@@ -22,7 +22,7 @@ Official registry record NCT04786262 was queried on 22 October 2026 and showed R
 
 ### 3. Immune-evasive/hypoimmune cells
 
-A 2025 report describes genetically modified donor islets transplanted into one person with longstanding T1D without immunosuppressive drugs; no immune response against the edited cells was detected at 12 weeks. This is proof-of-concept human evidence, not efficacy or cure evidence. Follow-up, participant count, residual immune biology, cell source, manufacturing, and long-term safety remain major constraints. [S5]
+A 2025 report describes genetically modified donor islets transplanted into one person with longstanding T1D without immunosuppressive drugs; no immune response against the edited cells was detected at 12 weeks. This is proof-of-concept human evidence, not efficacy or cure evidence. Follow-up, participant count, residual immune biology, cell source, manufacturing, and long-term safety remain major constraints. The associated official registry record NCT06239636 was queried on 22 October 2026 and showed RECRUITING; its estimated enrollment is very small and a registry label does not ensure a site is open. [S5, S7]
 
 ### 4. Disease-modifying immune therapy
 
@@ -63,6 +63,8 @@ These remain active research directions, but the first sprint has not completed 
 - **S4.** ClinicalTrials.gov, [NCT04786262](https://clinicaltrials.gov/study/NCT04786262), queried 22 October 2026. Registry snapshot showed RECRUITING.
 - **S5.** Ramzy et al., [Survival of Transplanted Allogeneic Beta Cells with No Immunosuppression](https://doi.org/10.1056/NEJMoa2503822), *NEJM*, 2025. Single-participant first-in-human report.
 - **S6.** FDA, [June 2026 Tzield indication announcement](https://www.fda.gov/news-events/press-announcements/fda-approves-new-indication-tzield-teplizumab-certain-pediatric-patients-recently-diagnosed-stage-3).
+
+- **S7.** ClinicalTrials.gov, [NCT06239636](https://clinicaltrials.gov/study/NCT06239636), queried 22 October 2026. Registry snapshot showed RECRUITING.
 
 ## Update record
 
