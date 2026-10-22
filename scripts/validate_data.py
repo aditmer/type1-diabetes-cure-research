@@ -14,7 +14,7 @@ REQUIRED = {
 LEVELS = {"E0", "E1", "E2", "E3", "E4", "E5"}
 CLAIM_TYPES = {"clinical_outcome", "regulatory_status", "trial_status", "program_status"}
 TRIAL_STATUSES = {"RECRUITING", "NOT_YET_RECRUITING", "ACTIVE_NOT_RECRUITING", "COMPLETED", "TERMINATED", "WITHDRAWN", "SUSPENDED", "ENROLLING_BY_INVITATION", "UNKNOWN", "NOT_FOUND"}
-DATE_FIELDS = {"publication_date", "accessed_date", "status_checked"}
+DATE_FIELDS = {"publication_date", "source_date", "accessed_date", "status_checked"}
 
 def valid_date(value):
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
@@ -44,10 +44,13 @@ def read_table(name):
         missing = [col for col in REQUIRED[name] if col not in optional and not row[col].strip()]
         if missing:
             raise ValueError(f"{name}:{row_number}: empty required fields: {missing}")
-        for field in DATE_FIELDS.intersection(row):
-            if row[field].strip() and not valid_date(row[field].strip()):
-                raise ValueError(f"{name}:{row_number}: {field} must be a real YYYY-MM-DD date")
+        validate_row_dates(name, row_number, row)
     return rows
+
+def validate_row_dates(name, row_number, row):
+    for field in DATE_FIELDS.intersection(row):
+        if row[field].strip() and not valid_date(row[field].strip()):
+            raise ValueError(f"{name}:{row_number}: {field} must be a real YYYY-MM-DD date")
 
 def validate_sources(rows):
     for row_number, row in enumerate(rows, start=2):
