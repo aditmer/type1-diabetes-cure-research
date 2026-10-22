@@ -13,7 +13,7 @@
 
 News, advocacy, and commercial pages may help discover sources but are not sufficient support for efficacy claims.
 
-## Evidence level (E0–E5)
+## Scientific evidence level (E0–E5)
 
 - **E0 — Hypothesis:** rationale or proposal without direct test.
 - **E1 — In vitro:** cells, organoids, or ex vivo material; no whole-animal clinical evidence.
@@ -22,7 +22,7 @@ News, advocacy, and commercial pages may help discover sources but are not suffi
 - **E4 — Controlled human:** randomized or otherwise robust comparative human evidence, replicated or with a meaningful confirmatory dataset.
 - **E5 — Established clinical benefit:** replicated, durable patient-important benefit reflected in authoritative clinical/regulatory evidence for the specific population and endpoint.
 
-This scale grades the evidence behind a specific claim, not overall therapy quality or approval status. A registered trial is not efficacy evidence. Preclinical evidence never supports claims of human cure.
+This scale grades scientific efficacy or safety evidence behind a specific claim, not overall therapy quality, regulatory action, or sponsor program status. Use an E0–E5 level only for scientific claims. For regulatory, registry, and sponsor status claims, record the independent `evidence_basis` (`regulatory_action`, `trial_registry`, or `sponsor_report`) and set `evidence_level` to `NA`. A registered trial is not efficacy evidence. Preclinical evidence never supports claims of human cure.
 
 ## Confidence score (0–5)
 
@@ -41,4 +41,4 @@ Score each claim separately across five one-point checks: (1) source is primary/
 
 ## Tracker fields
 
-`claim_id`, `claim_type`, `claim`, `source_id`, `evidence_level`, `confidence_0_to_5`, `population_or_model`, `design`, `n`, `analysis_denominator`, `endpoint`, `follow_up`, `cointerventions`, `limitations`, `status_checked`, `notes`. Each cited source ID must resolve in `data/sources.csv`. Claims are typed as clinical outcome, regulatory status, trial status, or program status. Clinical outcome claims must state both the study sample and outcome analysis denominator; if the source does not provide either, state that explicitly and lower confidence. Trial status must use a current ClinicalTrials.gov status category. Keep one principal claim per row. Use `unknown` rather than guessing, and link all source IDs in the companion source catalog/report.
+`claim_id`, `claim_type`, `claim`, `source_id`, `evidence_level`, `evidence_basis`, `confidence_0_to_5`, `population_or_model`, `design`, `n`, `outcome_numerator`, `analysis_denominator`, `endpoint`, `follow_up`, `cointerventions`, `limitations`, `status_checked`, `notes`. Each cited source ID must resolve in `data/sources.csv`. Claims are typed as clinical outcome, regulatory status, trial status, or program status, and the evidence basis must match that type. For a clinical outcome, `n` is the study sample, `outcome_numerator` is the number with the stated outcome, and `analysis_denominator` is the number assessed for that outcome. Record the population and follow-up/time point. Counts must be integers, the denominator must be positive and no larger than `n` when `n` is known, and the numerator cannot exceed the denominator. If the source does not report counts, enter `not reported` for both numerator and denominator and explain that in notes or limitations. Non-outcome status claims use `NA` for the evidence level and outcome counts. Trial status must use a current ClinicalTrials.gov status category. Keep one principal claim per row. Use `unknown` rather than guessing, and link all source IDs in the companion source catalog/report.
