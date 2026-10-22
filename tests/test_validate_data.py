@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.validate_data import validate_evidence, validate_trials
+from scripts.validate_data import validate_evidence, validate_row_dates, validate_trials
 
 class TrackerValidationTests(unittest.TestCase):
     def test_unknown_source_id_fails(self):
@@ -33,6 +33,11 @@ class TrackerValidationTests(unittest.TestCase):
         row = {"nct_id": "NCT12345678", "status": "PAUSED_MAYBE", "record_url": "https://clinicaltrials.gov/study/NCT12345678"}
         with self.assertRaisesRegex(ValueError, "invalid trial status"):
             validate_trials([row])
+
+    def test_invalid_source_date_fails(self):
+        row = {"source_date": "2025-02-30"}
+        with self.assertRaisesRegex(ValueError, "source_date must be a real YYYY-MM-DD date"):
+            validate_row_dates("sources.csv", 2, row)
 
 if __name__ == "__main__":
     unittest.main()
