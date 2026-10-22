@@ -96,6 +96,11 @@ class TrackerValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "numeric value, unit, and time point"):
             validate_evidence([claim], {"S1"})
 
+    def test_clinical_outcome_cannot_be_not_applicable(self):
+        claim = clinical_claim(outcome_type="not_applicable")
+        with self.assertRaisesRegex(ValueError, "clinical outcomes cannot use outcome_type not_applicable"):
+            validate_evidence([claim], {"S1"})
+
     def test_regulatory_claim_does_not_use_scientific_level(self):
         row = clinical_claim(
             claim_type="regulatory_status",
@@ -159,6 +164,27 @@ class TrackerValidationTests(unittest.TestCase):
             "known_limitations": "Current status and enrollment were not verified; full official record access was blocked.",
         }
         validate_trials([row])
+
+    def test_chictr_record_rejects_nonofficial_hostname(self):
+        for url in (
+            "https://example.org/chictr.org.cn/historyversionpubEN.html?regno=ChiCTR2300072200",
+            "https://notchictr.org.cn/historyversionpubEN.html?regno=ChiCTR2300072200",
+        ):
+            with self.subTest(url=url):
+                row = {
+                    "registry_id": "ChiCTR2300072200",
+                    "registry_name": "ChiCTR",
+                    "status": "UNKNOWN",
+                    "record_url": url,
+                    "registry_last_posted": "2026-01-28",
+                    "registry_last_verified": "",
+                    "enrollment_count": "",
+                    "enrollment_type": "",
+                    "results_posted": "unknown",
+                    "known_limitations": "Current status and enrollment were not verified; full official record access was blocked.",
+                }
+                with self.assertRaisesRegex(ValueError, "official record URL"):
+                    validate_trials([row])
 
     def test_registry_metadata_requires_machine_readable_values(self):
         row = {

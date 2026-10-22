@@ -5,6 +5,7 @@ import re
 from collections import Counter
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {
@@ -166,6 +167,8 @@ def validate_evidence(rows, source_ids):
             if numerator_text.upper() != "NA" or denominator_text.upper() != "NA":
                 raise ValueError(f"evidence.csv:{row_number}: non-outcome status claims must use NA for outcome numerator and denominator")
             continue
+        if outcome_type == "not_applicable":
+            raise ValueError(f"evidence.csv:{row_number}: clinical outcomes cannot use outcome_type not_applicable")
         if outcome_type == "binary":
             if not re.fullmatch(r"\d+", numerator_text) or not re.fullmatch(r"\d+", denominator_text):
                 raise ValueError(f"evidence.csv:{row_number}: binary outcomes require numeric outcome_numerator and analysis_denominator")
@@ -214,7 +217,8 @@ def validate_trials(rows):
             if not re.fullmatch(r"NCT\d{8}", registry_id) or not row["record_url"].startswith("https://clinicaltrials.gov/study/"):
                 raise ValueError(f"trials.csv:{row_number}: ClinicalTrials.gov records require an NCT ID and official record URL")
         elif registry == "ChiCTR":
-            if not re.fullmatch(r"ChiCTR\d{10}", registry_id) or "chictr.org.cn/" not in row["record_url"]:
+            hostname = urlsplit(row["record_url"]).hostname
+            if not re.fullmatch(r"ChiCTR\d{10}", registry_id) or hostname not in {"chictr.org.cn", "www.chictr.org.cn"}:
                 raise ValueError(f"trials.csv:{row_number}: ChiCTR records require a ChiCTR ID and official record URL")
         validate_registry_metadata(row, row_number, "trials.csv", required=registry == "ClinicalTrials.gov")
         if registry != "ClinicalTrials.gov" and any(not (row.get(field) or "").strip() for field in ("registry_last_verified", "enrollment_count", "enrollment_type", "results_posted")):
