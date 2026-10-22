@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.validate_data import validate_evidence, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_trials
+from scripts.validate_data import validate_evidence, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_sources, validate_trials
 
 
 def clinical_claim(**overrides):
@@ -81,6 +81,20 @@ class TrackerValidationTests(unittest.TestCase):
             baseline_value="43.18",
             baseline_unit="% time in target range",
             baseline_timepoint="Pre-transplant baseline",
+        )
+        validate_evidence([claim], {"S1"})
+
+    def test_continuous_outcome_accepts_signed_result_and_baseline(self):
+        claim = clinical_claim(
+            outcome_type="continuous",
+            outcome_numerator="NA",
+            analysis_denominator="1",
+            outcome_value="-1.5",
+            outcome_unit="percentage points",
+            outcome_timepoint="Month 12",
+            baseline_value="+0.5",
+            baseline_unit="percentage points",
+            baseline_timepoint="Baseline",
         )
         validate_evidence([claim], {"S1"})
 
@@ -240,6 +254,54 @@ class TrackerValidationTests(unittest.TestCase):
         row["results_posted"] = "unknown"
         with self.assertRaisesRegex(ValueError, "results_posted must be true or false"):
             validate_registry_metadata(row, 2, "trials.csv", required=True)
+
+    def test_registry_source_requires_nonempty_registry_name(self):
+        row = {
+            "source_id": "S_TEST",
+            "title": "Test registry record",
+            "authors_or_organization": "Registry",
+            "source_type": "Clinical trial registry",
+            "doi": "",
+            "pmid": "",
+            "registry_id": "NCT12345678",
+            "publication_date": "",
+            "source_date": "",
+            "source_url": "https://clinicaltrials.gov/study/NCT12345678",
+            "accessed_date": "",
+            "notes": "",
+            "registry_last_posted": "",
+            "registry_last_verified": "",
+            "enrollment_count": "",
+            "enrollment_type": "",
+            "results_posted": "",
+            "registry_name": " ",
+        }
+        with self.assertRaisesRegex(ValueError, "registry_name is required for registry sources"):
+            validate_sources([row])
+
+    def test_stripped_clinicaltrials_registry_name_requires_metadata(self):
+        row = {
+            "source_id": "S_TEST",
+            "title": "Test registry record",
+            "authors_or_organization": "Registry",
+            "source_type": "Clinical trial registry",
+            "doi": "",
+            "pmid": "",
+            "registry_id": "NCT12345678",
+            "publication_date": "",
+            "source_date": "",
+            "source_url": "https://clinicaltrials.gov/study/NCT12345678",
+            "accessed_date": "",
+            "notes": "",
+            "registry_last_posted": "",
+            "registry_last_verified": "",
+            "enrollment_count": "",
+            "enrollment_type": "",
+            "results_posted": "",
+            "registry_name": " ClinicalTrials.gov ",
+        }
+        with self.assertRaisesRegex(ValueError, "registry_last_posted is required"):
+            validate_sources([row])
 
     def test_registry_verification_month_must_be_valid(self):
         row = {

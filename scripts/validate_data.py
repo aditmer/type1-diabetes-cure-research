@@ -118,11 +118,14 @@ def validate_sources(rows):
             raise ValueError(f"sources.csv:{row_number}: provide at least one source identifier")
         if row["source_type"] == "Peer-reviewed primary study" and not row["doi"].strip():
             raise ValueError(f"sources.csv:{row_number}: peer-reviewed study requires a DOI")
+        registry_name = (row.get("registry_name") or "").strip()
+        if row["source_type"] == "Clinical trial registry" and not registry_name:
+            raise ValueError(f"sources.csv:{row_number}: registry_name is required for registry sources")
         validate_registry_metadata(
             row,
             row_number,
             "sources.csv",
-            row["source_type"] == "Clinical trial registry" and row["registry_name"] == "ClinicalTrials.gov",
+            row["source_type"] == "Clinical trial registry" and registry_name == "ClinicalTrials.gov",
         )
 
 def validate_evidence(rows, source_ids):
@@ -185,7 +188,7 @@ def validate_evidence(rows, source_ids):
             timepoint = (row.get("outcome_timepoint") or "").strip()
             if numerator_text.upper() != "NA":
                 raise ValueError(f"evidence.csv:{row_number}: continuous outcomes must use NA for outcome_numerator")
-            if not re.fullmatch(r"(?:[<>]=?|~)?\d+(?:\.\d+)?", value) or not unit or not timepoint:
+            if not re.fullmatch(r"(?:[<>]=?|~)?[+-]?\d+(?:\.\d+)?", value) or not unit or not timepoint:
                 raise ValueError(f"evidence.csv:{row_number}: continuous outcomes require a numeric value, unit, and time point")
             if denominator_text == "not reported":
                 explanation = f"{row['notes']} {row['limitations']}".lower()
@@ -202,7 +205,7 @@ def validate_evidence(rows, source_ids):
             baseline_timepoint = (row.get("baseline_timepoint") or "").strip()
             if any((baseline, baseline_unit, baseline_timepoint)) and not all((baseline, baseline_unit, baseline_timepoint)):
                 raise ValueError(f"evidence.csv:{row_number}: baseline value, unit, and time point must be provided together")
-            if baseline and not re.fullmatch(r"(?:[<>]=?|~)?\d+(?:\.\d+)?", baseline):
+            if baseline and not re.fullmatch(r"(?:[<>]=?|~)?[+-]?\d+(?:\.\d+)?", baseline):
                 raise ValueError(f"evidence.csv:{row_number}: baseline_value must be numeric")
         elif outcome_type == "not_reported":
             explanation = f"{row['notes']} {row['limitations']}".lower()
