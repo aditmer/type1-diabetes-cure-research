@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.validate_data import validate_evidence, validate_literature_log, validate_row_dates, validate_trials
+from scripts.validate_data import validate_evidence, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_trials
 
 
 def clinical_claim(**overrides):
@@ -109,6 +109,30 @@ class TrackerValidationTests(unittest.TestCase):
         row = {"nct_id": "NCT12345678", "status": "PAUSED_MAYBE", "record_url": "https://clinicaltrials.gov/study/NCT12345678"}
         with self.assertRaisesRegex(ValueError, "invalid trial status"):
             validate_trials([row])
+
+    def test_registry_metadata_requires_machine_readable_values(self):
+        row = {
+            "registry_last_posted": "2026-10-09",
+            "registry_last_verified": "2026-10",
+            "enrollment_count": "7",
+            "enrollment_type": "ACTUAL",
+            "results_posted": "false",
+        }
+        validate_registry_metadata(row, 2, "trials.csv", required=True)
+        row["results_posted"] = "unknown"
+        with self.assertRaisesRegex(ValueError, "results_posted must be true or false"):
+            validate_registry_metadata(row, 2, "trials.csv", required=True)
+
+    def test_registry_verification_month_must_be_valid(self):
+        row = {
+            "registry_last_posted": "2026-10-09",
+            "registry_last_verified": "2026-13",
+            "enrollment_count": "7",
+            "enrollment_type": "ACTUAL",
+            "results_posted": "false",
+        }
+        with self.assertRaisesRegex(ValueError, "must be a real YYYY-MM month"):
+            validate_registry_metadata(row, 2, "trials.csv", required=True)
 
 
 if __name__ == "__main__":

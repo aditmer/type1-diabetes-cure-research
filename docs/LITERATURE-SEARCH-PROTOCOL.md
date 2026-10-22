@@ -18,6 +18,7 @@
 - The ESearch calls used `db=pubmed`, `retmode=json`, `retmax=500`, and `sort=relevance`. The reported result count is the ESearch `count`; the screening file records every PMID returned for each query ID in result order.
 - Search decisions are `include` (used in the current evidence map), `exclude` (outside the scope or secondary material not used to support a primary claim), and `defer` (relevant primary preclinical material queued for the broader issue #2 review; not used as human evidence in this snapshot).
 - ClinicalTrials.gov was checked directly by NCT identifier in `data/sources.csv`; the checked date and registry URL are recorded there and in `data/trials.csv`.
+- Registry snapshots in both trackers store `registry_last_posted` (YYYY-MM-DD), `registry_last_verified` (YYYY-MM, matching ClinicalTrials.gov precision), `enrollment_count`, `enrollment_type` (`ACTUAL` or `ESTIMATED`), and `results_posted` (`true`/`false`) as dedicated columns. `status_checked`/`accessed_date` remains the date this project queried the record.
 - FDA announcements, labels, and review documents were checked directly at FDA.gov. Sponsor investor-relations releases were used only for dated program-status statements, not as independent efficacy evidence.
 
 ## PubMed searches recorded on 22 October 2026
