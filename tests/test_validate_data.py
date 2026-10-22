@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.validate_data import validate_evidence, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_trials
+from scripts.validate_data import validate_evidence, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_sources, validate_trials
 
 
 def clinical_claim(**overrides):
@@ -23,6 +23,13 @@ def clinical_claim(**overrides):
         "limitations": "Small uncontrolled study",
         "status_checked": "2026-10-22",
         "notes": "",
+        "outcome_type": "binary",
+        "outcome_value": "",
+        "outcome_unit": "",
+        "outcome_timepoint": "",
+        "baseline_value": "",
+        "baseline_unit": "",
+        "baseline_timepoint": "",
     }
     row.update(overrides)
     return row
@@ -63,6 +70,93 @@ class TrackerValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cannot exceed study sample size"):
             validate_evidence([clinical_claim(analysis_denominator="15")], {"S1"})
 
+    def test_continuous_outcome_accepts_value_unit_and_timepoint(self):
+        claim = clinical_claim(
+            outcome_type="continuous",
+            outcome_numerator="NA",
+            analysis_denominator="1",
+            outcome_value="96.21",
+            outcome_unit="% time in target range",
+            outcome_timepoint="Month 4 after transplantation",
+            baseline_value="43.18",
+            baseline_unit="% time in target range",
+            baseline_timepoint="Pre-transplant baseline",
+        )
+        validate_evidence([claim], {"S1"})
+
+    def test_continuous_outcome_accepts_signed_result_and_baseline(self):
+        claim = clinical_claim(
+            outcome_type="continuous",
+            outcome_numerator="NA",
+            analysis_denominator="1",
+            outcome_value="-1.5",
+            outcome_unit="percentage points",
+            outcome_timepoint="Month 12",
+            baseline_value="+0.5",
+            baseline_unit="percentage points",
+            baseline_timepoint="Baseline",
+        )
+        validate_evidence([claim], {"S1"})
+
+    def test_continuous_outcome_requires_unit_and_timepoint(self):
+        claim = clinical_claim(
+            outcome_type="continuous",
+            outcome_numerator="NA",
+            analysis_denominator="1",
+            outcome_value="96.21",
+            outcome_unit="",
+            outcome_timepoint="Month 4",
+        )
+        with self.assertRaisesRegex(ValueError, "numeric value, unit, and time point"):
+            validate_evidence([claim], {"S1"})
+
+    def test_continuous_outcome_requires_valid_analyzed_denominator(self):
+        base = clinical_claim(
+            outcome_type="continuous",
+            outcome_numerator="NA",
+            analysis_denominator="1",
+            outcome_value="96.21",
+            outcome_unit="% time in target range",
+            outcome_timepoint="Month 4",
+        )
+        validate_evidence([base], {"S1"})
+        with self.assertRaisesRegex(ValueError, "numeric analysis_denominator or not reported"):
+            validate_evidence([dict(base, analysis_denominator="NA")], {"S1"})
+        with self.assertRaisesRegex(ValueError, "must be positive"):
+            validate_evidence([dict(base, analysis_denominator="0")], {"S1"})
+        with self.assertRaisesRegex(ValueError, "cannot exceed study sample size"):
+            validate_evidence([dict(base, analysis_denominator="15")], {"S1"})
+
+    def test_continuous_outcome_allows_explained_unreported_denominator(self):
+        claim = clinical_claim(
+            outcome_type="continuous",
+            outcome_numerator="NA",
+            analysis_denominator="not reported",
+            outcome_value="96.21",
+            outcome_unit="% time in target range",
+            outcome_timepoint="Month 4",
+            notes="The outcome denominator was not reported.",
+        )
+        validate_evidence([claim], {"S1"})
+
+    def test_clinical_outcome_cannot_be_not_applicable(self):
+        claim = clinical_claim(outcome_type="not_applicable")
+        with self.assertRaisesRegex(ValueError, "clinical outcomes cannot use outcome_type not_applicable"):
+            validate_evidence([claim], {"S1"})
+
+    def test_not_reported_outcome_rejects_populated_measurement(self):
+        claim = clinical_claim(
+            outcome_type="not_reported",
+            outcome_numerator="NA",
+            analysis_denominator="not reported",
+            outcome_value="2.5",
+            outcome_unit="ng/mL",
+            outcome_timepoint="Not reported in abstract",
+            limitations="C-peptide value not reported in the accessible abstract.",
+        )
+        with self.assertRaisesRegex(ValueError, "cannot include measured outcome or baseline values"):
+            validate_evidence([claim], {"S1"})
+
     def test_regulatory_claim_does_not_use_scientific_level(self):
         row = clinical_claim(
             claim_type="regulatory_status",
@@ -71,6 +165,7 @@ class TrackerValidationTests(unittest.TestCase):
             n="unknown",
             outcome_numerator="NA",
             analysis_denominator="NA",
+            outcome_type="not_applicable",
         )
         with self.assertRaisesRegex(ValueError, "non-scientific status claim must use evidence_level NA"):
             validate_evidence([row], {"S1"})
@@ -83,6 +178,7 @@ class TrackerValidationTests(unittest.TestCase):
             n="unknown",
             outcome_numerator="NA",
             analysis_denominator="NA",
+            outcome_type="not_applicable",
         )
         validate_evidence([row], {"S1"})
         row["evidence_basis"] = "scientific_study"
@@ -106,9 +202,45 @@ class TrackerValidationTests(unittest.TestCase):
             validate_literature_log(searches, screening, {"S1"})
 
     def test_invalid_trial_status_fails(self):
-        row = {"nct_id": "NCT12345678", "status": "PAUSED_MAYBE", "record_url": "https://clinicaltrials.gov/study/NCT12345678"}
+        row = {"registry_id": "NCT12345678", "registry_name": "ClinicalTrials.gov", "status": "PAUSED_MAYBE", "record_url": "https://clinicaltrials.gov/study/NCT12345678"}
         with self.assertRaisesRegex(ValueError, "invalid trial status"):
             validate_trials([row])
+
+    def test_non_us_registry_record_is_supported_with_unknown_metadata(self):
+        row = {
+            "registry_id": "ChiCTR2300072200",
+            "registry_name": "ChiCTR",
+            "status": "UNKNOWN",
+            "record_url": "https://www.chictr.org.cn/historyversionpubEN.html?regno=ChiCTR2300072200",
+            "registry_last_posted": "2026-01-28",
+            "registry_last_verified": "",
+            "enrollment_count": "",
+            "enrollment_type": "",
+            "results_posted": "unknown",
+            "known_limitations": "Current status and enrollment were not verified; full official record access was blocked.",
+        }
+        validate_trials([row])
+
+    def test_chictr_record_rejects_nonofficial_hostname(self):
+        for url in (
+            "https://example.org/chictr.org.cn/historyversionpubEN.html?regno=ChiCTR2300072200",
+            "https://notchictr.org.cn/historyversionpubEN.html?regno=ChiCTR2300072200",
+        ):
+            with self.subTest(url=url):
+                row = {
+                    "registry_id": "ChiCTR2300072200",
+                    "registry_name": "ChiCTR",
+                    "status": "UNKNOWN",
+                    "record_url": url,
+                    "registry_last_posted": "2026-01-28",
+                    "registry_last_verified": "",
+                    "enrollment_count": "",
+                    "enrollment_type": "",
+                    "results_posted": "unknown",
+                    "known_limitations": "Current status and enrollment were not verified; full official record access was blocked.",
+                }
+                with self.assertRaisesRegex(ValueError, "official record URL"):
+                    validate_trials([row])
 
     def test_registry_metadata_requires_machine_readable_values(self):
         row = {
@@ -123,6 +255,54 @@ class TrackerValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "results_posted must be true or false"):
             validate_registry_metadata(row, 2, "trials.csv", required=True)
 
+    def test_registry_source_requires_nonempty_registry_name(self):
+        row = {
+            "source_id": "S_TEST",
+            "title": "Test registry record",
+            "authors_or_organization": "Registry",
+            "source_type": "Clinical trial registry",
+            "doi": "",
+            "pmid": "",
+            "registry_id": "NCT12345678",
+            "publication_date": "",
+            "source_date": "",
+            "source_url": "https://clinicaltrials.gov/study/NCT12345678",
+            "accessed_date": "",
+            "notes": "",
+            "registry_last_posted": "",
+            "registry_last_verified": "",
+            "enrollment_count": "",
+            "enrollment_type": "",
+            "results_posted": "",
+            "registry_name": " ",
+        }
+        with self.assertRaisesRegex(ValueError, "registry_name is required for registry sources"):
+            validate_sources([row])
+
+    def test_stripped_clinicaltrials_registry_name_requires_metadata(self):
+        row = {
+            "source_id": "S_TEST",
+            "title": "Test registry record",
+            "authors_or_organization": "Registry",
+            "source_type": "Clinical trial registry",
+            "doi": "",
+            "pmid": "",
+            "registry_id": "NCT12345678",
+            "publication_date": "",
+            "source_date": "",
+            "source_url": "https://clinicaltrials.gov/study/NCT12345678",
+            "accessed_date": "",
+            "notes": "",
+            "registry_last_posted": "",
+            "registry_last_verified": "",
+            "enrollment_count": "",
+            "enrollment_type": "",
+            "results_posted": "",
+            "registry_name": " ClinicalTrials.gov ",
+        }
+        with self.assertRaisesRegex(ValueError, "registry_last_posted is required"):
+            validate_sources([row])
+
     def test_registry_verification_month_must_be_valid(self):
         row = {
             "registry_last_posted": "2026-10-09",
@@ -133,6 +313,16 @@ class TrackerValidationTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "must be a real YYYY-MM month"):
             validate_registry_metadata(row, 2, "trials.csv", required=True)
+
+    def test_unknown_registry_results_status_is_allowed(self):
+        row = {
+            "registry_last_posted": "2026-01-28",
+            "registry_last_verified": "",
+            "enrollment_count": "",
+            "enrollment_type": "",
+            "results_posted": "unknown",
+        }
+        validate_registry_metadata(row, 2, "trials.csv", required=False)
 
 
 if __name__ == "__main__":
