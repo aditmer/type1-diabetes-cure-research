@@ -1,7 +1,8 @@
 # Literature Search Protocol
 
-**Protocol version:** 1.0
-**Initial search date:** 22 October 2026
+**Protocol version:** 1.1
+
+**Search snapshot:** 22 October 2026
 **Coverage:** focused, scoping search for an initial landscape; this is not a systematic review and does not claim exhaustive retrieval.
 
 ## Questions
@@ -9,45 +10,44 @@
 1. What human evidence exists for beta-cell replacement in established T1D?
 2. What human evidence exists for immune evasion, encapsulation, or tolerance intended to reduce immunosuppression?
 3. Which prevention or immune-modulation approaches delay onset or preserve insulin production, and what populations/endpoints were tested?
-4. What negative, stopped, inconclusive, and safety findings identify bottlenecks?
+4. Which negative, stopped, inconclusive, and safety findings identify bottlenecks?
 
-## Sources searched
+## Sources and exact search records
 
-- PubMed/MEDLINE and publisher pages for peer-reviewed primary studies.
-- ClinicalTrials.gov API v2 and individual official records for trial design, status, protocol, and posted results.
-- FDA announcements, labels, and review documents for regulatory scope and safety.
-- Sponsor investor relations releases only for program status or announced plans not yet reported in a peer-reviewed paper; label them sponsor-reported.
+- PubMed/MEDLINE was searched through the NCBI E-utilities ESearch API. The exact expressions, search date, result count, sort, and retrieval limit are recorded in [`data/literature-searches.csv`](../data/literature-searches.csv). Each returned PMID has a title/abstract screening decision and reason in [`data/literature-screening.csv`](../data/literature-screening.csv). Counts and identifiers are snapshots and can change as PubMed is updated.
+- The ESearch calls used `db=pubmed`, `retmode=json`, `retmax=500`, and `sort=relevance`. The reported result count is the ESearch `count`; the screening file records every PMID returned for each query ID in result order.
+- Search decisions are `include` (used in the current evidence map), `exclude` (outside the scope or secondary material not used to support a primary claim), and `defer` (relevant primary preclinical material queued for the broader issue #2 review; not used as human evidence in this snapshot).
+- ClinicalTrials.gov was checked directly by NCT identifier in `data/sources.csv`; the checked date and registry URL are recorded there and in `data/trials.csv`.
+- FDA announcements, labels, and review documents were checked directly at FDA.gov. Sponsor investor-relations releases were used only for dated program-status statements, not as independent efficacy evidence.
 
-## Search strings used for the initial snapshot
+## PubMed searches recorded on 22 October 2026
 
-Searches were run on 22 October 2026, then source records were opened and checked:
-
-- `site:nejm.org type 1 diabetes zimislecel phase 1-2 islets`
-- `site:clinicaltrials.gov NCT04786262 VX-880 zimislecel`
-- `site:nejm.org hypoimmune allogeneic islets no immunosuppression 14 months`
-- `site:clinicaltrials.gov NCT06239636 hypoimmune pancreatic islet`
-- `site:investors.vrtx.com VX-264 program updates type 1 diabetes March 2025`
-- `site:fda.gov type 1 diabetes Lantidra teplizumab 2026 indication`
+See the two CSV logs for the full strings and result-level decisions. The five searches covered zimislecel/VX-880, hypoimmune islets/UP421, VX-264, the 2026 teplizumab stage 3 regulatory topic, and direct identifier lookup for the two UP421 primary reports. All returned records received a screening decision and exclusion or deferral reason where applicable.
 
 ## Inclusion criteria
 
 - Human clinical study or official registry record relevant to T1D; or primary translational evidence directly testing a cure-relevant mechanism.
 - Official regulator materials for approvals, label indications, and safety requirements.
 - Negative, discontinued, or inconclusive programs when they materially inform a modality's failure modes.
-- The source must be directly accessible, with DOI, PMID, NCT identifier, or official document URL where available.
+- Directly accessible source with DOI, PMID, NCT identifier, or official document URL where available.
 
 ## Exclusion and handling criteria
 
-- News coverage, advocacy material, and commercial summaries may identify sources but do not establish efficacy.
+- News, advocacy, and commercial summaries may identify sources but do not establish efficacy.
+- Reviews, perspectives, and commentaries are not used in place of primary evidence; they may help discover primary sources.
 - Press releases are included only as sponsor-reported operational evidence, not as independent efficacy evidence.
-- Non-human and in-vitro results are tracked separately from human evidence.
+- Non-human and in-vitro results are kept separate from human evidence. Relevant preclinical records not yet assessed for the current snapshot are marked `defer` with a reason in the screening log.
 - Duplicate publications from the same participants are linked as follow-up, not counted as independent cohorts.
 - Unavailable denominators, endpoints, or causality assessments are recorded as unknown and not inferred.
 
 ## Extraction and update procedure
 
-For each source, record title, author/organization, source type, DOI, PMID, NCT identifier, publication date, direct URL, access date, and notes in `data/sources.csv`. Extract one principal claim per row in `data/evidence.csv`. For trials, query the official record and record the status-check date. Update this protocol when search systems, query strings, eligibility rules, or review scope change. Add a dated update entry to the relevant report.
+For each source, record title, author/organization, source type, DOI, PMID, NCT identifier, publication date, direct URL, access date, and notes in `data/sources.csv`. Extract one principal claim per row in `data/evidence.csv`. For trials, query the official record and record the status-check date. Update the exact query, date, result count, returned identifiers, and screening decisions when a search is repeated or its scope changes. Add a dated update entry to the relevant report.
 
 ## Limitations
 
-The initial query set is targeted and English-language. It may miss unpublished results, non-English records, conference abstracts, historical terminology, and relevant studies not indexed by the selected sources. A future systematic review would require a broader query strategy, duplicate independent screening, and a documented flow diagram.
+The initial query set is targeted and English-language. It may miss unpublished results, non-English records, conference abstracts, historical terminology, and relevant studies not indexed by PubMed. This is a reproducible scoping snapshot, not an exhaustive systematic review. A future systematic review would require broader queries, duplicate independent screening, and a documented flow diagram.
+
+## Update record
+
+- 2026-10-22: Replaced search-engine `site:` queries with five exact PubMed ESearch queries and logged returned PMIDs, counts, screening decisions, and reasons. Relevant preclinical hypoimmune reports were deferred to issue #2 for full-text assessment.

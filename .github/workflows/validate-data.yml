@@ -2,23 +2,7 @@ name: Validate research trackers
 
 on:
   pull_request:
-    paths:
-      - "data/**"
-      - "docs/**"
-      - "README.md"
-      - "CONTRIBUTING.md"
-      - "scripts/**"
-      - "tests/**"
-      - ".github/workflows/validate-data.yml"
   push:
-    paths:
-      - "data/**"
-      - "docs/**"
-      - "README.md"
-      - "CONTRIBUTING.md"
-      - "scripts/**"
-      - "tests/**"
-      - ".github/workflows/validate-data.yml"
 
 permissions:
   contents: read

@@ -2,19 +2,29 @@
 """Integrity checks for the public research trackers."""
 import csv
 import re
+from collections import Counter
 from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {
     "sources.csv": ["source_id", "title", "authors_or_organization", "source_type", "doi", "pmid", "nct_id", "publication_date", "source_date", "source_url", "accessed_date", "notes"],
-    "evidence.csv": ["claim_id", "claim_type", "claim", "source_id", "evidence_level", "confidence_0_to_5", "population_or_model", "design", "n", "analysis_denominator", "endpoint", "follow_up", "cointerventions", "limitations", "status_checked", "notes"],
+    "evidence.csv": ["claim_id", "claim_type", "claim", "source_id", "evidence_level", "evidence_basis", "confidence_0_to_5", "population_or_model", "design", "n", "outcome_numerator", "analysis_denominator", "endpoint", "follow_up", "cointerventions", "limitations", "status_checked", "notes"],
     "trials.csv": ["nct_id", "intervention", "modality", "phase", "status", "status_checked", "population", "primary_endpoint", "record_url", "known_limitations"],
+    "literature-searches.csv": ["query_id", "database", "searched_on", "exact_query", "result_count", "parameters", "notes"],
+    "literature-screening.csv": ["screening_id", "query_id", "pmid", "title", "decision", "decision_reason", "source_id"],
 }
 LEVELS = {"E0", "E1", "E2", "E3", "E4", "E5"}
 CLAIM_TYPES = {"clinical_outcome", "regulatory_status", "trial_status", "program_status"}
+EVIDENCE_BASES = {"scientific_study", "regulatory_action", "trial_registry", "sponsor_report"}
+EVIDENCE_BASIS_BY_CLAIM_TYPE = {
+    "clinical_outcome": "scientific_study",
+    "regulatory_status": "regulatory_action",
+    "trial_status": "trial_registry",
+    "program_status": "sponsor_report",
+}
 TRIAL_STATUSES = {"RECRUITING", "NOT_YET_RECRUITING", "ACTIVE_NOT_RECRUITING", "COMPLETED", "TERMINATED", "WITHDRAWN", "SUSPENDED", "ENROLLING_BY_INVITATION", "UNKNOWN", "NOT_FOUND"}
-DATE_FIELDS = {"publication_date", "source_date", "accessed_date", "status_checked"}
+DATE_FIELDS = {"publication_date", "source_date", "accessed_date", "status_checked", "searched_on"}
 
 def valid_date(value):
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
@@ -40,7 +50,14 @@ def read_table(name):
         if not key or key in ids:
             raise ValueError(f"{name}:{row_number}: missing or duplicate ID {key!r}")
         ids.add(key)
-        optional = {"doi", "pmid", "nct_id", "publication_date", "source_date", "notes"} if name == "sources.csv" else ({"notes"} if name == "evidence.csv" else set())
+        if name == "sources.csv":
+            optional = {"doi", "pmid", "nct_id", "publication_date", "source_date", "notes"}
+        elif name == "evidence.csv":
+            optional = {"notes"}
+        elif name == "literature-screening.csv":
+            optional = {"source_id"}
+        else:
+            optional = set()
         missing = [col for col in REQUIRED[name] if col not in optional and not row[col].strip()]
         if missing:
             raise ValueError(f"{name}:{row_number}: empty required fields: {missing}")
@@ -66,8 +83,13 @@ def validate_evidence(rows, source_ids):
     for row_number, row in enumerate(rows, start=2):
         if row["claim_type"] not in CLAIM_TYPES:
             raise ValueError(f"evidence.csv:{row_number}: invalid claim type {row['claim_type']!r}")
-        if row["evidence_level"] not in LEVELS:
-            raise ValueError(f"evidence.csv:{row_number}: invalid evidence level {row['evidence_level']!r}")
+        if row["evidence_basis"] not in EVIDENCE_BASES or row["evidence_basis"] != EVIDENCE_BASIS_BY_CLAIM_TYPE[row["claim_type"]]:
+            raise ValueError(f"evidence.csv:{row_number}: evidence basis does not match claim type")
+        if row["claim_type"] == "clinical_outcome":
+            if row["evidence_level"] not in LEVELS:
+                raise ValueError(f"evidence.csv:{row_number}: scientific claim requires an E0-E5 evidence level")
+        elif row["evidence_level"] != "NA":
+            raise ValueError(f"evidence.csv:{row_number}: non-scientific status claim must use evidence_level NA")
         try:
             confidence = int(row["confidence_0_to_5"])
         except ValueError as exc:
@@ -83,11 +105,26 @@ def validate_evidence(rows, source_ids):
         if not cited or unknown:
             raise ValueError(f"evidence.csv:{row_number}: unknown or missing source IDs: {sorted(unknown)}")
         if row["claim_type"] == "clinical_outcome":
-            denominator = row["analysis_denominator"].strip().lower()
-            count_is_known = bool(re.search(r"\d", row["n"]))
-            count_is_explicitly_unavailable = row["n"].strip().lower() in {"unknown", "not reported", "not available"} and bool(re.search(r"not reported|not available|not stated|unknown", denominator))
-            if not denominator or not (count_is_known or count_is_explicitly_unavailable):
-                raise ValueError(f"evidence.csv:{row_number}: clinical outcome requires an analysis denominator or explicit explanation that it is unavailable")
+            population = row["population_or_model"].strip()
+            follow_up = row["follow_up"].strip()
+            if not population or not follow_up:
+                raise ValueError(f"evidence.csv:{row_number}: clinical outcome requires an explicit population and time point/follow-up")
+            numerator_text = row["outcome_numerator"].strip().lower()
+            denominator_text = row["analysis_denominator"].strip().lower()
+            if re.fullmatch(r"\d+", numerator_text) and re.fullmatch(r"\d+", denominator_text):
+                numerator, denominator = int(numerator_text), int(denominator_text)
+                if denominator <= 0 or numerator > denominator:
+                    raise ValueError(f"evidence.csv:{row_number}: outcome numerator must be between 0 and its positive analysis denominator")
+                if re.fullmatch(r"\d+", row["n"].strip()) and denominator > int(row["n"].strip()):
+                    raise ValueError(f"evidence.csv:{row_number}: analysis denominator cannot exceed study sample size")
+            elif numerator_text == denominator_text == "not reported":
+                explanation = f"{row['notes']} {row['limitations']}".lower()
+                if not re.search(r"not reported|not available|not stated|unavailable", explanation):
+                    raise ValueError(f"evidence.csv:{row_number}: unavailable outcome counts require an explanation in notes or limitations")
+            else:
+                raise ValueError(f"evidence.csv:{row_number}: clinical outcome requires numeric outcome_numerator and analysis_denominator, or both explicitly not reported")
+        elif row["outcome_numerator"].strip().upper() != "NA" or row["analysis_denominator"].strip().upper() != "NA":
+            raise ValueError(f"evidence.csv:{row_number}: non-outcome status claims must use NA for outcome numerator and denominator")
 
 def validate_trials(rows):
     for row_number, row in enumerate(rows, start=2):
@@ -96,12 +133,43 @@ def validate_trials(rows):
         if not row["record_url"].startswith("https://clinicaltrials.gov/study/"):
             raise ValueError(f"trials.csv:{row_number}: record_url must be an official ClinicalTrials.gov record")
 
+def validate_literature_log(searches, screening, source_ids):
+    search_ids = {row["query_id"] for row in searches}
+    if len(search_ids) != len(searches):
+        raise ValueError("literature-searches.csv: duplicate query_id")
+    seen_results = set()
+    decisions = {"include", "exclude", "defer"}
+    for row_number, row in enumerate(screening, start=2):
+        if row["query_id"] not in search_ids:
+            raise ValueError(f"literature-screening.csv:{row_number}: unknown query_id {row['query_id']!r}")
+        if not re.fullmatch(r"\d+", row["pmid"]):
+            raise ValueError(f"literature-screening.csv:{row_number}: PMID must be numeric")
+        if row["decision"] not in decisions or not row["decision_reason"].strip():
+            raise ValueError(f"literature-screening.csv:{row_number}: decision and reason are required")
+        if row["source_id"].strip() and row["source_id"].strip() not in source_ids:
+            raise ValueError(f"literature-screening.csv:{row_number}: unknown source_id {row['source_id']!r}")
+        key = (row["query_id"], row["pmid"])
+        if key in seen_results:
+            raise ValueError(f"literature-screening.csv:{row_number}: duplicate PMID for query {row['query_id']}")
+        seen_results.add(key)
+    counts = Counter(row["query_id"] for row in screening)
+    for row_number, row in enumerate(searches, start=2):
+        try:
+            expected = int(row["result_count"])
+        except ValueError as exc:
+            raise ValueError(f"literature-searches.csv:{row_number}: result_count must be a non-negative integer") from exc
+        if expected < 0 or counts[row["query_id"]] != expected:
+            raise ValueError(f"literature-searches.csv:{row_number}: result_count does not match screened identifiers")
+
 if __name__ == "__main__":
     sources = read_table("sources.csv")
     evidence = read_table("evidence.csv")
     trials = read_table("trials.csv")
+    searches = read_table("literature-searches.csv")
+    screening = read_table("literature-screening.csv")
     validate_sources(sources)
     source_ids = {row["source_id"] for row in sources}
     validate_evidence(evidence, source_ids)
     validate_trials(trials)
-    print(f"sources.csv: {len(sources)} rows; evidence.csv: {len(evidence)} rows; trials.csv: {len(trials)} rows; integrity checks passed")
+    validate_literature_log(searches, screening, source_ids)
+    print(f"sources.csv: {len(sources)} rows; evidence.csv: {len(evidence)} rows; trials.csv: {len(trials)} rows; literature-searches.csv: {len(searches)} queries; literature-screening.csv: {len(screening)} results; integrity checks passed")
