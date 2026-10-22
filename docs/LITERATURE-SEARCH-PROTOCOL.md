@@ -1,6 +1,6 @@
 # Literature Search Protocol
 
-**Protocol version:** 1.1
+**Protocol version:** 1.2
 
 **Search snapshot:** 22 October 2026
 **Coverage:** focused, scoping search for an initial landscape; this is not a systematic review and does not claim exhaustive retrieval.
@@ -17,13 +17,13 @@
 - PubMed/MEDLINE was searched through the NCBI E-utilities ESearch API. The exact expressions, search date, result count, sort, and retrieval limit are recorded in [`data/literature-searches.csv`](../data/literature-searches.csv). Each returned PMID has a title/abstract screening decision and reason in [`data/literature-screening.csv`](../data/literature-screening.csv). Counts and identifiers are snapshots and can change as PubMed is updated.
 - The ESearch calls used `db=pubmed`, `retmode=json`, `retmax=500`, and `sort=relevance`. The reported result count is the ESearch `count`; the screening file records every PMID returned for each query ID in result order.
 - Search decisions are `include` (used in the current evidence map), `exclude` (outside the scope or secondary material not used to support a primary claim), and `defer` (relevant primary preclinical material queued for the broader issue #2 review; not used as human evidence in this snapshot).
-- ClinicalTrials.gov was checked directly by NCT identifier in `data/sources.csv`; the checked date and registry URL are recorded there and in `data/trials.csv`.
-- Registry snapshots in both trackers store `registry_last_posted` (YYYY-MM-DD), `registry_last_verified` (YYYY-MM, matching ClinicalTrials.gov precision), `enrollment_count`, `enrollment_type` (`ACTUAL` or `ESTIMATED`), and `results_posted` (`true`/`false`) as dedicated columns. `status_checked`/`accessed_date` remains the date this project queried the record.
+- ClinicalTrials.gov records are checked by NCT identifier; other registries use their own identifiers. `registry_name`, `registry_id`, the official record URL, and the query date are recorded in the source and trial trackers. Registry-specific fields are not forced into NCT-only columns.
+- Registry snapshots store `registry_last_posted` (YYYY-MM-DD), `registry_last_verified` (registry precision, YYYY-MM for ClinicalTrials.gov), `enrollment_count`, `enrollment_type` (`ACTUAL` or `ESTIMATED`), and `results_posted` as dedicated columns. Fields unavailable from an inaccessible or unverified record are blank or `unknown`, with the reason recorded in notes. `status_checked`/`accessed_date` is the date this project queried the record, not a substitute for registry verification.
 - FDA announcements, labels, and review documents were checked directly at FDA.gov. Sponsor investor-relations releases were used only for dated program-status statements, not as independent efficacy evidence.
 
 ## PubMed searches recorded on 22 October 2026
 
-See the two CSV logs for the full strings and result-level decisions. The five searches covered zimislecel/VX-880, hypoimmune islets/UP421, VX-264, the 2026 teplizumab stage 3 regulatory topic, and direct identifier lookup for the two UP421 primary reports. All returned records received a screening decision and exclusion or deferral reason where applicable.
+See the two CSV logs for the full strings and result-level decisions. The six searches covered zimislecel/VX-880, hypoimmune islets/UP421, VX-264, the 2026 teplizumab stage 3 regulatory topic, direct identifier lookup for the two UP421 primary reports, and the 2024 autologous CiPSC-islet report. All returned records received a screening decision and exclusion or deferral reason where applicable.
 
 ## Inclusion criteria
 
@@ -43,7 +43,7 @@ See the two CSV logs for the full strings and result-level decisions. The five s
 
 ## Extraction and update procedure
 
-For each source, record title, author/organization, source type, DOI, PMID, NCT identifier, publication date, direct URL, access date, and notes in `data/sources.csv`. Extract one principal claim per row in `data/evidence.csv`. For trials, query the official record and record the status-check date. Update the exact query, date, result count, returned identifiers, and screening decisions when a search is repeated or its scope changes. Add a dated update entry to the relevant report.
+For each source, record title, author/organization, source type, DOI, PMID, registry name/identifier, publication date, direct URL, access date, and notes in `data/sources.csv`. Extract one principal claim per row in `data/evidence.csv`; represent continuous measures with value, unit, and time point rather than forcing them into binary counts. For trials, query the official record and record the status-check date. Update the exact query, date, result count, returned identifiers, and screening decisions when a search is repeated or its scope changes. Add a dated update entry to the relevant report.
 
 ## Limitations
 
@@ -51,4 +51,5 @@ The initial query set is targeted and English-language. It may miss unpublished 
 
 ## Update record
 
-- 2026-10-22: Replaced search-engine `site:` queries with five exact PubMed ESearch queries and logged returned PMIDs, counts, screening decisions, and reasons. Relevant preclinical hypoimmune reports were deferred to issue #2 for full-text assessment.
+- 2026-10-22: Replaced search-engine `site:` queries with six exact PubMed ESearch queries and logged returned PMIDs, counts, screening decisions, and reasons. Relevant preclinical hypoimmune reports were deferred to issue #2 for full-text assessment.
+- 2026-10-22: Added an identifier search for the Cell 2024 CiPSC-islet primary report and a focused comparison of five replacement strategies. The official ChiCTR history page was access-restricted during direct verification; unavailable current registry fields are left unknown rather than inferred.

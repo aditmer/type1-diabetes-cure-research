@@ -2,6 +2,8 @@
 
 **Evidence snapshot: 22 October 2026.** This is a focused initial landscape, not a systematic review. Search scope and limitations are recorded in the [literature-search protocol](LITERATURE-SEARCH-PROTOCOL.md). Clinical-trial status can change; verify the linked official record before acting on it.
 
+For a focused comparison of deceased-donor, allogeneic stem-cell-derived, autologous CiPSC-derived, gene-edited immune-evasive donor, and encapsulated stem-cell-derived islets, see the [five-strategy comparison](CELL-REPLACEMENT-COMPARISON.md).
+
 ## Executive summary
 
 No established cure for T1D is identified. The strongest near-term clinical signal in this snapshot is beta-cell replacement: donor-islet therapy has a narrow FDA-approved indication for selected adults with recurrent severe hypoglycemia, and a small phase 1–2 stem-cell-derived islet study reported insulin independence in 10 of 12 full-dose recipients at day 365. The paper reports 14 participants with at least 12 months of follow-up (2 in part A and 12 full-dose participants in parts B/C); all 12 full-dose participants were free of severe hypoglycemic events during days 90–365 and had HbA1c below 7%, and 10/12 were insulin-independent at day 365. These analyses were interim and not prespecified. Safety must be considered alongside efficacy: serious neutropenia occurred in 3/14 participants, and two deaths were reported during follow-up (2/14): one caused by cryptococcal meningitis and one due to progression of preexisting neurocognitive impairment. Reporting an event and its cause does not establish treatment causality. [S3]
