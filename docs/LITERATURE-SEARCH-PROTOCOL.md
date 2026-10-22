@@ -23,7 +23,7 @@
 
 ## PubMed searches recorded on 22 October 2026
 
-See the two CSV logs for the full strings and result-level decisions. The six searches covered zimislecel/VX-880, hypoimmune islets/UP421, VX-264, the 2026 teplizumab stage 3 regulatory topic, direct identifier lookup for the two UP421 primary reports, and the 2024 autologous CiPSC-islet report. All returned records received a screening decision and exclusion or deferral reason where applicable.
+See the two CSV logs for the full strings and result-level decisions. The seven searches (Q1–Q7) covered zimislecel/VX-880, hypoimmune islets/UP421, VX-264, the 2026 teplizumab stage 3 regulatory topic, direct identifier lookup for the two UP421 primary reports (Q5), the 2024 autologous CiPSC-islet report (Q6), and identifier lookup for three primary PEC-Direct publications (Q7). The issue #2 assessment moved three previously deferred primary hypoimmune studies to `include`; one other relevant record remains deferred. All returned records have a screening decision and reason.
 
 ## Inclusion criteria
 
@@ -51,5 +51,6 @@ The initial query set is targeted and English-language. It may miss unpublished 
 
 ## Update record
 
-- 2026-10-22: Replaced search-engine `site:` queries with six exact PubMed ESearch queries and logged returned PMIDs, counts, screening decisions, and reasons. Relevant preclinical hypoimmune reports were deferred to issue #2 for full-text assessment.
-- 2026-10-22: Added an identifier search for the Cell 2024 CiPSC-islet primary report and a focused comparison of five replacement strategies. The official ChiCTR history page was access-restricted during direct verification; unavailable current registry fields are left unknown rather than inferred.
+- 2026-10-22: Replaced search-engine `site:` queries with seven exact PubMed ESearch queries and logged returned PMIDs, counts, screening decisions, and reasons. Relevant preclinical hypoimmune reports were initially deferred to issue #2 for full-text assessment.
+- 2026-10-22: Added an identifier search (Q6) for the Cell 2024 CiPSC-islet primary report and a focused comparison of five replacement strategies. The official ChiCTR history page was access-restricted during direct verification; unavailable current registry fields are left unknown rather than inferred.
+- 2026-10-22: Assessed the deferred primary hypoimmune rhesus and humanized-mouse reports and updated their screening decisions; added a three-PMID identifier search (Q7; renumbered from Q6 when merging with the CiPSC search) for PEC-Direct primary publications. Reviewed official ClinicalTrials.gov API records for NCT02239354, NCT03163511, NCT03513939, and NCT06408311 and added direct source/trial snapshots. The PEC-Direct publications are related reports in one registry program, not independent trials.
