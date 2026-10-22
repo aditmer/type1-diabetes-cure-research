@@ -26,6 +26,12 @@ This repository provides research context, not diagnosis, treatment advice, or i
 
 The trackers and source catalog are plain UTF-8 CSVs. Check their structure and scientific references locally with `python3 scripts/validate_data.py`, then run `python3 -m unittest discover -s tests -v`. Trial status is time-sensitive; the `status_checked` field is the date the official registry was queried. Verify the official record before citing current recruiting status. The workflow runs the same data validation when tracker files change in a pull request.
 
+## Licensing
+
+- Original code in this repository is licensed under the [MIT License](LICENSE).
+- Project-authored research prose, original analysis, and the original selection, arrangement, and annotations in project trackers are licensed under [Creative Commons Attribution 4.0 International](LICENSE-CC-BY-4.0.txt) (CC BY 4.0). Please provide attribution, link to the license, and indicate changes.
+- This grant applies only to material the project has rights to license. It does not relicense third-party papers, figures, registry content, or other source material; those remain subject to their own terms. Citations and factual metadata do not grant additional rights in the cited works.
+
 ## Sources and update cadence
 
 Primary studies, ClinicalTrials.gov records, FDA materials, and other official documents are preferred. Every substantive claim should have a source ID in the tracker or a direct citation in the report. Initial landscape checked 22 October 2026. A registry status is a snapshot, not a guarantee of site availability or eligibility.
