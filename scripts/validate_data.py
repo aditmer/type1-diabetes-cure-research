@@ -183,10 +183,20 @@ def validate_evidence(rows, source_ids):
             value = (row.get("outcome_value") or "").strip()
             unit = (row.get("outcome_unit") or "").strip()
             timepoint = (row.get("outcome_timepoint") or "").strip()
-            if numerator_text.upper() != "NA" or denominator_text.upper() != "NA":
-                raise ValueError(f"evidence.csv:{row_number}: continuous outcomes must use NA for binary counts")
+            if numerator_text.upper() != "NA":
+                raise ValueError(f"evidence.csv:{row_number}: continuous outcomes must use NA for outcome_numerator")
             if not re.fullmatch(r"(?:[<>]=?|~)?\d+(?:\.\d+)?", value) or not unit or not timepoint:
                 raise ValueError(f"evidence.csv:{row_number}: continuous outcomes require a numeric value, unit, and time point")
+            if denominator_text == "not reported":
+                explanation = f"{row['notes']} {row['limitations']}".lower()
+                if not re.search(r"not reported|not available|not stated|unavailable", explanation):
+                    raise ValueError(f"evidence.csv:{row_number}: unavailable analyzed denominators require an explanation in notes or limitations")
+            elif not re.fullmatch(r"\d+", denominator_text):
+                raise ValueError(f"evidence.csv:{row_number}: continuous outcomes require a numeric analysis_denominator or not reported")
+            elif int(denominator_text) <= 0:
+                raise ValueError(f"evidence.csv:{row_number}: analysis_denominator must be positive")
+            elif re.fullmatch(r"\d+", row["n"].strip()) and int(denominator_text) > int(row["n"].strip()):
+                raise ValueError(f"evidence.csv:{row_number}: analysis denominator cannot exceed study sample size")
             baseline = (row.get("baseline_value") or "").strip()
             baseline_unit = (row.get("baseline_unit") or "").strip()
             baseline_timepoint = (row.get("baseline_timepoint") or "").strip()
@@ -196,12 +206,22 @@ def validate_evidence(rows, source_ids):
                 raise ValueError(f"evidence.csv:{row_number}: baseline_value must be numeric")
         elif outcome_type == "not_reported":
             explanation = f"{row['notes']} {row['limitations']}".lower()
-            if numerator_text.upper() != "NA" or denominator_text.upper() != "NA":
-                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes must use NA for binary counts")
+            if numerator_text.upper() != "NA":
+                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes must use NA for outcome_numerator")
             if not re.search(r"not reported|not available|not stated|unavailable", explanation):
                 raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes require an explanation")
             if not (row.get("outcome_timepoint") or "").strip():
                 raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes require an explicit time-point note")
+            if any((row.get(field) or "").strip() for field in ("outcome_value", "outcome_unit", "baseline_value", "baseline_unit", "baseline_timepoint")):
+                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes cannot include measured outcome or baseline values")
+            if denominator_text == "not reported":
+                continue
+            if not re.fullmatch(r"\d+", denominator_text):
+                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes require a numeric analysis_denominator or not reported")
+            if int(denominator_text) <= 0:
+                raise ValueError(f"evidence.csv:{row_number}: analysis_denominator must be positive")
+            if re.fullmatch(r"\d+", row["n"].strip()) and int(denominator_text) > int(row["n"].strip()):
+                raise ValueError(f"evidence.csv:{row_number}: analysis denominator cannot exceed study sample size")
 
 def validate_trials(rows):
     for row_number, row in enumerate(rows, start=2):

@@ -74,7 +74,7 @@ class TrackerValidationTests(unittest.TestCase):
         claim = clinical_claim(
             outcome_type="continuous",
             outcome_numerator="NA",
-            analysis_denominator="NA",
+            analysis_denominator="1",
             outcome_value="96.21",
             outcome_unit="% time in target range",
             outcome_timepoint="Month 4 after transplantation",
@@ -88,7 +88,7 @@ class TrackerValidationTests(unittest.TestCase):
         claim = clinical_claim(
             outcome_type="continuous",
             outcome_numerator="NA",
-            analysis_denominator="NA",
+            analysis_denominator="1",
             outcome_value="96.21",
             outcome_unit="",
             outcome_timepoint="Month 4",
@@ -96,9 +96,51 @@ class TrackerValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "numeric value, unit, and time point"):
             validate_evidence([claim], {"S1"})
 
+    def test_continuous_outcome_requires_valid_analyzed_denominator(self):
+        base = clinical_claim(
+            outcome_type="continuous",
+            outcome_numerator="NA",
+            analysis_denominator="1",
+            outcome_value="96.21",
+            outcome_unit="% time in target range",
+            outcome_timepoint="Month 4",
+        )
+        validate_evidence([base], {"S1"})
+        with self.assertRaisesRegex(ValueError, "numeric analysis_denominator or not reported"):
+            validate_evidence([dict(base, analysis_denominator="NA")], {"S1"})
+        with self.assertRaisesRegex(ValueError, "must be positive"):
+            validate_evidence([dict(base, analysis_denominator="0")], {"S1"})
+        with self.assertRaisesRegex(ValueError, "cannot exceed study sample size"):
+            validate_evidence([dict(base, analysis_denominator="15")], {"S1"})
+
+    def test_continuous_outcome_allows_explained_unreported_denominator(self):
+        claim = clinical_claim(
+            outcome_type="continuous",
+            outcome_numerator="NA",
+            analysis_denominator="not reported",
+            outcome_value="96.21",
+            outcome_unit="% time in target range",
+            outcome_timepoint="Month 4",
+            notes="The outcome denominator was not reported.",
+        )
+        validate_evidence([claim], {"S1"})
+
     def test_clinical_outcome_cannot_be_not_applicable(self):
         claim = clinical_claim(outcome_type="not_applicable")
         with self.assertRaisesRegex(ValueError, "clinical outcomes cannot use outcome_type not_applicable"):
+            validate_evidence([claim], {"S1"})
+
+    def test_not_reported_outcome_rejects_populated_measurement(self):
+        claim = clinical_claim(
+            outcome_type="not_reported",
+            outcome_numerator="NA",
+            analysis_denominator="not reported",
+            outcome_value="2.5",
+            outcome_unit="ng/mL",
+            outcome_timepoint="Not reported in abstract",
+            limitations="C-peptide value not reported in the accessible abstract.",
+        )
+        with self.assertRaisesRegex(ValueError, "cannot include measured outcome or baseline values"):
             validate_evidence([claim], {"S1"})
 
     def test_regulatory_claim_does_not_use_scientific_level(self):
