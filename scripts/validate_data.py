@@ -8,9 +8,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {
-    "sources.csv": ["source_id", "title", "authors_or_organization", "source_type", "doi", "pmid", "nct_id", "publication_date", "source_date", "source_url", "accessed_date", "notes"],
+    "sources.csv": ["source_id", "title", "authors_or_organization", "source_type", "doi", "pmid", "nct_id", "publication_date", "source_date", "source_url", "accessed_date", "notes", "registry_last_posted", "registry_last_verified", "enrollment_count", "enrollment_type", "results_posted"],
     "evidence.csv": ["claim_id", "claim_type", "claim", "source_id", "evidence_level", "evidence_basis", "confidence_0_to_5", "population_or_model", "design", "n", "outcome_numerator", "analysis_denominator", "endpoint", "follow_up", "cointerventions", "limitations", "status_checked", "notes"],
-    "trials.csv": ["nct_id", "intervention", "modality", "phase", "status", "status_checked", "population", "primary_endpoint", "record_url", "known_limitations"],
+    "trials.csv": ["nct_id", "intervention", "modality", "phase", "status", "status_checked", "population", "primary_endpoint", "record_url", "known_limitations", "registry_last_posted", "registry_last_verified", "enrollment_count", "enrollment_type", "results_posted"],
     "literature-searches.csv": ["query_id", "database", "searched_on", "exact_query", "result_count", "parameters", "notes"],
     "literature-screening.csv": ["screening_id", "query_id", "pmid", "title", "decision", "decision_reason", "source_id"],
 }
@@ -24,7 +24,8 @@ EVIDENCE_BASIS_BY_CLAIM_TYPE = {
     "program_status": "sponsor_report",
 }
 TRIAL_STATUSES = {"RECRUITING", "NOT_YET_RECRUITING", "ACTIVE_NOT_RECRUITING", "COMPLETED", "TERMINATED", "WITHDRAWN", "SUSPENDED", "ENROLLING_BY_INVITATION", "UNKNOWN", "NOT_FOUND"}
-DATE_FIELDS = {"publication_date", "source_date", "accessed_date", "status_checked", "searched_on"}
+DATE_FIELDS = {"publication_date", "source_date", "accessed_date", "status_checked", "searched_on", "registry_last_posted"}
+ENROLLMENT_TYPES = {"ACTUAL", "ESTIMATED"}
 
 def valid_date(value):
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
@@ -34,6 +35,27 @@ def valid_date(value):
         return True
     except ValueError:
         return False
+
+def validate_registry_metadata(row, row_number, table_name, required):
+    fields = ("registry_last_posted", "registry_last_verified", "enrollment_count", "enrollment_type", "results_posted")
+    values = {field: row.get(field, "").strip() for field in fields}
+    if not required and not any(values.values()):
+        return
+    if not valid_date(values["registry_last_posted"]):
+        raise ValueError(f"{table_name}:{row_number}: registry_last_posted must be a real YYYY-MM-DD date")
+    verified = values["registry_last_verified"]
+    if not re.fullmatch(r"\d{4}-\d{2}", verified):
+        raise ValueError(f"{table_name}:{row_number}: registry_last_verified must use YYYY-MM precision")
+    try:
+        date.fromisoformat(f"{verified}-01")
+    except ValueError as exc:
+        raise ValueError(f"{table_name}:{row_number}: registry_last_verified must be a real YYYY-MM month") from exc
+    if not re.fullmatch(r"\d+", values["enrollment_count"]):
+        raise ValueError(f"{table_name}:{row_number}: enrollment_count must be a non-negative integer")
+    if values["enrollment_type"] not in ENROLLMENT_TYPES:
+        raise ValueError(f"{table_name}:{row_number}: enrollment_type must be ACTUAL or ESTIMATED")
+    if values["results_posted"].lower() not in {"true", "false"}:
+        raise ValueError(f"{table_name}:{row_number}: results_posted must be true or false")
 
 def read_table(name):
     path = ROOT / "data" / name
@@ -51,7 +73,7 @@ def read_table(name):
             raise ValueError(f"{name}:{row_number}: missing or duplicate ID {key!r}")
         ids.add(key)
         if name == "sources.csv":
-            optional = {"doi", "pmid", "nct_id", "publication_date", "source_date", "notes"}
+            optional = {"doi", "pmid", "nct_id", "publication_date", "source_date", "notes", "registry_last_posted", "registry_last_verified", "enrollment_count", "enrollment_type", "results_posted"}
         elif name == "evidence.csv":
             optional = {"notes"}
         elif name == "literature-screening.csv":
@@ -77,6 +99,7 @@ def validate_sources(rows):
             raise ValueError(f"sources.csv:{row_number}: provide at least one source identifier")
         if row["source_type"] == "Peer-reviewed primary study" and not row["doi"].strip():
             raise ValueError(f"sources.csv:{row_number}: peer-reviewed study requires a DOI")
+        validate_registry_metadata(row, row_number, "sources.csv", row["source_type"] == "Clinical trial registry")
 
 def validate_evidence(rows, source_ids):
     seen_claims = {}
@@ -132,6 +155,7 @@ def validate_trials(rows):
             raise ValueError(f"trials.csv:{row_number}: invalid trial status {row['status']!r}")
         if not row["record_url"].startswith("https://clinicaltrials.gov/study/"):
             raise ValueError(f"trials.csv:{row_number}: record_url must be an official ClinicalTrials.gov record")
+        validate_registry_metadata(row, row_number, "trials.csv", required=True)
 
 def validate_literature_log(searches, screening, source_ids):
     search_ids = {row["query_id"] for row in searches}
