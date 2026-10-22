@@ -8,6 +8,7 @@ An open, evidence-led research initiative to map credible paths toward a durable
 
 - [Research charter](docs/CHARTER.md): scope, goals, safeguards, and definitions.
 - [Evidence framework](docs/EVIDENCE-FRAMEWORK.md): source hierarchy, scoring, and claim rules.
+- [Minimum outcomes and claim review](docs/MINIMUM-OUTCOMES-AND-CLAIM-REVIEW.md): project-defined outcome set, follow-up/denominator standards, worked examples, and reviewer checklist.
 - [Landscape and failure modes](docs/LANDSCAPE-AND-FAILURE-MODES.md): initial evidence map, limitations, and open questions.
 - [Cell-replacement comparison](docs/CELL-REPLACEMENT-COMPARISON.md): source-backed comparison of five islet-replacement strategies and remaining barriers.
 - [14-day sprint](docs/SPRINT-01.md): dated work plan and issue links.

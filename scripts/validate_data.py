@@ -27,7 +27,7 @@ EVIDENCE_BASIS_BY_CLAIM_TYPE = {
 TRIAL_STATUSES = {"RECRUITING", "NOT_YET_RECRUITING", "ACTIVE_NOT_RECRUITING", "COMPLETED", "TERMINATED", "WITHDRAWN", "SUSPENDED", "ENROLLING_BY_INVITATION", "UNKNOWN", "NOT_FOUND"}
 DATE_FIELDS = {"publication_date", "source_date", "accessed_date", "status_checked", "searched_on", "registry_last_posted"}
 ENROLLMENT_TYPES = {"ACTUAL", "ESTIMATED"}
-OUTCOME_TYPES = {"binary", "continuous", "not_reported", "not_applicable"}
+OUTCOME_TYPES = {"binary", "continuous", "qualitative", "not_reported", "not_applicable"}
 
 def valid_date(value):
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
@@ -207,20 +207,23 @@ def validate_evidence(rows, source_ids):
                 raise ValueError(f"evidence.csv:{row_number}: baseline value, unit, and time point must be provided together")
             if baseline and not re.fullmatch(r"(?:[<>]=?|~)?[+-]?\d+(?:\.\d+)?", baseline):
                 raise ValueError(f"evidence.csv:{row_number}: baseline_value must be numeric")
-        elif outcome_type == "not_reported":
+        elif outcome_type in {"not_reported", "qualitative"}:
+            outcome_label = "not-reported" if outcome_type == "not_reported" else "qualitative"
             explanation = f"{row['notes']} {row['limitations']}".lower()
             if numerator_text.upper() != "NA":
-                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes must use NA for outcome_numerator")
-            if not re.search(r"not reported|not available|not stated|unavailable", explanation):
-                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes require an explanation")
+                raise ValueError(f"evidence.csv:{row_number}: {outcome_label} outcomes must use NA for outcome_numerator")
+            if not re.search(r"not reported|not available|not stated|unavailable|not extractable|no extractable", explanation):
+                raise ValueError(f"evidence.csv:{row_number}: {outcome_label} outcomes require an explanation of unavailable quantitative results")
+            if outcome_type == "qualitative" and not re.search(r"\bqualitative(?:ly)?\b|\bobserved\b", explanation):
+                raise ValueError(f"evidence.csv:{row_number}: qualitative outcomes require an explanation of the observed result")
             if not (row.get("outcome_timepoint") or "").strip():
-                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes require an explicit time-point note")
+                raise ValueError(f"evidence.csv:{row_number}: {outcome_label} outcomes require an explicit time-point note")
             if any((row.get(field) or "").strip() for field in ("outcome_value", "outcome_unit", "baseline_value", "baseline_unit", "baseline_timepoint")):
-                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes cannot include measured outcome or baseline values")
+                raise ValueError(f"evidence.csv:{row_number}: {outcome_label} outcomes cannot include measured outcome or baseline values")
             if denominator_text == "not reported":
                 continue
             if not re.fullmatch(r"\d+", denominator_text):
-                raise ValueError(f"evidence.csv:{row_number}: not-reported outcomes require a numeric analysis_denominator or not reported")
+                raise ValueError(f"evidence.csv:{row_number}: {outcome_label} outcomes require a numeric analysis_denominator or not reported")
             if int(denominator_text) <= 0:
                 raise ValueError(f"evidence.csv:{row_number}: analysis_denominator must be positive")
             if re.fullmatch(r"\d+", row["n"].strip()) and int(denominator_text) > int(row["n"].strip()):

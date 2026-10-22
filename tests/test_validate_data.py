@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.validate_data import validate_evidence, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_sources, validate_trials
+from scripts.validate_data import read_table, validate_evidence, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_sources, validate_trials
 
 
 def clinical_claim(**overrides):
@@ -156,6 +156,74 @@ class TrackerValidationTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(ValueError, "cannot include measured outcome or baseline values"):
             validate_evidence([claim], {"S1"})
+
+    def test_qualitative_outcome_accepts_observed_result_without_extractable_counts(self):
+        claim = clinical_claim(
+            n="unknown",
+            outcome_type="qualitative",
+            outcome_numerator="NA",
+            analysis_denominator="not reported",
+            outcome_timepoint="Through day 28",
+            limitations="Qualitative observed result; no extractable quantitative counts were reported.",
+        )
+        validate_evidence([claim], {"S1"})
+
+    def test_qualitative_outcome_requires_unavailable_count_explanation(self):
+        claim = clinical_claim(
+            outcome_type="qualitative",
+            outcome_numerator="NA",
+            analysis_denominator="not reported",
+            outcome_timepoint="Through day 28",
+            limitations="Observed graft survival.",
+        )
+        with self.assertRaisesRegex(ValueError, "require an explanation of unavailable quantitative results"):
+            validate_evidence([claim], {"S1"})
+
+    def test_qualitative_outcome_accepts_unavailable_measurements(self):
+        claim = clinical_claim(
+            claim="Grafts survived in the mouse model.",
+            outcome_type="qualitative",
+            outcome_numerator="NA",
+            analysis_denominator="not reported",
+            outcome_timepoint="Not stated in the accessible abstract",
+            limitations="Observed graft survival; quantitative measurements are unavailable in the accessible abstract.",
+        )
+        validate_evidence([claim], {"S1"})
+        with self.assertRaisesRegex(ValueError, "explanation of the observed result"):
+            validate_evidence([dict(claim, limitations="Quantitative measurements are unavailable.")], {"S1"})
+
+    def test_qualitative_outcome_rejects_measured_values_and_invalid_denominators(self):
+        base = clinical_claim(
+            outcome_type="qualitative",
+            outcome_numerator="NA",
+            analysis_denominator="1",
+            outcome_timepoint="Through day 28",
+            limitations="Qualitative observed result; no extractable quantitative counts were reported.",
+        )
+        validate_evidence([base], {"S1"})
+        for field in ("outcome_value", "outcome_unit", "baseline_value", "baseline_unit", "baseline_timepoint"):
+            with self.subTest(field=field):
+                with self.assertRaisesRegex(ValueError, "cannot include measured outcome or baseline values"):
+                    validate_evidence([dict(base, **{field: "2.5"})], {"S1"})
+        with self.assertRaisesRegex(ValueError, "numeric analysis_denominator or not reported"):
+            validate_evidence([dict(base, analysis_denominator="NA")], {"S1"})
+        with self.assertRaisesRegex(ValueError, "must be positive"):
+            validate_evidence([dict(base, analysis_denominator="0")], {"S1"})
+        with self.assertRaisesRegex(ValueError, "cannot exceed study sample size"):
+            validate_evidence([dict(base, analysis_denominator="15")], {"S1"})
+        with self.assertRaisesRegex(ValueError, "must use NA for outcome_numerator"):
+            validate_evidence([dict(base, outcome_numerator="1")], {"S1"})
+        with self.assertRaisesRegex(ValueError, "explicit time-point note"):
+            validate_evidence([dict(base, outcome_timepoint="")], {"S1"})
+
+    def test_tracker_distinguishes_qualitative_findings_from_unreported_outcomes(self):
+        rows = {row["claim_id"]: row for row in read_table("evidence.csv")}
+        for claim_id in ("EV-023", "EV-033", "EV-034"):
+            with self.subTest(claim_id=claim_id):
+                self.assertEqual(rows[claim_id]["outcome_type"], "qualitative")
+                self.assertEqual(rows[claim_id]["outcome_numerator"], "NA")
+        self.assertEqual(rows["EV-016"]["outcome_type"], "not_reported")
+
 
     def test_regulatory_claim_does_not_use_scientific_level(self):
         row = clinical_claim(
