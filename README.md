@@ -28,7 +28,7 @@ The trackers and source catalog are plain UTF-8 CSVs. Check their structure and 
 
 ## Licensing
 
-- Original code in this repository is licensed under the [MIT License](LICENSE).
+- Original code and code-associated documentation are licensed under the [MIT License](LICENSE). Research prose, reports, analysis, and original tracker selection, arrangement, and annotations are licensed under CC BY 4.0 below.
 - Project-authored research prose, original analysis, and the original selection, arrangement, and annotations in project trackers are licensed under [Creative Commons Attribution 4.0 International](LICENSE-CC-BY-4.0.txt) (CC BY 4.0). Please provide attribution, link to the license, and indicate changes.
 - This grant applies only to material the project has rights to license. It does not relicense third-party papers, figures, registry content, or other source material; those remain subject to their own terms. Citations and factual metadata do not grant additional rights in the cited works.
 
