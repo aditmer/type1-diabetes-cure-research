@@ -11,12 +11,12 @@ Thanks for helping improve the evidence map. Contributions should make claims mo
 
 ## Updating evidence
 
-1. Add or revise one principal claim per row in `data/evidence.csv`.
-2. Use a stable claim ID and cite a source ID that resolves to a direct source in the landscape or related report.
-3. Record model/population, design, denominator, endpoint, follow-up, co-interventions, limitations, and status-check date. Use `unknown` where not reported.
-4. For trial status, use the official registry record and record the date checked. Registry status does not guarantee current site availability.
-5. Update the report with evidence-consistent language; include negative, inconclusive, and safety evidence.
-6. Run `python3 scripts/validate_data.py` and review the resulting diff.
+1. Add or revise the source in `data/sources.csv`, with direct URL, source identifiers, publication/source date, and access date.
+2. Add or revise one principal claim per row in `data/evidence.csv`, citing catalog IDs with `|` separators.
+3. Record model/population, design, sample size, analysis denominator, endpoint, follow-up, co-interventions, limitations, and check date. Use `unknown` where not reported and explain why a denominator is unavailable.
+4. For trial status, use the official registry record and record the date checked. Registry status does not guarantee current site availability. Distinguish registry state from sponsor program decisions.
+5. Update the report with evidence-consistent language; include negative, inconclusive, and safety evidence, including uncertainty in causality and mechanism.
+6. Run `python3 scripts/validate_data.py` and `python3 -m unittest discover -s tests -v`, then review the resulting diff. Open a pull request; scientific changes should pass the required validation check before merge.
 
 ## Review standard
 

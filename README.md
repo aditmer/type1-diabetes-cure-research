@@ -10,7 +10,8 @@ An open, evidence-led research initiative to map credible paths toward a durable
 - [Evidence framework](docs/EVIDENCE-FRAMEWORK.md): source hierarchy, scoring, and claim rules.
 - [Landscape and failure modes](docs/LANDSCAPE-AND-FAILURE-MODES.md): initial evidence map, limitations, and open questions.
 - [14-day sprint](docs/SPRINT-01.md): dated work plan and issue links.
-- [Evidence tracker](data/evidence.csv) and [trial tracker](data/trials.csv): structured, source-linked starting datasets.
+- [Evidence tracker](data/evidence.csv), [trial tracker](data/trials.csv), and [source catalog](data/sources.csv): structured, source-linked starting datasets.
+- [Literature-search protocol](docs/LITERATURE-SEARCH-PROTOCOL.md): search sources, initial query set, inclusion rules, and limits.
 - [Contributing guide](CONTRIBUTING.md): reproducible update process.
 
 ## What “cure” means here
@@ -23,7 +24,7 @@ This repository provides research context, not diagnosis, treatment advice, or i
 
 ## Reproducibility
 
-The trackers are plain UTF-8 CSVs. Check their structure locally with `python3 scripts/validate_data.py`. Trial status is time-sensitive; the `status_checked` field is the date the official registry was queried. Verify the official record before citing current recruiting status. The workflow runs the same data validation when tracker files change in a pull request.
+The trackers and source catalog are plain UTF-8 CSVs. Check their structure and scientific references locally with `python3 scripts/validate_data.py`, then run `python3 -m unittest discover -s tests -v`. Trial status is time-sensitive; the `status_checked` field is the date the official registry was queried. Verify the official record before citing current recruiting status. The workflow runs the same data validation when tracker files change in a pull request.
 
 ## Sources and update cadence
 
