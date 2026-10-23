@@ -1,31 +1,38 @@
 # Q3 G1 maintainer decision record
 
-**Decision requested:** 23 October 2026
+**Decision recorded:** 23 October 2026
 
 **Owner:** repository maintainer
 
 **Scope:** source feasibility and authorization only. No G2 implementation,
 source outcome extraction, classification, or experiment is authorized here.
-No approval is recorded unless the maintainer completes the approval fields
-below.
+Final G1 authorization remains pending.
 
 ## Decision register
 
 | ID | Decision | Recommendation | Status | Approval date | Approving maintainer |
 |---|---|---|---|---|---|
-| G0 | Frozen preregistration and rules v1.0 | Approve the committed G0 specification without edits. | pending_maintainer | — | — |
-| A1 | Proposed amendment 2026-10-23-01 / v1.1 | Approve prospectively; keep v1.0 immutable. | pending_maintainer | — | — |
-| S13 | Lantidra label version | Approve DailyMed v3 at the 2026-10-23 retrieval snapshot. | pending_maintainer | — | — |
+| G0 | Frozen preregistration and rules v1.0 | Approve the frozen preregistration and rules v1.0 at commit `fe536fe8bea86b991f3f73e515751ead70146ca9`; do not modify frozen files. | approved | 2026-10-23 | @aditmer |
+| A1 | Amendment 2026-10-23-01 / v1.1 | Approve prospectively; preserve v1.0 and prepare separately versioned governing v1.1. | approved | 2026-10-23 | @aditmer |
+| S13 | Lantidra label version | Approve DailyMed v3 `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc`. | approved | 2026-10-23 | @aditmer |
 | S23 | Publisher article and supplement | Approve only a private retention path explicitly allowed by the access agreement. | blocked | — | — |
-| S19 | Europe PMC XML representation | Approve exact-byte preservation after archive deposit and restore verification. | blocked | — | — |
-| REG | Four historical ClinicalTrials.gov versions | Accept the official version-specific history locators as the reproducibility method; keep current API responses separately labeled. | recommended | — | — |
-| PEC | PEC-Direct overlap handling | Keep one program; record proven partial S23/S18 overlap and leave other overlap uncertain. | recommended | — | — |
-| ARCHIVE | Q3 private source preservation policy | Accept private OneDrive plus no-overwrite, content-addressed names, private inventory, exact cloud restore/hash verification, and independent backup where permitted as a proportionate pilot alternative to immutable institutional storage; explicitly accept its non-immutable risks. | pending_maintainer | — | — |
-| G1 | Final feasibility gate | Conditional GO to finish G1 close-out; NO-GO for G2 until blockers and approvals below are resolved. | pending_maintainer | — | — |
+| S19 | Europe PMC XML representation | Successful OneDrive cloud restore accepted; archive evidence verified. This does not approve the source version or third-party material. | restore accepted; source-version approval pending | 2026-10-23 | @aditmer |
+| REG | Four historical ClinicalTrials.gov versions | Accept official history locators S20 v20, S17 v13, S4 v32, and S9 v26; keep current API responses separately labeled. | accepted | 2026-10-23 | @aditmer |
+| PEC | PEC-Direct overlap handling | Accept conservative program-level grouping; preserve known partial overlap and uncertainty about other participant overlap. | accepted | 2026-10-23 | @aditmer |
+| ARCHIVE | Q3 private source preservation policy | Approve private OneDrive with restricted access, content-addressed naming, no-overwrite procedures, verified cloud restores, and independent backups where permitted; accept its deletion, account-access, and retention risks and that it is not immutable. | approved | 2026-10-23 | @aditmer |
+| G1 | Final feasibility gate | Final G1 authorization remains pending; G2 remains NO-GO. | pending_maintainer | — | — |
 
-`recommended`, `pending_maintainer`, and `blocked` are not approvals. The
-source manifest separately records every source-version approval as
-`pending_maintainer`; no approved version or approval date is populated.
+**Approval provenance:** these decisions were explicitly supplied by
+repository maintainer `@aditmer` in the project conversation on
+2026-10-23. The source-version fields in the manifest record only the
+selected DailyMed v3 and the four accepted historical registry versions.
+No source-version approval is inferred for S18, S19, or S23. S19's accepted
+restore evidence and approved archive policy are separate from approval of
+its source version. S23 remains blocked pending an authorized retention or
+lawful reacquisition path. None of these decisions authorizes redistribution
+of copyrighted publisher files.
+
+`recommended`, `pending_maintainer`, and `blocked` are not approvals.
 
 | ID | Alternative and consequence |
 |---|---|
@@ -41,7 +48,7 @@ source manifest separately records every source-version approval as
 
 ## Rationale and remaining actions
 
-### G0 and proposed v1.1
+### G0 and approved v1.1
 
 G0 commit `fe536fe8bea86b991f3f73e515751ead70146ca9` fixes eight report IDs
 across five programs, target populations, hypotheses, analysis, and controls.
@@ -51,7 +58,7 @@ v1.0 SHA-256 is
 `6cc2408d40072ccc83943cc9e7baca8bb653bb16d8ef36a8d2a6a802e48806a2`.
 Both remain unchanged.
 
-The proposed v1.1 JSON Patch binds to that exact rules hash. All 15 `add` and
+The approved v1.1 JSON Patch binds to that exact rules hash. All 15 `add` and
 `replace` operations were applied in order to a copy of v1.0: paths and
 operation types resolve, the resulting root version is 1.1, and the frozen
 eight-report population is unchanged. Its substantive changes are fixed-target
@@ -64,11 +71,12 @@ retained. Harmonized support still requires P1/P2/P3 and therefore implies
 provisional support. No outstanding internal consistency or deterministic
 patch defect was found in this review. Synthetic controls were not executed.
 
-**Recommended action:** approve v1.0 and proposed v1.1 as separate decisions.
-If v1.1 is rejected, v1.0 remains the governing rules. If approved, record
-the approver/date and create the dated, versioned governing specification
-before implementation; do not edit either frozen G0 file or silently activate
-the proposal.
+**Approval recorded:** v1.0 is approved as frozen, and amendment A1 is
+approved prospectively. The separately versioned governing
+[rules v1.1](rules-v1.1.json) was generated from the approved patch. Neither
+frozen G0 file was changed. No implementation is authorized by this
+specification decision. Governing v1.1 SHA-256:
+`56363652016477693ca71cb528cfb35a7162ddc6886d5e8bb7fa64ff647a2566`.
 
 ### S13 version
 
@@ -84,9 +92,9 @@ This is a date-consistency choice, not a comparison of clinical results.
 The alternative is v1 (published 2023-07-13) if the intended S13 input is
 the label contemporaneous with the original 2023 catalog entry. Version 2
 was published 2024-12-06; v3 was published 2026-01-15 and became effective
-2026-01-13. The choice changes which official labeling representation is
-reviewed, not the frozen target or the number of reports. Maintainer approval
-is pending.
+2026-01-13. The choice changes which official labeling representation is reviewed, not
+the frozen target or the number of reports. DailyMed v3 was explicitly
+approved by `@aditmer` on 2026-10-23.
 
 ### S23 private retention
 
@@ -133,16 +141,18 @@ that third-party material is included unless its credit line says otherwise.
 The 2026-10-23T16:08:28Z retrieval returned 122,548 bytes with SHA-256
 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`.
 The XML does not contain a `pmcid-ver`; `PMC11471599.1` is the official PMC
-archive locator, not a publisher version-of-record label. No authorized
-persistent archive has been populated, and no OneDrive restore test has been
-performed. A fresh 2026-10-23T17:15:01Z retrieval again verified HTTP 200,
+archive locator, not a publisher version-of-record label. The exact XML is
+stored in private OneDrive; a web download to a fresh non-synced location
+matched the expected 122,548 bytes and SHA-256, recorded as
+`S19-onedrive-restore-2026-10-23T181816Z`. The maintainer accepted this
+restore evidence on 2026-10-23. The actual archive location is retained only
+in the private inventory. A fresh 2026-10-23T17:15:01Z retrieval again verified HTTP 200,
 `application/xml`, 122,548 bytes, the expected SHA-256, DOI, PMCID, and CC BY
 4.0 license text. This is source verification only.
 
-**Proposed OneDrive procedure before Phase 2:** the maintainer selected
-OneDrive as a storage-service preference, but this is not approval of the
-preservation alternative. Review and explicitly accept or reject the
-`ARCHIVE` decision above. If accepted, follow
+**Approved OneDrive procedure:** the maintainer approved OneDrive as the
+project's proportionate archival solution on 2026-10-23, with the stated
+controls and acknowledged non-immutable risks. Follow
 [ONEDRIVE-ARCHIVE.md](ONEDRIVE-ARCHIVE.md) to create the private
 `T1D-Research/Q3/Private-Source-Archive/` layout, upload the exact XML and
 attribution sidecar, restore it through OneDrive's web download into a fresh
@@ -152,30 +162,26 @@ introducing Graph authentication.
 
 OneDrive is not immutable: ordinary version history and restore capability
 do not guarantee prevention of deletion, overwrites, account loss, or
-administrative access. The proposed safeguards reduce accidental-change and
-verification risks but do not satisfy the original stronger storage
-guarantee. If the maintainer rejects this policy, use an approved immutable
-institutional archive instead. Until the policy is accepted and a genuine
-cloud restore is verified, S19 remains `pending_maintainer`.
+administrative access. The safeguards reduce accidental-change and verification risks but do not
+satisfy an immutable-storage guarantee. S19's archive is verified under this
+policy. Its exact source-version approval and review of third-party
+credit-line exceptions remain separate.
 
 ### Approval checklist
 
-For each item, record an explicit selection (approve/reject or the exact
-version), approver, date, and rationale in this file or another durable
-written project record. A recommendation or the OneDrive service preference
-is not approval.
+The decisions below were explicitly supplied by `@aditmer` on 2026-10-23.
 
 | Decision | Exact item to decide | Current choice |
 |---|---|---|
-| G0 | Approve or reject frozen preregistration v1.0 and rules v1.0 at commit `fe536fe8bea86b991f3f73e515751ead70146ca9`; these files remain unchanged. | Pending |
-| A1 | Approve or reject proposed amendment `2026-10-23-01`, v1.1, separately and prospectively; v1.0 remains governing unless a separately versioned specification is approved. | Pending |
-| S13 | Select source `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc` from DailyMed archive 940595 (latest published by the 2026-10-23 snapshot), or explicitly select the contemporaneous 2023 v1 alternative. | Pending |
-| REG | Accept version-specific locators S20 v20, S17 v13, S4 v32, and S9 v26 as the recovery method, with current API hashes kept distinct. | Pending |
-| PEC | Accept one PEC-Direct program; retain proven partial S23/S18 overlap, keep other overlap uncertain, and do not infer independent replication or unique participants. | Pending |
-| ARCHIVE | Accept or reject the OneDrive alternative and its disclosed non-immutable risks, private/no-share access, checksum control, cloud-download restore verification, and recovery limitations. | Pending |
-| S19 | Accept source representation locator `PMC11471599.1` and Europe PMC XML hash `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`; separately require an actual compliant deposit and restore. | Pending |
-| S23 | Confirm authorized acquisition and whether the applicable Elsevier/library agreement permits private retention, backup, and named-reviewer access; otherwise require lawful reviewer reacquisition and keep preservation blocked. | Pending |
-| G1 | Authorize or reject G1 only after the required approvals, rights decisions, accepted source versions, and preservation evidence are complete. | Pending; G2 NO-GO |
+| G0 | Approve frozen preregistration and rules v1.0 at commit `fe536fe8bea86b991f3f73e515751ead70146ca9`; leave both files unchanged. | Approved 2026-10-23 by @aditmer |
+| A1 | Approve amendment `2026-10-23-01` prospectively; preserve v1.0 and use separately versioned rules v1.1. | Approved 2026-10-23 by @aditmer; governing file generated |
+| S13 | Select DailyMed v3 `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc`. | Approved 2026-10-23 by @aditmer |
+| REG | Accept official history locators S20 v20, S17 v13, S4 v32, and S9 v26; keep current API hashes distinct. | Accepted 2026-10-23 by @aditmer |
+| PEC | Keep one PEC-Direct program; retain proven partial S23/S18 overlap, other overlap uncertain, and do not infer unique participants or independent replication. | Accepted 2026-10-23 by @aditmer |
+| ARCHIVE | Use private OneDrive with restricted access, content-addressed naming, no-overwrite procedures, verified cloud restores, independent backup where permitted; accept non-immutable risks. | Approved 2026-10-23 by @aditmer |
+| S19 | Accept the maintainer-reported cloud restore evidence; keep source-version approval and third-party-credit review separate. | Restore accepted 2026-10-23 by @aditmer; source version pending |
+| S23 | Confirm authorized acquisition and whether the applicable agreement permits retention/backup/reviewer access, or establish lawful reviewer reacquisition. | Blocked; unresolved |
+| G1 | Final authorization decision after remaining rights/source review; G2 remains NO-GO. | Pending; G2 NO-GO |
 
 ### ClinicalTrials.gov and cohort identity
 
@@ -199,10 +205,9 @@ route, so a second local archive of all four records is not required for
 this G1 decision. Label any future current API retrieval separately and
 re-check the live record before execution/publication.
 
-**Recommendation:** accept and close the G1 historical-version handling
-blocker using those version-specific official locators, subject to the
-maintainer adopting the policy above. No contact fields or participant-level
-data are retained.
+**Decision recorded:** the maintainer accepted S20 v20, S17 v13, S4 v32,
+and S9 v26 on 2026-10-23 as the official historical recovery locators. No
+contact fields or participant-level data are retained.
 
 PEC-Direct remains one program. S23's Table 1/footnotes establish partial
 participant overlap with S18. The extent of S18/S23 overlap, any S19 overlap,
@@ -215,12 +220,13 @@ linkage is inferred.
 
 ## Gate outcome
 
-**Conditional GO to finish G1 close-out; NO-GO for G2.** G0 approval, the
-proposed amendment decision, S13 version acceptance, S23 rights/retention,
-and S19 archival deposit/restore evidence remain outstanding. Historical
-registry locators and conservative program grouping are documented and
-recommended for acceptance. The seven-checkpoint reassessment is in
+**Final G1 authorization pending; G2 NO-GO.** G0, A1, S13, REG, PEC, and
+ARCHIVE decisions are recorded as approved or accepted. S19's cloud restore
+is accepted and technically verified; source-version approval and
+third-party credit-line review remain separate. S23 remains blocked until an
+authorized retention or lawful reacquisition path is established. The
+seven-checkpoint reassessment is in
 [SOURCE-FEASIBILITY.md](SOURCE-FEASIBILITY.md). G2 remains unauthorized until
-the maintainer records G0/G1 approval, resolves the external preservation
-conditions, and accepts the governing specification. No clinical data,
+the remaining conditions are resolved and the maintainer separately
+authorizes G1. No clinical data,
 classifications, controls, or experiments were run for this record.

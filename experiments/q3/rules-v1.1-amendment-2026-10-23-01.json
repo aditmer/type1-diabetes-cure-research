@@ -2,9 +2,9 @@
   "specification_id": "q3-reporting-support",
   "kind": "declarative_research_amendment_not_executable_code",
   "amendment_id": "2026-10-23-01",
-  "proposed_version": "1.1",
-  "status": "proposed_awaiting_maintainer_approval",
-  "effective_version": null,
+  "approved_version": "1.1",
+  "status": "approved_prospectively",
+  "effective_version": "1.1",
   "date_utc": "2026-10-23",
   "base_file": "rules-v1.0.json",
   "base_sha256": "6cc2408d40072ccc83943cc9e7baca8bb653bb16d8ef36a8d2a6a802e48806a2",
@@ -116,8 +116,13 @@
       "value": "PREREGISTRATION.md synthetic and precedence controls plus AMENDMENT-2026-10-23-01.md Additional expected control behavior; all specified only, not executed"
     }
   ],
-  "path_naming": "v1_0 object keys are stable base addresses, not a second rule version; the proposed combined specification has root version 1.1",
-  "approval_policy": "do not apply or implement before recorded maintainer approval; original v1.0 files remain immutable",
+  "path_naming": "v1_0 object keys are stable base addresses, not a second rule version; the approved combined specification has root version 1.1",
+  "approval_policy": "approved prospectively by repository maintainer @aditmer on 2026-10-23; implementation still requires final G1 authorization; original v1.0 files remain immutable",
+  "approval_provenance": {
+    "approval_date": "2026-10-23",
+    "approving_maintainer": "@aditmer",
+    "record": "Explicit approval supplied in the project conversation."
+  },
   "controls_specification": "AMENDMENT-2026-10-23-01.md section Additional expected control behavior (not executed)",
   "execution": "none"
 }
