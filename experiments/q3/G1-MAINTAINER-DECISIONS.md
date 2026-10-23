@@ -20,6 +20,7 @@ below.
 | S19 | Europe PMC XML representation | Approve exact-byte preservation after archive deposit and restore verification. | blocked | — | — |
 | REG | Four historical ClinicalTrials.gov versions | Accept the official version-specific history locators as the reproducibility method; keep current API responses separately labeled. | recommended | — | — |
 | PEC | PEC-Direct overlap handling | Keep one program; record proven partial S23/S18 overlap and leave other overlap uncertain. | recommended | — | — |
+| ARCHIVE | Q3 private source preservation policy | Accept private OneDrive plus no-overwrite, content-addressed names, private inventory, exact cloud restore/hash verification, and independent backup where permitted as a proportionate pilot alternative to immutable institutional storage; explicitly accept its non-immutable risks. | pending_maintainer | — | — |
 | G1 | Final feasibility gate | Conditional GO to finish G1 close-out; NO-GO for G2 until blockers and approvals below are resolved. | pending_maintainer | — | — |
 
 `recommended`, `pending_maintainer`, and `blocked` are not approvals. The
@@ -35,6 +36,7 @@ source manifest separately records every source-version approval as
 | S19 | Use a different approved CC BY-compatible archive if available; a remote locator or checksum alone does not satisfy the exact-byte deposit/restore requirement. |
 | REG | Save permitted historical bytes as an additional safeguard if a version locator becomes unavailable; do not substitute current API bytes for the historical version. |
 | PEC | Treating reports as disjoint or summing their sample counts risks double-counting; retain uncertainty and program-level grouping. |
+| ARCHIVE | Reject OneDrive as insufficiently durable: select an approved immutable archive or keep G1 blocked; OneDrive version history is not write-once retention. |
 | G1 | Authorize G2 immediately: not recommended while rights, preservation, and explicit approvals remain unresolved. |
 
 ## Rationale and remaining actions
@@ -99,9 +101,11 @@ distinguishes subscription articles from open-access licenses, restricts
 redistribution of subscription published articles, and says subscription
 agreements can grant additional rights. Its
 [sharing policy](https://www.elsevier.com/about/policies-and-standards/sharing)
-does not itself establish a general right for this project to create a shared
-archive of the final published PDF. The particular account's subscription
-and library-license terms have not been verified.
+allows an author to privately share a subscription Published Journal Article
+with known research colleagues for personal use, but otherwise says sharing
+is by agreement. It does not establish rights for this maintainer's personal
+backup or a private project OneDrive archive. The particular account's
+subscription and library-license terms have not been verified.
 
 **Before marking unblocked:** the maintainer or library rights contact must
 confirm that the downloading user was authorized and whether the applicable
@@ -130,32 +134,48 @@ The 2026-10-23T16:08:28Z retrieval returned 122,548 bytes with SHA-256
 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`.
 The XML does not contain a `pmcid-ver`; `PMC11471599.1` is the official PMC
 archive locator, not a publisher version-of-record label. No authorized
-persistent archive has been identified or populated, and no restore test has
-been performed.
+persistent archive has been populated, and no OneDrive restore test has been
+performed. A fresh 2026-10-23T17:15:01Z retrieval again verified HTTP 200,
+`application/xml`, 122,548 bytes, the expected SHA-256, DOI, PMCID, and CC BY
+4.0 license text. This is source verification only.
 
-**Maintainer procedure before Phase 2:**
+**Proposed OneDrive procedure before Phase 2:** the maintainer selected
+OneDrive as a storage-service preference, but this is not approval of the
+preservation alternative. Review and explicitly accept or reject the
+`ARCHIVE` decision above. If accepted, follow
+[ONEDRIVE-ARCHIVE.md](ONEDRIVE-ARCHIVE.md) to create the private
+`T1D-Research/Q3/Private-Source-Archive/` layout, upload the exact XML and
+attribution sidecar, restore it through OneDrive's web download into a fresh
+non-synced location, and record the matching private/public evidence. The
+procedure works through OneDrive Personal or Business web UI without
+introducing Graph authentication.
 
-1. Select an approved, versioned institutional research archive and confirm
-   it can retain this CC BY 4.0 material with attribution and the article's
-   third-party exceptions. Do not use the Git repository as the archive.
-2. Fetch the exact bytes from
-   `https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11471599/fullTextXML`
-   into staging outside the worktree. Require HTTP 200,
-   `application/xml`, exactly 122,548 bytes, and the SHA-256 above; stop on
-   any mismatch rather than silently replacing the candidate.
-3. Deposit the unmodified XML as an immutable versioned object. Store a
-   separate sidecar with full author/title/DOI/PMCID attribution, source URL,
-   retrieval UTC, MIME type, byte length, SHA-256, CC BY 4.0 URL, and
-   third-party exception notes. Record the archive accession/object ID and
-   deposit time in the manifest.
-4. Retrieve the deposited object through the archive's normal recovery path
-   into a separate location and recalculate its byte count and SHA-256.
-   Record the restore evidence and verification date. A second HTTP fetch
-   alone is not archive recovery evidence.
+OneDrive is not immutable: ordinary version history and restore capability
+do not guarantee prevention of deletion, overwrites, account loss, or
+administrative access. The proposed safeguards reduce accidental-change and
+verification risks but do not satisfy the original stronger storage
+guarantee. If the maintainer rejects this policy, use an approved immutable
+institutional archive instead. Until the policy is accepted and a genuine
+cloud restore is verified, S19 remains `pending_maintainer`.
 
-Until deposit and restore verification are recorded, S19 remains
-`pending_maintainer`; the fresh retrieval establishes source identity and
-hash stability only.
+### Approval checklist
+
+For each item, record an explicit selection (approve/reject or the exact
+version), approver, date, and rationale in this file or another durable
+written project record. A recommendation or the OneDrive service preference
+is not approval.
+
+| Decision | Exact item to decide | Current choice |
+|---|---|---|
+| G0 | Approve or reject frozen preregistration v1.0 and rules v1.0 at commit `fe536fe8bea86b991f3f73e515751ead70146ca9`; these files remain unchanged. | Pending |
+| A1 | Approve or reject proposed amendment `2026-10-23-01`, v1.1, separately and prospectively; v1.0 remains governing unless a separately versioned specification is approved. | Pending |
+| S13 | Select source `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc` from DailyMed archive 940595 (latest published by the 2026-10-23 snapshot), or explicitly select the contemporaneous 2023 v1 alternative. | Pending |
+| REG | Accept version-specific locators S20 v20, S17 v13, S4 v32, and S9 v26 as the recovery method, with current API hashes kept distinct. | Pending |
+| PEC | Accept one PEC-Direct program; retain proven partial S23/S18 overlap, keep other overlap uncertain, and do not infer independent replication or unique participants. | Pending |
+| ARCHIVE | Accept or reject the OneDrive alternative and its disclosed non-immutable risks, private/no-share access, checksum control, cloud-download restore verification, and recovery limitations. | Pending |
+| S19 | Accept source representation locator `PMC11471599.1` and Europe PMC XML hash `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`; separately require an actual compliant deposit and restore. | Pending |
+| S23 | Confirm authorized acquisition and whether the applicable Elsevier/library agreement permits private retention, backup, and named-reviewer access; otherwise require lawful reviewer reacquisition and keep preservation blocked. | Pending |
+| G1 | Authorize or reject G1 only after the required approvals, rights decisions, accepted source versions, and preservation evidence are complete. | Pending; G2 NO-GO |
 
 ### ClinicalTrials.gov and cohort identity
 
