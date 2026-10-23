@@ -1,0 +1,123 @@
+{
+  "specification_id": "q3-reporting-support",
+  "kind": "declarative_research_amendment_not_executable_code",
+  "amendment_id": "2026-10-23-01",
+  "proposed_version": "1.1",
+  "status": "proposed_awaiting_maintainer_approval",
+  "effective_version": null,
+  "date_utc": "2026-10-23",
+  "base_file": "rules-v1.0.json",
+  "base_sha256": "6cc2408d40072ccc83943cc9e7baca8bb653bb16d8ef36a8d2a6a802e48806a2",
+  "base_commit": "fe536fe8bea86b991f3f73e515751ead70146ca9",
+  "rationale_and_exposure": "AMENDMENT-2026-10-23-01.md",
+  "patch_format": "RFC 6902 JSON Patch",
+  "unmodified_requirements": "inherit all base requirements; no source, target, question, hypothesis, estimand or sensitivity changes",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/version",
+      "value": "1.1"
+    },
+    {
+      "op": "replace",
+      "path": "/provisional_v1_0/requirements/P1",
+      "value": "at least one quantitatively observed insulin use or independence, HbA1c, CGM time in range, or severe hypoglycemia endpoint attributed by the report to the fixed target population, not solely a contextual cohort"
+    },
+    {
+      "op": "replace",
+      "path": "/provisional_v1_0/requirements/P2",
+      "value": "identifiable prespecified target population in the report; simple source-stated attribution suffices without detailed verified cohort or overlap mapping"
+    },
+    {
+      "op": "replace",
+      "path": "/provisional_v1_0/requirements/P3",
+      "value": "stated overall follow-up for the fixed target population at least nominal 12 months including day 365 or week 52; later-only accepted; no endpoint-specific horizon or treatment-anchor requirement"
+    },
+    {
+      "op": "replace",
+      "path": "/harmonized_v1_0/requirements/H2_observed_clinical/domains/insulin",
+      "value": [
+        "observed insulin dose",
+        "units",
+        "observed insulin-independent participant count, including explicitly reported zero",
+        "insulin-independence definition",
+        "onset and duration when any independence occurred; justified field-level not_applicable when explicit reviewed evidence states nobody achieved independence"
+      ]
+    },
+    {
+      "op": "add",
+      "path": "/harmonized_v1_0/requirements/H3_denominators/required_binary_outcomes",
+      "value": ["insulin_independence"]
+    },
+    {
+      "op": "replace",
+      "path": "/harmonized_v1_0/requirements/H4_timing/each_clinical_domain",
+      "value": [
+        "observed nominal month-12 or day-365 or week-52",
+        "time anchored to each participant's first administration of the cell-containing intervention",
+        "endpoint analysis population",
+        "assessment interval"
+      ]
+    },
+    {
+      "op": "add",
+      "path": "/harmonized_v1_0/requirements/H4_timing/index_treatment",
+      "value": {
+        "infusion": "first cell infusion",
+        "implant": "first implantation of the cell-containing intervention; not preparatory empty-device implantation",
+        "later_administrations": "record separately; never reset time zero",
+        "incomplete_or_conflicting_anchor_review": "unknown predicate, unless another failure is independently proven",
+        "confirmed_omission_of_first_versus_repeat_anchor": "unmet predicate with TIMING_UNREPORTED after complete review",
+        "explicit_later_administration_anchor": "unmet predicate with ANCHOR_MISMATCH",
+        "no_derived_visit_reanchoring": true
+      }
+    },
+    {
+      "op": "replace",
+      "path": "/harmonized_v1_0/requirements/H4_timing/repeat_treatment",
+      "value": "retain first and repeat administration dates and source-stated anchors; fixed horizon uses first cell administration only; no silent or calculated anchor resetting"
+    },
+    {
+      "op": "add",
+      "path": "/field_dictionary/value_policy",
+      "value": {
+        "reported": "preserve source-supported value regardless of report labels, including zero, false, unfavorable outcomes and facts proving failure",
+        "other_statuses": "null value plus status, locator or access log, review scope and justification",
+        "zero_independence_onset_and_duration": "not_applicable only with explicit source evidence that nobody achieved independence during the observation interval through the fixed horizon; zero independent at month 12 alone does not rule out earlier episodes; outcome count, denominator, definition and horizon remain mandatory"
+      }
+    },
+    {
+      "op": "replace",
+      "path": "/reason_codes/ANCHOR_MISMATCH",
+      "value": "endpoint explicitly anchored to something other than the participant's first administration of the cell-containing intervention, including a later treatment"
+    },
+    {
+      "op": "add",
+      "path": "/reason_codes/TARGET_POPULATION_MISMATCH",
+      "value": "complete review confirms screen endpoint or overall follow-up belongs solely to a contextual cohort rather than the frozen target; unmet affected predicate"
+    },
+    {
+      "op": "add",
+      "path": "/reason_codes/TARGET_ATTRIBUTION_UNCERTAIN",
+      "value": "source-stated attribution of screen endpoint or overall follow-up to the fixed target cannot be adjudicated; unknown affected predicate"
+    },
+    {
+      "op": "add",
+      "path": "/rule_labels",
+      "value": {
+        "provisional_v1_0": "provisional-v1.1",
+        "harmonized_v1_0": "harmonized-v1.1",
+        "sensitivity/harmonized_no_cgm_v1_0": "harmonized-no-cgm-v1.1"
+      }
+    },
+    {
+      "op": "replace",
+      "path": "/controls_specification",
+      "value": "PREREGISTRATION.md synthetic and precedence controls plus AMENDMENT-2026-10-23-01.md Additional expected control behavior; all specified only, not executed"
+    }
+  ],
+  "path_naming": "v1_0 object keys are stable base addresses, not a second rule version; the proposed combined specification has root version 1.1",
+  "approval_policy": "do not apply or implement before recorded maintainer approval; original v1.0 files remain immutable",
+  "controls_specification": "AMENDMENT-2026-10-23-01.md section Additional expected control behavior (not executed)",
+  "execution": "none"
+}

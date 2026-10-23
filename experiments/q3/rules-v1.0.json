@@ -1,0 +1,267 @@
+{
+  "specification_id": "q3-reporting-support",
+  "version": "1.0",
+  "registered_utc_date": "2026-10-23",
+  "kind": "declarative_research_specification_not_executable_code",
+  "authority": "docs/SPRINT-02.md v1.1",
+  "starting_tracker_commit": "3812dfc8e622863c152e05f531db1038692f0ef6",
+  "starting_ledger_sha256": {
+    "data/evidence.csv": "0b3027199ab70fe93bc8845adcfd11357bee5e4b70461899ac441b91eca8b918",
+    "data/sources.csv": "4d6775d1a038503a0d56ec8a862bbc3fafd780704c248aa05e5be4c55fce6412",
+    "data/trials.csv": "c1db4e5d53d5487074b1347886f7e5b0e6e918733780e15c992bde6b34802a81"
+  },
+  "analysis_unit": "one_fixed_report_at_one_accepted_source_version_and_target_population",
+  "sample_size": {"reports": 8, "programs": 5},
+  "reports": [
+    {
+      "source_id": "S13",
+      "report_id": "Q3-S13",
+      "program_id": "lantidra-pooled",
+      "target_population_id": "lantidra-treated",
+      "subcohort_id": "lantidra-pooled-all",
+      "target": "all treated participants in both pooled label studies including repeat infusions",
+      "identifier": "DailyMed setid 24610d9f-0c5a-4f55-93b3-d456300bfd5d",
+      "official_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=24610d9f-0c5a-4f55-93b3-d456300bfd5d"
+    },
+    {
+      "source_id": "S18",
+      "report_id": "Q3-S18",
+      "program_id": "pec-direct",
+      "target_population_id": "pec-s18-target",
+      "subcohort_id": "pec-s18-all",
+      "target": "full 17-person publication population, not a responder subset",
+      "identifier": "10.1016/j.xcrm.2021.100466",
+      "registry_id": "NCT03163511",
+      "official_url": "https://doi.org/10.1016/j.xcrm.2021.100466"
+    },
+    {
+      "source_id": "S19",
+      "report_id": "Q3-S19",
+      "program_id": "pec-direct",
+      "target_population_id": "pec-s19-target",
+      "subcohort_id": "pec-s19-optimized-all",
+      "target": "full 10-recipient optimized publication group, not a responder subset",
+      "identifier": "10.1038/s41587-023-02055-5",
+      "registry_id": "NCT03163511",
+      "official_url": "https://doi.org/10.1038/s41587-023-02055-5"
+    },
+    {
+      "source_id": "S23",
+      "report_id": "Q3-S23",
+      "program_id": "pec-direct",
+      "target_population_id": "pec-s23-target",
+      "subcohort_id": "pec-s23-site-all",
+      "target": "full 15-person single-site publication population",
+      "identifier": "10.1016/j.stem.2021.10.003",
+      "registry_id": "NCT03163511",
+      "official_url": "https://doi.org/10.1016/j.stem.2021.10.003"
+    },
+    {
+      "source_id": "S20",
+      "report_id": "Q3-S20",
+      "program_id": "pec-direct",
+      "target_population_id": "pec-registry-cohort2",
+      "subcohort_id": "pec-registry-cohort2-all",
+      "target": "planned efficacy Cohort 2, not Cohort 1 safety",
+      "identifier": "NCT03163511",
+      "official_url": "https://clinicaltrials.gov/study/NCT03163511"
+    },
+    {
+      "source_id": "S17",
+      "report_id": "Q3-S17",
+      "program_id": "vc01",
+      "target_population_id": "vc01-cohort2",
+      "subcohort_id": "vc01-cohort2-planned",
+      "target": "planned efficacy Cohort 2; do not substitute Cohort 1",
+      "identifier": "NCT02239354",
+      "official_url": "https://clinicaltrials.gov/study/NCT02239354"
+    },
+    {
+      "source_id": "S4",
+      "report_id": "Q3-S4",
+      "program_id": "zimislecel",
+      "target_population_id": "vx880-parts-abc",
+      "subcohort_id": "vx880-parts-abc-all",
+      "target": "VX-880 Parts A/B/C, retain part strata and exclude VX-017 Part D from target",
+      "identifier": "NCT04786262",
+      "official_url": "https://clinicaltrials.gov/study/NCT04786262"
+    },
+    {
+      "source_id": "S9",
+      "report_id": "Q3-S9",
+      "program_id": "vx264",
+      "target_population_id": "vx264-all",
+      "subcohort_id": "vx264-all-parts",
+      "target": "all VX-264 recipients or planned recipients, retain part strata",
+      "identifier": "NCT05791201",
+      "official_url": "https://clinicaltrials.gov/study/NCT05791201"
+    }
+  ],
+  "context_only_source_ids": ["S1", "S3", "S10"],
+  "source_version_policy": {
+    "accepted_version_required_before_phase2": true,
+    "version_changes_require_dated_approved_amendment": true,
+    "version_change_is_not_harmonization_effect": true,
+    "never_count_versions_as_additional_reports": true
+  },
+  "overlap": {
+    "relationships": ["same", "subset", "distinct_within_program", "uncertain"],
+    "relationship_fields": ["from_population_id", "to_population_id", "relationship", "direction_if_subset", "source_version_id", "locator", "adjudication_note"],
+    "pec_direct_default": "uncertain overlap among S18 S19 S23 S20; one program; verify subset and registry cohort links",
+    "unknown_overlap_handling": "conservative program grouping without estimating unique participants",
+    "uncertain_outcome_to_target_linkage": "unknown harmonized identity predicate",
+    "prohibited": ["sum overlapping participant counts", "treat repeated reports as independent replication", "combine endpoints across reports into a synthetic complete population"],
+    "duplicate_report_version_id": "error_and_halt"
+  },
+  "field_dictionary": {
+    "required_record_keys": ["field_id", "status", "value", "source_version_id", "target_population_id", "subcohort_id", "locator", "review_scope", "reason_codes", "adjudication_note"],
+    "statuses": {
+      "reported": "positively supported value or explicit absence; locator required",
+      "unreported_in_reviewed_material": "confirmed omission after complete relevant main and supplemental material review; scope and locator required",
+      "inaccessible": "necessary source unavailable to review; access log required",
+      "not_yet_extracted": "incomplete review including tracker-only gaps",
+      "conflicting": "decisive incompatible facts unresolved; retain both locators",
+      "not_applicable": "justified structural inapplicability; never a waiver of required clinical domains"
+    },
+    "missing_value": null,
+    "preserve_source_precision_and_units": true,
+    "no_imputation_or_enrollment_substitution": true,
+    "predicate_states": ["met", "unmet", "unknown"],
+    "predicate_mapping": {
+      "reported_satisfies_requirement": "met",
+      "reported_explicit_structural_absence_satisfies_requirement": "met",
+      "reported_contradicts_requirement": "unmet",
+      "confirmed_omission_of_required_field": "unmet",
+      "inaccessible_or_not_yet_extracted_or_conflicting": "unknown",
+      "uncertain_decisive_linkage_or_enrollment": "unknown",
+      "unsupported_not_applicable_waiver": "error_and_halt"
+    },
+    "baseline_applicability": "require baseline numerical values when meaningful for the endpoint definition; otherwise explicit source-based rationale required",
+    "field_status_does_not_equal_rule_label": true
+  },
+  "classification": {
+    "labels": ["supported", "not_supported", "unresolved", "not_applicable"],
+    "ordered_precedence": [
+      {"priority": 1, "condition": "reviewed evidence confirms target efficacy cohort never enrolled", "label": "not_applicable"},
+      {"priority": 2, "condition": "at least one required predicate is proven unmet", "label": "not_supported"},
+      {"priority": 3, "condition": "no predicate proven unmet and at least one required predicate unknown", "label": "unresolved"},
+      {"priority": 4, "condition": "target enrollment established and every required predicate met", "label": "supported"}
+    ],
+    "retain_all_unknown_flags_under_any_label": true,
+    "retain_all_failure_reason_codes": true,
+    "no_enrollment_requires_proof_not_absence_of_results": true
+  },
+  "provisional_v1_0": {
+    "operator": "all",
+    "requirements": {
+      "P1": "at least one quantitatively observed insulin use or independence, HbA1c, CGM time in range, or severe hypoglycemia endpoint",
+      "P2": "identifiable report population",
+      "P3": "stated overall follow-up at least nominal 12 months including day 365 or week 52; later-only accepted"
+    },
+    "does_not_require": ["all clinical domains", "endpoint-specific denominators", "endpoint-specific horizon or treatment anchor", "verified overlap", "co-intervention or safety completeness"],
+    "not_observed_clinical_evidence": ["planned endpoint", "C-peptide alone", "graft survival alone", "qualitative favorable statement"]
+  },
+  "harmonized_v1_0": {
+    "operator": "all",
+    "requires_provisional_predicates": ["P1", "P2", "P3"],
+    "requirements": {
+      "H1_identity_design": {
+        "required": ["explicit target population", "disease stage", "eligibility", "intervention and dose", "study design", "baseline and comparator context including explicit no concurrent comparator", "report-program-subcohort mapping", "outcome-to-target linkage"],
+        "uncertain_participant_overlap_alone_can_remain": true
+      },
+      "H2_observed_clinical": {
+        "domains": {
+          "insulin": ["observed dose", "units", "insulin-independence definition", "onset and duration"],
+          "hba1c": ["observed HbA1c", "units"],
+          "cgm": ["observed time in range", "range 70-180 mg/dL", "aggregation interval"],
+          "severe_hypoglycemia": ["event definition", "observed events", "participants affected"]
+        },
+        "all_domains_require": ["baseline and follow-up values where applicable", "endpoint hierarchy primary or secondary or post_hoc or composite"],
+        "favorable_outcome_required": false
+      },
+      "H3_denominators": {
+        "global": ["enrolled count", "treated count", "followed count", "numbers reaching horizon", "censoring", "withdrawals", "missing-data handling with explicit none if applicable"],
+        "each_binary_endpoint": ["numerator", "endpoint-specific analysis denominator"],
+        "each_continuous_endpoint": ["endpoint-specific analyzed denominator", "units", "summary definition"],
+        "forbid_borrowing": ["enrollment count", "device count", "other endpoint denominator"]
+      },
+      "H4_timing": {
+        "each_clinical_domain": ["observed nominal month-12 or day-365 or week-52", "time anchored to treatment", "endpoint analysis population", "assessment interval"],
+        "event_interval": "source-defined start and end ending at accepted horizon plus denominator",
+        "repeat_treatment": "retain first and repeat administration dates and stated anchor; no silent anchor resetting",
+        "rejected": ["maximum follow-up only", "month 6", "through one year without endpoint timing", "later-only assessment", "one year after achieving insulin independence"],
+        "no_numeric_visit_conversion": true
+      },
+      "H5_burden_safety": {
+        "required": ["immunosuppression regimen and exposure or explicit absence", "other material co-interventions or explicit absence", "repeat procedures and dosing and exposure", "harms with population and observation window and attribution", "treatment discontinuations or explicit none"],
+        "silence_is_not_absence": true
+      }
+    }
+  },
+  "reason_codes": {
+    "NO_TARGET_ENROLLMENT": "confirmed un-enrolled target; not_applicable",
+    "PLANNED_ONLY": "review confirms planned endpoints without observed clinical outcomes",
+    "SURROGATE_ONLY": "review confirms only biological or surrogate outcomes, not P1 endpoints",
+    "QUANTITATIVE_CLINICAL_OUTCOME_MISSING": "confirmed no quantitative patient-important endpoint",
+    "REPORT_POPULATION_MISSING": "confirmed omission of identifiable report population",
+    "FOLLOWUP_LT_12_MONTHS": "reported overall follow-up below screen minimum",
+    "FOLLOWUP_UNREPORTED": "confirmed omission of screen follow-up",
+    "IDENTITY_DESIGN_MISSING": "confirmed missing H1 requirement",
+    "COHORT_LINKAGE_CONFLICT": "unresolved target linkage; unknown predicate",
+    "CLINICAL_DOMAIN_MISSING": "confirmed missing required observed clinical domain",
+    "ENDPOINT_DEFINITION_MISSING": "confirmed missing endpoint definition, baseline where applicable, or hierarchy",
+    "DENOMINATOR_MISSING": "confirmed missing required count or endpoint analysis denominator",
+    "NUMERATOR_MISSING": "confirmed missing binary numerator",
+    "SUMMARY_OR_UNITS_MISSING": "confirmed missing continuous summary definition or units",
+    "ATTRITION_CONTEXT_MISSING": "confirmed missing censoring, withdrawals, horizon count, or missing-data handling",
+    "WINDOW_MISMATCH": "endpoint timing incompatible with fixed nominal 12-month horizon",
+    "ANCHOR_MISMATCH": "endpoint anchored to something other than treatment",
+    "TIMING_UNREPORTED": "confirmed missing endpoint timing, interval, or anchor",
+    "BURDEN_CONTEXT_MISSING": "confirmed missing immunosuppression, co-intervention, repeat dosing or exposure",
+    "SAFETY_CONTEXT_MISSING": "confirmed missing harms population, window, attribution, or discontinuations",
+    "SOURCE_INACCESSIBLE": "necessary material inaccessible; unknown predicate",
+    "EXTRACTION_INCOMPLETE": "source review incomplete; unknown predicate",
+    "SOURCE_CONFLICT": "decisive source facts unresolved; unknown predicate",
+    "TARGET_ENROLLMENT_UNKNOWN": "target enrollment cannot be adjudicated; unknown predicate",
+    "OVERLAP_UNCERTAIN": "coverage flag only unless outcome-to-target identity is also uncertain",
+    "LEDGER_EXTRACTION_GAP": "correction log only; not a harmonization effect",
+    "LEDGER_EXTRACTION_ERROR": "correction log only; not a harmonization effect",
+    "SOURCE_VERSION_CHANGE": "amendment and correction log only; not a harmonization effect",
+    "PROVENANCE_INVALID": "error and halt",
+    "REVERSE_SUPPORT_TRANSITION": "error and halt"
+  },
+  "primary_outcome": {
+    "numerator": "count(provisional=supported AND harmonized=not_supported)",
+    "denominator": "count(provisional=supported AND harmonized IN [supported,not_supported])",
+    "zero_denominator": "no_estimate; preserve coverage; no H0 inference",
+    "outputs": ["all 16 transition cells with report IDs", "report coverage", "program coverage without voting", "all change reasons", "unchanged supported and unsupported", "all unresolved and not_applicable", "separate ledger correction log"],
+    "uncertainty": "descriptive counts and coverage only; no independence-based intervals",
+    "sort": "program_id then report_id then field_id in ascending lexical order"
+  },
+  "sensitivity": {
+    "leave_one_program_out": {
+      "omit_each": ["lantidra-pooled", "pec-direct", "vc01", "zimislecel", "vx264"],
+      "omit_all_reports_in_program": true,
+      "same_fraction_and_zero_denominator_policy": true
+    },
+    "harmonized_no_cgm_v1_0": {
+      "base": "harmonized_v1_0",
+      "omit_only": ["H2 CGM domain and its baseline-follow-up and hierarchy fields", "H3 CGM-specific endpoint numerator-denominator-units-summary", "H4 CGM-specific horizon-population-interval"],
+      "retain": ["unchanged provisional_v1_0", "all non-CGM requirements", "all global H3 fields", "H1", "H5"],
+      "separately_labeled": true
+    }
+  },
+  "invariants_and_stops": [
+    "harmonized supported implies provisional supported",
+    "same adjudicated source facts and version for both rules",
+    "no outcome-dependent target or source selection",
+    "no participant pooling or cross-treatment efficacy estimates",
+    "no implementation before explicit maintainer G0 and G1 approval",
+    "halt for essential access, reuse or version blockers pending approved amendment",
+    "halt on failed controls, invalid provenance or schemas, contradictory cohort mappings defeating grouping, or unreproducible outputs",
+    "no estimate and stop robustness assessment if denominator zero"
+  ],
+  "controls_specification": "PREREGISTRATION.md section Synthetic controls: exact expected behavior, not fixtures executed",
+  "amendment_policy": "preserve original v1.0; dated separately committed amendment with exposure disclosure and maintainer approval",
+  "phase1_execution": "none"
+}
