@@ -36,6 +36,8 @@ The project does not prescribe treatments, recruit participants, collect persona
 ## Definitions used in this project
 
 - **Prevention/delay:** postponing clinical onset or slowing loss of endogenous insulin production; not reversal or cure.
+- **Beta-cell preservation:** maintenance of residual endogenous beta-cell function after clinical diagnosis, measured with a stated endpoint such as stimulated C-peptide; this does not by itself restore lost beta-cell mass, reverse stage 3 disease, or demonstrate remission.
+- **Reversal:** a claim that established clinical disease has been moved back to an earlier disease state; name the measured clinical criteria and duration, and do not infer reversal from a biomarker change alone.
 - **Partial remission:** reduced insulin need after diagnosis with residual beta-cell function; not cure.
 - **Insulin independence:** no exogenous insulin at a stated time point; a measured outcome that may be temporary and treatment-dependent.
 - **Functional cure:** project shorthand for durable insulin independence and near-physiologic glucose regulation without chronic systemic immunosuppression, supported by multi-year follow-up and acceptable risk. This is a research target, not a validated regulatory category.

@@ -34,6 +34,7 @@ Score each claim separately across five one-point checks: (1) source is primary/
 - State whether immunosuppression, device implantation, or another co-intervention was used.
 - Prefer “was associated with” for uncontrolled data; reserve causal wording for designs that justify it.
 - Distinguish protocol endpoint from observed benefit and surrogate endpoint from clinical benefit.
+- Keep stage 2 delay of clinical onset separate from post-diagnosis stage 3 beta-cell preservation; neither is remission, reversal, insulin independence, or cure without evidence for those distinct outcomes.
 - Never turn a single case, biomarker, mouse result, press release, or insulin-independence interval into a cure claim.
 - Use “no evidence identified” rather than “proven ineffective” when the search is incomplete.
 - Note follow-up limits and unknown long-term safety, durability, manufacturing, and generalizability.
