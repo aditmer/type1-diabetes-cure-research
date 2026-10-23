@@ -25,13 +25,21 @@ class Q3G1MetadataTests(unittest.TestCase):
         return read_q3_csv(self.q3 / "retrieval-log.csv", Q3_RETRIEVAL_LOG_FIELDS)
 
     def test_repository_q3_metadata_is_valid(self):
-        self.assertEqual(validate_q3_metadata(), (8, 40))
+        self.assertEqual(validate_q3_metadata(), (8, 41))
 
     def test_manifest_must_match_all_frozen_report_targets(self):
         rows = self.manifest()
         rows[0]["target_population_id"] = "different-target"
         with self.assertRaisesRegex(ValueError, "target_population_id differs"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+
+    def test_manifest_identifiers_must_match_all_frozen_reports(self):
+        for field in ("source_id", "report_id", "program_id", "target_population_id"):
+            with self.subTest(field=field):
+                rows = self.manifest()
+                rows[0][field] = "changed-identifier"
+                with self.assertRaises(ValueError):
+                    validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
     def test_manifest_rejects_malformed_hashes(self):
         rows = self.manifest()
@@ -44,6 +52,21 @@ class Q3G1MetadataTests(unittest.TestCase):
         s19 = next(row for row in rows if row["source_id"] == "S19")
         s19["archive_status"] = "verified"
         with self.assertRaisesRegex(ValueError, "verified archive requires object and restore evidence"):
+            validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+
+    def test_onedrive_archive_cannot_be_verified_without_a_restore_event(self):
+        rows = self.manifest()
+        s19 = next(row for row in rows if row["source_id"] == "S19")
+        s19.update({
+            "archive_status": "verified",
+            "archive_reference": "OneDrive:T1D-Research/Q3/Private-Source-Archive/S19",
+            "archive_recovery_evidence": "fresh cloud download checked",
+            "archive_object_id": "OD-S19-3e14ef3dcb7f",
+            "archive_restore_event_id": "S19-onedrive-restore-pending",
+            "archive_restore_bytes": s19["bytes"],
+            "archive_restore_sha256": s19["sha256"],
+        })
+        with self.assertRaisesRegex(ValueError, "lacks a successful restore event"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
     def test_verified_archive_requires_matching_retrieval_records(self):

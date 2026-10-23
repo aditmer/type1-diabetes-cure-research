@@ -47,17 +47,26 @@ URL and download time/time zone were not supplied, and the PDFs do not carry a
 publisher version-sequence identifier. Keep the files outside the public
 repository and confirm the authorized retention path before execution.
 
-The remaining G1 conditions are a source-version/rights decision for S13,
-confirmation of S23 subscription and retention terms with an authorized
-private storage route, and a durable S19 archive deposit with restore
-verification. The historical ClinicalTrials.gov version locators provide an
-adequate official recovery method without requiring four duplicate local
-archives; maintainer adoption of that handling policy remains pending.
-Conservative PEC-Direct program grouping is sufficient for G1 despite
-unresolved participant overlap. G0 and the proposed amendment also await
-explicit maintainer decisions. The recommendation therefore remains
-conditional; it does **not** authorize G2, implementation, outcome
-extraction, or classification.
+The maintainer selected private OneDrive as the preferred storage service.
+This does not approve OneDrive as a substitute for the original immutable
+institutional archive recommendation. The proposed alternative policy,
+limitations, upload and restore steps, and exact approval checklist are in
+[ONEDRIVE-ARCHIVE.md](ONEDRIVE-ARCHIVE.md) and
+[G1-MAINTAINER-DECISIONS.md](G1-MAINTAINER-DECISIONS.md). No OneDrive account
+was accessed; no S19 or S23 file was uploaded, restored, or given a cloud
+object identifier. S19's fresh 2026-10-23T17:15:01Z retrieval matches its
+122,548-byte source hash and CC BY 4.0 identity but is not archive evidence.
+S23 rights for private retention and researcher access remain unresolved.
+S13's recommended v3 selection, G0, the proposed amendment, REG, PEC, and the
+explicit ARCHIVE policy decision also await approval.
+
+The historical ClinicalTrials.gov version locators provide an adequate
+official recovery method without requiring four duplicate local archives;
+maintainer adoption of that handling policy remains pending. Conservative
+PEC-Direct program grouping is sufficient for G1 despite unresolved
+participant overlap. The recommendation remains CONDITIONAL GO for completing
+G1 close-out and NO-GO for G2, implementation, outcome extraction, or
+classification.
 
 The eight-row [source manifest](source-manifest.csv) identifies each proposed
 version, target population, dates, rights decision, recovery path, and blocker.
@@ -251,25 +260,49 @@ same accepted source facts, not complementary facts across publications.
 | --- | --- | --- | --- | --- |
 | 1. G0 committed/versioned | **Documented; approval pending** | G0 commit `fe536fe8bea86b991f3f73e515751ead70146ca9` is present; frozen files match recorded hashes. All eight reports, five programs, targets, hypotheses, and controls are unchanged. | No explicit G0 approval exists; v1.1 remains a proposal. | Review and record separate approve/reject decisions for v1.0 and amendment 01. |
 | 2. Primary/official access or blockers documented | **Completed for G1 review** | S13 v3, S18/S19 Europe PMC records, S23 main PDF and supplement, and all four exact registry history versions have identified official retrieval locators. S23 file identity, listed supplemental content, size, page count, and hashes were checked. | S23's Cell Press download is maintainer-reported; agreement-specific retention and an authorized private storage path remain unconfirmed. Earlier automated 403s remain historical access failures only. | Confirm S23 user authorization and applicable license; use the decision record's private-retention branch or have each reviewer reacquire. |
-| 3. Permitted reuse/provenance | **Partial; S23 blocked** | S19's CC BY 4.0 language and third-party exception are confirmed; ClinicalTrials.gov terms and attribution practice are recorded; Elsevier's current general copyright/sharing policy was reviewed. | No S23 public license; actual subscription terms are unknown. S19 archive exceptions require sidecar attribution and review. | Confirm S23 retention scope with the library; archive S19 only in an approved rights-compliant location. |
-| 4. Reproducible source versions | **Partial; not complete** | S13 v3 archive ZIP/member hashes are verified; S18/S19 PMC/EPMC locators and hashes are recorded; S23 component hashes are recorded; registry history pages identify versions and submission dates. | S13 version acceptance is pending; S19 lacks a durable deposit and restore check; S23 exact publisher sequence and retention path are unresolved. | Record S13 selection; deposit/restore S19 exact XML; establish S23 private storage or reviewer reacquisition path. |
+| 3. Permitted reuse/provenance | **Partial; S23 blocked** | S19's CC BY 4.0 language and third-party exception are confirmed; ClinicalTrials.gov terms and attribution practice are recorded; Elsevier's current general copyright/sharing policy was reviewed. | No S23 public license; actual subscription terms and whether a private personal backup or project access is allowed are unknown. S19 archive exceptions require sidecar attribution and review. | Confirm S23 retention scope with the library; archive S19 only after rights review and explicit ARCHIVE-policy approval. |
+| 4. Reproducible source versions | **Partial; not complete** | S13 v3 archive ZIP/member hashes are verified; S18/S19 PMC/EPMC locators and hashes are recorded; S23 component hashes are recorded; registry history pages identify versions and submission dates. A new S19 Europe PMC fetch at 2026-10-23T17:15:01Z again matched source identity, exact length/hash, and license. | S13 version acceptance is pending; S19 has no OneDrive deposit or fresh cloud restore; S23 exact publisher sequence, rights basis, and retention path are unresolved. | Record S13 selection and ARCHIVE decision; deposit/restore S19 exact XML; establish S23 permitted private storage or lawful reviewer reacquisition. |
 | 5. Missing reporting vs. incomplete extraction | **Completed as G1 specification; not applied to outcomes** | G0 defines six field statuses, locator/review-scope requirements, failure-before-unknown precedence, and a separate correction log. | No clinical fields or outcome-bearing supplement tables were adjudicated. This is intentionally deferred; no omissions may be inferred from unreviewed material. | After G1/G2 authorization, apply the field-state model to accepted source versions and log review scope and locators. |
 | 6. Conservative identity | **Completed for G1 grouping; detailed overlap remains uncertain** | Frozen report and target IDs are preserved. S23 establishes partial overlap with S18; source and registry records support one PEC-Direct program. | Full S23/S18 equivalence, S19 participant overlap, and exact publication-to-registry mapping remain unknown. | Keep one program, do not sum participants; resolve target linkage only from lawful evidence before extraction. |
 | 7. Controls/sensitivity/stops | **Specification complete; execution deferred** | G0 defines synthetic controls, precedence/invariant checks, sensitivities, a no-estimate rule, and explicit stop conditions. | No implementation or synthetic control execution is authorized in this G1 assignment. | Run controls only during authorized G2 implementation, before any real-source extraction. |
 
 The decision record
-[G1-MAINTAINER-DECISIONS.md](G1-MAINTAINER-DECISIONS.md) contains the eight
-recommended maintainer decisions, alternatives and consequences, exact S19
-deposit/restore procedure, and explicit approval fields. No decision is
-approved on the maintainer's behalf.
+[G1-MAINTAINER-DECISIONS.md](G1-MAINTAINER-DECISIONS.md) contains the
+maintainer approval checklist, alternatives and consequences, and exact
+source-version identifiers. The
+[OneDrive procedure](ONEDRIVE-ARCHIVE.md) contains the detailed upload/restore
+instructions and safe attribution-sidecar template. No decision or cloud
+action is represented as approved or completed.
 
-**Readiness recommendation:** conditional GO to complete G1 close-out only;
+**Readiness recommendation:** CONDITIONAL GO to complete G1 close-out only;
 NO-GO to begin G2 until the maintainer records the decisions above and the
-remaining preservation/terms conditions are verified. S23 is no longer an
-access blocker for this review, but its PDF is not yet a durably preserved,
-rights-cleared project input. If the outstanding conditions cannot be
-resolved, stop under the frozen eight-source scope or seek a separate,
-dated, prospective amendment; never silently drop or replace S23.
+remaining preservation/terms conditions are verified. S23 is not an access
+blocker for identity review, but its PDF is not yet a rights-cleared or
+durably preserved project input. OneDrive is not immutable and its proposed
+use is unapproved. If the outstanding conditions cannot be resolved, stop
+under the frozen eight-source scope or seek a separate, dated, prospective
+amendment; never silently drop or replace S23.
+
+## Manual actions still required
+
+1. Record separate written decisions for G0 v1.0, amendment A1 v1.1, S13's
+   exact DailyMed version, REG's four historical versions, PEC overlap
+   handling, and the proposed OneDrive ARCHIVE policy. Record the approver,
+   date, choice, and rationale; do not change any pending status before that.
+2. For S19, review third-party credit lines, upload the exact source XML and
+   attribution sidecar to the private OneDrive folder only after policy
+   acceptance, download the cloud object to a fresh non-synced directory,
+   verify exact bytes/hash, and preserve real object/restore evidence in the
+   private inventory. Make an independent backup where permitted.
+3. For S23, have the maintainer/library confirm acquisition authorization and
+   whether private retention, backup, and named-reviewer access are covered.
+   If they are, upload only the article and separate supplement and verify
+   each fresh cloud download. Otherwise do not store them in OneDrive; arrange
+   lawful reviewer reacquisition and keep preservation blocked.
+4. Only after the approvals, rights basis, and actual restore evidence exist,
+   append unique restore events and update matching manifest fields; then
+   reassess and explicitly authorize or reject G1. G2 remains NO-GO until
+   that decision.
 
 **Handoff boundary:** this PR requests G1 decisions only. G2 remains NO-GO
 until G0/G1 approval and the S23/S19 external preservation conditions are
@@ -280,17 +313,22 @@ pipeline/results acceptance criteria intentionally remain unfinished.
 ## Phase 1 validation
 
 On 2026-10-23, `python3 scripts/validate_data.py` passed for the eight-source
-manifest and 40-record retrieval log, and
-`python3 -m unittest discover -s tests -v` passed all 60 tests. `git diff
+manifest and 41-record retrieval log, and
+`python3 -m unittest discover -s tests -v` passed all 67 tests. `git diff
 --check` passed. The recorded G0 preregistration and rules v1.0 SHA-256 hashes
 also match the frozen values above. The repository validator checks frozen G0
 hashes, all eight manifest IDs and targets, CSV widths, provenance fields,
 hash formats, transport-neutral archive restoration evidence, exact
 approved-version binding, and the proposed
 amendment patch/invariants. No classifier, synthetic outcome controls, or
-real-data analysis was run. The retrieval log preserves prior observations
-and adds a timestamped S19 exact-byte identity/license recheck; the response
-was temporary and was not deposited in an archive. The three S23
+real-data analysis was run. The new standard-library archive helper and
+focused tests cover exact byte/hash matches, corruption, incomplete files,
+unreadable/non-regular inputs, and path-free machine-readable output. Existing
+and added metadata tests ensure a missing or mismatched restore event cannot
+be marked verified, approval fields stay empty, and all frozen identifiers
+and v1.0 files remain unchanged. The retrieval log preserves prior
+observations and adds a timestamped S19 exact-byte identity/license recheck;
+the response was temporary and was not deposited in an archive. The three S23
 human-supplied PDF representations remain logged. Browser-rendered HTML has
 no raw-byte hash where the bytes were not retained; challenge responses are
 explicitly not article copies. These are static integrity checks, not
