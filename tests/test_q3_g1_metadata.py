@@ -1,7 +1,8 @@
-import unittest
 import json
+import unittest
 
 from scripts.validate_data import (
+    Q3_RETRIEVAL_LOG_FIELDS,
     Q3_SOURCE_MANIFEST_FIELDS,
     ROOT,
     read_q3_csv,
@@ -21,17 +22,10 @@ class Q3G1MetadataTests(unittest.TestCase):
         return read_q3_csv(self.q3 / "source-manifest.csv", Q3_SOURCE_MANIFEST_FIELDS)
 
     def retrieval_log(self):
-        return read_q3_csv(
-            self.q3 / "retrieval-log.csv",
-            [
-                "artifact_id", "source_id", "retrieved_utc", "request_url",
-                "http_status", "media_type", "bytes", "response_sha256",
-                "verification_outcome",
-            ],
-        )
+        return read_q3_csv(self.q3 / "retrieval-log.csv", Q3_RETRIEVAL_LOG_FIELDS)
 
     def test_repository_q3_metadata_is_valid(self):
-        self.assertEqual(validate_q3_metadata(), (8, 39))
+        self.assertEqual(validate_q3_metadata(), (8, 40))
 
     def test_manifest_must_match_all_frozen_report_targets(self):
         rows = self.manifest()
@@ -49,17 +43,55 @@ class Q3G1MetadataTests(unittest.TestCase):
         rows = self.manifest()
         s19 = next(row for row in rows if row["source_id"] == "S19")
         s19["archive_status"] = "verified"
-        with self.assertRaisesRegex(ValueError, "verified archive requires reference and recovery evidence"):
+        with self.assertRaisesRegex(ValueError, "verified archive requires object and restore evidence"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
     def test_verified_archive_requires_matching_retrieval_records(self):
         rows = self.manifest()
         s13 = next(row for row in rows if row["source_id"] == "S13")
         log = self.retrieval_log()
-        archive_record = next(record for record in log if record["artifact_id"] == "S13-archive-v3")
-        archive_record["response_sha256"] = "0" * 64
-        with self.assertRaisesRegex(ValueError, "lacks matching successful retrieval evidence"):
+        restore_record = next(
+            record for record in log
+            if record["artifact_id"] == s13["archive_restore_event_id"]
+        )
+        restore_record["response_sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "restored bytes and SHA-256 must match"):
             validate_q3_source_manifest(rows, self.rules["reports"], log)
+
+    def test_archive_restore_does_not_require_http_transport(self):
+        rows = self.manifest()
+        s13 = next(row for row in rows if row["source_id"] == "S13")
+        log = self.retrieval_log()
+        restore_record = next(
+            record for record in log
+            if record["artifact_id"] == s13["archive_restore_event_id"]
+        )
+        restore_record["http_status"] = ""
+        self.assertIsNone(validate_q3_source_manifest(rows, self.rules["reports"], log))
+
+    def test_archive_restore_requires_exact_byte_count(self):
+        rows = self.manifest()
+        s13 = next(row for row in rows if row["source_id"] == "S13")
+        s13["archive_restore_bytes"] = "1"
+        with self.assertRaisesRegex(ValueError, "restored bytes and SHA-256 must match"):
+            validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+
+    def test_archive_restore_requires_success_for_the_identified_object(self):
+        rows = self.manifest()
+        s13 = next(row for row in rows if row["source_id"] == "S13")
+        for field, value in (
+            ("verification_outcome", "restore_failed"),
+            ("archive_object_id", "different-object"),
+        ):
+            with self.subTest(field=field):
+                log = self.retrieval_log()
+                event = next(
+                    record for record in log
+                    if record["artifact_id"] == s13["archive_restore_event_id"]
+                )
+                event[field] = value
+                with self.assertRaisesRegex(ValueError, "lacks a successful restore event"):
+                    validate_q3_source_manifest(rows, self.rules["reports"], log)
 
     def test_official_version_locator_requires_successful_retrieval(self):
         rows = self.manifest()
@@ -77,6 +109,16 @@ class Q3G1MetadataTests(unittest.TestCase):
         rows = self.manifest()
         rows[0]["approved_version_id"] = rows[0]["source_version_id"]
         with self.assertRaisesRegex(ValueError, "recommendations cannot populate approval fields"):
+            validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+
+    def test_approved_version_must_match_manifest_version(self):
+        rows = self.manifest()
+        s13 = next(row for row in rows if row["source_id"] == "S13")
+        s13["maintainer_approval_status"] = "approved"
+        s13["approved_version_id"] = "SPL-v1"
+        s13["approval_date"] = "2026-10-23"
+        s13["approving_maintainer"] = "Maintainer"
+        with self.assertRaisesRegex(ValueError, "approved version must match source_version_id"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
     def test_manifest_requires_provenance_locators(self):

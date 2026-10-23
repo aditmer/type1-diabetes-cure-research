@@ -65,10 +65,13 @@ Q3_SOURCE_MANIFEST_FIELDS = [
     "maintainer_approval_status", "approved_version_id", "approval_date",
     "approving_maintainer", "archive_status", "archive_reference",
     "archive_recovery_evidence", "citation_title", "citation_authors",
+    "archive_object_id", "archive_restore_event_id", "archive_restore_bytes",
+    "archive_restore_sha256",
 ]
 Q3_RETRIEVAL_LOG_FIELDS = [
     "artifact_id", "source_id", "retrieved_utc", "request_url", "http_status",
     "media_type", "bytes", "response_sha256", "verification_outcome",
+    "archive_object_id",
 ]
 Q3_SHA256 = re.compile(r"[0-9a-f]{64}")
 
@@ -149,6 +152,8 @@ def validate_q3_source_manifest(rows, expected_reports, retrieval_log):
                 raise ValueError(f"source-manifest.csv:{row_number}: approved source requires version, date, and maintainer")
             if not valid_date(row["approval_date"]):
                 raise ValueError(f"source-manifest.csv:{row_number}: approval_date must be a real YYYY-MM-DD date")
+            if row["approved_version_id"] != row["source_version_id"]:
+                raise ValueError(f"source-manifest.csv:{row_number}: approved version must match source_version_id")
         elif any(value.strip() for value in approval_fields):
             raise ValueError(f"source-manifest.csv:{row_number}: recommendations cannot populate approval fields")
 
@@ -156,27 +161,42 @@ def validate_q3_source_manifest(rows, expected_reports, retrieval_log):
         if archive_status not in {"verified", "official_version_locator", "pending_maintainer"}:
             raise ValueError(f"source-manifest.csv:{row_number}: invalid archive status")
         if archive_status == "verified":
-            if not row["archive_reference"].strip() or not row["archive_recovery_evidence"].strip():
-                raise ValueError(f"source-manifest.csv:{row_number}: verified archive requires reference and recovery evidence")
-            evidence_hashes = Q3_SHA256.findall(row["archive_recovery_evidence"])
-            if not evidence_hashes:
-                raise ValueError(f"source-manifest.csv:{row_number}: verified archive requires a recorded recovery hash")
-            archive_record = next(
+            restore_bytes = row["archive_restore_bytes"]
+            restore_sha256 = row["archive_restore_sha256"]
+            if not all(
+                row[field].strip()
+                for field in (
+                    "archive_reference", "archive_object_id", "archive_restore_event_id",
+                    "archive_recovery_evidence", "archive_restore_bytes",
+                    "archive_restore_sha256",
+                )
+            ):
+                raise ValueError(f"source-manifest.csv:{row_number}: verified archive requires object and restore evidence")
+            if not restore_bytes.isdigit() or int(restore_bytes) < 1:
+                raise ValueError(f"source-manifest.csv:{row_number}: archive restore bytes must be a positive integer")
+            if not Q3_SHA256.fullmatch(restore_sha256):
+                raise ValueError(f"source-manifest.csv:{row_number}: invalid archive restore SHA-256")
+            restore_record = next(
                 (
                     record for record in retrieval_log
                     if record["source_id"] == source_id
-                    and record["request_url"] == row["archive_reference"]
-                    and record["http_status"] == "200"
+                    and record["artifact_id"] == row["archive_restore_event_id"]
                 ),
                 None,
             )
-            if archive_record is None or archive_record["response_sha256"] not in evidence_hashes:
-                raise ValueError(f"source-manifest.csv:{row_number}: verified archive lacks matching successful retrieval evidence")
-            if row["sha256"] not in evidence_hashes or not any(
-                record["source_id"] == source_id and record["response_sha256"] == row["sha256"]
-                for record in retrieval_log
+            if (
+                restore_record is None
+                or restore_record["verification_outcome"] != "archive_restore_success"
+                or restore_record["archive_object_id"] != row["archive_object_id"]
             ):
-                raise ValueError(f"source-manifest.csv:{row_number}: archived source bytes lack matching retrieval evidence")
+                raise ValueError(f"source-manifest.csv:{row_number}: verified archive lacks a successful restore event for its object")
+            if (
+                restore_bytes != row["bytes"]
+                or restore_sha256 != row["sha256"]
+                or restore_record["bytes"] != restore_bytes
+                or restore_record["response_sha256"] != restore_sha256
+            ):
+                raise ValueError(f"source-manifest.csv:{row_number}: restored bytes and SHA-256 must match the manifest source")
         elif archive_status == "official_version_locator":
             if row["archive_reference"] != row["version_locator"]:
                 raise ValueError(f"source-manifest.csv:{row_number}: official locator must match version_locator")
@@ -189,6 +209,14 @@ def validate_q3_source_manifest(rows, expected_reports, retrieval_log):
                 raise ValueError(f"source-manifest.csv:{row_number}: official version locator lacks successful retrieval evidence")
         elif row["archive_reference"].strip() or row["archive_recovery_evidence"].strip():
             raise ValueError(f"source-manifest.csv:{row_number}: pending archive cannot claim a deposit")
+        if archive_status != "verified" and any(
+            row[field].strip()
+            for field in (
+                "archive_object_id", "archive_restore_event_id",
+                "archive_restore_bytes", "archive_restore_sha256",
+            )
+        ):
+            raise ValueError(f"source-manifest.csv:{row_number}: unverified archive cannot claim restore evidence")
 
 
 def validate_q3_retrieval_log(rows):
