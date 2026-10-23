@@ -181,10 +181,12 @@ def validate_q3_source_manifest(rows, expected_reports, retrieval_log):
             if row["archive_reference"] != row["version_locator"]:
                 raise ValueError(f"source-manifest.csv:{row_number}: official locator must match version_locator")
             if not any(
-                record["source_id"] == source_id and record["request_url"] == row["archive_reference"]
+                record["source_id"] == source_id
+                and record["request_url"] == row["archive_reference"]
+                and record["http_status"] == "200"
                 for record in retrieval_log
             ):
-                raise ValueError(f"source-manifest.csv:{row_number}: official version locator lacks retrieval evidence")
+                raise ValueError(f"source-manifest.csv:{row_number}: official version locator lacks successful retrieval evidence")
         elif row["archive_reference"].strip() or row["archive_recovery_evidence"].strip():
             raise ValueError(f"source-manifest.csv:{row_number}: pending archive cannot claim a deposit")
 

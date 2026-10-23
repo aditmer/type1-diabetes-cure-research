@@ -1,5 +1,5 @@
 import unittest
-from pathlib import Path
+import json
 
 from scripts.validate_data import (
     Q3_SOURCE_MANIFEST_FIELDS,
@@ -9,7 +9,6 @@ from scripts.validate_data import (
     validate_q3_metadata,
     validate_q3_source_manifest,
 )
-import json
 
 
 class Q3G1MetadataTests(unittest.TestCase):
@@ -60,6 +59,18 @@ class Q3G1MetadataTests(unittest.TestCase):
         archive_record = next(record for record in log if record["artifact_id"] == "S13-archive-v3")
         archive_record["response_sha256"] = "0" * 64
         with self.assertRaisesRegex(ValueError, "lacks matching successful retrieval evidence"):
+            validate_q3_source_manifest(rows, self.rules["reports"], log)
+
+    def test_official_version_locator_requires_successful_retrieval(self):
+        rows = self.manifest()
+        s18 = next(row for row in rows if row["source_id"] == "S18")
+        log = self.retrieval_log()
+        locator_record = next(
+            record for record in log
+            if record["source_id"] == "S18" and record["request_url"] == s18["archive_reference"]
+        )
+        locator_record["http_status"] = "403"
+        with self.assertRaisesRegex(ValueError, "official version locator lacks successful retrieval evidence"):
             validate_q3_source_manifest(rows, self.rules["reports"], log)
 
     def test_recommendation_cannot_populate_maintainer_approval_fields(self):

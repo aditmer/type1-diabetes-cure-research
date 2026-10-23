@@ -281,7 +281,7 @@ pipeline/results acceptance criteria intentionally remain unfinished.
 
 On 2026-10-23, `python3 scripts/validate_data.py` passed for the eight-source
 manifest and 39-record retrieval log, and
-`python3 -m unittest discover -s tests -v` passed all 55 tests. `git diff
+`python3 -m unittest discover -s tests -v` passed all 56 tests. `git diff
 --check` passed. The recorded G0 preregistration and rules v1.0 SHA-256 hashes
 also match the frozen values above. The repository validator checks frozen G0
 hashes, all eight manifest IDs and targets, CSV widths, provenance fields,

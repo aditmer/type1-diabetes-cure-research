@@ -1,7 +1,9 @@
 # Q3 G1 maintainer decision record
 
-**Decision requested:** 23 October 2026  
-**Owner:** repository maintainer  
+**Decision requested:** 23 October 2026
+
+**Owner:** repository maintainer
+
 **Scope:** source feasibility and authorization only. No G2 implementation,
 source outcome extraction, classification, or experiment is authorized here.
 No approval is recorded unless the maintainer completes the approval fields
