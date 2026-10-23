@@ -7,6 +7,13 @@ That commit (2026-10-23T13:56:41Z) froze
 before the G1 source requests. No source-level clinical outcome fields, paired classifications,
 support-loss estimates, or pipeline were produced.
 
+**Self-review update, 23 October 2026:** a
+[proposed dated G0 amendment](AMENDMENT-2026-10-23-01.md) clarifies target
+attribution, first-treatment anchoring, and explicit zero-responder reporting.
+Its [machine-readable overrides](rules-v1.1-proposed.json) await maintainer
+approval; v1.0 is unchanged. The G1 corrections below remove an unverified
+S19 editorial-version assertion and separate S23's conflicting dates.
+
 ## Recommendation and scope of verification
 
 **NO-GO for execution with the frozen scope as presently verified.**
@@ -48,7 +55,7 @@ recovery evidence only to the extent actually verified below.
 | --- | --- | --- |
 | S13 | DailyMed SPL XML, HTTP 200; set ID `24610d9f-0c5a-4f55-93b3-d456300bfd5d`, document ID `a3163e14-0404-4e27-884b-f6f9f7f695bc`, version 3, effective 2026-01-13. History API says published 2026-01-15. | Archive ID `940595` downloaded as ZIP; its XML member has the identical SHA-256 as the current XML. This is a verified recovery path, not just an access date. The catalog's 2023 source date does not uniquely identify this current version; maintainer must accept v3 explicitly. No outcome comparison with older labels was made. |
 | S18 | Europe PMC full-text XML, HTTP 200, DOI `10.1016/j.xcrm.2021.100466`; article metadata explicitly identifies `PMC8714853.1`. Electronic publication 2021-12-02; collection 2021-12-21; manuscript revision received 2021-10-12 (not a postpublication revision). | XML checksum and explicit archive version identify the reviewed representation. PMC package-metadata routes failed (404), so no separately recoverable exact-byte package was verified. Main supplement `mmc1.pdf` downloaded; `mmc2.xlsx` listed but deliberately not downloaded/reviewed because it describes subject-level data. Unreviewed supplements prevent inferring source omissions. |
-| S19 | Europe PMC XML, HTTP 200, DOI `10.1038/s41587-023-02055-5`, PMCID `PMC11471599`. Online publication 2023-11-27; print issue October 2024 (catalog uses 2024-10-01). | The XML has no `pmcid-ver` field or explicit postpublication revision identifier. DOI/PMCID plus checksum are not a recoverable byte archive. Metadata package routes failed (404); a permitted persistent copy or demonstrably versioned archive is still required. Supplementary information, reporting summary, and protocol PDFs retrieved, but not clinically audited. |
+| S19 | Europe PMC XML, HTTP 200, DOI `10.1038/s41587-023-02055-5`, PMCID `PMC11471599`. Online publication 2023-11-27; print issue October 2024 (catalog uses 2024-10-01). | The XML has no `pmcid-ver` field or explicit editorial/postpublication revision identifier. The manifest uses an internal unverified retrieval ID, not a claim of publisher-assigned version or version-of-record status. DOI/PMCID plus checksum are not a recoverable byte archive. Metadata package routes failed (404); a permitted persistent copy or demonstrably versioned archive is still required. Supplementary information, reporting summary, and protocol PDFs retrieved, but not clinically audited. |
 | S23 | DOI `10.1016/j.stem.2021.10.003`, PMID `34861146`; bibliographic record retrieved. Correct PII is `S193459092100415X`; publisher full-text route returned 403. Europe PMC reports no PMCID, `isOpenAccess=N`. | No full text, supplements, article-specific reuse decision, or recoverable reviewed primary version established. Index `firstPublicationDate` is 2021-12-01, while the frozen catalog says 2021-12-02; retain both rather than invent a resolution. Critical G1 blocker. |
 | S20 | NCT03163511 official API JSON, HTTP 200; results module present. History version 20, submitted 2024-11-07, posted 2024-12-03; registry verified month 2024-11. | Browser opened the version-specific history panel and title for version 20. It supplies a recoverable historical study record, not a promise of byte-identical future API serialization. Retain API hash separately. |
 | S17 | NCT02239354 official API JSON, HTTP 200; results module present. History version 13, submitted 2022-02-25, posted 2022-03-24; verified month 2022-02. | Version-specific history panel/title opened successfully. Presence of results is metadata only; no efficacy values were extracted. Planned efficacy Cohort 2 remains distinct from Cohort 1. |
@@ -56,6 +63,18 @@ recovery evidence only to the extent actually verified below.
 | S9 | NCT05791201 official API JSON, HTTP 200; no results module. History version 26, submitted 2026-10-06, posted 2026-10-09; verified month 2026-10. | Version-specific history panel/title verified. Enrollment metadata is not an outcome-analysis denominator; sponsor context cannot replace missing registry results. |
 
 ### Exact locators and re-retrieval procedure
+
+The manifest's date columns contain ISO dates at their reported precision;
+`publication_date` means article publication, SPL publication, or registry
+first posting as appropriate to source type. `revision_or_submission_date`
+means S13 SPL effective date, S18 prepublication revision received, or
+registry version submission date; it is not uniformly a postpublication
+revision. Unknown values are blank or explicitly `unknown`, with unresolved
+conflicts retained in `outstanding_limitations`. S23's canonical publication
+date is blank rather than selecting one conflicting date. A
+`source_version_id` beginning `unverified-` is an internal tracking label,
+not evidence of a reproducible source version. No proposed source version
+has been approved by the maintainer.
 
 Use the manifest's `retrieval_url` for the listed representation and hash
 the response bytes before parsing. Confirm MIME/signature, source identifier,
@@ -101,6 +120,13 @@ For independent checking, navigate to the exact manifest history URL,
 confirm its version/title, and compare the identity/status metadata above.
 No assertion is made that the history HTML and API JSON have identical bytes.
 
+S18/S19 metadata-only rechecks at 2026-10-23T14:15:50Z returned the same bytes
+and hashes as the original retrievals. They reconfirmed the distinct
+licenses and the presence/absence of `pmcid-ver`; they did not establish
+S19's editorial version or a new durable preservation path. These two
+observations are appended to the retrieval log, not substituted for the
+original 23 observations.
+
 ## Terms, licenses, and handling decisions
 
 These are conservative project handling decisions, not legal advice.
@@ -141,7 +167,7 @@ same accepted source facts, not complementary facts across publications.
 
 | Checkpoint | Status | Evidence and remaining condition |
 | --- | --- | --- |
-| 1. G0 committed/versioned | Documented; approval pending | G0 commit above, immutable v1.0 plan/rules, starting commit/checksums, exactly eight reports/five groups. Maintainer has not approved methodology. |
+| 1. G0 committed/versioned | Documented; approval pending | G0 commit above, immutable v1.0 plan/rules, starting commit/checksums, exactly eight reports/five groups. Amendment 01 and v1.1 overrides are proposed only. Maintainer has not approved methodology. |
 | 2. Primary/official access or blockers documented | Blocked | Official label, two publication XMLs, and four registry JSONs retrieved; S23 primary material inaccessible. Blocker recorded, not excluded. |
 | 3. Permitted reuse/provenance | Partial; human decision needed | Article-specific S18/S19 licenses and official terms reviewed; no restricted copies committed. S23 terms/full-text access unresolved; historical-registry handling and supplement notices require confirmation. |
 | 4. Reproducible source versions | Partial | S13 recoverable archive validated; four version-specific registry panels verified; S18 explicit archive version identified. S19 exact-byte recovery not established, S18 package recovery unverified, S23 reviewed version absent. Checksums alone are not archives. |
@@ -151,7 +177,8 @@ same accepted source facts, not complementary facts across publications.
 
 ### Decisions required before Phase 2
 
-The maintainer must review/approve G0, resolve S23 primary/supplement access
+The maintainer must review/approve G0 and decide on proposed amendment 01,
+resolve S23 primary/supplement access
 and version/rights (or approve a dated prospective amendment), establish
 remaining permitted preservation paths (especially S19), accept proposed
 source versions including S13 v3, and assign human cohort/source
@@ -173,4 +200,10 @@ manifest report/program/target IDs match the frozen specification. Recorded
 response hashes and byte lengths were checked against the retrieved bytes.
 The three starting tracker hashes and both committed G0 files remain
 unchanged. No classifier, synthetic fixtures, or real-data analysis was run.
+Self-review also checked all 15 proposed JSON Patch addresses and value
+types against the immutable base without applying the patch, plus local
+document links and date-column formats. The 25-row retrieval log preserves
+the original 23 observations unchanged and appends two same-hash metadata
+rechecks. These are static integrity checks, not evidence that the planned
+classifier or synthetic controls pass.
 The complete PR diff and `git diff --check` are checked before handoff.
