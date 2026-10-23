@@ -25,7 +25,7 @@ class Q3G1MetadataTests(unittest.TestCase):
         return read_q3_csv(self.q3 / "retrieval-log.csv", Q3_RETRIEVAL_LOG_FIELDS)
 
     def test_repository_q3_metadata_is_valid(self):
-        self.assertEqual(validate_q3_metadata(), (8, 41))
+        self.assertEqual(validate_q3_metadata(), (8, 42))
 
     def test_manifest_must_match_all_frozen_report_targets(self):
         rows = self.manifest()
@@ -51,6 +51,7 @@ class Q3G1MetadataTests(unittest.TestCase):
         rows = self.manifest()
         s19 = next(row for row in rows if row["source_id"] == "S19")
         s19["archive_status"] = "verified"
+        s19["archive_object_id"] = ""
         with self.assertRaisesRegex(ValueError, "verified archive requires object and restore evidence"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
