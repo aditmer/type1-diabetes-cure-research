@@ -128,7 +128,7 @@ class Q3G1MetadataTests(unittest.TestCase):
             validate_q3_g1_authorization(approved, rows)
         s23["assigned_reviewer_access_status"] = "confirmed"
         s23["assigned_reviewer_access_evidence"] = "Assigned reviewers confirmed individual institutional access."
-        validate_q3_g1_authorization(approved, rows)
+        validate_q3_g1_authorization(self.with_s19_inventory_confirmation(approved), rows)
 
     def test_g1_can_be_authorized_after_source_and_access_evidence(self):
         rows = self.manifest()
@@ -143,8 +143,83 @@ class Q3G1MetadataTests(unittest.TestCase):
         validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
         decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
-        approved = self.with_g1_decision(decisions, "approved")
+        approved = self.with_s19_inventory_confirmation(self.with_g1_decision(decisions, "approved"))
         validate_q3_g1_authorization(approved, rows)
+
+    def authorized_g1_fixture(self):
+        rows = self.manifest()
+        for row in rows:
+            self.approve_source(row)
+        s23 = next(row for row in rows if row["source_id"] == "S23")
+        s23["assigned_reviewer_access_status"] = "confirmed"
+        s23["assigned_reviewer_access_evidence"] = "Assigned reviewers confirmed lawful individual access and component hashes."
+        decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
+        return self.with_s19_inventory_confirmation(self.with_g1_decision(decisions, "approved")), rows
+
+    def test_g1_requires_matching_explicit_approval_for_every_frozen_source(self):
+        for source_id in (report["source_id"] for report in self.rules["reports"]):
+            for field, value in (
+                ("maintainer_approval_status", "pending_maintainer"),
+                ("approved_version_id", "different-version"),
+                ("approval_date", ""),
+                ("approving_maintainer", ""),
+            ):
+                with self.subTest(source_id=source_id, field=field):
+                    decisions, rows = self.authorized_g1_fixture()
+                    next(row for row in rows if row["source_id"] == source_id)[field] = value
+                    with self.assertRaisesRegex(ValueError, "requires an approved matching source version"):
+                        validate_q3_g1_authorization(decisions, rows)
+
+    def test_g1_requires_separate_dated_s19_inventory_confirmation(self):
+        for status, approval_date, approver in (
+            ("pending_maintainer", "—", "—"),
+            ("approved", "", "@maintainer"),
+            ("approved", "2026-02-30", "@maintainer"),
+            ("approved", "2026-10-23", ""),
+        ):
+            with self.subTest(status=status, approval_date=approval_date, approver=approver):
+                decisions, rows = self.authorized_g1_fixture()
+                decisions = self.with_s19_inventory_confirmation(decisions, status, approval_date, approver)
+                with self.assertRaisesRegex(ValueError, "requires a dated maintainer confirmation of S19 private inventory"):
+                    validate_q3_g1_authorization(decisions, rows)
+
+    def test_g1_rejects_missing_s19_inventory_confirmation(self):
+        decisions, rows = self.authorized_g1_fixture()
+        decisions = "\n".join(
+            line for line in decisions.splitlines() if not line.startswith("| S19-INVENTORY |")
+        )
+        with self.assertRaisesRegex(ValueError, "requires a dated maintainer confirmation of S19 private inventory"):
+            validate_q3_g1_authorization(decisions, rows)
+
+    def test_g1_can_be_authorized_with_all_approvals_and_separate_inventory_confirmation(self):
+        decisions, rows = self.authorized_g1_fixture()
+        validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+        validate_q3_g1_authorization(decisions, rows)
+
+    def test_g1_requires_exactly_the_frozen_source_set(self):
+        for mutation in ("missing", "duplicate", "unknown"):
+            with self.subTest(mutation=mutation):
+                decisions, rows = self.authorized_g1_fixture()
+                if mutation == "missing":
+                    rows.pop()
+                elif mutation == "duplicate":
+                    rows.append(rows[0].copy())
+                else:
+                    rows[0]["source_id"] = "unknown"
+                with self.assertRaisesRegex(ValueError, "requires exactly the eight frozen sources"):
+                    validate_q3_g1_authorization(decisions, rows)
+
+    def with_s19_inventory_confirmation(
+        self, decisions, status="approved", approval_date="2026-10-23", approver="@maintainer",
+    ):
+        row = (
+            "| S19-INVENTORY | Private archive attribution inventory | "
+            "Confirm required attribution fields for the exact archived S19 XML; no private location published. "
+            f"| {status} | {approval_date} | {approver} |"
+        )
+        if re.search(r"(?m)^\| S19-INVENTORY \|", decisions):
+            return re.sub(r"(?m)^\| S19-INVENTORY \|.*$", row, decisions)
+        return decisions + "\n" + row + "\n"
 
     def approve_source(self, row):
         row["maintainer_approval_status"] = "approved"

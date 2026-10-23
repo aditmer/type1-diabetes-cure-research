@@ -18,6 +18,7 @@ Final G1 authorization remains pending.
 | S18 | Europe PMC XML representation | Accept PMC archive locator `PMC8714853.1` with the exact 114,747-byte Europe PMC XML hash documented below. | pending_maintainer | — | — |
 | S23 | Publisher article and supplement | Prefer individual lawful reacquisition by each assigned reviewer; do not use shared storage unless the account agreement expressly permits it. | blocked; reviewer access unverified | — | — |
 | S19 | Europe PMC XML representation | Accept PMC archive locator `PMC11471599.1` with the exact 122,548-byte Europe PMC XML hash documented below. The verified OneDrive restore remains a separate decision. | restore accepted; source-version approval pending | 2026-10-23 | @aditmer |
+| S19-INVENTORY | Private archive attribution inventory | Confirm the private inventory for the exact archived S19 XML contains title, all authors, DOI, license, retrieval date, source hash, and third-party notice; publish no private location or account details. | pending_maintainer | — | — |
 | REG | Four historical ClinicalTrials.gov versions | Accept official history locators S20 v20, S17 v13, S4 v32, and S9 v26; keep current API responses separately labeled. | accepted | 2026-10-23 | @aditmer |
 | PEC | PEC-Direct overlap handling | Accept conservative program-level grouping; preserve known partial overlap and uncertainty about other participant overlap. | accepted | 2026-10-23 | @aditmer |
 | ARCHIVE | Q3 private source preservation policy | Approve private OneDrive with restricted access, content-addressed naming, no-overwrite procedures, verified cloud restores, and independent backups where permitted; accept its deletion, account-access, and retention risks and that it is not immutable. | approved | 2026-10-23 | @aditmer |
@@ -35,6 +36,15 @@ blocked until assigned reviewers' authorized access is verified. None of
 these decisions authorizes redistribution of copyrighted publisher files.
 
 `recommended`, `pending_maintainer`, and `blocked` are not approvals.
+
+Before final G1 authorization, all eight frozen sources must retain explicit
+dated maintainer approval of their matching manifest versions. The separate
+`S19-INVENTORY` row must be marked `approved` with the confirmation date and
+maintainer only after the required private attribution fields have been
+checked. General rights-review text, source approval, and the accepted restore
+are not substitutes for that confirmation. No new upload or restore is needed,
+and no private inventory contents, location, or account details should be
+published. This records the existing close-out requirement, not a new gate.
 
 ## Final source decisions requested
 
