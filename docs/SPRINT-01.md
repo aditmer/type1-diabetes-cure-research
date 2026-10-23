@@ -2,6 +2,8 @@
 
 **Window:** 22 October–4 November 2026 (inclusive). **Goal:** establish a reproducible, source-auditable map of major cure-relevant approaches and failure modes. This sprint produces research infrastructure and an evidence snapshot; it does not conduct experiments or make treatment recommendations.
 
+**Closeout — 23 October 2026:** all five original research issues are closed and their work is merged into `main`. The evidence-baseline scope completed early; the planned window above and original day plan below are retained, not treated as elapsed. [Sprint 02](SPRINT-02.md) now defines the first computational research handoff.
+
 ## Workstreams and completion criteria
 
 1. **Charter and evidence rules** — publish mission, terminology, safety boundary, source ranking, claim scoring, and correction policy. Complete in this baseline.
@@ -13,13 +15,25 @@
 
 ## Issue board
 
-Issues are created in GitHub as independently reviewable tasks and are linked below after publication:
+GitHub issue states and merged PRs checked 23 October 2026:
 
 - [x] [Issue 1 — audit stem-cell-derived islet replacement and registry status](https://github.com/aditmer/type1-diabetes-cure-research/issues/1)
 - [x] [Issue 2 — audit immune-evasive/islet encapsulation approaches and failure modes](https://github.com/aditmer/type1-diabetes-cure-research/issues/2)
 - [x] [Issue 3 — separate immune prevention, delay, remission, and cure evidence](https://github.com/aditmer/type1-diabetes-cure-research/issues/3) — stage 2 onset delay and recent-onset stage 3 beta-cell preservation are separately documented and tracked.
-- [ ] [Issue 4 — build and validate failure-mode evidence matrix](https://github.com/aditmer/type1-diabetes-cure-research/issues/4) — matrix and Sprint 02 decision memo prepared in this branch; pending PR review and merge.
+- [x] [Issue 4 — build and validate failure-mode evidence matrix](https://github.com/aditmer/type1-diabetes-cure-research/issues/4) — merged in [PR #19](https://github.com/aditmer/type1-diabetes-cure-research/pull/19).
 - [x] [Issue 5 — define minimum outcome set and evidence review checklist](https://github.com/aditmer/type1-diabetes-cure-research/issues/5)
+
+Replacement evidence and the five-strategy islet comparison merged in [PR #11](https://github.com/aditmer/type1-diabetes-cure-research/pull/11) and [PR #12](https://github.com/aditmer/type1-diabetes-cure-research/pull/12). Immune-evasion/encapsulation and minimum-outcome work merged in [PR #13](https://github.com/aditmer/type1-diabetes-cure-research/pull/13) and [PR #18](https://github.com/aditmer/type1-diabetes-cure-research/pull/18). The stage-specific prevention/preservation audit merged in [PR #20](https://github.com/aditmer/type1-diabetes-cure-research/pull/20). The additional dataset-feasibility task, [Issue #14](https://github.com/aditmer/type1-diabetes-cure-research/issues/14), is closed via [PR #21](https://github.com/aditmer/type1-diabetes-cure-research/pull/21).
+
+## What the baseline enables
+
+The sprint created source-linked evidence, trial, and failure-mode CSVs; product-specific human and preclinical evidence reviews; minimum-outcome/claim rules; ranked research questions; and dataset-feasibility decisions. Provenance fields, registry check dates, a validator, unit tests, and CI make the evidence infrastructure auditable. These deliverables are an evidence baseline, not an experiment or proof of cure.
+
+Human reports include insulin independence under immunosuppression in selected zimislecel recipients (S3) and graft function without immunosuppression in one repeatedly reported UP421 recipient (S5/S8), not independent replication or proof of cure. Mouse and macaque immune-evasion findings (S14/S16) remain preclinical; they cannot supply human safety or efficacy estimates. The [evidence tracker](../data/evidence.csv) preserves source-specific denominators, windows, harms, and limitations rather than pooling these findings.
+
+Important gaps remain: long-term benefit and harms without systemic immunosuppression; direct measurements distinguishing immune injury from oxygenation, fibrosis, dose, or product effects; independent replication; and consistent endpoint-specific denominators, follow-up, censoring, and cohort identity. Small uncontrolled human cohorts and animal findings cannot resolve these gaps. Inaccessible full text and unextracted fields remain unknown, not negative outcomes; [Issue #16](https://github.com/aditmer/type1-diabetes-cure-research/issues/16) remains open as lower-priority verification work.
+
+The [priority rationale](SPRINT-02-RESEARCH-PRIORITIES.md) and [completed feasibility assessment](DATASET-FEASIBILITY.md) explain the transition from collecting evidence to testing a bounded assumption reproducibly. Q1 lacks enough independent hypoxia donors; Q2 lacks established comparable animal-level data and replication. Q3 is a **conditional go** for a source-level reporting-robustness pilot under [Issue #15](https://github.com/aditmer/type1-diabetes-cure-research/issues/15), which remains open. It tests whether evidence assessments withstand harmonization, not treatment efficacy or a biological cure mechanism.
 
 ## Day plan
 
