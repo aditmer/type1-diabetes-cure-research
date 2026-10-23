@@ -18,8 +18,8 @@ Issues are created in GitHub as independently reviewable tasks and are linked be
 - [x] [Issue 1 — audit stem-cell-derived islet replacement and registry status](https://github.com/aditmer/type1-diabetes-cure-research/issues/1)
 - [x] [Issue 2 — audit immune-evasive/islet encapsulation approaches and failure modes](https://github.com/aditmer/type1-diabetes-cure-research/issues/2)
 - [ ] [Issue 3 — separate immune prevention, delay, remission, and cure evidence](https://github.com/aditmer/type1-diabetes-cure-research/issues/3)
-- [ ] [Issue 4 — build and validate failure-mode evidence matrix](https://github.com/aditmer/type1-diabetes-cure-research/issues/4)
-- [ ] [Issue 5 — define minimum outcome set and evidence review checklist](https://github.com/aditmer/type1-diabetes-cure-research/issues/5) — implementation prepared; pending PR review and merge.
+- [ ] [Issue 4 — build and validate failure-mode evidence matrix](https://github.com/aditmer/type1-diabetes-cure-research/issues/4) — matrix and Sprint 02 decision memo prepared in this branch; pending PR review and merge.
+- [x] [Issue 5 — define minimum outcome set and evidence review checklist](https://github.com/aditmer/type1-diabetes-cure-research/issues/5)
 
 ## Day plan
 

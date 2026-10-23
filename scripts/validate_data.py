@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {
     "sources.csv": ["source_id", "title", "authors_or_organization", "source_type", "doi", "pmid", "registry_id", "publication_date", "source_date", "source_url", "accessed_date", "notes", "registry_last_posted", "registry_last_verified", "enrollment_count", "enrollment_type", "results_posted", "registry_name"],
     "evidence.csv": ["claim_id", "claim_type", "claim", "source_id", "evidence_level", "evidence_basis", "confidence_0_to_5", "population_or_model", "design", "n", "outcome_numerator", "analysis_denominator", "endpoint", "follow_up", "cointerventions", "limitations", "status_checked", "notes", "outcome_type", "outcome_value", "outcome_unit", "outcome_timepoint", "baseline_value", "baseline_unit", "baseline_timepoint"],
+    "failure-modes.csv": ["matrix_id", "failure_mode", "category", "affected_modalities", "observed_evidence", "evidence_scope", "population_or_model", "human_relevance", "evidence_status", "hypothesized_mechanism", "source_ids", "confidence_0_to_5", "confidence_rationale", "unresolved_questions", "competing_explanations", "next_discriminating_test", "patient_impact_1_to_3", "evidence_gap_1_to_3", "open_data_feasibility_1_to_3", "computational_tractability_1_to_3", "safety_relevance_1_to_3", "research_tractability_1_to_3", "priority_score", "priority_rank", "priority_rationale", "candidate_data"],
     "trials.csv": ["registry_id", "intervention", "modality", "phase", "status", "status_checked", "population", "primary_endpoint", "record_url", "known_limitations", "registry_last_posted", "registry_last_verified", "enrollment_count", "enrollment_type", "results_posted", "registry_name"],
     "literature-searches.csv": ["query_id", "database", "searched_on", "exact_query", "result_count", "parameters", "notes"],
     "literature-screening.csv": ["screening_id", "query_id", "pmid", "title", "decision", "decision_reason", "source_id"],
@@ -28,6 +29,25 @@ TRIAL_STATUSES = {"RECRUITING", "NOT_YET_RECRUITING", "ACTIVE_NOT_RECRUITING", "
 DATE_FIELDS = {"publication_date", "source_date", "accessed_date", "status_checked", "searched_on", "registry_last_posted"}
 ENROLLMENT_TYPES = {"ACTUAL", "ESTIMATED"}
 OUTCOME_TYPES = {"binary", "continuous", "qualitative", "not_reported", "not_applicable"}
+FAILURE_MODE_CATEGORIES = {"biological", "engineering", "clinical", "regulatory", "access", "safety"}
+FAILURE_MODE_SCOPES = {"human", "preclinical", "human_and_preclinical", "human_and_registry", "registry_or_regulatory"}
+FAILURE_MODE_STATUSES = {"observed_limitation", "evidence_gap", "mixed"}
+FAILURE_MODE_SUPPORT_TYPES = {
+    "Peer-reviewed primary study",
+    "Clinical trial registry",
+    "FDA-approved prescribing information",
+    "Regulatory announcement",
+    "Regulatory review",
+    "Regulatory draft guidance",
+}
+FAILURE_MODE_SCORE_FIELDS = (
+    "patient_impact_1_to_3",
+    "evidence_gap_1_to_3",
+    "open_data_feasibility_1_to_3",
+    "computational_tractability_1_to_3",
+    "safety_relevance_1_to_3",
+    "research_tractability_1_to_3",
+)
 
 def valid_date(value):
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
@@ -85,6 +105,8 @@ def read_table(name):
         raise ValueError(f"{name}: no data rows")
     ids = set()
     for row_number, row in enumerate(rows, start=2):
+        if None in row or any(value is None for value in row.values()):
+            raise ValueError(f"{name}:{row_number}: column count does not match header")
         key = row[REQUIRED[name][0]].strip()
         if not key or key in ids:
             raise ValueError(f"{name}:{row_number}: missing or duplicate ID {key!r}")
@@ -279,15 +301,84 @@ def validate_literature_log(searches, screening, source_ids):
         if expected < 0 or counts[row["query_id"]] != expected:
             raise ValueError(f"literature-searches.csv:{row_number}: result_count does not match screened identifiers")
 
+def validate_failure_modes(rows, sources):
+    if not 8 <= len(rows) <= 12:
+        raise ValueError("failure-modes.csv: expected 8 to 12 distinct failure modes")
+
+    source_types = {source["source_id"]: source["source_type"] for source in sources}
+    seen_ids = set()
+    seen_modes = set()
+    scored_rows = []
+    for row_number, row in enumerate(rows, start=2):
+        matrix_id = (row.get("matrix_id") or "").strip()
+        if not matrix_id or matrix_id in seen_ids:
+            raise ValueError(f"failure-modes.csv:{row_number}: missing or duplicate matrix_id {matrix_id!r}")
+        seen_ids.add(matrix_id)
+        for field in REQUIRED["failure-modes.csv"]:
+            if not (row.get(field) or "").strip():
+                raise ValueError(f"failure-modes.csv:{row_number}: {field} is required; use an explicit unknown or evidence-gap statement")
+        mode = re.sub(r"[^a-z0-9]+", " ", row["failure_mode"].lower()).strip()
+        if mode in seen_modes:
+            raise ValueError(f"failure-modes.csv:{row_number}: duplicate failure_mode")
+        seen_modes.add(mode)
+
+        categories = {value.strip() for value in row["category"].split("|")}
+        if not categories or categories - FAILURE_MODE_CATEGORIES:
+            raise ValueError(f"failure-modes.csv:{row_number}: invalid category {sorted(categories - FAILURE_MODE_CATEGORIES)}")
+        if row["evidence_scope"] not in FAILURE_MODE_SCOPES:
+            raise ValueError(f"failure-modes.csv:{row_number}: invalid evidence_scope {row['evidence_scope']!r}")
+        if row["evidence_status"] not in FAILURE_MODE_STATUSES:
+            raise ValueError(f"failure-modes.csv:{row_number}: invalid evidence_status {row['evidence_status']!r}")
+        cited = {value.strip() for value in row["source_ids"].split("|") if value.strip()}
+        unknown = cited - source_types.keys()
+        if not cited or unknown:
+            raise ValueError(f"failure-modes.csv:{row_number}: unknown or missing source IDs: {sorted(unknown)}")
+        if not any(source_types[source_id] in FAILURE_MODE_SUPPORT_TYPES for source_id in cited):
+            raise ValueError(f"failure-modes.csv:{row_number}: at least one primary study or authoritative source is required; a dataset candidate or sponsor report alone is insufficient")
+        try:
+            confidence = int(row["confidence_0_to_5"])
+        except ValueError as exc:
+            raise ValueError(f"failure-modes.csv:{row_number}: confidence must be an integer") from exc
+        if not 0 <= confidence <= 5:
+            raise ValueError(f"failure-modes.csv:{row_number}: confidence must be from 0 to 5")
+
+        scores = {}
+        for field in FAILURE_MODE_SCORE_FIELDS:
+            try:
+                scores[field] = int(row[field])
+            except ValueError as exc:
+                raise ValueError(f"failure-modes.csv:{row_number}: {field} must be an integer from 1 to 3") from exc
+            if scores[field] not in {1, 2, 3}:
+                raise ValueError(f"failure-modes.csv:{row_number}: {field} must be an integer from 1 to 3")
+        score = sum(scores.values())
+        if row["priority_score"] != str(score):
+            raise ValueError(f"failure-modes.csv:{row_number}: priority_score must equal the six component scores ({score})")
+        try:
+            rank = int(row["priority_rank"])
+        except ValueError as exc:
+            raise ValueError(f"failure-modes.csv:{row_number}: priority_rank must be an integer") from exc
+        if rank < 1:
+            raise ValueError(f"failure-modes.csv:{row_number}: priority_rank must be positive")
+        scored_rows.append((rank, -score, -scores["safety_relevance_1_to_3"], -scores["research_tractability_1_to_3"], matrix_id))
+
+    if sorted(item[0] for item in scored_rows) != list(range(1, len(rows) + 1)):
+        raise ValueError("failure-modes.csv: priority_rank values must be unique and contiguous")
+    expected_order = sorted(scored_rows, key=lambda item: (item[1], item[2], item[3], item[4]))
+    for expected_rank, item in enumerate(expected_order, start=1):
+        if item[0] != expected_rank:
+            raise ValueError("failure-modes.csv: ranks must follow score, safety relevance, research tractability, then matrix_id")
+
 if __name__ == "__main__":
     sources = read_table("sources.csv")
     evidence = read_table("evidence.csv")
+    failure_modes = read_table("failure-modes.csv")
     trials = read_table("trials.csv")
     searches = read_table("literature-searches.csv")
     screening = read_table("literature-screening.csv")
     validate_sources(sources)
     source_ids = {row["source_id"] for row in sources}
     validate_evidence(evidence, source_ids)
+    validate_failure_modes(failure_modes, sources)
     validate_trials(trials)
     validate_literature_log(searches, screening, source_ids)
-    print(f"sources.csv: {len(sources)} rows; evidence.csv: {len(evidence)} rows; trials.csv: {len(trials)} rows; literature-searches.csv: {len(searches)} queries; literature-screening.csv: {len(screening)} results; integrity checks passed")
+    print(f"sources.csv: {len(sources)} rows; evidence.csv: {len(evidence)} rows; failure-modes.csv: {len(failure_modes)} rows; trials.csv: {len(trials)} rows; literature-searches.csv: {len(searches)} queries; literature-screening.csv: {len(screening)} results; integrity checks passed")
