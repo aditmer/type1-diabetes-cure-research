@@ -12,6 +12,7 @@ An open, evidence-led research initiative to map credible paths toward a durable
 - [Landscape and failure modes](docs/LANDSCAPE-AND-FAILURE-MODES.md): initial evidence map, limitations, and open questions.
 - [Failure-mode evidence matrix](data/failure-modes.csv): source-linked, scored matrix; this CSV is the authoritative dataset.
 - [Sprint 02 execution plan](docs/SPRINT-02.md): conditional Q3 decision, classification contract, implementation gates, and Issue #15 handoff.
+- [Q3 preregistration](experiments/q3/PREREGISTRATION.md) and [G1 source feasibility](experiments/q3/SOURCE-FEASIBILITY.md): Phase 1 specifications and documented access/version blockers; no-go for execution pending resolution and maintainer approval. No experimental results generated.
 - [Sprint 02 research priorities](docs/SPRINT-02-RESEARCH-PRIORITIES.md): authoritative scoring rationale and candidate research questions.
 - [Public dataset feasibility](docs/DATASET-FEASIBILITY.md): verified file access, reuse limits, biological units, and the Issue #14 pilot decision.
 - [Cell-replacement comparison](docs/CELL-REPLACEMENT-COMPARISON.md): source-backed comparison of five islet-replacement strategies and remaining barriers.
