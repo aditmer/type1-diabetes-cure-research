@@ -287,17 +287,38 @@ def validate_q3_g1_authorization(decision_text, manifest):
         return
 
     sources = {row["source_id"]: row for row in manifest}
-    for source_id in ("S18", "S19", "S23"):
+    frozen_source_ids = {"S13", "S18", "S19", "S23", "S20", "S17", "S4", "S9"}
+    if len(manifest) != len(frozen_source_ids) or set(sources) != frozen_source_ids:
+        raise ValueError("G1 authorization requires exactly the eight frozen sources")
+    for source_id in sorted(frozen_source_ids):
         row = sources[source_id]
         if (
             row["maintainer_approval_status"] != "approved"
+            or not row["source_version_id"].strip()
             or row["approved_version_id"] != row["source_version_id"]
+            or not valid_date(row["approval_date"])
+            or not row["approving_maintainer"].strip()
+            or row["approving_maintainer"].strip() in {"—", "-"}
         ):
             raise ValueError(f"G1 authorization requires an approved matching source version for {source_id}")
     if not sources["S19"]["rights_review_evidence"].strip():
         raise ValueError("G1 authorization requires documented S19 rights-review evidence")
     if sources["S23"]["assigned_reviewer_access_status"] != "confirmed":
         raise ValueError("G1 authorization requires confirmed S23 assigned-reviewer access")
+    inventory_rows = [
+        [cell.strip() for cell in line.strip().strip("|").split("|")]
+        for line in decision_text.splitlines()
+        if line.startswith("| S19-INVENTORY |")
+    ]
+    if (
+        len(inventory_rows) != 1
+        or len(inventory_rows[0]) != 6
+        or inventory_rows[0][3] != "approved"
+        or not valid_date(inventory_rows[0][4])
+        or not inventory_rows[0][5]
+        or inventory_rows[0][5] in {"—", "-"}
+    ):
+        raise ValueError("G1 authorization requires a dated maintainer confirmation of S19 private inventory")
 
 
 def validate_q3_retrieval_log(rows):
