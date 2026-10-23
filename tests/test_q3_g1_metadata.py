@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 
 from scripts.validate_data import (
@@ -25,7 +26,7 @@ class Q3G1MetadataTests(unittest.TestCase):
         return read_q3_csv(self.q3 / "retrieval-log.csv", Q3_RETRIEVAL_LOG_FIELDS)
 
     def test_repository_q3_metadata_is_valid(self):
-        self.assertEqual(validate_q3_metadata(), (8, 42))
+        self.assertEqual(validate_q3_metadata(), (8, 44))
 
     def test_only_explicitly_accepted_source_versions_are_approved(self):
         approved = {
@@ -63,6 +64,55 @@ class Q3G1MetadataTests(unittest.TestCase):
         self.assertNotIn("Ditmer", record["request_url"])
         s19 = next(row for row in self.manifest() if row["source_id"] == "S19")
         self.assertEqual(s19["archive_reference"], "private-archive-alias:OD-S19-3e14ef3dcb7f")
+
+    def test_source_version_archive_and_rights_statuses_are_independent(self):
+        s19 = next(row for row in self.manifest() if row["source_id"] == "S19")
+        self.assertEqual(s19["maintainer_approval_status"], "pending_maintainer")
+        self.assertEqual(s19["approved_version_id"], "")
+        self.assertEqual(s19["archive_status"], "verified")
+        self.assertEqual(s19["rights_review_status"], "third_party_review_pending")
+        event = next(
+            row for row in self.retrieval_log()
+            if row["artifact_id"] == "S19-onedrive-restore-2026-10-23T181816Z"
+        )
+        self.assertEqual(event["verification_outcome"], "archive_restore_success")
+        self.assertEqual(event["bytes"], "122548")
+        self.assertEqual(event["response_sha256"], s19["sha256"])
+
+    def test_s23_account_rights_cannot_be_represented_as_verified(self):
+        rows = self.manifest()
+        s23 = next(row for row in rows if row["source_id"] == "S23")
+        self.assertEqual(s23["rights_review_status"], "account_terms_unverified")
+        self.assertEqual(s23["maintainer_approval_status"], "pending_maintainer")
+        self.assertEqual(s23["archive_status"], "pending_maintainer")
+        self.assertEqual(s23["approved_version_id"], "")
+        s23["rights_review_status"] = "conditions_documented"
+        with self.assertRaisesRegex(ValueError, "S23 account-specific rights cannot be represented as verified"):
+            validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+
+    def test_g1_authorization_is_not_inferred_from_individual_approvals(self):
+        decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
+        g1_row = next(line for line in decisions.splitlines() if line.startswith("| G1 |"))
+        self.assertIn("| pending_maintainer |", g1_row)
+        self.assertIn("| — | — |", g1_row)
+        self.assertIn("Final G1 authorization remains pending", decisions)
+
+    def test_public_q3_metadata_contains_no_private_onedrive_locations(self):
+        private_location = re.compile(
+            r"https?://[^\s,;\"<>]*(?:1drv\.ms|onedrive(?:\.live)?\.com|"
+            r"(?:[\w-]+\.)*sharepoint\.com|d\.docs\.live\.net)",
+            re.IGNORECASE,
+        )
+        account_email = re.compile(
+            r"\b[^\s,;\"<>@]+@(?:outlook|hotmail|live|msn)\.[a-z.]+\b",
+            re.IGNORECASE,
+        )
+        for path in self.q3.iterdir():
+            if path.is_file() and path.suffix in {".csv", ".md", ".json"}:
+                text = path.read_text(encoding="utf-8")
+                with self.subTest(path=path.name):
+                    self.assertIsNone(private_location.search(text))
+                    self.assertIsNone(account_email.search(text))
 
     def test_manifest_must_match_all_frozen_report_targets(self):
         rows = self.manifest()

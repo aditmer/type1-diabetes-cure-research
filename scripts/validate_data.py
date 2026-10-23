@@ -66,13 +66,18 @@ Q3_SOURCE_MANIFEST_FIELDS = [
     "approving_maintainer", "archive_status", "archive_reference",
     "archive_recovery_evidence", "citation_title", "citation_authors",
     "archive_object_id", "archive_restore_event_id", "archive_restore_bytes",
-    "archive_restore_sha256",
+    "archive_restore_sha256", "rights_review_status",
 ]
 Q3_RETRIEVAL_LOG_FIELDS = [
     "artifact_id", "source_id", "retrieved_utc", "request_url", "http_status",
     "media_type", "bytes", "response_sha256", "verification_outcome",
     "archive_object_id",
 ]
+Q3_RIGHTS_REVIEW_STATUSES = {
+    "conditions_documented",
+    "third_party_review_pending",
+    "account_terms_unverified",
+}
 Q3_SHA256 = re.compile(r"[0-9a-f]{64}")
 
 def valid_date(value):
@@ -128,6 +133,12 @@ def validate_q3_source_manifest(rows, expected_reports, retrieval_log):
             raise ValueError(f"source-manifest.csv:{row_number}: S19 citation title is required")
         if source_id == "S19" and not row["citation_authors"].strip():
             raise ValueError(f"source-manifest.csv:{row_number}: S19 author attribution is required")
+        if row["rights_review_status"] not in Q3_RIGHTS_REVIEW_STATUSES:
+            raise ValueError(f"source-manifest.csv:{row_number}: invalid rights review status")
+        if source_id == "S19" and row["rights_review_status"] != "third_party_review_pending":
+            raise ValueError(f"source-manifest.csv:{row_number}: S19 third-party review must remain pending")
+        if source_id == "S23" and row["rights_review_status"] != "account_terms_unverified":
+            raise ValueError(f"source-manifest.csv:{row_number}: S23 account-specific rights cannot be represented as verified")
         missing = [field for field in required if not row[field].strip()]
         if missing:
             raise ValueError(f"source-manifest.csv:{row_number}: empty required provenance fields: {missing}")
