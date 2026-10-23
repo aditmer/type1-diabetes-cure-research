@@ -241,41 +241,54 @@ def apply_q3_json_patch(document, operations):
     result = copy.deepcopy(document)
     for index, operation in enumerate(operations, start=1):
         if operation.get("op") not in {"add", "replace"}:
-            raise ValueError(f"rules-v1.1-proposed.json: unsupported operation at index {index}")
+            raise ValueError(f"rules-v1.1-amendment-2026-10-23-01.json: unsupported operation at index {index}")
         pointer = operation.get("path", "")
         if not pointer.startswith("/"):
-            raise ValueError(f"rules-v1.1-proposed.json: invalid JSON Pointer at index {index}")
+            raise ValueError(f"rules-v1.1-amendment-2026-10-23-01.json: invalid JSON Pointer at index {index}")
         parts = [part.replace("~1", "/").replace("~0", "~") for part in pointer[1:].split("/")]
         parent = result
         for part in parts[:-1]:
             if not isinstance(parent, dict) or part not in parent:
-                raise ValueError(f"rules-v1.1-proposed.json: unresolved path at index {index}: {pointer}")
+                raise ValueError(f"rules-v1.1-amendment-2026-10-23-01.json: unresolved path at index {index}: {pointer}")
             parent = parent[part]
         key = parts[-1]
         if not isinstance(parent, dict):
-            raise ValueError(f"rules-v1.1-proposed.json: non-object target at index {index}: {pointer}")
+            raise ValueError(f"rules-v1.1-amendment-2026-10-23-01.json: non-object target at index {index}: {pointer}")
         if operation["op"] == "replace" and key not in parent:
-            raise ValueError(f"rules-v1.1-proposed.json: replace target missing at index {index}: {pointer}")
+            raise ValueError(f"rules-v1.1-amendment-2026-10-23-01.json: replace target missing at index {index}: {pointer}")
         parent[key] = operation["value"]
     return result
 
 
 def validate_q3_amendment(directory, rules):
-    amendment_path = directory / "rules-v1.1-proposed.json"
+    amendment_path = directory / "rules-v1.1-amendment-2026-10-23-01.json"
     amendment = json.loads(amendment_path.read_text(encoding="utf-8"))
+    approval = amendment.get("approval_provenance", {})
+    if (
+        amendment.get("amendment_id") != "2026-10-23-01"
+        or amendment.get("status") != "approved_prospectively"
+        or amendment.get("effective_version") != "1.1"
+        or approval.get("approval_date") != amendment.get("date_utc")
+        or not approval.get("approving_maintainer")
+    ):
+        raise ValueError("rules-v1.1-amendment-2026-10-23-01.json: approval metadata is incomplete or inconsistent")
     base_bytes = (directory / "rules-v1.0.json").read_bytes()
     base_hash = hashlib.sha256(base_bytes).hexdigest()
     if base_hash != amendment["base_sha256"]:
-        raise ValueError("rules-v1.1-proposed.json: base SHA-256 does not match frozen rules")
+        raise ValueError("rules-v1.1-amendment-2026-10-23-01.json: base SHA-256 does not match frozen rules")
     patched = apply_q3_json_patch(rules, amendment["patch"])
     if patched["version"] != "1.1" or patched["reports"] != rules["reports"]:
-        raise ValueError("rules-v1.1-proposed.json: patch must create v1.1 without changing frozen reports")
+        raise ValueError("rules-v1.1-amendment-2026-10-23-01.json: patch must create v1.1 without changing frozen reports")
     if patched["harmonized_v1_0"]["requires_provisional_predicates"] != ["P1", "P2", "P3"]:
-        raise ValueError("rules-v1.1-proposed.json: harmonized support must still imply provisional support")
+        raise ValueError("rules-v1.1-amendment-2026-10-23-01.json: harmonized support must still imply provisional support")
     if patched["field_dictionary"]["predicate_mapping"]["inaccessible_or_not_yet_extracted_or_conflicting"] != "unknown":
-        raise ValueError("rules-v1.1-proposed.json: inaccessible or incomplete information must remain unknown")
+        raise ValueError("rules-v1.1-amendment-2026-10-23-01.json: inaccessible or incomplete information must remain unknown")
     if patched["field_dictionary"]["value_policy"]["reported"] == "":
-        raise ValueError("rules-v1.1-proposed.json: reported source facts must be preserved")
+        raise ValueError("rules-v1.1-amendment-2026-10-23-01.json: reported source facts must be preserved")
+    governing_path = directory / "rules-v1.1.json"
+    governing = json.loads(governing_path.read_text(encoding="utf-8"))
+    if governing != patched:
+        raise ValueError("rules-v1.1.json: governing rules must exactly match the approved amendment applied to frozen v1.0")
 
 
 def validate_q3_metadata(directory=ROOT):

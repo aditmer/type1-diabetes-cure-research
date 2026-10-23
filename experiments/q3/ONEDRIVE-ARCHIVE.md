@@ -1,25 +1,24 @@
 # Q3 private OneDrive archive and restore procedure
 
-**Status:** procedure prepared; no OneDrive upload, cloud restore, S19 archive,
-or S23 rights decision has been verified. OneDrive is the maintainer's
-selected storage-service preference, not approval of the archival policy or
-permission to retain the Cell Press PDFs.
+**Status:** the ARCHIVE policy was approved by `@aditmer` on 2026-10-23.
+S19 is stored in the private archive and its cloud download passed the exact
+byte/hash restore check; the maintainer accepted that evidence. S23 remains
+blocked pending a permitted retention or lawful reacquisition path. OneDrive
+approval does not authorize retention or redistribution of Cell Press PDFs.
 
 ## Proposed archive policy decision
 
 The original G1 recommendation called for an immutable institutional archive.
 OneDrive version history is not write-once retention and does not guarantee
-that an object cannot be changed or deleted. The proposed, proportionate
+that an object cannot be changed or deleted. The approved, proportionate
 alternative for this small pilot is a private OneDrive archive with
 version-specific content-addressed filenames, a no-overwrite rule, a
 separately protected inventory, exact-byte restore checks, and an independent
 backup where the applicable rights allow it.
 
-This alternative retains risks of account loss, deletion, administrative
-access, sync errors, and limited recovery. It is not equivalent to immutable
-institutional preservation. Do not set the decision to approved or mark an
-archive verified until the maintainer records explicit acceptance and the
-object's fresh cloud download has passed the checks below.
+The maintainer explicitly accepted the risks of account loss, deletion,
+administrative access, sync errors, and limited recovery on 2026-10-23. This
+is not equivalent to immutable institutional preservation.
 
 ## Folder layout and access
 
@@ -54,8 +53,14 @@ assertion of a publisher version-of-record number). Expected source bytes:
 122,548; SHA-256
 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`.
 The live Europe PMC XML was fetched and re-verified on
-`2026-10-23T17:15:01Z`; this confirms source identity and integrity only, not
-an archive deposit.
+`2026-10-23T17:15:01Z`; this confirms source identity and integrity only.
+The exact XML was subsequently uploaded to the approved private archive.
+A fresh non-synced OneDrive web download matched 122,548 bytes and SHA-256
+`3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`.
+Restore event `S19-onedrive-restore-2026-10-23T181816Z` is recorded in the
+public log under an opaque alias; the actual location and item details remain
+in the private inventory. This verifies restoration, not source-version
+approval or third-party credit-line review.
 
 1. Review third-party credit lines in the XML. The article states CC BY 4.0,
    but individual third-party exceptions still apply.
@@ -155,7 +160,7 @@ missing, do not claim S23 preservation or G1 completion.
 ## Public evidence and status transitions
 
 Use a non-identifying public `archive_reference` such as
-`OneDrive:T1D-Research/Q3/Private-Source-Archive/S19` and a safe opaque
+`private-archive-alias:OD-S19-3e14ef3dcb7f` and a safe opaque
 `archive_object_id` alias backed by the private inventory. The actual OneDrive
 item ID/link belongs only in that private inventory.
 

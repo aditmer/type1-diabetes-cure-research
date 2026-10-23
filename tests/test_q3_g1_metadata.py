@@ -27,6 +27,43 @@ class Q3G1MetadataTests(unittest.TestCase):
     def test_repository_q3_metadata_is_valid(self):
         self.assertEqual(validate_q3_metadata(), (8, 42))
 
+    def test_only_explicitly_accepted_source_versions_are_approved(self):
+        approved = {
+            row["source_id"]: row
+            for row in self.manifest()
+            if row["maintainer_approval_status"] == "approved"
+        }
+        self.assertEqual(set(approved), {"S13", "S20", "S17", "S4", "S9"})
+        for row in approved.values():
+            self.assertEqual(row["approved_version_id"], row["source_version_id"])
+            self.assertEqual(row["approval_date"], "2026-10-23")
+            self.assertEqual(row["approving_maintainer"], "@aditmer")
+
+    def test_governing_v1_1_matches_approved_amendment(self):
+        validate_q3_amendment(self.q3, self.rules)
+        amendment = json.loads(
+            (self.q3 / "rules-v1.1-amendment-2026-10-23-01.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(amendment["status"], "approved_prospectively")
+        self.assertEqual(amendment["effective_version"], "1.1")
+        governing = json.loads((self.q3 / "rules-v1.1.json").read_text(encoding="utf-8"))
+        self.assertEqual(governing["reports"], self.rules["reports"])
+        for key in ("sample_size", "context_only_source_ids", "source_version_policy",
+                    "overlap", "classification", "primary_outcome", "sensitivity",
+                    "invariants_and_stops"):
+            with self.subTest(key=key):
+                self.assertEqual(governing[key], self.rules[key])
+
+    def test_public_restore_record_uses_only_the_opaque_archive_alias(self):
+        record = next(
+            event for event in self.retrieval_log()
+            if event["artifact_id"] == "S19-onedrive-restore-2026-10-23T181816Z"
+        )
+        self.assertEqual(record["request_url"], "archive-alias://OD-S19-3e14ef3dcb7f")
+        self.assertNotIn("Ditmer", record["request_url"])
+        s19 = next(row for row in self.manifest() if row["source_id"] == "S19")
+        self.assertEqual(s19["archive_reference"], "private-archive-alias:OD-S19-3e14ef3dcb7f")
+
     def test_manifest_must_match_all_frozen_report_targets(self):
         rows = self.manifest()
         rows[0]["target_population_id"] = "different-target"
@@ -60,7 +97,7 @@ class Q3G1MetadataTests(unittest.TestCase):
         s19 = next(row for row in rows if row["source_id"] == "S19")
         s19.update({
             "archive_status": "verified",
-            "archive_reference": "OneDrive:T1D-Research/Q3/Private-Source-Archive/S19",
+            "archive_reference": "private-archive-alias:OD-S19-3e14ef3dcb7f",
             "archive_recovery_evidence": "fresh cloud download checked",
             "archive_object_id": "OD-S19-3e14ef3dcb7f",
             "archive_restore_event_id": "S19-onedrive-restore-pending",
@@ -131,7 +168,8 @@ class Q3G1MetadataTests(unittest.TestCase):
 
     def test_recommendation_cannot_populate_maintainer_approval_fields(self):
         rows = self.manifest()
-        rows[0]["approved_version_id"] = rows[0]["source_version_id"]
+        s18 = next(row for row in rows if row["source_id"] == "S18")
+        s18["approved_version_id"] = s18["source_version_id"]
         with self.assertRaisesRegex(ValueError, "recommendations cannot populate approval fields"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
