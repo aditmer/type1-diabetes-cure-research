@@ -1,6 +1,6 @@
 # Sprint 02 — Reproducible Endpoint-Harmonization Pilot
 
-**Execution plan v1.0 — 23 October 2026.** Primary workstream: [Issue #15](https://github.com/aditmer/type1-diabetes-cure-research/issues/15). **Decision owner:** repository maintainer (@aditmer), with contributor source adjudication and PR review before accepting results. Work is milestone-gated, not tied to an invented sprint end date. This document closes the planning handoff in [Issue #17](https://github.com/aditmer/type1-diabetes-cure-research/issues/17); it does not authorize outcome analysis before the gates below.
+**Execution plan v1.1 — 23 October 2026.** Primary workstream: [Issue #15](https://github.com/aditmer/type1-diabetes-cure-research/issues/15). **Decision owner:** repository maintainer (@aditmer), with contributor source adjudication and PR review before accepting results. Work is milestone-gated, not tied to an invented sprint end date. This document closes the planning handoff in [Issue #17](https://github.com/aditmer/type1-diabetes-cure-research/issues/17); it does not authorize outcome analysis before the gates below.
 
 ## Objective and bounded decision
 
@@ -10,14 +10,20 @@ Determine whether source-level evidence assessments remain stable after applying
 
 This pilot measures **reporting support, not treatment efficacy**, biological mechanisms, or clinical superiority. It does not pool populations, estimate treatment effects, rank therapies, or establish cure. The [charter](CHARTER.md) and [minimum-outcomes standard](MINIMUM-OUTCOMES-AND-CLAIM-REVIEW.md) apply. Twelve months is the project's minimum reporting expectation beyond early feasibility, not a regulatory consensus threshold, evidence of multi-year durability, or proof of cure.
 
+### Why this work comes first
+
+The [authoritative ranking and sensitivity rationale](SPRINT-02-RESEARCH-PRIORITIES.md#priorities-and-sensitivity) place FM-01, FM-03, FM-04, FM-05, FM-11, and FM-07 in the same 15/18 leading band: immune recurrence, engraftment, durability, cell-product safety, alloimmune protection, and endpoint comparability. Their queue order is not a demonstrated biological ordering. Q3 addresses FM-07/FM-10 because its aggregate-source path is feasible, not because the biological barriers are resolved or unimportant.
+
+The strongest rival explanations remain immune injury versus oxygenation/fibrosis, cell dose/potency, implantation site, and procedure effects for graft dysfunction; and selection, co-interventions, attrition, endpoint drift, or incomplete extraction for apparent benefit/reporting differences. See the [matrix](../data/failure-modes.csv) for source-linked discriminating tests. Reconsider priority only if Q1 gains adequate independent donor coverage and validation, Q2 gains reusable matched animal-level persistence/function data and replication, or direct product-level measurements and comparators can distinguish graft-failure mechanisms. Failed Q3 access/adjudication gates trigger revision or stopping, not automatic promotion of an untestable biological question.
+
 ## Prespecified question, hypotheses, and analysis unit
 
-**Exact question:** In the fixed candidate source set below, does a source-level classification of support for a comparable 12-month clinical-benefit assessment change between the frozen local-ledger assessment and primary/official-source adjudication with endpoint and cohort harmonization?
+**Exact question:** In the fixed candidate source set below, does provisional source-level support for a 12-month clinical-benefit assessment survive consistent endpoint, denominator, follow-up, cohort-identity, and co-intervention requirements applied to the same adjudicated source facts?
 
-- **H0:** no adjudicable paired report classification changes because of harmonization or extraction/cohort correction, after separating source-version-only differences.
-- **H1:** at least one adjudicable report classification changes for a documented, source-supported harmonization or extraction/cohort correction, not solely because the source version changed.
+- **H0:** every adjudicable report passing the provisional screen also meets the harmonized requirements.
+- **H1:** at least one adjudicable report passes the provisional screen but fails the harmonized requirements for a documented reason.
 
-A validated change contradicts robustness for that report only. Unchanged classifications support stability only for the audited, adjudicable records, including records consistently lacking support; they do not establish mature clinical evidence. Unresolved pairs cannot support H0. Report unresolved coverage even if every resolved pair is unchanged. No significance test, participant-level inference, power claim, or population-wide generalization is planned.
+A validated loss of support contradicts robustness for that report only. Unchanged supported classifications indicate stability only for those audited records, not treatment efficacy. Reports failing both rules describe consistently insufficient support; they are not evidence for H0. Unresolved pairs cannot support H0. If no adjudicable report passes the provisional screen, the robustness hypothesis is untestable in this set. No significance test, participant-level inference, power claim, or population-wide generalization is planned.
 
 **Primary unit:** one versioned source-level report, not a CSV claim, endpoint, participant, or publication treated as an independent cohort. Attach every report to a stable `program_id`, report-population/subcohort ID, and overlap relationship (`same`, `subset`, `distinct within program`, or `uncertain`). Multiple endpoints are fields within a report assessment. Count each source/version once; retain amendments as linked versions rather than extra observations.
 
@@ -27,7 +33,7 @@ Provide a secondary program-level table of report coverage, conflicts, and unres
 
 ## Fixed source set and provenance
 
-Freeze the Git commit and checksums of [evidence](../data/evidence.csv), [sources](../data/sources.csv), and [trials](../data/trials.csv) as the baseline. Extract primary/official materials, not secondary summaries. The following are required inputs; observations below are the existing **22 October 2026 snapshot**, not newly verified registry states.
+Freeze the Git commit and checksums of [evidence](../data/evidence.csv), [sources](../data/sources.csv), and [trials](../data/trials.csv) as the starting extraction ledger. Extract primary/official materials, not secondary summaries. The following are required inputs; observations below are the existing **22 October 2026 snapshot**, not newly verified registry states.
 
 | Sources / program | Required adjudication |
 | --- | --- |
@@ -47,9 +53,16 @@ Use only necessary public aggregate facts and derived annotations. Repository li
 
 Issue #15 must commit a machine-readable **rule v1.0**, data dictionary, source list, and analysis plan before new outcome-dependent extraction or classification. Existing feasibility knowledge is disclosed above; this is prospective prespecification of a pilot, not a claim of blindness to the literature.
 
-Apply the same rule twice: **baseline** uses only the frozen ledger's explicit fields/notes with source-specific attribution; **harmonized** uses adjudicated primary/official evidence and verified population links. Do not infer an undocumented historical maturity rating or silently overwrite baseline gaps. A registry without observed outcomes remains planned-only even when a linked publication reports results.
+Freeze two deterministic rules before extraction and apply both to the **same version of the same adjudicated source facts**:
 
-For each report, require all of the following for `supported`:
+- **Provisional screen:** `supported` means at least one quantitatively reported patient-important clinical endpoint (insulin use/independence, HbA1c, CGM time in range, or severe hypoglycemia), an identifiable report population, and a stated follow-up of at least nominal 12 months (including day 365 or week 52). This screen deliberately does not enforce endpoint-specific timing/denominators, completeness across clinical domains, verified overlap, or co-intervention disclosure. It is a project-defined screen of apparent maturity, not an author claim, efficacy judgment, or historical tracker rating.
+- **Harmonized assessment:** `supported` requires all five conditions below. The fixed nominal 12-month horizon is a stricter comparability convention within the project's minimum-follow-up expectation; a later-only observed outcome may pass the screen but not this fixed-horizon rule. Record that reason, not a claim that later follow-up is inferior.
+
+For both rules use `not_supported` for a proven failure, `unresolved` when decisive facts cannot be reviewed, and `not_applicable` when the target efficacy cohort never enrolled, with the precedence below. A registry without observed outcomes remains planned-only even when a linked publication reports results. The permissive screen must be a superset of harmonized support; test that invariant. A reverse transition indicates a rule/extraction bug and halts analysis.
+
+Separately reconcile the frozen ledger with adjudicated extraction, preserving original fields and source attribution. Label corrections and extraction gaps; never count completing an unextracted field or changing a source version as a harmonization effect. This avoids making incomplete tracker extraction the primary comparator.
+
+For each report, the harmonized rule requires all of the following for `supported`:
 
 1. **Identity/design:** explicit population, disease stage, eligibility, intervention/dose, study design, baseline/comparator context (including no concurrent comparator), and report-to-program/subcohort mapping.
 2. **Observed clinical endpoints:** insulin dose and insulin-independence definition/duration, HbA1c, CGM time in range (70–180 mg/dL, aggregation interval), and severe hypoglycemia (event definition, events and participants affected). Record baseline and follow-up values where applicable and endpoint hierarchy (primary/secondary/post hoc/composite). A protocol, biomarker, graft survival, or qualitative favorable statement cannot substitute for these clinical domains.
@@ -63,16 +76,16 @@ Use four exhaustive report labels, with field-level reason codes:
 
 | Label | Deterministic meaning |
 | --- | --- |
-| `supported` | All five requirements met for the same identifiable report population and compatible horizon. |
+| `supported` | Provisional-screen conditions met, or all five harmonized requirements met, depending on the explicitly named rule. |
 | `not_supported` | At least one decisive requirement is demonstrably unmet in reviewed material (e.g., planned-only, short window, surrogate-only, or confirmed unreported required field). This means insufficient reporting support, not ineffective treatment. |
 | `unresolved` | No decisive failure established, but inaccessible material, incomplete extraction, conflicting sources, or uncertain population linkage prevents adjudication. |
 | `not_applicable` | No enrolled target efficacy cohort exists for the scoped assessment, e.g., S17 Cohort 2. Preserve other report cohorts separately; do not turn absence into failure. |
 
 Prespecify the target assessment population for each report in rule v1.0; do not select the best-reported cohort after seeing classifications. For multi-cohort reports, retain other cohorts as contextual fields; report `supported` only if the target population is explicitly identified. If no target efficacy cohort enrolled, use `not_applicable`; otherwise apply `not_supported` before `unresolved` when a decisive failure is proven, preserving all unresolved flags. Never hide inaccessible fields behind a report label.
 
-Each field must distinguish `reported`, `unreported_in_reviewed_material`, `inaccessible`, `not_yet_extracted`, `conflicting`, and `not_applicable`, with evidence locator or access log. Only completed review of the relevant accessible material can establish unreported information; “not in tracker” cannot. Baseline gaps are `not_yet_extracted` unless the ledger explicitly documents a source-level absence. No imputation, silent defaults, or fabricated real-world values.
+Each field must distinguish `reported`, `unreported_in_reviewed_material`, `inaccessible`, `not_yet_extracted`, `conflicting`, and `not_applicable`, with evidence locator or access log. Only completed review of the relevant accessible material can establish unreported information; “not in tracker” cannot. Ledger gaps are `not_yet_extracted` unless the ledger explicitly documents a source-level absence. No imputation, silent defaults, or fabricated real-world values.
 
-The primary output is the complete before/after transition table and changed-report count divided by the number of adjudicable pairs, with both report and program coverage. A pair involving `unresolved` is not adjudicable; report it separately. Changes involving `not_applicable` are scope corrections, not clinical-benefit changes. Classify every change as source/extraction correction, endpoint/denominator/window harmonization, cohort correction, or source-version change; version-driven changes alone do not refute reporting robustness. Show unchanged unsupported records and all exclusions, not just downgrades.
+The primary output is the complete screen-to-harmonized transition table and the number losing support divided by adjudicable **screen-supported** reports, with report and program coverage. Separately show unchanged unsupported records, `not_applicable` units, all unresolved pairs, and the ledger-correction log. For each loss of support record all failed requirements (endpoint, denominator, window/anchor, cohort linkage, or co-intervention/harms context); do not force a single cause. Neither unresolved fields nor an empty denominator can be reported as zero changes or support for H0. Report proportions descriptively without independence-based confidence intervals.
 
 ## Controls, sensitivity, and reproducibility
 
@@ -80,13 +93,13 @@ Use a small, synthetic fixture suite clearly separated from real source data:
 
 | Control | Expected result |
 | --- | --- |
-| Negative: complete, correctly linked 12-month record, including an unfavorable clinical outcome; repeated identical input | `supported` remains unchanged; byte-stable derived output. Favorable results are not needed to pass. |
-| Positive: remove binary analysis denominator while leaving enrollment intact | Not `supported`; correct missing-denominator reason, no enrollment substitution. |
+| Negative: complete, correctly linked 12-month record, including an unfavorable clinical outcome; repeated identical input | Both rules return `supported`; byte-stable derived output. Favorable results are not needed to pass. |
+| Positive: remove binary analysis denominator while leaving enrollment intact | Screen remains `supported`; harmonized label is `not_supported` with a confirmed missing-denominator reason, no enrollment substitution. |
 | Positive: duplicate a cohort under another publication ID | One program, overlap flagged; no additional independent cohort or participant count. Distinct subcohorts within one program must remain distinguishable. |
-| Positive: replace month 12 with month 6, or change the treatment anchor | `not_supported` with time-window/anchor mismatch. |
+| Positive: replace an endpoint's month-12 timing with month 6 while retaining one-year overall follow-up, or change its treatment anchor | Screen remains `supported`; harmonized label is `not_supported` with time-window/anchor mismatch. A wholly six-month report fails both rules. |
 | Positive: replace observed results with planned endpoints, or mark a required source inaccessible | Planned-only cannot pass; inaccessible information remains flagged/unresolved, not “unreported” or zero events. |
 
-Test label precedence and field-state handling as well as classifications. All required controls must pass before real-data execution.
+Test label precedence, field-state handling, and the support-superset invariant as well as classifications. Include a ledger-only extraction gap that is resolved without changing the paired source facts; it must not count as a harmonization effect. All required controls must pass before real-data execution.
 
 **Prespecified sensitivity analyses:** (1) leave one program out at a time, reporting changed/unchanged/unresolved counts and denominators to expose dependence on PEC-Direct's multiple reports; (2) relax only the requirement for CGM reporting, leaving all other gates intact, to distinguish a strict completeness-rule effect from denominator/window/cohort errors. Keep this secondary rule separately versioned and never relabel its results as passing the primary standard. These are reporting-rule checks, not pooled treatment analyses.
 
@@ -96,7 +109,7 @@ Use lightweight Python (standard library where sufficient), CSV/JSON inputs, a d
 
 | Gate / owner | Evidence required to proceed |
 | --- | --- |
-| **G0: prespecification — maintainer approval before implementation** | Commit rule v1.0 and preregistered plan before outcome-dependent analysis, including baseline, fixed source set, unit/overlap policy, controls, sensitivity rules, exclusions, and interpretation. Source-access/terms checks may precede this without analyzing outcomes. |
+| **G0: prespecification — maintainer approval before implementation** | Commit rule v1.0 and preregistered plan before outcome-dependent analysis, including both screening/harmonized rules, frozen starting ledger, fixed source set, unit/overlap policy, controls, sensitivity rules, exclusions, and interpretation. Source-access/terms checks may precede this without analyzing outcomes. |
 | **G1: source feasibility — contributor documents, maintainer decides** | All eight candidate sources have access/terms/version decisions; decisive primary/official material is reviewable with a reproducible version path. The field-state model distinguishes missing reporting from incomplete extraction. Program IDs and conservative overlap handling prevent double-counting. |
 | **G2: implementation readiness — PR reviewer** | Deterministic classifier/deduplication and synthetic denominator, cohort, time-window, and planned/observed controls pass; provenance and offline rerun are demonstrable. Only then run the frozen real-data analysis. |
 | **G3: results review — maintainer after contributor review** | Reproducible transition tables, sensitivity outputs, source discrepancies and limitations; explicit supported/contradicted/unresolved robustness conclusions and continuation/stop decision. No cure, causal mechanism, or comparative clinical-efficacy claim. |
@@ -105,13 +118,13 @@ Use lightweight Python (standard library where sufficient), CSV/JSON inputs, a d
 
 **No-go / stop:** stop Q3 before outcome analysis if any required source's decisive material cannot be accessed or used permissibly, its version cannot be reproduced, or essential endpoint/population linkage cannot be adjudicated. A confirmed reporting omission is a valid audit finding, not automatically a feasibility failure; inability to distinguish omission from incomplete review is a failure. Do not drop a required difficult source to manufacture a go decision. Record blockers and request a reviewed scope amendment or stop; any revised pilot needs a new prospective plan before analysis.
 
-During execution, halt on failed controls, invalid provenance, unresolved contradictory cohort mappings, or unreproducible output. If no adjudicable pairs remain, report no estimable robustness result and stop. If every pair is unchanged and unsupported, report that result, not evidence maturity. Mixed or all-unresolved findings cannot be forced into a positive conclusion. Reopen biological priorities only when new independent data meet the feasibility requirements; source audit findings do not resolve biological rival hypotheses.
+During execution, halt on failed controls, invalid provenance, contradictory outcome-to-cohort mappings that defeat conservative grouping, or unreproducible output. Unknown participant overlap alone is not a blocker when program-level grouping prevents double-counting. If no adjudicable screen-supported pairs remain, report no estimable robustness result and stop. If every pair is unchanged and unsupported, report that result, not evidence maturity. Mixed or all-unresolved findings cannot be forced into a positive conclusion. Reopen biological priorities only when new independent data meet the feasibility requirements; source audit findings do not resolve biological rival hypotheses.
 
 ## Issue #15 implementation handoff
 
 The next PR, not this planning PR, should:
 
-- [ ] Commit the preregistered plan, rule/data dictionary, frozen candidate set, baseline commit, controls, and sensitivity definitions **before outcome-dependent analysis**; record later amendments without replacing the original.
+- [ ] Commit the preregistered plan, both classification rules/data dictionary, frozen candidate set, starting-ledger commit, controls, and sensitivity definitions **before outcome-dependent analysis**; record later amendments without replacing the original.
 - [ ] Complete G1 access/reuse/version adjudication and obtain the maintainer's documented go/no-go decision before coding the pipeline.
 - [ ] Capture provenance manifests, retrieval dates, source revisions, lawful snapshots/locators, checksums where feasible, and failed access attempts.
 - [ ] Add small reproducible CSV/JSON extraction and cohort-mapping files separate from authoritative scientific trackers; preserve unavailable denominators and field-state reasons.
@@ -121,3 +134,5 @@ The next PR, not this planning PR, should:
 - [ ] Obtain source adjudication/reproduction review and G3 decision: continue/replicate the methods audit, revise prospectively, request missing data, or stop. Run the repository validator and unit tests before review.
 
 Deliverables are one preregistered plan/rule, one provenance manifest, one small extraction/cohort ledger, one tested script/command path, and one generated report with sensitivity tables and a continuation/stop decision. Keep this proportionate to five identifiable program groups; no large framework or new biological experiment is needed. [Issue #16](https://github.com/aditmer/type1-diabetes-cure-research/issues/16) remains lower-priority source verification, promoted only for a specific Q3 gate blocker rather than another broad literature review.
+
+**Planning revision note (23 October 2026):** v1.1 separates ledger-extraction reconciliation from the paired source-level rules so incomplete local extraction cannot manufacture or preclude a harmonization result. It also makes the ranked-priority handoff and conditions for reconsidering biological work explicit. No source outcomes were newly extracted and no pilot analysis was run for this revision.
