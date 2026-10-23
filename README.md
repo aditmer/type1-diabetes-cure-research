@@ -2,7 +2,7 @@
 
 An open, evidence-led research initiative to map credible paths toward a durable, safe, broadly accessible cure for autoimmune type 1 diabetes (T1D). The project synthesizes primary research and authoritative records; it is not a clinical research lab, medical service, or substitute for care.
 
-**Status:** early research infrastructure and first landscape snapshot (22 October 2026). No cure is established. Current insulin and diabetes technologies remain essential and must not be stopped or changed based on this repository.
+**Status — 23 October 2026:** Sprint 01's evidence baseline is complete ahead of its planned 4 November end. The project is transitioning to reproducible computational research: Sprint 02 selects Q3, a conditional source-level endpoint-harmonization pilot under [Issue #15](https://github.com/aditmer/type1-diabetes-cure-research/issues/15), with source-access and prespecification gates before implementation. It studies reporting robustness, not treatment efficacy or a cure mechanism. No cure is established. Current insulin and diabetes technologies remain essential and must not be stopped or changed based on this repository.
 
 ## Start here
 
@@ -11,10 +11,11 @@ An open, evidence-led research initiative to map credible paths toward a durable
 - [Minimum outcomes and claim review](docs/MINIMUM-OUTCOMES-AND-CLAIM-REVIEW.md): project-defined outcome set, follow-up/denominator standards, worked examples, and reviewer checklist.
 - [Landscape and failure modes](docs/LANDSCAPE-AND-FAILURE-MODES.md): initial evidence map, limitations, and open questions.
 - [Failure-mode evidence matrix](data/failure-modes.csv): source-linked, scored matrix; this CSV is the authoritative dataset.
-- [Sprint 02 research priorities](docs/SPRINT-02-RESEARCH-PRIORITIES.md): scoring rationale and falsifiable computational question candidates for Issue #14.
+- [Sprint 02 execution plan](docs/SPRINT-02.md): conditional Q3 decision, classification contract, implementation gates, and Issue #15 handoff.
+- [Sprint 02 research priorities](docs/SPRINT-02-RESEARCH-PRIORITIES.md): authoritative scoring rationale and candidate research questions.
 - [Public dataset feasibility](docs/DATASET-FEASIBILITY.md): verified file access, reuse limits, biological units, and the Issue #14 pilot decision.
 - [Cell-replacement comparison](docs/CELL-REPLACEMENT-COMPARISON.md): source-backed comparison of five islet-replacement strategies and remaining barriers.
-- [14-day sprint](docs/SPRINT-01.md): dated work plan and issue links.
+- [Sprint 01 closeout](docs/SPRINT-01.md): completed evidence baseline, remaining gaps, and preserved original 14-day plan.
 - [Evidence tracker](data/evidence.csv), [trial tracker](data/trials.csv), and [source catalog](data/sources.csv): structured, source-linked starting datasets.
 - [Literature-search protocol](docs/LITERATURE-SEARCH-PROTOCOL.md): search sources, initial query set, inclusion rules, and limits.
 - [Contributing guide](CONTRIBUTING.md): reproducible update process.
