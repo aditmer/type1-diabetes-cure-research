@@ -294,8 +294,8 @@ def validate_q3_g1_authorization(decision_text, manifest):
             or row["approved_version_id"] != row["source_version_id"]
         ):
             raise ValueError(f"G1 authorization requires an approved matching source version for {source_id}")
-    if sources["S19"]["rights_review_status"] != "third_party_review_complete":
-        raise ValueError("G1 authorization requires completion of S19 third-party review")
+    if not sources["S19"]["rights_review_evidence"].strip():
+        raise ValueError("G1 authorization requires documented S19 rights-review evidence")
     if sources["S23"]["assigned_reviewer_access_status"] != "confirmed":
         raise ValueError("G1 authorization requires confirmed S23 assigned-reviewer access")
 

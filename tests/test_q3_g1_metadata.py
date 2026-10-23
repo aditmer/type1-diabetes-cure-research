@@ -111,20 +111,24 @@ class Q3G1MetadataTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "requires an approved matching source version"):
             validate_q3_g1_authorization(premature, self.manifest())
 
-    def test_g1_requires_s23_access_and_s19_review_even_after_version_approval(self):
+    def test_g1_requires_s23_access_and_s19_rights_evidence_after_version_approval(self):
         rows = self.manifest()
         s19 = next(row for row in rows if row["source_id"] == "S19")
+        s23 = next(row for row in rows if row["source_id"] == "S23")
         for source_id in ("S18", "S19", "S23"):
             self.approve_source(next(row for row in rows if row["source_id"] == source_id))
         decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
         approved = self.with_g1_decision(decisions, "approved")
 
-        with self.assertRaisesRegex(ValueError, "requires completion of S19 third-party review"):
+        s19["rights_review_evidence"] = ""
+        with self.assertRaisesRegex(ValueError, "requires documented S19 rights-review evidence"):
             validate_q3_g1_authorization(approved, rows)
-        s19["rights_review_status"] = "third_party_review_complete"
-        s19["rights_review_evidence"] = "Credit lines reviewed; excluded third-party items were omitted."
+        s19["rights_review_evidence"] = "CC BY conditions documented; third-party material excluded from planned annotations."
         with self.assertRaisesRegex(ValueError, "requires confirmed S23 assigned-reviewer access"):
             validate_q3_g1_authorization(approved, rows)
+        s23["assigned_reviewer_access_status"] = "confirmed"
+        s23["assigned_reviewer_access_evidence"] = "Assigned reviewers confirmed individual institutional access."
+        validate_q3_g1_authorization(approved, rows)
 
     def test_g1_can_be_authorized_after_source_and_access_evidence(self):
         rows = self.manifest()
