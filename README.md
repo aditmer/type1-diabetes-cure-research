@@ -21,7 +21,7 @@ An open, evidence-led research initiative to map credible paths toward a durable
 
 ## What “cure” means here
 
-We distinguish (1) **disease prevention/delay**, (2) **partial remission**, (3) **insulin independence**, (4) **functional cure** (durable insulin independence with clinically meaningful safety and without chronic immunosuppression), and (5) **biological cure** (durable restoration of endogenous glucose regulation while also controlling the autoimmune disease). These are project definitions for transparent comparison, not regulatory or consensus clinical endpoints. Each report must say which outcome was measured. Insulin independence alone, especially short-term or under immunosuppression, is not called a cure.
+We distinguish (1) **prevention/delay of stage 3 onset** in stage 2 disease, (2) **beta-cell preservation** after stage 3 diagnosis, (3) **partial remission**, (4) **insulin independence**, (5) **functional cure** (durable insulin independence with clinically meaningful safety and without chronic immunosuppression), and (6) **biological cure** (durable restoration of endogenous glucose regulation while also controlling the autoimmune disease). These are project definitions for transparent comparison, not regulatory or consensus clinical endpoints. A delay in diagnosis is not prevention of autoimmunity; C-peptide preservation alone is not remission, reversal, insulin independence, or cure. Each report must say which outcome was measured. Insulin independence alone, especially short-term or under immunosuppression, is not called a cure.
 
 ## Medical safety
 

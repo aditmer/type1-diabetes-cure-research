@@ -14,7 +14,7 @@
 
 Confidence scores the bounded **observed-evidence statement**, not the hypothesis, product, or treatment recommendation. Each rationale names the checks earned from the [five-point evidence rubric](EVIDENCE-FRAMEWORK.md). Two points for source and claim-fit design can support an accurate report of an event or regulatory statement without establishing a patient-important effect, adequate clinical sample, or replication. Detailed outcome denominators, time windows, and co-interventions remain in the [evidence tracker](../data/evidence.csv); matrix rows preserve material distinctions and missingness under the [minimum-outcomes standard](MINIMUM-OUTCOMES-AND-CLAIM-REVIEW.md).
 
-Issue #3 remains open; its expanded stage-specific immune-therapy audit is not assumed complete. FM-07 uses only the already cataloged FDA indication and explicitly awaits that audit. The scoped search is not exhaustive: “not identified in reviewed sources” does not mean no such data exist.
+Issue #3's scoped stage-specific audit is now documented in the landscape and evidence tracker. It distinguishes TN-10's Stage 2 onset endpoint from PROTECT's Stage 3 C-peptide endpoint and records the FDA-required confirmatory study; it is not an exhaustive review of immune-modifying therapies. FM-07 incorporates those sources, while cross-trial endpoint harmonization and patient-important benefit remain research questions. “Not identified in reviewed sources” does not mean no such data exist.
 
 ## Transparent research-priority scoring
 
