@@ -85,12 +85,21 @@ remain NO-GO.
 
 The eight-row [source manifest](source-manifest.csv) identifies each
 version, target population, dates, rights decision, recovery path, and blocker.
-Its `maintainer_approval_status`, `rights_review_status`, and `archive_status`
-are independent: `account_terms_unverified` does not represent S23 as
-permission-cleared, and S19's verified archive does not approve its source
-version or third-party content. `third_party_review_pending` records S19's
-item-level reuse limitation; it does not invalidate the CC BY 4.0 license for
-the article's covered content.
+Its maintainer approval, rights review, reviewer access, storage/sharing, and
+archive statuses are independent. S23's `assigned_reviewer_access_status`
+tracks each reviewer's lawful access, while `storage_sharing_status` separately
+tracks permission to retain or share publisher PDFs; confirming one does not
+clear the other. Supported rights states are `conditions_documented`,
+`third_party_review_pending`, and `third_party_review_complete`; every state
+requires a `rights_review_evidence` entry, and completion does not imply
+blanket reuse rights. S23 reviewer access may be `unverified` or `confirmed`
+(`confirmed` requires `assigned_reviewer_access_evidence`); its storage and
+sharing status may be `unverified`, `prohibited`, `conditional`, or
+`permitted`, with evidence required for every resolved status. Other sources
+use `not_applicable` for the two S23-specific status fields. S19's verified
+archive does not approve its source version or third-party content.
+`third_party_review_pending` records S19's item-level reuse limitation; it
+does not invalidate the CC BY 4.0 license for the article's covered content.
 [Retrieval log](retrieval-log.csv) records raw-byte provenance, including
 unsuccessful/invalid routes. Checksums refer to downloaded bytes in exactly
 the listed representation, not equivalent HTML/PDF/JSON serializations.
@@ -296,7 +305,7 @@ G1.
 | 2. Source access and identity | Each frozen source representation and necessary material has a verified official identity/recovery route, without treating access as rights clearance. | **Satisfied for the G1 identity review** for S13, S18, S19, S20, S17, S4, and S9. S23's maintainer-supplied main PDF and separate supplement have matching identities, inventory, sizes, and hashes. | S23's supplied copy does not prove each assigned reviewer's lawful access. Reviewer-by-reviewer reacquisition is only a recommended procedure. This is **blocking** until verified. | Maintainer identifies assigned reviewers; each confirms their own authorized publisher/institutional access and the DOI-linked article plus `mmc1.pdf` before analysis. |
 | 3. Permitted use and rights | Rights conditions for the planned factual analysis and any archive/reproduction are documented; no unknown permission is represented as granted. | **Partial.** S18 CC BY-NC-ND 4.0 and S19 CC BY 4.0 notice are identified. The S19 notice explicitly excepts items identified by credit line; no explicit `<attrib>` elements appeared in the XML recheck. Elsevier's current official sharing, copyright, and hosting policies were reviewed. | S23 has no CC license; the applicable access agreement and any right to store/share publisher PDFs are unknown. **Blocking** to G2 source use until its lawful access path is confirmed. S19 item-specific content is not cleared for later reproduction, but need not block cited factual annotations that do not reproduce it. | Select individual S23 reacquisition under each reviewer's own authorized access; prohibit shared/public PDF copies. For S19, inspect a credit line before any specific item is reproduced. |
 | 4. Source version accepted and recovery path established | Maintainer explicitly accepts each source representation; archive and lawful recovery evidence are recorded independently. | **Partial.** S13 v3 and registry versions S20 v20, S17 v13, S4 v32, S9 v26 are accepted. S18 `PMC8714853.1` + XML hash and S19 `PMC11471599.1` + XML hash are documented recommendations. S19's exact OneDrive restore is verified and accepted. | S18, S19, and S23 version selections remain pending. S19 `.1` is an archive locator, not a publisher version number. The private archive attribution sidecar is not visible in this repository; confirm its fields without another restore. S23 has no shared archive; its lawful reacquisition route is not yet confirmed. **Blocking** to completion of the S19 archive-inventory check and to G2 until source selections and S23 access confirmations are recorded. | Accept/reject the exact S18 and S19 representations; confirm S19's private inventory includes title/authors/DOI/license/retrieval/hash; select S23 publisher representation and individual reacquisition route. Do not repeat S19 upload/restore. |
-| 5. Methodological approval | G0 and the approved prospective amendment establish the methods, target populations, field states, and stopping rules. | **Satisfied as approval.** The seven checkpoint assessment does not execute the methods or interpret any clinical outcomes. | No source outcome fields, denominators, or endpoint eligibility were adjudicated; this is the intended G1 boundary, not a new gate. | After G1 authorization, perform only the approved G2 pipeline work and retain review-scope/locator provenance. |
+| 5. Missing reporting vs. incomplete extraction | G0 defines six field statuses, locator/review-scope requirements, failure-before-unknown precedence, and a separate correction log. | **Specified; not applied to outcomes.** The field-state rules are documented, but no source fields or outcome-bearing supplement tables were adjudicated. | Inaccessible, unreviewed, or incompletely extracted material must not be treated as absent reporting. This remains a scientific safeguard for G2, not an outcome-level finding in G1. | After separate G1 authorization and within G2, apply the field-state model only to reviewed accepted source versions; record review scope and locators, and keep unknown distinct from not reported. |
 | 6. Conservative identity | Frozen reports remain distinct; uncertain participant overlap is handled conservatively without pooling. | **Satisfied for the G1 grouping decision.** Maintainer accepted one PEC-Direct program; S23 confirms partial overlap with S18. Frozen source/target IDs remain unchanged. | Full S18/S23 equivalence, S19 overlap, and publication-to-registry equivalence remain uncertain. This is nonblocking if no unique-participant totals or cross-report field borrowing are used. | Preserve program grouping; resolve outcome-to-target linkage only from lawful evidence before extraction. |
 | 7. Controls, sensitivities, and stops | Required synthetic controls and invariant checks are specified before any real-source analysis. | **Specification complete.** G0 defines controls, sensitivity analyses, precedence/invariant checks, no-estimate handling, and stop conditions. | Controls are not executed here and no implementation is authorized. Their execution belongs to G2, not an extra G1 approval gate. | At G2, execute controls before analysis of the frozen source set; stop on any preregistered failure. |
 
@@ -347,10 +356,11 @@ amendment; never silently drop or replace S23.
    outcomes, classify real reports, or run experiments before that
    authorization.
 
-**Handoff boundary:** this PR records maintainer decisions and approved v1.1
-only. G1 authorization remains pending and G2 remains NO-GO until the S23
-rights/reacquisition path and remaining source-review conditions are recorded
-as satisfied. Do not implement, classify real reports, compute
+**Handoff boundary:** this PR records the Q3 source-clearance recommendations,
+rights/access boundaries and evidence-backed status validation, and approved
+v1.1. G1 authorization remains pending and G2 remains NO-GO until the S23
+reviewer-access path and remaining source-review conditions are recorded as
+satisfied. Do not implement, classify real reports, compute
 results, merge this PR, or close #15 as part of Phase 1. Issue #15's
 pipeline/results acceptance criteria intentionally remain unfinished.
 
@@ -363,11 +373,13 @@ manifest and 44-record retrieval log, and
 also match the frozen values above. The validator checks frozen G0 hashes,
 all eight manifest IDs and targets, CSV widths, provenance fields, hash
 formats, transport-neutral archive restoration evidence, exact
-approved-version binding, source-specific rights-review states, and faithful
-generation of governing v1.1 from the approved amendment patch. New metadata
-tests verify S19's archive restore without inferring source approval or
-clearing third-party reuse, require S23 account terms to remain unverified,
-and confirm final G1 remains pending. Public Q3 metadata is scanned for
+approved-version binding, evidence-backed rights/access transitions, explicit
+G1 authorization prerequisites, and faithful generation of governing v1.1
+from the approved amendment patch. Metadata tests verify S19's archive restore
+without inferring source approval or clearing third-party reuse, permit a
+documented third-party review to complete, keep S23 reviewer access separate
+from storage/sharing permission, and reject premature G1 authorization.
+Public Q3 metadata is scanned for
 private OneDrive/share links and Microsoft account email addresses. The
 retrieval log preserves all prior 42 observations and appends timestamped
 S18/S19 source identity, hash, version, and license rechecks. S19's original

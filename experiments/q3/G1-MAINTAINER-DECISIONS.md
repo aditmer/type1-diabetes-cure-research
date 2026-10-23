@@ -171,8 +171,9 @@ not share or archive the publisher PDFs absent express rights.”
 
 **Reproducibility/status:** The proposed method is reproducible if every
 assigned reviewer can lawfully reacquire and verify the exact components;
-that condition has not yet been demonstrated. `account_terms_unverified`,
-reviewer access unverified, source-version approval pending, and no archive
+that condition has not yet been demonstrated. The manifest records reviewer
+access and storage/sharing permission as separate statuses; both are
+`unverified`. Source-version approval remains pending, and no archive is
 claimed. No approval date or approver.
 
 ### G1 and seven-checkpoint result

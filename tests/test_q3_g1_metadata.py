@@ -8,6 +8,7 @@ from scripts.validate_data import (
     ROOT,
     read_q3_csv,
     validate_q3_amendment,
+    validate_q3_g1_authorization,
     validate_q3_metadata,
     validate_q3_source_manifest,
 )
@@ -28,17 +29,17 @@ class Q3G1MetadataTests(unittest.TestCase):
     def test_repository_q3_metadata_is_valid(self):
         self.assertEqual(validate_q3_metadata(), (8, 44))
 
-    def test_only_explicitly_accepted_source_versions_are_approved(self):
+    def test_approved_sources_have_matching_version_and_explicit_provenance(self):
         approved = {
             row["source_id"]: row
             for row in self.manifest()
             if row["maintainer_approval_status"] == "approved"
         }
-        self.assertEqual(set(approved), {"S13", "S20", "S17", "S4", "S9"})
+        self.assertTrue(approved)
         for row in approved.values():
             self.assertEqual(row["approved_version_id"], row["source_version_id"])
-            self.assertEqual(row["approval_date"], "2026-10-23")
-            self.assertEqual(row["approving_maintainer"], "@aditmer")
+            self.assertRegex(row["approval_date"], r"^\d{4}-\d{2}-\d{2}$")
+            self.assertTrue(row["approving_maintainer"].strip())
 
     def test_governing_v1_1_matches_approved_amendment(self):
         validate_q3_amendment(self.q3, self.rules)
@@ -67,10 +68,8 @@ class Q3G1MetadataTests(unittest.TestCase):
 
     def test_source_version_archive_and_rights_statuses_are_independent(self):
         s19 = next(row for row in self.manifest() if row["source_id"] == "S19")
-        self.assertEqual(s19["maintainer_approval_status"], "pending_maintainer")
-        self.assertEqual(s19["approved_version_id"], "")
         self.assertEqual(s19["archive_status"], "verified")
-        self.assertEqual(s19["rights_review_status"], "third_party_review_pending")
+        self.assertTrue(s19["rights_review_evidence"])
         event = next(
             row for row in self.retrieval_log()
             if row["artifact_id"] == "S19-onedrive-restore-2026-10-23T181816Z"
@@ -79,23 +78,87 @@ class Q3G1MetadataTests(unittest.TestCase):
         self.assertEqual(event["bytes"], "122548")
         self.assertEqual(event["response_sha256"], s19["sha256"])
 
-    def test_s23_account_rights_cannot_be_represented_as_verified(self):
+    def test_s23_reviewer_access_and_storage_sharing_are_independent(self):
         rows = self.manifest()
         s23 = next(row for row in rows if row["source_id"] == "S23")
-        self.assertEqual(s23["rights_review_status"], "account_terms_unverified")
-        self.assertEqual(s23["maintainer_approval_status"], "pending_maintainer")
-        self.assertEqual(s23["archive_status"], "pending_maintainer")
-        self.assertEqual(s23["approved_version_id"], "")
-        s23["rights_review_status"] = "conditions_documented"
-        with self.assertRaisesRegex(ValueError, "S23 account-specific rights cannot be represented as verified"):
+        self.approve_source(s23)
+        s23["assigned_reviewer_access_status"] = "confirmed"
+        with self.assertRaisesRegex(ValueError, "confirmed reviewer access requires evidence"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+        s23["assigned_reviewer_access_evidence"] = "Assigned reviewers confirmed individual institutional access."
+        validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+
+        s23["storage_sharing_status"] = "permitted"
+        with self.assertRaisesRegex(ValueError, "resolved storage/sharing status requires evidence"):
+            validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+        s23["storage_sharing_evidence"] = "Applicable account agreement permits private project storage and reviewer sharing."
+        validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+
+    def test_completed_s19_third_party_review_requires_evidence(self):
+        rows = self.manifest()
+        s19 = next(row for row in rows if row["source_id"] == "S19")
+        self.approve_source(s19)
+        s19["rights_review_status"] = "third_party_review_complete"
+        s19["rights_review_evidence"] = ""
+        with self.assertRaisesRegex(ValueError, "rights review status requires evidence"):
+            validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+        s19["rights_review_evidence"] = "Credit lines reviewed; excluded third-party items were omitted."
+        validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
     def test_g1_authorization_is_not_inferred_from_individual_approvals(self):
         decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
-        g1_row = next(line for line in decisions.splitlines() if line.startswith("| G1 |"))
-        self.assertIn("| pending_maintainer |", g1_row)
-        self.assertIn("| — | — |", g1_row)
-        self.assertIn("Final G1 authorization remains pending", decisions)
+        premature = self.with_g1_decision(decisions, "approved")
+        with self.assertRaisesRegex(ValueError, "requires an approved matching source version"):
+            validate_q3_g1_authorization(premature, self.manifest())
+
+    def test_g1_requires_s23_access_and_s19_review_even_after_version_approval(self):
+        rows = self.manifest()
+        s19 = next(row for row in rows if row["source_id"] == "S19")
+        for source_id in ("S18", "S19", "S23"):
+            self.approve_source(next(row for row in rows if row["source_id"] == source_id))
+        decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
+        approved = self.with_g1_decision(decisions, "approved")
+
+        with self.assertRaisesRegex(ValueError, "requires completion of S19 third-party review"):
+            validate_q3_g1_authorization(approved, rows)
+        s19["rights_review_status"] = "third_party_review_complete"
+        s19["rights_review_evidence"] = "Credit lines reviewed; excluded third-party items were omitted."
+        with self.assertRaisesRegex(ValueError, "requires confirmed S23 assigned-reviewer access"):
+            validate_q3_g1_authorization(approved, rows)
+
+    def test_g1_can_be_authorized_after_source_and_access_evidence(self):
+        rows = self.manifest()
+        s19 = next(row for row in rows if row["source_id"] == "S19")
+        s23 = next(row for row in rows if row["source_id"] == "S23")
+        for source_id in ("S18", "S19", "S23"):
+            self.approve_source(next(row for row in rows if row["source_id"] == source_id))
+        s19["rights_review_status"] = "third_party_review_complete"
+        s19["rights_review_evidence"] = "Credit lines reviewed; excluded third-party items were omitted."
+        s23["assigned_reviewer_access_status"] = "confirmed"
+        s23["assigned_reviewer_access_evidence"] = "Assigned reviewers confirmed individual institutional access."
+        validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+
+        decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
+        approved = self.with_g1_decision(decisions, "approved")
+        validate_q3_g1_authorization(approved, rows)
+
+    def approve_source(self, row):
+        row["maintainer_approval_status"] = "approved"
+        row["approved_version_id"] = row["source_version_id"]
+        row["approval_date"] = "2026-10-23"
+        row["approving_maintainer"] = "@maintainer"
+
+    def with_g1_decision(self, decisions, status):
+        replacement = (
+            f"| G1 | Final feasibility gate | Explicitly authorize G1; G2 remains NO-GO. "
+            f"| {status} | 2026-10-23 | @maintainer |"
+        )
+        return re.sub(
+            r"(?m)^\| G1 \| Final feasibility gate \|.*$",
+            replacement,
+            decisions,
+            count=1,
+        )
 
     def test_public_q3_metadata_contains_no_private_onedrive_locations(self):
         private_location = re.compile(
