@@ -16,20 +16,25 @@ four official historical registry locators, conservative PEC-Direct
 grouping, and the private OneDrive archive policy. The separately versioned
 [governing rules v1.1](rules-v1.1.json) was generated from the approved
 [amendment](AMENDMENT-2026-10-23-01.md); frozen v1.0 files remain unchanged.
-S19's OneDrive restore evidence was accepted and its exact bytes/hash were
-verified. This does not approve its source version or third-party material.
+PR #28 is merged, and its maintainer comment records the audit confirmation
+and the already-approved decisions. S19's OneDrive restore evidence was
+accepted and its exact bytes/hash were verified. This does not approve its
+source version or third-party material.
 
 ## Recommendation and scope of verification
 
 **Final G1 authorization remains pending; G2 is NO-GO and unauthorized.**
-The S23 source-access blocker is resolved for this review: the maintainer reports
-downloading the publisher materials from Cell Press in a normal browser on
-23 October 2026, and the supplied private files were independently checked
-for PDF identity, completeness indicators, byte lengths, and hashes. This is
-distinct from the earlier automated publisher request, which returned HTTP
-403 challenge HTML. That challenge was not an article copy and never proved
-that an authorized human could not access the article. No HTTP success status
-or exact attachment URL is claimed for the manual download.
+The maintainer reports downloading the S23 publisher materials from Cell
+Press in a normal browser on 23 October 2026. Their PDF identity, listed
+supplement inventory, byte lengths, and hashes were independently checked.
+This establishes that copies were supplied for this review, not that the
+acquiring account's terms permit personal retention, project storage, or
+access by other reviewers. No named reviewer has independently confirmed
+lawful access. An earlier automated publisher request returned HTTP 403
+challenge HTML; that response was not an article copy and did not establish
+that a human without an authorized account could not access it. No HTTP
+success status or exact attachment URL is claimed for the reported manual
+download.
 
 The main PDF is the 21-page Ramzy et al. article (Cell Stem Cell 28,
 2047–2061; 2 December 2021; DOI `10.1016/j.stem.2021.10.003`; PMID
@@ -42,12 +47,14 @@ article-specific permission for public redistribution was established.
 The PDF title and author line were checked against the PubMed citation; the
 trial registration appears in the article. No outcome values were extracted.
 
-This satisfies S23 source access and the listed article/supplement
-completeness check for current G1 review, not durable source preservation,
-redistribution rights, or overall G1 approval. The exact publisher attachment
-URL and download time/time zone were not supplied, and the PDFs do not carry a
-publisher version-sequence identifier. Keep the files outside the public
-repository and confirm the authorized retention path before execution.
+The exact publisher attachment URL and download time/time zone were not
+supplied, and the PDFs do not carry a publisher version-sequence identifier.
+The public DOI/article page is the stable entry point; its linked
+“Supplemental information” item is the official route to `mmc1.pdf`. The
+automated page fetch was blocked, so no direct supplement URL is asserted.
+Keep the publisher PDFs outside GitHub. Source identity for the supplied copy
+is checked, but S23's lawfully reproducible access path is not yet verified
+for the assigned researchers.
 
 The maintainer approved private OneDrive as the proportionate project archive
 on 2026-10-23, with restricted access, content-addressed naming,
@@ -61,8 +68,12 @@ uploaded and downloaded from OneDrive to a fresh non-synced location; the
 restore exactly matched 122,548 bytes and SHA-256
 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`.
 The public log and manifest use an opaque archive alias; the actual location
-is retained only in the private inventory. S23 rights for retention and
-researcher access remain unresolved.
+is retained only in the private inventory. S23 rights for retention and researcher access remain unresolved. The
+recommended route is individual reacquisition by each reviewer through their
+own authorized Cell Press or institutional access; this avoids relying on
+unverified project-storage rights. It becomes a reproducible recovery path
+only after each assigned reviewer confirms access and the article and
+supplement match the recorded hashes.
 
 The maintainer accepted official ClinicalTrials.gov history locators S20 v20,
 S17 v13, S4 v32, and S9 v26 without requiring duplicate local archives.
@@ -74,6 +85,21 @@ remain NO-GO.
 
 The eight-row [source manifest](source-manifest.csv) identifies each
 version, target population, dates, rights decision, recovery path, and blocker.
+Its maintainer approval, rights review, reviewer access, storage/sharing, and
+archive statuses are independent. S23's `assigned_reviewer_access_status`
+tracks each reviewer's lawful access, while `storage_sharing_status` separately
+tracks permission to retain or share publisher PDFs; confirming one does not
+clear the other. Supported rights states are `conditions_documented`,
+`third_party_review_pending`, and `third_party_review_complete`; every state
+requires a `rights_review_evidence` entry, and completion does not imply
+blanket reuse rights. S23 reviewer access may be `unverified` or `confirmed`
+(`confirmed` requires `assigned_reviewer_access_evidence`); its storage and
+sharing status may be `unverified`, `prohibited`, `conditional`, or
+`permitted`, with evidence required for every resolved status. Other sources
+use `not_applicable` for the two S23-specific status fields. S19's verified
+archive does not approve its source version or third-party content.
+`third_party_review_pending` records S19's item-level reuse limitation; it
+does not invalidate the CC BY 4.0 license for the article's covered content.
 [Retrieval log](retrieval-log.csv) records raw-byte provenance, including
 unsuccessful/invalid routes. Checksums refer to downloaded bytes in exactly
 the listed representation, not equivalent HTML/PDF/JSON serializations.
@@ -103,9 +129,9 @@ recovery evidence only to the extent actually verified below.
 | Source | Direct verification and selected version | Recovery evidence / outstanding limitation |
 | --- | --- | --- |
 | S13 | DailyMed history lists v1 published 2023-07-13, v2 2024-12-06, and v3 2026-01-15; v3 effective date 2026-01-13. The verified v3 archive ZIP is 327,121 bytes, SHA-256 `db33f66f3b6e3433d0c47667a0e367f4e1b464cc2875e023e950f1f049f1fd33`; XML member `a3163e14-0404-4e27-884b-f6f9f7f695bc.xml` was restored from archive 940595 at 2026-10-23T16:30:27Z: 168,862 bytes, SHA-256 `696ebb05a528236ea6077c912785e94cf103aa4d29fa61bacab3282e65307fd4`, matching the API representation. | The maintainer approved v3 `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc` on 2026-10-23. This is a source-date consistency choice, not an outcome comparison; v1 remains the contemporaneous-2023 alternative but was not selected. |
-| S18 | Europe PMC full-text XML, HTTP 200, DOI `10.1016/j.xcrm.2021.100466`; XML identifies `PMC8714853.1`. Electronic publication 2021-12-02; collection 2021-12-21; manuscript revision received 2021-10-12 (prepublication, not a postpublication revision). | The version-specific PMC URL `https://pmc.ncbi.nlm.nih.gov/articles/PMC8714853.1/` renders the article in browser access; a direct automated GET can return a CAPTCHA page. Europe PMC re-fetches the 114,747-byte XML with the same SHA-256 `2c33d10d93cd399fadef190447f2ea5778625c476405f3e6cb011eb94e792433`, including the explicit version. Publisher supplements `mmc1.pdf` (43,029,202 bytes; SHA-256 `47b5b974c6d21b5d11c84dfd0b82db0d8fced9f7609926b75d2608dbb202c0a5`) and `mmc3.pdf` (47,295,702 bytes; SHA-256 `e1a358a0d58b1ebb2a21cd1f21e1078ffd32bcb5fc5023de22d3fcb88bb73f13`) were signature-checked, not content-reviewed. `mmc2.xlsx` is explicitly a subject-level table and was not accessed. That is an intentional privacy/scope boundary, not an omission finding. Article license: CC BY-NC-ND 4.0; no full text committed. |
-| S19 | Europe PMC XML, HTTP 200, DOI `10.1038/s41587-023-02055-5`, PMCID `PMC11471599`; the PMC browser locator `https://pmc.ncbi.nlm.nih.gov/articles/PMC11471599.1/` renders a version-specific page. Online publication 2023-11-27; print issue October 2024. The XML identifies the title *Encapsulated stem cell-derived beta cells exert glucose control in patients with type 1 diabetes*, by Bart Keymeulen et al. | The maintainer accepted the OneDrive restore evidence on 2026-10-23. A fresh non-synced download matched 122,548 bytes and SHA-256 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839` (event `S19-onedrive-restore-2026-10-23T181816Z`). The archive is `verified`; the opaque alias is public, actual location is only in the private inventory. The XML has no `pmcid-ver`; `.1` is a PMC archive locator, not a publisher-assigned version-of-record claim. Source-version approval and third-party-credit review remain separate. |
-| S23 | Maintainer reports normal-browser download from Cell Press on 2026-10-23. Main article PDF is 3,927,356 bytes, SHA-256 `0c7bf5e8f66a3b44992522b7911a7bd39b473a6b55d47cb8e6a2f81eed45e3f2`, 21 pages; the separate supplement is 1,294,061 bytes, SHA-256 `1e83cc5db34081eab03c049beed768ab69a9f83015484ea89dbb00f11a203f22`, 18 pages. The 5,219,476-byte combined copy (SHA-256 `4649519fcc24d22bba3f749f7b462b95ed532eca0a923d332f4bf7c45ef0ad76`) duplicates both and is not a separate source. | Article identity and supplemental inventory are verified; see PR #25 and the manifest/log. Elsevier's [copyright](https://www.elsevier.com/about/policies-and-standards/copyright) and [sharing](https://www.elsevier.com/about/policies-and-standards/sharing) policies distinguish subscription from open-access reuse, restrict redistribution of subscription published articles, and defer additional rights to the applicable subscription agreement. The particular access agreement and whether it permits project-team retention/storage are unknown. Keep both component PDFs outside the public repository. No approved private archive or recovery check exists; status remains blocked pending maintainer/library confirmation and an authorized storage path. |
+| S18 | Europe PMC full-text XML, HTTP 200, DOI `10.1016/j.xcrm.2021.100466`; XML identifies `PMC8714853.1` as `pmcid-ver`. Electronic publication 2021-12-02; collection/issue date 2021-12-21; revision received 2021-10-12 and accepted 2021-11-15 (both prepublication history, not postpublication revisions). | Recheck on 2026-10-23 returned 114,747 bytes and the expected SHA-256 `2c33d10d93cd399fadef190447f2ea5778625c476405f3e6cb011eb94e792433`. Recommend accepting `PMC8714853.1` with this exact Europe PMC XML as the representation: the archive page identifies the version and the XML independently carries the same version identifier. The publisher supplements `mmc1.pdf` (43,029,202 bytes; SHA-256 `47b5b974c6d21b5d11c84dfd0b82db0d8fced9f7609926b75d2608dbb202c0a5`) and `mmc3.pdf` (47,295,702 bytes; SHA-256 `e1a358a0d58b1ebb2a21cd1f21e1078ffd32bcb5fc5023de22d3fcb88bb73f13`) remain in the documented inventory and were signature-checked, not content-reviewed. `mmc2.xlsx` is a subject-level table and was not accessed. CC BY-NC-ND 4.0 permits the planned noncommercial factual analysis subject to its conditions; do not reproduce protected text or figures or distribute adaptations. |
+| S19 | Europe PMC XML, DOI `10.1038/s41587-023-02055-5`, PMCID `PMC11471599`; the PMC browser locator `https://pmc.ncbi.nlm.nih.gov/articles/PMC11471599.1/` renders the archived article. Online publication 2023-11-27; print issue October 2024. | Recheck on 2026-10-23 returned 122,548 bytes and the expected SHA-256 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`. The maintainer accepted the earlier OneDrive restore evidence; do not repeat it. `PMC11471599.1` is a PMC archive locator, not a publisher-assigned editorial version; the XML contains no `pmcid-ver`. The CC BY 4.0 notice covers third-party material unless a credit line says otherwise and requires permission where an exception applies. The XML contains no explicit `<attrib>` elements; that is not a blanket finding that every embedded item is reusable. The public manifest records title, all authors, DOI, license, retrieval time, hash, and safe archive alias. The private inventory is not accessible here, so its attribution sidecar still needs maintainer confirmation; no new upload/restore is needed. Recommend accepting the identified XML representation, with source-version approval and item-level reuse review still pending. |
+| S23 | Maintainer reports normal-browser download from Cell Press on 2026-10-23. Main article PDF is 3,927,356 bytes, SHA-256 `0c7bf5e8f66a3b44992522b7911a7bd39b473a6b55d47cb8e6a2f81eed45e3f2`, 21 pages; the separate `mmc1.pdf` supplement is 1,294,061 bytes, SHA-256 `1e83cc5db34081eab03c049beed768ab69a9f83015484ea89dbb00f11a203f22`, 18 pages. The 5,219,476-byte combined copy (SHA-256 `4649519fcc24d22bba3f749f7b462b95ed532eca0a923d332f4bf7c45ef0ad76`) duplicates both and is not a separate source. | Supplied file identity and supplement inventory are verified; this does not establish the download account's rights or future reviewer access. The DOI `https://doi.org/10.1016/j.stem.2021.10.003` resolves to the official Cell Press article page; use that page's “Supplemental information” link for `mmc1.pdf`. Current Elsevier [sharing](https://www.elsevier.com/about/policies-and-standards/sharing), [copyright](https://www.elsevier.com/about/policies-and-standards/copyright), and [hosting](https://www.elsevier.com/about/policies-and-standards/hosting) policies do not grant this project a shared-storage right; the applicable account terms are unknown. Recommend authorized reviewer-by-reviewer reacquisition, but no reviewer access confirmation is recorded. |
 | S20 | NCT03163511 official API JSON, HTTP 200; results module present. History version 20, submitted 2024-11-07, posted 2024-12-03; registry verified month 2024-11. | Browser opened the version-specific history panel and title for version 20. It supplies a recoverable historical study record, not a promise of byte-identical future API serialization. Retain API hash separately. |
 | S17 | NCT02239354 official API JSON, HTTP 200; results module present. History version 13, submitted 2022-02-25, posted 2022-03-24; verified month 2022-02. | Version-specific history panel/title opened successfully. Presence of results is metadata only; no efficacy values were extracted. Planned efficacy Cohort 2 remains distinct from Cohort 1. |
 | S4 | NCT04786262 official API JSON, HTTP 200; no results module. History version 32, submitted 2026-08-27, posted 2026-09-01; verified month 2026-08. | Version-specific history panel/title verified. Registry includes VX-880 and VX-017 arm labels; target remains frozen VX-880 Parts A/B/C, not VX-017 Part D. No posted-results absence was translated into a clinical failure. |
@@ -235,8 +261,8 @@ Repository CC BY/MIT licensing does not relicense third-party material.
 | ClinicalTrials.gov | Official [Terms and Conditions](https://clinicaltrials.gov/about-site/terms-conditions), previously rendered and checked 2026-10-23; page says last updated 2023-01-31. The former `/policy/terms-of-use` route returned 404. | Cite ClinicalTrials.gov and the exact official version locator; record source version, submission/posting dates, retrieval date, and any transformation. Historical UI locators (`?tab=history&a=<version>`) are separately verified recovery paths; current API JSON hash is only for the current API response, not a historical page. Under this documented approach no duplicate local registry snapshots are required for G1. Recheck the live record before execution/publication. Do not retain contact details or participant-level data. |
 | DailyMed S13 | [DailyMed overview/disclaimer](https://dailymed.nlm.nih.gov/dailymed/about-dailymed.cfm) and [NLM copyright policy](https://www.nlm.nih.gov/web_policies.html#copyright), checked 2026-10-23. | NLM hosting does not make company-submitted labeling public domain. Overview also warns that in-use labeling is not necessarily identical to the latest FDA-approved labeling. Preserve official archive locator and factual annotations; no blanket redistribution grant asserted. Verify any future copy/reuse basis and version acceptance; do not silently call v3 the 2023 label. |
 | S18 | XML permissions explicitly state [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/), copyright The Authors 2021. | Noncommercial/no-derivatives restrictions apply to protected content. This PR includes only original factual annotations/locators, no adapted article text or figures. Any future full-copy distribution requires attribution, license compliance, confirmation of noncommercial use and third-party notices. Do not assign repository CC BY to this article. |
-| S19 | XML permissions state [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), copyright The Authors 2023, with third-party exceptions. | Attributed preservation is permitted for covered content, subject to exception review. The exact XML has a verified private OneDrive restore under the approved non-immutable archive policy. Review third-party credit lines before any reuse beyond preserving the exact source representation. |
-| S23 | Main PDF copyright line identifies © 2021 Elsevier Inc.; no Creative Commons grant was identified. Elsevier's public policy restricts redistribution of subscription published articles and notes subscription agreements may add rights. | Browser access resolves review access, not private retention rights. The particular subscription/license terms remain unknown. Do not commit or redistribute either PDF. The maintainer/library must confirm the authorized user's retention rights and whether future reviewers may access an access-controlled project store. Use private encrypted/backup storage only if the contract permits it; otherwise each reviewer must reacquire lawfully. |
+| S19 | XML permissions state [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), copyright The Authors 2023, with third-party exceptions. The 2026-10-23 XML recheck found the general exception clause and no explicit `<attrib>` elements. | The existing exact-byte archive is verified under the already-approved OneDrive policy; no new upload or restore is needed. Preserve the XML intact and cite it. Before later reproducing any figure, image, table, or expressive text, inspect that item's credit line and obtain permission if it is excluded from CC BY. Factual annotations may cite the source; do not assign repository CC BY to third-party content. |
+| S23 | Main PDF identifies © 2021 Elsevier Inc.; no Creative Commons grant was identified. Current Elsevier [sharing](https://www.elsevier.com/about/policies-and-standards/sharing), [copyright](https://www.elsevier.com/about/policies-and-standards/copyright), and [hosting](https://www.elsevier.com/about/policies-and-standards/hosting) policies distinguish author sharing from other sharing and defer subscription-specific additional rights to the applicable agreement. | Recommend each assigned reviewer reacquire the article and supplement through the official Cell Press page using their own authorized Cell Press or institutional access. Do not share credentials, use a common archive, publicly redistribute, or retain/share publisher PDFs beyond the user's own agreement. The copyright policy says users with legal access may text/data-mine subscription articles noncommercially without sharing adaptations; this does not establish a right to share the PDFs or store them for the team. No account-specific agreement or reviewer access has been verified. |
 | Archive services | [PMC copyright notice](https://pmc.ncbi.nlm.nih.gov/about/copyright/), checked 2026-10-23. | PMC access alone is not a license; follow article-specific terms and approved retrieval services. Europe PMC XML was used, not systematic downloading from PMC article pages. Failed OA package metadata routes are logged; they do not prove articles unavailable from every lawful archive. |
 
 No new subject-level source-data workbook was opened or redistributed.
@@ -263,15 +289,36 @@ same accepted source facts, not complementary facts across publications.
 
 ## Seven-checkpoint readiness decision
 
-| Checkpoint | Readiness | Evidence supporting completion | Blocker / maintainer decision | Specific next action |
+The statuses are deliberately separate: source bytes/identity may be verified
+without source-version acceptance; acceptance does not grant reuse rights;
+an archive restore does not resolve either; and none of these substitutes for
+methodological approval or explicit final G1 authorization. At this review,
+S19 source identity and archive restore are verified but its version remains
+unapproved; S23's supplied bytes are identity-checked but assigned-reviewer
+access and account-specific rights are unverified. The maintainer has approved
+G0/A1 and the existing population/archival decisions, but has not authorized
+G1.
+
+| Checkpoint | Required condition | Evidence and status | Limitation; blocking? | Exact next action |
 | --- | --- | --- | --- | --- |
-| 1. G0 committed/versioned | **Approved; frozen** | G0 commit `fe536fe8bea86b991f3f73e515751ead70146ca9` is present; frozen files match recorded hashes. All eight reports, five programs, targets, hypotheses, and controls are unchanged. Amendment 01 was approved prospectively and generated as governing v1.1. | No outstanding decision; neither frozen v1.0 file was edited. | Preserve v1.0 and v1.1 as distinct; no implementation until final G1 authorization. |
-| 2. Primary/official access or blockers documented | **Completed for G1 review** | S13 v3, S18/S19 Europe PMC records, S23 main PDF and supplement, and all four exact registry history versions have identified official retrieval locators. S23 file identity, listed supplemental content, size, page count, and hashes were checked. | S23's Cell Press download is maintainer-reported; agreement-specific retention and an authorized private storage path remain unconfirmed. Earlier automated 403s remain historical access failures only. | Confirm S23 user authorization and applicable license; use the decision record's private-retention branch or have each reviewer reacquire. |
-| 3. Permitted reuse/provenance | **Partial; S23 blocked** | S19's CC BY 4.0 language and third-party exception are confirmed; ClinicalTrials.gov terms and attribution practice are recorded; Elsevier's current general copyright/sharing policy was reviewed. | No S23 public license; actual subscription terms and whether a private personal backup or project access is allowed are unknown. S19 credit-line exceptions still require review. | Confirm S23 retention scope with the library or establish lawful reviewer reacquisition; review S19 third-party credit lines before reuse. |
-| 4. Reproducible source versions | **Partially approved** | S13 v3 and registry versions S20 v20, S17 v13, S4 v32, and S9 v26 were accepted; S19 OneDrive restore matched exact byte count and SHA-256; S18/S19 PMC/EPMC locators and hashes are recorded. | S19 source-version approval and S23 exact publisher sequence/rights/retention path remain unresolved. | Resolve S23 permitted retention or lawful reacquisition; decide separately whether S19 source representation is approved. |
-| 5. Missing reporting vs. incomplete extraction | **Completed as G1 specification; not applied to outcomes** | G0 defines six field statuses, locator/review-scope requirements, failure-before-unknown precedence, and a separate correction log. | No clinical fields or outcome-bearing supplement tables were adjudicated. This is intentionally deferred; no omissions may be inferred from unreviewed material. | After G1/G2 authorization, apply the field-state model to accepted source versions and log review scope and locators. |
-| 6. Conservative identity | **Accepted for G1 grouping; detailed overlap remains uncertain** | Maintainer accepted conservative PEC-Direct program-level grouping. Frozen report and target IDs are preserved. S23 establishes partial overlap with S18; source and registry records support one program. | Full S23/S18 equivalence, S19 participant overlap, and exact publication-to-registry mapping remain unknown. | Keep one program, do not sum participants; resolve target linkage only from lawful evidence before extraction. |
-| 7. Controls/sensitivity/stops | **Specification complete; execution deferred** | G0 defines synthetic controls, precedence/invariant checks, sensitivities, a no-estimate rule, and explicit stop conditions. | No implementation or synthetic control execution is authorized in this G1 assignment. | Run controls only during authorized G2 implementation, before any real-source extraction. |
+| 1. G0 committed/versioned | Frozen preregistration and rules remain intact; approved prospective amendment is governing. | **Satisfied.** G0 commit `fe536fe8bea86b991f3f73e515751ead70146ca9` and both frozen hashes are recorded. Eight report IDs, five programs, targets, and controls are preserved. PR #28 is merged; the maintainer's approval/audit comment is recorded. A1 and governing v1.1 are approved. | None. This decision does not authorize G2. | Preserve v1.0/v1.1 separately and wait for the distinct final G1 decision. |
+| 2. Source access and identity | Each frozen source representation and necessary material has a verified official identity/recovery route, without treating access as rights clearance. | **Satisfied for the G1 identity review** for S13, S18, S19, S20, S17, S4, and S9. S23's maintainer-supplied main PDF and separate supplement have matching identities, inventory, sizes, and hashes. | S23's supplied copy does not prove each assigned reviewer's lawful access. Reviewer-by-reviewer reacquisition is only a recommended procedure. This is **blocking** until verified. | Maintainer identifies assigned reviewers; each confirms their own authorized publisher/institutional access and the DOI-linked article plus `mmc1.pdf` before analysis. |
+| 3. Permitted use and rights | Rights conditions for the planned factual analysis and any archive/reproduction are documented; no unknown permission is represented as granted. | **Partial.** S18 CC BY-NC-ND 4.0 and S19 CC BY 4.0 notice are identified. The S19 notice explicitly excepts items identified by credit line; no explicit `<attrib>` elements appeared in the XML recheck. Elsevier's current official sharing, copyright, and hosting policies were reviewed. | S23 has no CC license; the applicable access agreement and any right to store/share publisher PDFs are unknown. **Blocking** to G2 source use until its lawful access path is confirmed. S19 item-specific content is not cleared for later reproduction, but need not block cited factual annotations that do not reproduce it. | Select individual S23 reacquisition under each reviewer's own authorized access; prohibit shared/public PDF copies. For S19, inspect a credit line before any specific item is reproduced. |
+| 4. Source version accepted and recovery path established | Maintainer explicitly accepts each source representation; archive and lawful recovery evidence are recorded independently. | **Partial.** S13 v3 and registry versions S20 v20, S17 v13, S4 v32, S9 v26 are accepted. S18 `PMC8714853.1` + XML hash and S19 `PMC11471599.1` + XML hash are documented recommendations. S19's exact OneDrive restore is verified and accepted. | S18, S19, and S23 version selections remain pending. S19 `.1` is an archive locator, not a publisher version number. The private archive attribution sidecar is not visible in this repository; confirm its fields without another restore. S23 has no shared archive; its lawful reacquisition route is not yet confirmed. **Blocking** to completion of the S19 archive-inventory check and to G2 until source selections and S23 access confirmations are recorded. | Accept/reject the exact S18 and S19 representations; confirm S19's private inventory includes title/authors/DOI/license/retrieval/hash; select S23 publisher representation and individual reacquisition route. Do not repeat S19 upload/restore. |
+| 5. Missing reporting vs. incomplete extraction | G0 defines six field statuses, locator/review-scope requirements, failure-before-unknown precedence, and a separate correction log. | **Specified; not applied to outcomes.** The field-state rules are documented, but no source fields or outcome-bearing supplement tables were adjudicated. | Inaccessible, unreviewed, or incompletely extracted material must not be treated as absent reporting. This remains a scientific safeguard for G2, not an outcome-level finding in G1. | After separate G1 authorization and within G2, apply the field-state model only to reviewed accepted source versions; record review scope and locators, and keep unknown distinct from not reported. |
+| 6. Conservative identity | Frozen reports remain distinct; uncertain participant overlap is handled conservatively without pooling. | **Satisfied for the G1 grouping decision.** Maintainer accepted one PEC-Direct program; S23 confirms partial overlap with S18. Frozen source/target IDs remain unchanged. | Full S18/S23 equivalence, S19 overlap, and publication-to-registry equivalence remain uncertain. This is nonblocking if no unique-participant totals or cross-report field borrowing are used. | Preserve program grouping; resolve outcome-to-target linkage only from lawful evidence before extraction. |
+| 7. Controls, sensitivities, and stops | Required synthetic controls and invariant checks are specified before any real-source analysis. | **Specification complete.** G0 defines controls, sensitivity analyses, precedence/invariant checks, no-estimate handling, and stop conditions. | Controls are not executed here and no implementation is authorized. Their execution belongs to G2, not an extra G1 approval gate. | At G2, execute controls before analysis of the frozen source set; stop on any preregistered failure. |
+
+**Overall assessment: narrowly blocked; not yet READY FOR FINAL G1
+APPROVAL.** The remaining actions are (a) the maintainer's explicit S18,
+S19, and S23 representation decisions, (b) confirmation of S19's private
+inventory attribution fields, (c) documented lawful S23 access for each
+assigned reviewer under their own access, and (d) the separate explicit G1
+authorization. No earlier source approval, archive restore, CI result, or
+merged PR substitutes for (d). If the individual S23 access route is
+verified and all three source selections are accepted, this package can be
+reconsidered for final G1 authorization without creating a shared publisher
+PDF archive.
 
 The decision record
 [G1-MAINTAINER-DECISIONS.md](G1-MAINTAINER-DECISIONS.md) contains the
@@ -291,46 +338,53 @@ amendment; never silently drop or replace S23.
 
 ## Manual actions still required
 
-1. Review S19 third-party credit lines before reuse beyond exact-byte
-   preservation; its archive restore is verified and accepted, but the source
-   version has not been separately approved.
-2. For S23, have the maintainer/library confirm acquisition authorization and
-   whether private retention, backup, and named-reviewer access are covered.
-   Otherwise establish a lawful reviewer reacquisition path. Keep S23
-   unresolved until one of those permitted paths is documented.
-3. After the remaining rights/source review, make a separate explicit G1
-   authorization decision. Do not begin G2, extract outcomes, classify real
-   reports, or run experiments before that authorization.
+1. Accept or reject S18's `PMC8714853.1` representation and exact 114,747-byte
+   Europe PMC XML hash; keep the already documented supplement inventory and
+   do not access `mmc2.xlsx`.
+2. Accept or reject S19's `PMC11471599.1` archive locator and exact
+   122,548-byte Europe PMC XML hash. Its restore is already verified and
+   accepted; do not repeat it. Confirm that the private inventory sidecar
+   includes title, all authors, DOI, license, retrieval date, source hash,
+   and the third-party notice. Do not reproduce an item whose credit line
+   excludes it from CC BY without obtaining permission.
+3. Select S23's recommended authorized individual-reacquisition path, and
+   record each assigned reviewer's access confirmation and matching main/
+   supplement hashes. Do not upload the publisher PDFs to OneDrive or share
+   them unless the applicable account terms expressly authorize it.
+4. After the source decisions and access evidence are recorded, make a
+   separate explicit G1 authorization decision. Do not begin G2, extract
+   outcomes, classify real reports, or run experiments before that
+   authorization.
 
-**Handoff boundary:** this PR records maintainer decisions and approved v1.1
-only. G1 authorization remains pending and G2 remains NO-GO until the S23
-rights/reacquisition path and remaining source-review conditions are recorded
-as satisfied. Do not implement, classify real reports, compute
+**Handoff boundary:** this PR records the Q3 source-clearance recommendations,
+rights/access boundaries and evidence-backed status validation, and approved
+v1.1. G1 authorization remains pending and G2 remains NO-GO until the S23
+reviewer-access path and remaining source-review conditions are recorded as
+satisfied. Do not implement, classify real reports, compute
 results, merge this PR, or close #15 as part of Phase 1. Issue #15's
 pipeline/results acceptance criteria intentionally remain unfinished.
 
 ## Phase 1 validation
 
 On 2026-10-23, `python3 scripts/validate_data.py` passed for the eight-source
-manifest and 42-record retrieval log, and
-`python3 -m unittest discover -s tests -v` passed all 70 tests. `git diff
+manifest and 44-record retrieval log, and
+`python3 -m unittest discover -s tests -v` passed all 74 tests. `git diff
 --check` passed. The recorded G0 preregistration and rules v1.0 SHA-256 hashes
-also match the frozen values above. The repository validator checks frozen G0
-hashes, all eight manifest IDs and targets, CSV widths, provenance fields,
-hash formats, transport-neutral archive restoration evidence, exact
-approved-version binding, and faithful generation of governing v1.1 from the
-approved amendment patch. No classifier, synthetic outcome controls, or
-real-data analysis was run. The new standard-library archive helper and
-focused tests cover exact byte/hash matches, corruption, incomplete files,
-unreadable/non-regular inputs, and path-free machine-readable output. Existing
-and added metadata tests ensure a missing or mismatched restore event cannot
-be marked verified, source-version approval fields match selected versions,
-and all frozen identifiers
-and v1.0 files remain unchanged. The retrieval log preserves prior
-observations and adds timestamped S19 identity/license and restore records;
-the source-verification response was temporary, and the verified archive
-location is recorded only in the private inventory. The three S23
-human-supplied PDF representations remain logged. Browser-rendered HTML has
-no raw-byte hash where the bytes were not retained; challenge responses are
-explicitly not article copies. These are static integrity checks, not
-evidence that the planned classifier or synthetic controls pass.
+also match the frozen values above. The validator checks frozen G0 hashes,
+all eight manifest IDs and targets, CSV widths, provenance fields, hash
+formats, transport-neutral archive restoration evidence, exact
+approved-version binding, evidence-backed rights/access transitions, explicit
+G1 authorization prerequisites, and faithful generation of governing v1.1
+from the approved amendment patch. Metadata tests verify S19's archive restore
+without inferring source approval or clearing third-party reuse, permit a
+documented third-party review to complete, keep S23 reviewer access separate
+from storage/sharing permission, and reject premature G1 authorization.
+Public Q3 metadata is scanned for
+private OneDrive/share links and Microsoft account email addresses. The
+retrieval log preserves all prior 42 observations and appends timestamped
+S18/S19 source identity, hash, version, and license rechecks. S19's original
+restore event and opaque alias remain unchanged; its private archive location
+is not exposed. The three S23 human-supplied PDF representations remain
+logged. No classifier, synthetic outcome controls, or real-data analysis was
+run. These are static integrity checks, not evidence that the planned
+classifier or synthetic controls pass.

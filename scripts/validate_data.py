@@ -66,13 +66,25 @@ Q3_SOURCE_MANIFEST_FIELDS = [
     "approving_maintainer", "archive_status", "archive_reference",
     "archive_recovery_evidence", "citation_title", "citation_authors",
     "archive_object_id", "archive_restore_event_id", "archive_restore_bytes",
-    "archive_restore_sha256",
+    "archive_restore_sha256", "rights_review_status",
+    "rights_review_evidence", "assigned_reviewer_access_status",
+    "assigned_reviewer_access_evidence", "storage_sharing_status",
+    "storage_sharing_evidence",
 ]
 Q3_RETRIEVAL_LOG_FIELDS = [
     "artifact_id", "source_id", "retrieved_utc", "request_url", "http_status",
     "media_type", "bytes", "response_sha256", "verification_outcome",
     "archive_object_id",
 ]
+Q3_RIGHTS_REVIEW_STATUSES = {
+    "conditions_documented",
+    "third_party_review_pending",
+    "third_party_review_complete",
+}
+Q3_REVIEWER_ACCESS_STATUSES = {"not_applicable", "unverified", "confirmed"}
+Q3_STORAGE_SHARING_STATUSES = {
+    "not_applicable", "unverified", "prohibited", "conditional", "permitted",
+}
 Q3_SHA256 = re.compile(r"[0-9a-f]{64}")
 
 def valid_date(value):
@@ -128,6 +140,40 @@ def validate_q3_source_manifest(rows, expected_reports, retrieval_log):
             raise ValueError(f"source-manifest.csv:{row_number}: S19 citation title is required")
         if source_id == "S19" and not row["citation_authors"].strip():
             raise ValueError(f"source-manifest.csv:{row_number}: S19 author attribution is required")
+        if row["rights_review_status"] not in Q3_RIGHTS_REVIEW_STATUSES:
+            raise ValueError(f"source-manifest.csv:{row_number}: invalid rights review status")
+        if not row["rights_review_evidence"].strip():
+            raise ValueError(f"source-manifest.csv:{row_number}: rights review status requires evidence")
+        reviewer_access_status = row["assigned_reviewer_access_status"]
+        if reviewer_access_status not in Q3_REVIEWER_ACCESS_STATUSES:
+            raise ValueError(f"source-manifest.csv:{row_number}: invalid assigned reviewer access status")
+        if source_id == "S23":
+            if reviewer_access_status == "not_applicable":
+                raise ValueError(f"source-manifest.csv:{row_number}: S23 reviewer access status is required")
+            if (
+                reviewer_access_status == "confirmed"
+                and not row["assigned_reviewer_access_evidence"].strip()
+            ):
+                raise ValueError(f"source-manifest.csv:{row_number}: confirmed reviewer access requires evidence")
+            if (
+                reviewer_access_status == "unverified"
+                and row["assigned_reviewer_access_evidence"].strip()
+            ):
+                raise ValueError(f"source-manifest.csv:{row_number}: unverified reviewer access cannot claim confirmation evidence")
+        elif reviewer_access_status != "not_applicable" or row["assigned_reviewer_access_evidence"].strip():
+            raise ValueError(f"source-manifest.csv:{row_number}: reviewer access status is only applicable to S23")
+        storage_status = row["storage_sharing_status"]
+        if storage_status not in Q3_STORAGE_SHARING_STATUSES:
+            raise ValueError(f"source-manifest.csv:{row_number}: invalid storage/sharing status")
+        if source_id == "S23":
+            if storage_status == "not_applicable":
+                raise ValueError(f"source-manifest.csv:{row_number}: S23 storage/sharing status is required")
+            if storage_status == "unverified" and row["storage_sharing_evidence"].strip():
+                raise ValueError(f"source-manifest.csv:{row_number}: unverified storage/sharing cannot claim permission evidence")
+            if storage_status not in {"unverified", "not_applicable"} and not row["storage_sharing_evidence"].strip():
+                raise ValueError(f"source-manifest.csv:{row_number}: resolved storage/sharing status requires evidence")
+        elif storage_status != "not_applicable" or row["storage_sharing_evidence"].strip():
+            raise ValueError(f"source-manifest.csv:{row_number}: storage/sharing status is only applicable to S23")
         missing = [field for field in required if not row[field].strip()]
         if missing:
             raise ValueError(f"source-manifest.csv:{row_number}: empty required provenance fields: {missing}")
@@ -219,6 +265,41 @@ def validate_q3_source_manifest(rows, expected_reports, retrieval_log):
             raise ValueError(f"source-manifest.csv:{row_number}: unverified archive cannot claim restore evidence")
 
 
+def validate_q3_g1_authorization(decision_text, manifest):
+    decision_rows = []
+    for line in decision_text.splitlines():
+        if line.startswith("| G1 |"):
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            if len(cells) == 6:
+                decision_rows.append(cells)
+    if len(decision_rows) != 1:
+        raise ValueError("G1 decision register must contain exactly one six-column G1 row")
+    _, _, _, status, approval_date, approver = decision_rows[0]
+    if status not in {"pending_maintainer", "approved", "rejected", "blocked"}:
+        raise ValueError("G1 decision register has an invalid authorization status")
+    if status == "pending_maintainer":
+        if approval_date not in {"", "—", "-"} or approver not in {"", "—", "-"}:
+            raise ValueError("pending G1 authorization cannot claim an approval date or maintainer")
+        return
+    if not valid_date(approval_date) or not approver.strip() or approver in {"—", "-"}:
+        raise ValueError("final G1 decision requires a valid date and explicit maintainer")
+    if status != "approved":
+        return
+
+    sources = {row["source_id"]: row for row in manifest}
+    for source_id in ("S18", "S19", "S23"):
+        row = sources[source_id]
+        if (
+            row["maintainer_approval_status"] != "approved"
+            or row["approved_version_id"] != row["source_version_id"]
+        ):
+            raise ValueError(f"G1 authorization requires an approved matching source version for {source_id}")
+    if not sources["S19"]["rights_review_evidence"].strip():
+        raise ValueError("G1 authorization requires documented S19 rights-review evidence")
+    if sources["S23"]["assigned_reviewer_access_status"] != "confirmed":
+        raise ValueError("G1 authorization requires confirmed S23 assigned-reviewer access")
+
+
 def validate_q3_retrieval_log(rows):
     artifacts = set()
     for row_number, row in enumerate(rows, start=2):
@@ -306,6 +387,8 @@ def validate_q3_metadata(directory=ROOT):
     retrieval_log = read_q3_csv(q3 / "retrieval-log.csv", Q3_RETRIEVAL_LOG_FIELDS)
     validate_q3_retrieval_log(retrieval_log)
     validate_q3_source_manifest(manifest, rules["reports"], retrieval_log)
+    decisions = (q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
+    validate_q3_g1_authorization(decisions, manifest)
     validate_q3_amendment(q3, rules)
     return len(manifest), len(retrieval_log)
 

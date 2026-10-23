@@ -3,8 +3,10 @@
 **Status:** the ARCHIVE policy was approved by `@aditmer` on 2026-10-23.
 S19 is stored in the private archive and its cloud download passed the exact
 byte/hash restore check; the maintainer accepted that evidence. S23 remains
-blocked pending a permitted retention or lawful reacquisition path. OneDrive
-approval does not authorize retention or redistribution of Cell Press PDFs.
+blocked until each assigned reviewer confirms authorized access for the
+recommended individual-reacquisition path. No S23 archive is claimed.
+OneDrive approval does not authorize retention or redistribution of Cell
+Press PDFs.
 
 ## Proposed archive policy decision
 
@@ -61,6 +63,12 @@ Restore event `S19-onedrive-restore-2026-10-23T181816Z` is recorded in the
 public log under an opaque alias; the actual location and item details remain
 in the private inventory. This verifies restoration, not source-version
 approval or third-party credit-line review.
+The public manifest includes the title, all authors, DOI, license, retrieval
+time, source hash, and safe archive alias. The private inventory itself is
+not part of this repository and was not inspected in this review; the
+maintainer should confirm its sidecar contains those attribution fields and
+the third-party notice. This is a metadata confirmation only and does not
+require another upload or restore.
 
 1. Review third-party credit lines in the XML. The article states CC BY 4.0,
    but individual third-party exceptions still apply.
@@ -125,37 +133,73 @@ Suggested attribution sidecar values:
 
 ## S23: Cell Press article and supplement
 
-Elsevier's current sharing policy distinguishes the published journal
-article from an accepted manuscript. For subscription articles it allows an
-author to privately share a published article with known research colleagues
-for personal use, but says other sharing is by agreement. Its copyright
-policy describes enumerated author/institution uses and says other uses
-require permission. These public policies do not establish that this
-maintainer's browser download, personal backup, private OneDrive storage, or
-access by this research team is permitted by the relevant subscription or
-library agreement. A private folder does not itself confer rights.
+**Recommended path: authorized reviewer reacquisition, not a shared archive.**
+Use the official [DOI](https://doi.org/10.1016/j.stem.2021.10.003), which
+resolves to the Cell Press article page, and use that page's “Supplemental
+information” link to retrieve the separate `mmc1.pdf`. The main article and
+supplement are the two frozen components; the combined PDF duplicates them.
+The official publisher landing page and DOI are stable discovery locators;
+the direct supplement URL was not verified because automated access to the
+publisher page is blocked.
 
-Before upload, the maintainer or library rights contact must confirm in
-writing that the acquiring user was authorized and that the agreement permits
-the intended private retention, custodians, backup, and access by named
-reviewers. If uncertain, seek the rights holder/library's guidance. If the
-terms do not permit project storage or reviewer access, do not upload either
-PDF; have each reviewer reacquire through authorized access when needed and
-keep S23 blocked until that route is approved.
+The current Elsevier [sharing policy](https://www.elsevier.com/about/policies-and-standards/sharing)
+says authors may privately share a subscription Published Journal Article
+with known colleagues for their personal use and otherwise sharing is by
+agreement. Its [copyright policy](https://www.elsevier.com/about/policies-and-standards/copyright)
+states that users with legal access may text/data-mine subscription articles
+for noncommercial purposes without sharing adaptations, and notes that a
+subscription agreement may provide additional rights. The [hosting policy](https://www.elsevier.com/about/policies-and-standards/hosting)
+also says sharing a subscription Published Journal Article is otherwise by
+agreement. These public rules do not establish the maintainer's account
+terms, project storage rights, or rights for a reviewer who is not an
+authorized user. An author-sharing allowance is not a general license for
+this project to share the publisher PDF.
 
-Only after that rights check, upload the 21-page main article and separate
-18-page `mmc1.pdf` supplement. Do not upload the duplicate 39-page combined
-PDF. Verify fresh OneDrive downloads using these expected values:
+Each assigned reviewer must use their own authorized Cell Press account,
+institutional subscription/proxy, or other lawful publisher-provided access.
+Do not share credentials, send a downloaded publisher PDF to another
+reviewer, upload it to GitHub/OneDrive/a shared drive, or publicly
+redistribute it. Each reviewer may make only the personal/temporary copy
+allowed by their own access terms. If the applicable terms do not permit a
+download for hash verification, do not save a copy; ask the library or
+publisher for an authorized verification method. The maintainer records
+reviewer access confirmation without credentials or private account URLs.
+
+Before analysis, each assigned source reviewer independently:
+
+1. Opens the official DOI/article page through their own authorized access
+   and confirms the title, DOI, PMID `34861146`, and article identity.
+2. Opens the publisher-linked “Supplemental information” item and confirms
+   that it is the separate `mmc1.pdf`, not the combined duplicate.
+3. Where their terms permit a personal download, checks the expected byte
+   counts and SHA-256 values below using `scripts/q3_archive_verify.py` with
+   `--purpose source`; otherwise asks the publisher/library how to verify the
+   same representation lawfully.
+4. Records the access date, whether publisher or institutional access was
+   used, the identity/hash result, and the reviewer confirmation in the
+   project record. Do not record credentials or private access URLs.
+
+The exact expected component identities are:
 
 | Object | Bytes | SHA-256 |
 |---|---:|---|
 | Main article | 3,927,356 | `0c7bf5e8f66a3b44992522b7911a7bd39b473a6b55d47cb8e6a2f81eed45e3f2` |
 | Separate supplement (`mmc1.pdf`) | 1,294,061 | `1e83cc5db34081eab03c049beed768ab69a9f83015484ea89dbb00f11a203f22` |
 
-Record a distinct object identifier and restore event for each file in the
-private inventory. Do not publicly expose the private path, URL, account
-identifier, or rights evidence. If the rights basis or restore evidence is
-missing, do not claim S23 preservation or G1 completion.
+Do not upload these PDFs to the approved OneDrive archive merely because the
+archive policy was approved; that policy does not grant article-specific
+rights. Private retention, backup, or named-reviewer access may be used only
+if the relevant account agreement expressly permits the exact scope. If that
+permission is later confirmed, the maintainer may choose Path A and record
+the rights basis and a separate exact-byte restore for each file. Until then,
+the individual-reacquisition route is preferred, no project archive is
+claimed, and S23 remains blocked until each assigned reviewer's authorized
+access is confirmed.
+
+An authorized author-accepted manuscript or repository copy could be
+considered only if a suitable lawful representation is found. Do not
+substitute it for the frozen publisher PDFs without a separate source-version
+decision and comparison of material differences.
 
 ## Public evidence and status transitions
 
