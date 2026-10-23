@@ -1,6 +1,10 @@
+import csv
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
-from scripts.validate_data import read_table, validate_evidence, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_sources, validate_trials
+from scripts.validate_data import FAILURE_MODE_SCORE_FIELDS, REQUIRED, read_table, validate_evidence, validate_failure_modes, validate_literature_log, validate_registry_metadata, validate_row_dates, validate_sources, validate_trials
 
 
 def clinical_claim(**overrides):
@@ -36,6 +40,148 @@ def clinical_claim(**overrides):
 
 
 class TrackerValidationTests(unittest.TestCase):
+    def test_failure_mode_tracker_is_source_linked_and_scored(self):
+        rows = read_table("failure-modes.csv")
+        sources = read_table("sources.csv")
+        validate_failure_modes(rows, sources)
+        self.assertGreaterEqual(len(rows), 8)
+        self.assertLessEqual(len(rows), 12)
+
+    def test_failure_mode_requires_known_source_ids(self):
+        rows = read_table("failure-modes.csv")
+        rows[0]["source_ids"] = "S999"
+        with self.assertRaisesRegex(ValueError, "unknown or missing source IDs"):
+            validate_failure_modes(rows, read_table("sources.csv"))
+
+    def test_failure_mode_cannot_rely_only_on_candidate_or_sponsor(self):
+        for source_id in ("S10", "S25"):
+            with self.subTest(source_id=source_id):
+                rows = read_table("failure-modes.csv")
+                rows[0]["source_ids"] = source_id
+                with self.assertRaisesRegex(ValueError, "at least one primary study or authoritative source"):
+                    validate_failure_modes(rows, read_table("sources.csv"))
+
+    def test_failure_mode_priority_score_must_match_component_scores(self):
+        rows = read_table("failure-modes.csv")
+        sources = read_table("sources.csv")
+        rows[0]["priority_score"] = str(int(rows[0]["priority_score"]) + 1)
+        with self.assertRaisesRegex(ValueError, "priority_score must equal"):
+            validate_failure_modes(rows, sources)
+
+    def test_failure_mode_ranks_must_follow_documented_order(self):
+        rows = read_table("failure-modes.csv")
+        sources = read_table("sources.csv")
+        rows[0]["priority_rank"], rows[1]["priority_rank"] = rows[1]["priority_rank"], rows[0]["priority_rank"]
+        with self.assertRaisesRegex(ValueError, "ranks must follow score"):
+            validate_failure_modes(rows, sources)
+
+    def test_failure_mode_requires_population_relevance_and_unknowns(self):
+        sources = read_table("sources.csv")
+        for field in REQUIRED["failure-modes.csv"]:
+            with self.subTest(field=field):
+                rows = read_table("failure-modes.csv")
+                rows[0][field] = " "
+                with self.assertRaises(ValueError):
+                    validate_failure_modes(rows, sources)
+
+    def test_failure_mode_rejects_invalid_scores_and_confidence(self):
+        sources = read_table("sources.csv")
+        for field in FAILURE_MODE_SCORE_FIELDS:
+            for value in ("0", "4", "1.5", "high"):
+                with self.subTest(field=field, value=value):
+                    rows = read_table("failure-modes.csv")
+                    rows[0][field] = value
+                    with self.assertRaisesRegex(ValueError, "must be an integer from 1 to 3"):
+                        validate_failure_modes(rows, sources)
+        for value in ("-1", "6", "2.5", "high"):
+            with self.subTest(confidence=value):
+                rows = read_table("failure-modes.csv")
+                rows[0]["confidence_0_to_5"] = value
+                with self.assertRaisesRegex(ValueError, "confidence must be"):
+                    validate_failure_modes(rows, sources)
+
+    def test_failure_mode_rejects_invalid_categories_scopes_and_statuses(self):
+        sources = read_table("sources.csv")
+        for field, value in (
+            ("category", "engineering|unsupported"),
+            ("category", "engineering|"),
+            ("evidence_scope", "unknown"),
+            ("evidence_status", "proven"),
+        ):
+            with self.subTest(field=field, value=value):
+                rows = read_table("failure-modes.csv")
+                rows[0][field] = value
+                with self.assertRaisesRegex(ValueError, "invalid"):
+                    validate_failure_modes(rows, sources)
+
+    def test_failure_mode_rejects_duplicate_names_ids_and_ranks(self):
+        sources = read_table("sources.csv")
+        for field, message in (
+            ("matrix_id", "duplicate matrix_id"),
+            ("failure_mode", "duplicate failure_mode"),
+            ("priority_rank", "unique and contiguous"),
+        ):
+            with self.subTest(field=field):
+                rows = read_table("failure-modes.csv")
+                rows[1][field] = rows[0][field]
+                with self.assertRaisesRegex(ValueError, message):
+                    validate_failure_modes(rows, sources)
+
+    def test_failure_mode_rejects_invalid_rank_and_row_count(self):
+        sources = read_table("sources.csv")
+        for value, message in (("0", "must be positive"), ("first", "must be an integer"), ("99", "unique and contiguous")):
+            with self.subTest(rank=value):
+                rows = read_table("failure-modes.csv")
+                rows[0]["priority_rank"] = value
+                with self.assertRaisesRegex(ValueError, message):
+                    validate_failure_modes(rows, sources)
+        rows = read_table("failure-modes.csv")
+        for invalid_rows in (rows[:7], rows + rows[:2]):
+            with self.assertRaisesRegex(ValueError, "expected 8 to 12"):
+                validate_failure_modes(invalid_rows, sources)
+
+    def test_failure_mode_rank_tie_breaks_are_enforced(self):
+        sources = read_table("sources.csv")
+        rows = read_table("failure-modes.csv")
+        for field in ("safety_relevance_1_to_3", "research_tractability_1_to_3", "matrix_id"):
+            with self.subTest(tie_break=field):
+                tied = [dict(row) for row in rows[:8]]
+                for row in tied:
+                    for score_field in FAILURE_MODE_SCORE_FIELDS:
+                        row[score_field] = "2"
+                    row["priority_score"] = "12"
+                tied.sort(key=lambda row: row["matrix_id"])
+                if field != "matrix_id":
+                    tied[-1][field] = "3"
+                    tied[-1]["patient_impact_1_to_3"] = "1"
+                    tied.insert(0, tied.pop())
+                for rank, row in enumerate(tied, start=1):
+                    row["priority_rank"] = str(rank)
+                validate_failure_modes(tied, sources)
+                tied[0]["priority_rank"], tied[-1]["priority_rank"] = tied[-1]["priority_rank"], tied[0]["priority_rank"]
+                with self.assertRaisesRegex(ValueError, "ranks must follow score"):
+                    validate_failure_modes(tied, sources)
+
+    def test_failure_mode_csv_rejects_bad_header_and_column_count(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "data").mkdir()
+            path = root / "data" / "failure-modes.csv"
+            header = REQUIRED["failure-modes.csv"]
+            for actual_header, row, message in (
+                (["wrong_header"], None, "header mismatch"),
+                (header, ["x"], "column count does not match header"),
+                (header, ["x"] * (len(header) + 1), "column count does not match header"),
+            ):
+                with self.subTest(message=message), path.open("w", encoding="utf-8", newline="") as handle:
+                    writer = csv.writer(handle)
+                    writer.writerow(actual_header)
+                    if row is not None:
+                        writer.writerow(row)
+                with patch("scripts.validate_data.ROOT", root):
+                    with self.assertRaisesRegex(ValueError, message):
+                        read_table("failure-modes.csv")
+
     def test_unknown_source_id_fails(self):
         with self.assertRaisesRegex(ValueError, "unknown or missing source IDs"):
             validate_evidence([clinical_claim(source_id="S99")], {"S1"})

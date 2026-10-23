@@ -62,19 +62,7 @@ These remain active research directions, but this first sprint has not completed
 
 ## Recurring failure modes and bottlenecks
 
-| Failure mode | Why it matters | Evidence to track |
-|---|---|---|
-| Autoimmune recurrence | Replaced cells may be attacked by the same autoreactive immune process; hypoimmune engineering has only preclinical and single-person early evidence. [S5, S8, S14, S15, S16] | Autoantibodies, cellular immune response, graft function, disease-stage stratification, and multi-year human outcomes. |
-| Alloimmune rejection | Donor-derived cells can trigger host immune rejection. | HLA matching/editing, graft survival, immunosuppression, immune monitoring. |
-| Immunosuppression burden | Infection, malignancy, organ toxicity, and monitoring can offset benefit. | Specific regimen, adverse events, cumulative exposure, discontinuation. |
-| Engraftment and cell function | Closed-device VC-01 was terminated for insufficient functional engraftment; open devices permit vascular ingrowth but also immune-cell entry and require immunosuppression. Quantitative oxygenation was not reported in the cited human results. [S17, S18, S19] | C-peptide, glucose responsiveness, time-in-range, graft survival and location, device-level cell mass, fibrosis, and direct oxygenation measures. |
-| Durability and overclaiming | One-year insulin independence does not establish multi-year stable function. | Denominators, follow-up, insulin use, HbA1c/time-in-range, severe hypoglycemia. |
-| Encapsulation/device performance | VC-01 was terminated for insufficient engraftment and VX-264 did not meet its efficacy endpoint; these program-level findings do not establish a shared mechanism. Vascularized approaches can improve access to blood supply but do not isolate cells from immunity. [S9, S10, S17, S18, S19] | C-peptide, oxygenation, fibrosis, cell survival, explant/device analysis, device-specific adverse events, immunosuppression burden, and clear distinction between registry and sponsor status. |
-| Manufacturing and consistency | Scale-up, purity, potency, batch consistency, and cost constrain access. | Product characterization, release criteria, manufacturing deviations, delivery capacity. |
-| Tumor/off-target risk | Undifferentiated hypoimmune iPSCs formed teratomatous multi-lineage growths in primate experiments; findings must not be conflated with a purified differentiated clinical islet product. [S14] | Long-term surveillance, product purity, genomic stability, tumorigenicity, off-target differentiation, and validated removal/safety controls. |
-| Trial selection/generalizability | Early studies often enroll highly selected participants with severe disease. | Inclusion criteria, demographics, comparator, site availability, external validity. |
-| Endpoint mismatch | Surrogate or short-term endpoints may not equal durable patient benefit. | Pre-specified endpoint, clinical importance, independent replication, postapproval evidence. |
-| Access and treatment burden | Complex procedures may be unavailable or unaffordable. | Eligibility, geography, cost, donor/cell supply, patient-reported burden. |
+The ranked, source-linked matrix is maintained in [`data/failure-modes.csv`](../data/failure-modes.csv); it distinguishes product-specific observations, hypothesized mechanisms, and explicit evidence gaps. The [Sprint 02 research-priority memo](SPRINT-02-RESEARCH-PRIORITIES.md) explains the scoring and identifies candidate falsifiable questions. This report does not maintain a second copy of the matrix.
 
 ## Research priorities for Sprint 01
 
@@ -110,6 +98,7 @@ These remain active research directions, but this first sprint has not completed
 
 ## Update record
 
+- 2026-10-22: Added the CSV-first, source-linked failure-mode matrix and transparent research-priority scoring; replaced the earlier unranked table with a link to the authoritative matrix. Added a Sprint 02 memo with conditional computational-question candidates for Issue #14, including explicit dataset-access and mechanism unknowns.
 - 2026-10-22: Re-audited the zimislecel paper endpoints, denominators, follow-up, immunosuppression, and safety findings; checked the current official registry API records for NCT04786262, NCT06239636, and NCT05791201. Added the 12/12 full-dose primary endpoint results, distinguished published study endpoints from current registry outcomes, noted registry record recency and the absence of posted results, and clarified that UP421 is gene-edited donor-islet evidence rather than stem-cell-derived evidence. VX-264's negative program result remains sponsor-reported, with its mechanism unresolved.
 - 2026-10-22: Assessed primary hypoimmune mouse and non-human-primate studies; added humanized-mouse and macaque findings with model and sample limits, including the distinct single-animal insulin-independence report. Added VC-01 termination data, PEC-Direct clinical C-peptide and safety findings, and official Cell Pouch/Encellin registry protocols; clarified device-specific trade-offs, immunosuppression, posted-results status, and unresolved oxygenation/failure mechanisms.
 - 2026-10-22: Added the PEC-Direct 4/10 primary endpoint (detectable C-peptide at month 6) as a separate outcome nested with the 3/10 >=0.1 nmol/L result, and abstract-level hypoimmune islet findings (allo/autoimmune avoidance and anti-CD47 elimination in humanized mice) with explicit preclinical limits.
