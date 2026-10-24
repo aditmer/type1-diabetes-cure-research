@@ -1,6 +1,6 @@
 # Q3 G1 maintainer decision record
 
-**Decision recorded:** 23 October 2026
+**Decision record updated:** 24 October 2026
 
 **Owner:** repository maintainer
 
@@ -15,41 +15,45 @@ Final G1 authorization remains pending.
 | G0 | Frozen preregistration and rules v1.0 | Approve the frozen preregistration and rules v1.0 at commit `fe536fe8bea86b991f3f73e515751ead70146ca9`; do not modify frozen files. | approved | 2026-10-23 | @aditmer |
 | A1 | Amendment 2026-10-23-01 / v1.1 | Approve prospectively; preserve v1.0 and prepare separately versioned governing v1.1. | approved | 2026-10-23 | @aditmer |
 | S13 | Lantidra label version | Approve DailyMed v3 `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc`. | approved | 2026-10-23 | @aditmer |
-| S18 | Europe PMC XML representation | Accept PMC archive locator `PMC8714853.1` with the exact 114,747-byte Europe PMC XML hash documented below. | pending_maintainer | — | — |
-| S23 | Publisher article and supplement | Prefer individual lawful reacquisition by each assigned reviewer; do not use shared storage unless the account agreement expressly permits it. | blocked; reviewer access unverified | — | — |
-| S19 | Europe PMC XML representation | Accept PMC archive locator `PMC11471599.1` with the exact 122,548-byte Europe PMC XML hash documented below. The verified OneDrive restore remains a separate decision. | restore accepted; source-version approval pending | 2026-10-23 | @aditmer |
-| S19-INVENTORY | Private archive attribution inventory | Confirm the private inventory for the exact archived S19 XML contains title, all authors, DOI, license, retrieval date, source hash, and third-party notice; publish no private location or account details. | pending_maintainer | — | — |
+| S18 | Europe PMC XML representation | Approve PMC archive locator `PMC8714853.1` and the exact 114,747-byte Europe PMC XML hash below; preserve CC BY-NC-ND 4.0 conditions and do not infer outcomes from unreviewed supplements. | approved | 2026-10-24 | @aditmer |
+| S23 | Publisher article and supplement | Approve the existing `publisher-pdf-human-copy-2026-10-23` representation and Path B individual lawful reacquisition for the sole assigned reviewer; no shared storage or redistribution. | approved | 2026-10-24 | @aditmer |
+| S19 | Europe PMC XML representation | Approve PMC archive locator `PMC11471599.1` and the exact 122,548-byte Europe PMC XML hash below; item-level third-party rights review remains pending. | approved | 2026-10-24 | @aditmer |
+| S19-INVENTORY | Private archive attribution inventory | Accept the reconciled private inventory under the approved non-immutable archive policy, with the historical restore-artifact limitation documented; publish no private location or account details. | approved | 2026-10-24 | @aditmer |
 | REG | Four historical ClinicalTrials.gov versions | Accept official history locators S20 v20, S17 v13, S4 v32, and S9 v26; keep current API responses separately labeled. | accepted | 2026-10-23 | @aditmer |
 | PEC | PEC-Direct overlap handling | Accept conservative program-level grouping; preserve known partial overlap and uncertainty about other participant overlap. | accepted | 2026-10-23 | @aditmer |
 | ARCHIVE | Q3 private source preservation policy | Approve private OneDrive with restricted access, content-addressed naming, no-overwrite procedures, verified cloud restores, and independent backups where permitted; accept its deletion, account-access, and retention risks and that it is not immutable. | approved | 2026-10-23 | @aditmer |
 | G1 | Final feasibility gate | Final G1 authorization remains pending; G2 remains NO-GO. | pending_maintainer | — | — |
 
-**Approval provenance:** these decisions were explicitly supplied by
-repository maintainer `@aditmer` in the project conversation on
-2026-10-23. The source-version fields in the manifest record only the
-selected DailyMed v3 and the four accepted historical registry versions.
-PR #28 is merged, and its maintainer comment contains the audit confirmation
-and those approvals. No source-version approval is inferred for S18, S19, or
-S23. S19's accepted restore evidence and approved archive policy are separate
-from approval of its source version or third-party material. S23 remains
-blocked until assigned reviewers' authorized access is verified. None of
-these decisions authorizes redistribution of copyrighted publisher files.
+**Approval provenance:** G0, A1, S13, REG, PEC, and ARCHIVE were explicitly
+approved by repository maintainer `@aditmer` on 2026-10-23; their historical
+approval dates are unchanged. S18, S19, S19-INVENTORY, and S23 were explicitly
+approved by `@aditmer` on 2026-10-24 in the authenticated
+[maintainer approval comment on PR #31](https://github.com/aditmer/type1-diabetes-cure-research/pull/31#issuecomment-6385261837).
+S19 source approval, its previously accepted
+restore, and the newly accepted inventory reconciliation are separate
+decisions. The restore's historical log and maintainer acceptance survive,
+but its original verifier output and restored download are unavailable for
+independent reinspection; no new restore or independent verification is
+claimed. S19's item-level third-party reuse review remains pending. S23
+access confirmation applies to the sole assigned reviewer under Path B and
+does not authorize storage or sharing of publisher PDFs. None of these
+decisions authorizes redistribution of copyrighted publisher files or final
+G1.
 
 `recommended`, `pending_maintainer`, and `blocked` are not approvals.
 
 Before final G1 authorization, all eight frozen sources must retain explicit
-dated maintainer approval of their matching manifest versions. The separate
-`S19-INVENTORY` row must be marked `approved` with the confirmation date and
-maintainer only after the required private attribution fields have been
-checked. General rights-review text, source approval, and the accepted restore
-are not substitutes for that confirmation. No new upload or restore is needed,
-and no private inventory contents, location, or account details should be
-published. This records the existing close-out requirement, not a new gate.
+dated maintainer approval of their matching manifest versions. The separate `S19-INVENTORY` row records the 2026-10-24 approval of the
+reconciled private attribution record under the existing archive policy,
+including its historical-evidence limitation. It is not a substitute for
+item-level rights review or final G1 authorization. No new upload or restore
+is needed, and no private inventory contents, location, or account details
+should be published.
 
-## Final source decisions requested
+## Recorded source decisions
 
-These are recommendations for maintainer selection, not approvals. No
-approval date or approver is assigned in advance.
+The decisions below record the maintainer's 2026-10-24 approvals; evidence
+and limitations are kept distinct from approval status.
 
 ### S18 — Shapiro et al., DOI `10.1016/j.xcrm.2021.100466`
 
@@ -63,8 +67,8 @@ collection/issue date (2021-12-21), revision received (2021-10-12), and
 acceptance (2021-11-15). The last two are prepublication history dates, not
 postpublication revision dates. The article states CC BY-NC-ND 4.0.
 
-**Recommendation:** Accept `PMC8714853.1` as the version-specific recovery
-identifier and the hash-identified Europe PMC XML as the fixed S18
+**Decision — approved 2026-10-24 by @aditmer:** Accept `PMC8714853.1` as the
+archive locator and the hash-identified Europe PMC XML as the fixed S18
 representation. This is suitable for the planned noncommercial study of
 reported facts if the project preserves attribution and does not reproduce
 protected article expression or distribute adaptations. Keep the existing
@@ -77,12 +81,13 @@ separate local byte archive is claimed. If this representation is rejected,
 the maintainer must identify the alternative exact representation and
 version before any source substitution; do not change the report population.
 
-**Exact selection requested:** “Accept S18 `PMC8714853.1` and Europe PMC XML
+**Approved selection:** “Accept S18 `PMC8714853.1` and Europe PMC XML
 SHA-256 `2c33d10d93cd399fadef190447f2ea5778625c476405f3e6cb011eb94e792433`
 (114,747 bytes) as the frozen project source.”
 
-**Status/provenance:** `pending_maintainer`; no approval date or approver.
-Source identity/license evidence was reverified and logged on 2026-10-23.
+**Status/provenance:** approved 2026-10-24 by `@aditmer`; the exact source
+version and hash are recorded in the manifest. The `mmc2.xlsx` supplement
+remains unreviewed and outside scope; no missing outcomes are inferred.
 
 ### S19 — Keymeulen et al., DOI `10.1038/s41587-023-02055-5`
 
@@ -98,7 +103,7 @@ the line says that material is included. No explicit `<attrib>` elements
 were found in the rechecked XML; that does not establish blanket permission
 for every figure/image/table or supplement.
 
-**Recommendation:** Accept the exact Europe PMC XML byte representation
+**Decision — approved 2026-10-24 by @aditmer:** Accept the exact Europe PMC XML byte representation
 with the PMC archive locator and hash as S19's frozen source. Its existing
 private OneDrive restore was already verified and accepted; neither that
 archive event nor the approved archive policy approves this source version.
@@ -110,22 +115,47 @@ and verified private restore but no publisher-assigned editorial-version
 label. Alternative source representations require a separate maintainer
 decision and must not silently replace the frozen bytes. Reuse of any
 third-party figure, image, table, or expressive text requires item-level
-rights review. The public manifest records title, all authors, DOI, license,
-retrieval time, source hash, and safe archive alias. The private OneDrive
-inventory itself is not accessible in this repository, so its sidecar
-contents were not independently inspected; the maintainer should confirm it
-contains those fields and the third-party notice. No new S19 upload or
-restore is needed.
+rights review. The public manifest records title, all authors, DOI, license, retrieval time,
+source hash, and safe archive alias. The private inventory reconciliation is
+approved separately under `S19-INVENTORY` below. Its `17:48:45Z` timestamp
+has no matching source-retrieval event; local metadata suggests sidecar
+preparation but does not establish that conclusively. The public retrieval
+log remains authoritative. The existing restore event and earlier
+maintainer acceptance survive, but the original verifier output and restored
+download are unavailable for independent reinspection. No new upload,
+restore, or independent verification is claimed.
 
-**Exact selection requested:** “Accept S19 `PMC11471599.1` as the PMC archive
+**Approved selection:** “Accept S19 `PMC11471599.1` as the PMC archive
 locator and accept the Europe PMC XML SHA-256
 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`
 (122,548 bytes) as the frozen project source, subject to the stated
 third-party exceptions.”
 
-**Status/provenance:** source-version `pending_maintainer`. Only the distinct
-archive restore was accepted on 2026-10-23 by `@aditmer`; no source-version
-approval is recorded.
+**Status/provenance:** source version approved on 2026-10-24 by `@aditmer`.
+The existing archive restore was accepted on 2026-10-23. Item-level
+third-party reuse review remains `third_party_review_pending`; source-version
+approval does not change that status.
+
+### S19-INVENTORY — reconciled private archive attribution inventory
+
+**Decision — approved with documented limitation, 2026-10-24 by @aditmer.**
+The maintainer accepts the reconciled private attribution/inventory record
+under the previously approved non-immutable archive policy. The sidecar
+contains the title, all 12 authors, DOI, license, timestamp field, source
+hash, and third-party notice. The `2026-10-23T17:48:45Z` value has no
+corresponding public source-retrieval event; local metadata suggests it may
+reflect sidecar preparation, but that is not conclusive. The public
+retrieval log is authoritative for recorded source retrievals.
+
+The inventory refers to the previously accepted restore
+`S19-onedrive-restore-2026-10-23T181816Z`. The historical public restore
+record and the 2026-10-23 maintainer acceptance survive. The original
+verifier output and restored download are unavailable for independent
+reinspection. The maintainer accepts the historical evidence with this
+limitation; no new restore or independent reproduction is claimed. This
+decision does not assert immutable storage, recovered raw verification
+artifacts, or permission to reproduce third-party material. No private paths,
+item URLs, account identifiers, or inventory content are published.
 
 ### S23 — Ramzy et al., DOI `10.1016/j.stem.2021.10.003`
 
@@ -147,14 +177,14 @@ access may text/data-mine subscription articles for noncommercial purposes
 without sharing adaptations. These public policies do not establish this
 maintainer's account-specific retention or team-storage rights.
 
-**Recommendation — Path B, authorized reviewer reacquisition:** Each assigned
-reviewer obtains the publisher article and separate supplement through their
-own authorized Cell Press account, institutional proxy/subscription, or
-another publisher-authorized route. Each confirms access and verifies the
-title/DOI and, where their terms allow a personal download, the two expected
-hashes before analysis. No credentials or publisher PDFs are shared, and no
-OneDrive/project archive is created. This is preferable to inferring a
-shared-storage right from the maintainer's prior download.
+**Decision — approved Path B, 2026-10-24 by @aditmer:** The maintainer
+confirms being the sole assigned source reviewer for this initial
+computational pilot and attests firsthand to obtaining both the main article
+and separate supplement through public publisher access. This is
+confirmation of individual access, not a new hash-verification test. The
+existing component identities and hashes remain as previously recorded.
+Path B is selected: individual lawful source reacquisition. No credentials
+or publisher PDFs are shared, and no shared archive is authorized.
 
 **Handling and limitations:** Private reading and any personal download are
 only within the research and retention scope granted to that individual by
@@ -162,8 +192,8 @@ their own applicable terms. Do not publicly redistribute, upload to GitHub
 or a shared folder, or share a copied publisher PDF unless an applicable
 agreement expressly authorizes it. Factual annotations may cite the source;
 do not reproduce copyrighted figures, images, tables, or substantial text.
-The specific access agreements and access of assigned reviewers are
-unverified. The direct supplement URL was not independently retrieved; use
+The specific access agreement's storage/sharing rights remain unverified.
+The direct supplement URL was not independently retrieved; use
 the “Supplemental information” link on the official DOI landing page, not a
 guessed URL.
 
@@ -174,17 +204,18 @@ selected by this recommendation. Path C (an author manuscript or repository
 copy) has not been verified; do not substitute without a separate
 source-version decision and comparison of material differences.
 
-**Exact selection/action requested:** “Select Path B. Confirm that each
-assigned reviewer has lawful individual access to the Cell Press publication
-and linked supplement, and record identity/hash checks before analysis. Do
-not share or archive the publisher PDFs absent express rights.”
+**Approved selection/action:** “Select Path B. The sole assigned reviewer has
+confirmed lawful individual public access to the Cell Press publication and
+linked supplement. Do not share or archive the publisher PDFs absent express
+rights.”
 
-**Reproducibility/status:** The proposed method is reproducible if every
-assigned reviewer can lawfully reacquire and verify the exact components;
-that condition has not yet been demonstrated. The manifest records reviewer
-access and storage/sharing permission as separate statuses; both are
-`unverified`. Source-version approval remains pending, and no archive is
-claimed. No approval date or approver.
+**Reproducibility/status:** S23 source version and the sole assigned
+reviewer's access are approved/confirmed on 2026-10-24. The manifest records
+reviewer access separately from storage/sharing permission. Storage and
+sharing remain `unverified`; do not upload, redistribute, or create a shared
+archive of publisher PDFs. If a second reviewer is assigned, that individual
+must separately establish lawful access. Independent checking and
+reproduction of later computational results remain downstream requirements.
 
 ### G1 and seven-checkpoint result
 
@@ -192,23 +223,23 @@ The seven checkpoint reassessment is in
 [SOURCE-FEASIBILITY.md](SOURCE-FEASIBILITY.md). It preserves the separate
 states for source identity/access, source-version acceptance, rights,
 archive or lawful recovery, methodological approval, and final G1
-authorization. The assessment is **narrowly blocked**, not READY FOR FINAL
-G1 APPROVAL: S18/S19/S23 source selections are pending; S23 reviewer-specific
-lawful access is not yet verified; and G1 itself requires a separate
-explicit maintainer decision. Existing approvals, the S19 restore, passing
-checks, and PR #28 do not imply final G1 authorization. G2 remains NO-GO.
+authorization. The source package is **ready for a separate final G1 decision; G1 is not
+authorized**: the four source-level decisions are recorded, while G1 itself
+still requires a separate explicit maintainer decision. Existing approvals,
+the S19 restore, passing checks, and PR #28 do not imply final G1
+authorization. G2 remains NO-GO.
 
 | ID | Alternative and consequence |
 |---|---|
 | G0 | Reject or defer G0: no implementation authorization; any methodological changes need a separately versioned proposal. |
 | A1 | Reject v1.1: keep v1.0 governing; do not use the target-attribution, first-treatment-anchor, or explicit-zero clarifications. |
 | S13 | Select v1 only if the intended source is contemporaneous with the 2023 catalog entry; the reviewed label vintage changes, but not the frozen population or report count. |
-| S23 | Prefer reviewer-by-reviewer lawful reacquisition; if any assigned reviewer cannot access the publisher source, keep S23 blocked. Do not infer a shared-storage right. |
+| S23 | If any subsequently assigned reviewer cannot independently reacquire the source lawfully, keep access for that reviewer blocked; do not infer a shared-storage right. |
 | S19 | Use a different approved CC BY-compatible archive if available; a remote locator or checksum alone does not satisfy the exact-byte deposit/restore requirement. |
 | REG | Save permitted historical bytes as an additional safeguard if a version locator becomes unavailable; do not substitute current API bytes for the historical version. |
 | PEC | Treating reports as disjoint or summing their sample counts risks double-counting; retain uncertainty and program-level grouping. |
 | ARCHIVE | Reject OneDrive as insufficiently durable: select an approved immutable archive or keep G1 blocked; OneDrive version history is not write-once retention. |
-| G1 | Authorize G2 immediately: not recommended while rights, preservation, and explicit approvals remain unresolved. |
+| G1 | A separate dated maintainer authorization is still required before G2; this source-closeout decision is not final G1 authorization. |
 
 ## Rationale and remaining actions
 
@@ -282,18 +313,14 @@ agreement. These public policies do not establish this maintainer's
 account-specific storage rights or authorize project-team access to the
 publisher PDFs.
 
-**Recommended path B:** each assigned reviewer independently reacquires the
-main article and publisher-linked `mmc1.pdf` through their own authorized
-Cell Press account, institutional subscription/proxy, or other lawful
-publisher access. Do not share credentials or downloaded publisher PDFs, or
-upload them to GitHub, OneDrive, or a shared drive. Each reviewer confirms
-access and verifies the DOI/title, component identities, and expected hashes
-before analysis; only a personal/temporary copy allowed by their own terms
-may be used for byte verification. If download is not authorized, ask the
-publisher/library for another lawful verification method. Record reviewer
-confirmation without account identifiers or private URLs. This route is
-reproducible only once each assigned reviewer has confirmed access and
-matching components; that evidence is not yet recorded.
+**Approved Path B:** the maintainer selected individual lawful reacquisition
+and attested on 2026-10-24 to being the sole assigned reviewer with firsthand
+public access to the main article and separate `mmc1.pdf`. This confirms
+individual access; it is not a new hash check. Preserve previously recorded
+component identities and hashes. Do not share credentials or publisher PDFs,
+or upload them to GitHub, OneDrive, or a shared drive. If another reviewer is
+later assigned, that reviewer must separately confirm lawful access. Record
+confirmation without account identifiers or private URLs.
 
 **Path A is conditional, not selected:** use private OneDrive retention only
 if the relevant agreement explicitly permits the intended personal
@@ -303,7 +330,7 @@ accepted manuscript or repository copy, has not been verified and must not
 replace the frozen publisher representation without a separate source-version
 decision and comparison of material differences.
 
-### S19 exact-byte preservation
+### S19 approved source and exact-byte preservation
 
 The verified representation is Europe PMC full-text XML for DOI
 `10.1038/s41587-023-02055-5`, PMCID `PMC11471599`: *Encapsulated stem
@@ -316,39 +343,41 @@ that third-party material is included unless its credit line says otherwise.
 The 2026-10-23T16:08:28Z retrieval returned 122,548 bytes with SHA-256
 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839`.
 The XML does not contain a `pmcid-ver`; `PMC11471599.1` is the official PMC
-archive locator, not a publisher version-of-record label. The exact XML is
-stored in private OneDrive; a web download to a fresh non-synced location
-matched the expected 122,548 bytes and SHA-256, recorded as
+archive locator, not a publisher version-of-record label. The exact XML is stored in private OneDrive. The historical public record
+reports that a fresh web download to a non-synced location matched the
+expected 122,548 bytes and SHA-256, under event
 `S19-onedrive-restore-2026-10-23T181816Z`. The maintainer accepted this
-restore evidence on 2026-10-23. The actual archive location is retained only
-in the private inventory. A fresh 2026-10-23T17:15:01Z retrieval again verified HTTP 200,
+restore evidence on 2026-10-23. The original verifier output and restored
+download are unavailable for independent reinspection; this evidence
+limitation was accepted on 2026-10-24. The actual archive location is
+retained only in the private inventory. A 2026-10-23T17:15:01Z retrieval
+recorded HTTP 200,
 `application/xml`, 122,548 bytes, the expected SHA-256, DOI, PMCID, and CC BY
 4.0 license text. This is source verification only.
 
 **S19 archive procedure:** the maintainer approved OneDrive as the project's
 proportionate archival solution on 2026-10-23, with the stated controls and
-acknowledged non-immutable risks. The exact S19 XML restore is already
-verified; do not repeat its upload or restore. The public manifest records
+acknowledged non-immutable risks. The S19 restore is historically recorded
+and was accepted; its raw artifacts are no longer available for independent
+reinspection. Do not repeat its upload or restore. The public manifest records
 the title, all authors, DOI, license, retrieval time, source hash, and safe
-archive alias. The actual private inventory is not in this repository and
-was not inspected in this review, so its sidecar contents cannot be
-independently confirmed. The maintainer should confirm that the private
-inventory records the same attribution fields and the third-party notice;
-this is a metadata check only, not a new archive or restore task. See
+archive alias. The actual private inventory is not in this repository. The maintainer
+has accepted the reconciled sidecar with its timestamp and restore-evidence
+limitations documented; this is not a new archive or restore task. See
 [ONEDRIVE-ARCHIVE.md](ONEDRIVE-ARCHIVE.md) for the sidecar template.
 
 OneDrive is not immutable: ordinary version history and restore capability
 do not guarantee prevention of deletion, overwrites, account loss, or
 administrative access. The safeguards reduce accidental-change and verification risks but do not
-satisfy an immutable-storage guarantee. S19's archive is verified under this
-policy. Its exact source-version approval and review of third-party
-credit-line exceptions remain separate.
+satisfy an immutable-storage guarantee. S19's archive and exact source
+version are accepted under this policy. Review of third-party credit-line
+exceptions remains separate and pending.
 
 ### Approval checklist
 
 G0/A1/S13/REG/PEC/ARCHIVE entries below were explicitly supplied by
-`@aditmer` on 2026-10-23. S18/S19/S23 and final G1 are recommendations or
-pending decisions and have not been approved.
+`@aditmer` on 2026-10-23. S18/S19/S19-INVENTORY/S23 were approved on
+2026-10-24. Final G1 remains pending and G2 remains NO-GO.
 
 | Decision | Exact item to decide | Current choice |
 |---|---|---|
@@ -358,10 +387,11 @@ pending decisions and have not been approved.
 | REG | Accept official history locators S20 v20, S17 v13, S4 v32, and S9 v26; keep current API hashes distinct. | Accepted 2026-10-23 by @aditmer |
 | PEC | Keep one PEC-Direct program; retain proven partial S23/S18 overlap, other overlap uncertain, and do not infer unique participants or independent replication. | Accepted 2026-10-23 by @aditmer |
 | ARCHIVE | Use private OneDrive with restricted access, content-addressed naming, no-overwrite procedures, verified cloud restores, independent backup where permitted; accept non-immutable risks. | Approved 2026-10-23 by @aditmer |
-| S18 | Accept `PMC8714853.1` and Europe PMC XML SHA-256 `2c33d10d93cd399fadef190447f2ea5778625c476405f3e6cb011eb94e792433` (114,747 bytes). | Pending maintainer selection |
-| S19 | Accept `PMC11471599.1` as archive locator and Europe PMC XML SHA-256 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839` (122,548 bytes), subject to third-party exceptions; confirm private-inventory attribution fields. | Source version pending; restore accepted 2026-10-23 by @aditmer |
-| S23 | Select individual lawful reacquisition; verify each assigned reviewer's access and file identity. No shared storage unless expressly allowed. | Blocked; reviewer access and account terms unverified |
-| G1 | Final authorization decision after remaining source selections and rights/access evidence; G2 remains NO-GO. | Pending; G2 NO-GO |
+| S18 | Accept `PMC8714853.1` and Europe PMC XML SHA-256 `2c33d10d93cd399fadef190447f2ea5778625c476405f3e6cb011eb94e792433` (114,747 bytes). | Approved 2026-10-24 by @aditmer |
+| S19 | Accept `PMC11471599.1` as archive locator and Europe PMC XML SHA-256 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839` (122,548 bytes), subject to third-party exceptions. | Source version approved 2026-10-24 by @aditmer; restore accepted 2026-10-23 |
+| S19 inventory | Accept reconciled private attribution inventory under the approved non-immutable policy, with historical restore evidence limitation. | Approved 2026-10-24 by @aditmer; no new verification claimed |
+| S23 | Select individual lawful reacquisition; sole reviewer attests public publisher access. No shared storage unless expressly allowed. | Approved 2026-10-24 by @aditmer; access confirmed, storage/sharing unverified |
+| G1 | Separate final authorization decision; G2 remains NO-GO. | Pending; G2 NO-GO |
 
 ### ClinicalTrials.gov and cohort identity
 
@@ -400,14 +430,14 @@ linkage is inferred.
 
 ## Gate outcome
 
-**Final G1 authorization pending; G2 NO-GO.** G0, A1, S13, REG, PEC, and
-ARCHIVE decisions are recorded as approved or accepted. S19's cloud restore
-is accepted and technically verified; source-version approval, private
-inventory attribution confirmation, and item-specific third-party reuse
-review remain separate. S23 remains blocked until the recommended
-reviewer-by-reviewer lawful access path is confirmed. The seven-checkpoint
-reassessment is in
+**Ready for a separate final G1 decision; G1 is not authorized and G2 remains
+NO-GO.** G0, A1, S13, REG, PEC, and ARCHIVE decisions retain their
+2026-10-23 dates. S18, S19, S19-INVENTORY, and S23 source-level decisions are
+recorded as approved on 2026-10-24. S19's restore is accepted under the
+documented historical-evidence limitation; item-specific third-party reuse
+review remains pending. S23's sole-reviewer public access is confirmed under
+Path B, while publisher-PDF storage/sharing rights remain unverified. The
+seven-checkpoint reassessment is in
 [SOURCE-FEASIBILITY.md](SOURCE-FEASIBILITY.md). G2 remains unauthorized until
-the remaining conditions are resolved and the maintainer separately
-authorizes G1. No clinical data,
+the maintainer separately authorizes G1. No clinical data,
 classifications, controls, or experiments were run for this record.
