@@ -303,28 +303,32 @@ def _validate_consistency(fields):
             _require(a is None or b is None or a <= b, "contradictory global counts")
     for domain in DOMAINS:
         denominator = value(domain + ".denominator")
+        participant_denominator = value(domain + ".denominator_basis") == "endpoint_analysis"
         observation = value(domain + ".observation")
         if target is False or enrolled == 0:
             _require(value(domain + ".attribution") != "target" or
                      (observation != "observed" and
-                      (observation == "planned" or denominator in (None, 0))),
+                      (observation == "planned" or not participant_denominator or
+                       denominator in (None, 0))),
                      "observed target outcomes or analysis counts contradict no target enrollment")
-        _require(value(domain + ".attribution") != "target" or
+        _require(not participant_denominator or value(domain + ".attribution") != "target" or
                  observation == "planned" or
                  denominator is None or enrolled is None or denominator <= enrolled,
                  "analysis denominator exceeds target enrollment")
         if domain == "insulin_independence":
             numerator = value(domain + ".value")
-            _require(numerator is None or denominator is None or numerator <= denominator,
+            _require(not participant_denominator or numerator is None or denominator is None or
+                     numerator <= denominator,
                      "binary numerator exceeds analysis denominator")
         if domain == "severe_hypoglycemia":
             affected, events = value(domain + ".participants_affected"), value(domain + ".value")
-            _require(affected is None or denominator is None or affected <= denominator,
+            _require(not participant_denominator or affected is None or denominator is None or
+                     affected <= denominator,
                      "affected participants exceed denominator")
             _require(affected is None or events is None or
                      ((affected == 0) == (events == 0) and affected <= events),
                      "contradictory hypoglycemia events/participants")
-        if observation == "observed":
+        if observation == "observed" and participant_denominator:
             _require(denominator != 0, "observed endpoint with zero analysis denominator")
     none = value("independence.none_through_horizon")
     if none is True:

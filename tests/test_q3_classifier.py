@@ -80,6 +80,61 @@ class Q3ClassifierTests(unittest.TestCase):
             self.assert_pair(result, "supported", "not_supported")
             self.assert_reason(result, "DENOMINATOR_MISSING")
 
+    def test_device_count_denominator_may_exceed_participant_enrollment(self):
+        document = baseline()
+        change(document, "counts.enrolled", 10)
+        change(document, "hba1c.denominator", 20)
+        change(document, "hba1c.denominator_basis", "device_count")
+        seal(document)
+        full = classify(document)
+        result = full["reports"][0]
+        self.assert_pair(result, "supported", "not_supported")
+        self.assert_reason(result, "DENOMINATOR_MISSING")
+        retained = next(f for f in result["fields"] if f["field_id"] == "hba1c.denominator")
+        self.assertEqual(retained["value"], 20)
+        self.assertEqual(
+            next(f["value"] for f in result["fields"]
+                 if f["field_id"] == "hba1c.denominator_basis"),
+            "device_count",
+        )
+        self.assertNotIn("unique_participants", canonical_json(full))
+
+    def test_endpoint_analysis_participant_denominator_cannot_exceed_enrollment(self):
+        document = baseline()
+        change(document, "counts.enrolled", 10)
+        change(document, "hba1c.denominator", 20)
+        change(document, "hba1c.denominator_basis", "endpoint_analysis")
+        seal(document)
+        with self.assertRaisesRegex(InputError, "exceeds target enrollment"):
+            classify(document)
+
+    def test_denominator_basis_uses_only_unit_comparable_checks(self):
+        cases = (
+            ("endpoint_analysis", 10, "supported", ()),
+            ("device_count", 20, "not_supported", ("DENOMINATOR_MISSING",)),
+            ("enrollment", 10, "not_supported", ("DENOMINATOR_MISSING",)),
+            ("other_endpoint", 10, "not_supported", ("DENOMINATOR_MISSING",)),
+        )
+        for basis, count, harmonized, reasons in cases:
+            with self.subTest(basis=basis):
+                document = baseline()
+                change(document, "hba1c.denominator", count)
+                change(document, "hba1c.denominator_basis", basis)
+                result = self.result(document)
+                self.assert_pair(result, "supported", harmonized)
+                for reason in reasons:
+                    self.assert_reason(result, reason)
+
+        # A device count is not a participant denominator, even when numerically
+        # smaller than the number affected; H3 still rejects the basis itself.
+        document = baseline()
+        change(document, "severe_hypoglycemia.denominator", 2)
+        change(document, "severe_hypoglycemia.denominator_basis", "device_count")
+        change(document, "severe_hypoglycemia.participants_affected", 5)
+        result = self.result(document)
+        self.assert_pair(result, "supported", "not_supported")
+        self.assert_reason(result, "DENOMINATOR_MISSING")
+
     def test_duplicate_cohort_keeps_two_reports_one_program(self):
         result = classify(controls()["duplicate_cohort"])
         self.assertEqual(len(result["reports"]), 2)
@@ -660,8 +715,11 @@ class Q3InputValidationTests(unittest.TestCase):
             change(document, "target_enrolled", False)
             change(document, "hba1c.attribution", "target")
             change(document, "hba1c.denominator", 1)
+            change(document, "hba1c.denominator_basis", "endpoint_analysis")
             if observation:
                 change(document, "hba1c.observation", observation)
+            else:
+                change(document, "hba1c.observation", status="inaccessible")
             seal(document)
             with self.assertRaisesRegex(InputError, "analysis counts contradict"):
                 classify(document)
