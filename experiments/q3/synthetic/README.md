@@ -203,3 +203,19 @@ numerator/denominator and event/affected-participant checks remain enforced.
 Tests retain contextual observations under a proven un-enrolled target and
 verify that their presence does not prevent `not_applicable` precedence.
 These corrections do not change governing rules, source facts, or authorization.
+
+Subsequent review identified additional no-enrollment consistency edge cases.
+An observed, target-attributed endpoint now contradicts proven zero enrollment
+regardless of whether its numeric value or denominator is accessible. A positive
+target analysis denominator also contradicts that proof when observation status
+is unknown; explicitly planned endpoints remain exempt from the actual-enrollment
+bound. Contextual-cohort observations remain permitted and retain their flags.
+Global followed/horizon counts are checked against all known ancestors, not
+just adjacent counts, so unknown intermediate counts cannot conceal a proven
+contradiction. A reported global enrolled count of zero supplies no-enrollment
+proof for label precedence even when `target_enrolled` is unknown; its original
+unknown field flag and other uncertainty/failure reasons remain visible.
+
+The review-corrected suite has 150 tests, including 65 classifier tests.
+All seven controls and separate-process deterministic regeneration remain
+required. These checks do not constitute independent G2 acceptance.

@@ -635,6 +635,83 @@ class Q3InputValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(InputError, "numerator exceeds"):
             classify(document)
 
+    def test_zero_enrollment_rejects_observed_target_even_with_inaccessible_value(self):
+        for domain in DOMAINS:
+            for enrolled in (0, None):
+                with self.subTest(domain=domain, enrolled=enrolled):
+                    document = controls()["inaccessible"]
+                    change(document, "target_enrolled", False)
+                    if enrolled == 0:
+                        change(document, "counts.enrolled", 0)
+                    change(document, domain + ".observation", "observed")
+                    change(document, domain + ".attribution", "target")
+                    seal(document)
+                    with self.assertRaisesRegex(InputError, "contradict no target enrollment"):
+                        classify(document)
+                    change(document, domain + ".attribution", "contextual")
+                    seal(document)
+                    result = classify(document)["reports"][0]
+                    self.assertEqual(set(result["labels"].values()), {"not_applicable"})
+                    self.assertIn(domain + ".value", {f["field_id"] for f in result["unknown_flags"]})
+
+    def test_no_enrollment_rejects_positive_target_analysis_count_without_result(self):
+        for observation in ("observed", None):
+            document = controls()["inaccessible"]
+            change(document, "target_enrolled", False)
+            change(document, "hba1c.attribution", "target")
+            change(document, "hba1c.denominator", 1)
+            if observation:
+                change(document, "hba1c.observation", observation)
+            seal(document)
+            with self.assertRaisesRegex(InputError, "analysis counts contradict"):
+                classify(document)
+
+    def test_known_global_counts_checked_against_all_ancestors(self):
+        for lower, upper in (("followed", "enrolled"), ("at_horizon", "enrolled"),
+                             ("at_horizon", "treated")):
+            with self.subTest(lower=lower, upper=upper):
+                document = controls()["inaccessible"]
+                change(document, "counts." + upper, 10)
+                change(document, "counts." + lower, 11)
+                seal(document)
+                with self.assertRaisesRegex(InputError, "contradictory global counts"):
+                    classify(document)
+                change(document, "counts." + lower, 9)
+                seal(document)
+                classify(document)
+
+    def test_planned_target_denominators_do_not_contradict_actual_zero_enrollment(self):
+        document = controls()["planned_only"]
+        change(document, "target_enrolled", False)
+        for name in ("enrolled", "treated", "followed", "at_horizon", "censored", "withdrawals"):
+            change(document, "counts." + name, 0)
+        seal(document)
+        result = classify(document)["reports"][0]
+        self.assertEqual(set(result["labels"].values()), {"not_applicable"})
+        for domain in DOMAINS:
+            self.assertEqual(field(document, domain + ".denominator")["value"], 10)
+        self.assertIn("PLANNED_ONLY", result["reason_codes"]["harmonized-v1.1"])
+        self.assertIn("NO_TARGET_ENROLLMENT", result["reason_codes"]["harmonized-v1.1"])
+
+    def test_reported_zero_enrollment_proves_inapplicability_retaining_unknowns(self):
+        for status in ("inaccessible", "not_yet_extracted", "conflicting"):
+            for failure in (False, True):
+                with self.subTest(status=status, failure=failure):
+                    document = controls()["inaccessible"]
+                    change(document, "target_enrolled", status=status)
+                    change(document, "counts.enrolled", 0)
+                    if failure:
+                        change(document, "overall_followup", "below_12_months")
+                    seal(document)
+                    result = classify(document)["reports"][0]
+                    self.assertEqual(set(result["labels"].values()), {"not_applicable"})
+                    self.assertIn("NO_TARGET_ENROLLMENT", result["reason_codes"]["harmonized-v1.1"])
+                    flag = next(f for f in result["unknown_flags"] if f["field_id"] == "target_enrolled")
+                    self.assertEqual(flag["state"], "unknown")
+                    self.assertIn("TARGET_ENROLLMENT_UNKNOWN", flag["reason_codes"])
+                    if failure:
+                        self.assertIn("FOLLOWUP_LT_12_MONTHS", result["reason_codes"]["harmonized-v1.1"])
+
     def test_contradictory_overlap_and_subset_direction_halt(self):
         document = controls()["duplicate_cohort"]
         second_edge = copy.deepcopy(document["overlap"][0])

@@ -290,14 +290,27 @@ def _validate_consistency(fields):
         _require(all(value("counts." + name) in (None, 0) for name in
                      ("treated", "followed", "at_horizon", "censored", "withdrawals")),
                  "positive target counts contradict no target enrollment")
-    for lower, upper in (("treated", "enrolled"), ("followed", "treated"),
-                         ("at_horizon", "followed"), ("withdrawals", "enrolled"),
-                         ("censored", "enrolled")):
-        a, b = value("counts." + lower), value("counts." + upper)
-        _require(a is None or b is None or a <= b, "contradictory global counts")
+    ancestors = {
+        "treated": ("enrolled",),
+        "followed": ("treated", "enrolled"),
+        "at_horizon": ("followed", "treated", "enrolled"),
+        "withdrawals": ("enrolled",),
+        "censored": ("enrolled",),
+    }
+    for lower, uppers in ancestors.items():
+        for upper in uppers:
+            a, b = value("counts." + lower), value("counts." + upper)
+            _require(a is None or b is None or a <= b, "contradictory global counts")
     for domain in DOMAINS:
         denominator = value(domain + ".denominator")
+        observation = value(domain + ".observation")
+        if target is False or enrolled == 0:
+            _require(value(domain + ".attribution") != "target" or
+                     (observation != "observed" and
+                      (observation == "planned" or denominator in (None, 0))),
+                     "observed target outcomes or analysis counts contradict no target enrollment")
         _require(value(domain + ".attribution") != "target" or
+                 observation == "planned" or
                  denominator is None or enrolled is None or denominator <= enrolled,
                  "analysis denominator exceeds target enrollment")
         if domain == "insulin_independence":
@@ -311,14 +324,8 @@ def _validate_consistency(fields):
             _require(affected is None or events is None or
                      ((affected == 0) == (events == 0) and affected <= events),
                      "contradictory hypoglycemia events/participants")
-        if value(domain + ".observation") == "observed":
+        if observation == "observed":
             _require(denominator != 0, "observed endpoint with zero analysis denominator")
-            _require(not (target is False or enrolled == 0) or
-                     value(domain + ".attribution") != "target" or
-                     (value(domain + ".value") is None and
-                      (domain != "severe_hypoglycemia" or
-                       value(domain + ".participants_affected") is None)),
-                     "observed target outcomes contradict no target enrollment")
     none = value("independence.none_through_horizon")
     if none is True:
         _require(value("insulin_independence.value") in (None, 0),
@@ -450,6 +457,8 @@ def _classify(report):
     if enrollment["state"] != "met" and "NO_TARGET_ENROLLMENT" not in enrollment["reason_codes"]:
         enrollment = _result("unknown", "TARGET_ENROLLMENT_UNKNOWN", *enrollment["reason_codes"])
     evaluated["target_enrolled"] = enrollment
+    if fields["counts.enrolled"]["status"] == "reported" and fields["counts.enrolled"]["value"] == 0:
+        enrollment = _result("unmet", "NO_TARGET_ENROLLMENT", *enrollment["reason_codes"])
     candidates = [_all([evaluated[d + ".observation"], evaluated[d + ".value"],
                         evaluated[d + ".attribution"]]) for d in DOMAINS]
     candidates.append(_all([evaluated["severe_hypoglycemia.observation"],
