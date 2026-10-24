@@ -159,6 +159,19 @@ class Q3G1MetadataTests(unittest.TestCase):
         self.assertNotEqual(pending, decisions)
         validate_q3_g1_authorization(pending, rows)
 
+    def test_g1_go_rejects_scope_that_bypasses_synthetic_or_reviewer_gate(self):
+        decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
+        rows = self.manifest()
+        unrestricted = re.sub(
+            r"(?m)^(\| G1 \| Final feasibility gate \|).*?\| approved \| 2026-10-24 \| @aditmer \|$",
+            r"\1 GO for unrestricted real-source analysis immediately. | approved | 2026-10-24 | @aditmer |",
+            decisions,
+            count=1,
+        )
+        self.assertNotEqual(unrestricted, decisions)
+        with self.assertRaisesRegex(ValueError, "must limit authorization to synthetic-only G2-A"):
+            validate_q3_g1_authorization(unrestricted, rows)
+
     def test_g1_requires_s23_access_and_s19_rights_evidence_after_version_approval(self):
         rows = self.manifest()
         s19 = next(row for row in rows if row["source_id"] == "S19")
@@ -276,7 +289,10 @@ class Q3G1MetadataTests(unittest.TestCase):
 
     def with_g1_decision(self, decisions, status):
         replacement = (
-            f"| G1 | Final feasibility gate | Explicitly authorize G1; G2 remains NO-GO. "
+            "| G1 | Final feasibility gate | GO for synthetic-only G2-A under governing v1.1 "
+            "after this authorization PR is reviewed and merged; real-source outcome work remains "
+            "NO-GO until all seven synthetic controls and required invariants pass and a reviewer "
+            "explicitly accepts G2 readiness. "
             f"| {status} | 2026-10-24 | @aditmer |"
         )
         return re.sub(

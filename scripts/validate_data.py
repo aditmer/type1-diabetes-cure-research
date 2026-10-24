@@ -274,7 +274,7 @@ def validate_q3_g1_authorization(decision_text, manifest):
                 decision_rows.append(cells)
     if len(decision_rows) != 1:
         raise ValueError("G1 decision register must contain exactly one six-column G1 row")
-    _, _, _, status, approval_date, approver = decision_rows[0]
+    _, _, decision_scope, status, approval_date, approver = decision_rows[0]
     if status not in {"pending_maintainer", "approved", "rejected", "blocked"}:
         raise ValueError("G1 decision register has an invalid authorization status")
     if status == "pending_maintainer":
@@ -285,6 +285,18 @@ def validate_q3_g1_authorization(decision_text, manifest):
         raise ValueError("final G1 decision requires a valid date and explicit maintainer")
     if status != "approved":
         return
+    required_scope_phrases = (
+        "synthetic-only G2-A",
+        "after this authorization PR is reviewed and merged",
+        "real-source outcome work remains NO-GO",
+        "all seven synthetic controls and required invariants pass",
+        "reviewer explicitly accepts G2 readiness",
+    )
+    if any(phrase.casefold() not in decision_scope.casefold() for phrase in required_scope_phrases):
+        raise ValueError(
+            "approved G1 decision must limit authorization to synthetic-only G2-A "
+            "and preserve the real-source reviewer-accepted readiness gate"
+        )
 
     sources = {row["source_id"]: row for row in manifest}
     frozen_source_ids = {"S13", "S18", "S19", "S23", "S20", "S17", "S4", "S9"}

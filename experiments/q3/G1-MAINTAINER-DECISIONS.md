@@ -24,7 +24,7 @@ controls and invariants pass and a reviewer explicitly accepts G2 readiness.
 | REG | Four historical ClinicalTrials.gov versions | Accept official history locators S20 v20, S17 v13, S4 v32, and S9 v26; keep current API responses separately labeled. | accepted | 2026-10-23 | @aditmer |
 | PEC | PEC-Direct overlap handling | Accept conservative program-level grouping; preserve known partial overlap and uncertainty about other participant overlap. | accepted | 2026-10-23 | @aditmer |
 | ARCHIVE | Q3 private source preservation policy | Approve private OneDrive with restricted access, content-addressed naming, no-overwrite procedures, verified cloud restores, and independent backups where permitted; accept its deletion, account-access, and retention risks and that it is not immutable. | approved | 2026-10-23 | @aditmer |
-| G1 | Final feasibility gate | GO for synthetic-only G2-A under governing v1.1 after this authorization PR is reviewed and merged; real-source analysis remains NO-GO until controls pass and a reviewer accepts G2 readiness. | approved | 2026-10-24 | @aditmer |
+| G1 | Final feasibility gate | GO for synthetic-only G2-A under governing v1.1 after this authorization PR is reviewed and merged; real-source outcome work remains NO-GO until all seven synthetic controls and required invariants pass and a reviewer explicitly accepts G2 readiness. | approved | 2026-10-24 | @aditmer |
 
 **Approval provenance:** G0, A1, S13, REG, PEC, and ARCHIVE were explicitly
 approved by repository maintainer `@aditmer` on 2026-10-23; their historical
