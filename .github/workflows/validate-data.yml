@@ -20,3 +20,5 @@ jobs:
         run: python scripts/validate_data.py
       - name: Run validation unit tests
         run: python -m unittest discover -s tests -v
+      - name: Reproduce Q3 synthetic controls offline
+        run: python -m scripts.q3_synthetic --output-dir "$RUNNER_TEMP/q3-synthetic"
