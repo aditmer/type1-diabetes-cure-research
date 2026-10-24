@@ -2,7 +2,7 @@
 
 An open, evidence-led research initiative to map credible paths toward a durable, safe, broadly accessible cure for autoimmune type 1 diabetes (T1D). The project synthesizes primary research and authoritative records; it is not a clinical research lab, medical service, or substitute for care.
 
-**Status — 23 October 2026:** Sprint 01's evidence baseline is complete ahead of its planned 4 November end. The project is transitioning to reproducible computational research: Sprint 02 selects Q3, a conditional source-level endpoint-harmonization pilot under [Issue #15](https://github.com/aditmer/type1-diabetes-cure-research/issues/15), with source-access and prespecification gates before implementation. It studies reporting robustness, not treatment efficacy or a cure mechanism. No cure is established. Current insulin and diabetes technologies remain essential and must not be stopped or changed based on this repository.
+**Status — 24 October 2026:** Sprint 01's evidence baseline is complete ahead of its planned 4 November end. The maintainer recorded G1 GO for Q3 synthetic-only G2-A implementation readiness under approved rules v1.1. Begin [Issue #33](https://github.com/aditmer/type1-diabetes-cure-research/issues/33) only after the focused G1 authorization PR is reviewed and merged. Real-source outcome work remains NO-GO until all seven synthetic controls and required invariants pass and a reviewer explicitly accepts G2 readiness. Q3 assesses reporting robustness, not treatment efficacy or a cure mechanism. No cure is established. Current insulin and diabetes technologies remain essential and must not be stopped or changed based on this repository.
 
 ## Start here
 
@@ -11,9 +11,9 @@ An open, evidence-led research initiative to map credible paths toward a durable
 - [Minimum outcomes and claim review](docs/MINIMUM-OUTCOMES-AND-CLAIM-REVIEW.md): project-defined outcome set, follow-up/denominator standards, worked examples, and reviewer checklist.
 - [Landscape and failure modes](docs/LANDSCAPE-AND-FAILURE-MODES.md): initial evidence map, limitations, and open questions.
 - [Failure-mode evidence matrix](data/failure-modes.csv): source-linked, scored matrix; this CSV is the authoritative dataset.
-- [Sprint 02 execution plan](docs/SPRINT-02.md): conditional Q3 decision, classification contract, implementation gates, and Issue #15 handoff.
-- [Q3 preregistration](experiments/q3/PREREGISTRATION.md) and [G1 source feasibility](experiments/q3/SOURCE-FEASIBILITY.md): Phase 1 specifications and documented access/version blockers; no-go for execution pending resolution and maintainer approval. No experimental results generated.
-- [Q3 proposed amendment 01](experiments/q3/AMENDMENT-2026-10-23-01.md): self-review clarifications to target attribution, time zero, and zero responders; original G0 v1.0 preserved, amendment approval pending.
+- [Sprint 02 execution plan](docs/SPRINT-02.md): approved Q3 scope, G1 GO, staged implementation gates, and Issue #15 handoff.
+- [Q3 preregistration](experiments/q3/PREREGISTRATION.md) and [G1 source feasibility](experiments/q3/SOURCE-FEASIBILITY.md): frozen G0 and approved v1.1, source limitations, and the final dated G1 decision. Synthetic-only G2-A is gated on the authorization PR merge; real-source analysis remains NO-GO pending G2 readiness acceptance.
+- [Q3 amendment 01](experiments/q3/AMENDMENT-2026-10-23-01.md): approved prospective clarifications to target attribution, time zero, and zero responders; original G0 v1.0 remains preserved.
 - [Sprint 02 research priorities](docs/SPRINT-02-RESEARCH-PRIORITIES.md): authoritative scoring rationale and candidate research questions.
 - [Public dataset feasibility](docs/DATASET-FEASIBILITY.md): verified file access, reuse limits, biological units, and the Issue #14 pilot decision.
 - [Cell-replacement comparison](docs/CELL-REPLACEMENT-COMPARISON.md): source-backed comparison of five islet-replacement strategies and remaining barriers.

@@ -1,14 +1,23 @@
-# Q3 G1 source feasibility: final authorization pending; G2 NO-GO
+# Q3 G1 source feasibility: GO recorded; G2 readiness pending
 
-**Verified and updated:** 24 October 2026, UTC. **Part of #15; Phase 1 only.**
+**Verified and updated:** 24 October 2026, UTC. **Part of #15; G1 closeout with no real-source outcome work.**
 **G0 commit:** `fe536fe8bea86b991f3f73e515751ead70146ca9`.
 That commit (2026-10-23T13:56:41Z) froze
 [preregistration](PREREGISTRATION.md) and [rule v1.0](rules-v1.0.json)
-before the G1 source requests. No source-level clinical outcome fields, paired classifications,
-support-loss estimates, or pipeline were produced.
+before the G1 source requests. No source-level clinical outcome fields,
+paired classifications, support-loss estimates, or pipeline were produced.
 Issue #15 was closed despite its remaining G2/G3 and original acceptance
 criteria; repository-admin access was used to reopen it on 23 October 2026.
 Its history and outstanding scope remain intact.
+
+**Final G1 decision — GO, 24 October 2026:** `@aditmer` explicitly approved
+synthetic-data-only G2-A implementation readiness under governing v1.1 in
+the authenticated [Issue #32 comment](https://github.com/aditmer/type1-diabetes-cure-research/issues/32#issuecomment-6385483877)
+(posted 2026-10-24 14:36:43 UTC). This focused authorization PR must be
+reviewed and merged before #33 begins. Real-source outcome extraction,
+classification, and analysis remain NO-GO until all seven preregistered
+synthetic controls and required invariants pass and a reviewer explicitly
+accepts G2 readiness.
 
 **Decision update, 23 October 2026:** maintainer `@aditmer` approved frozen
 G0 v1.0, amendment A1 `2026-10-23-01` prospectively, S13 DailyMed v3, the
@@ -21,13 +30,14 @@ and the already-approved decisions. S19's OneDrive restore evidence was
 accepted on 2026-10-23. On 2026-10-24, the maintainer approved the exact S18,
 S19, and S23 representations, accepted the reconciled S19 inventory with its
 historical evidence limitation, and confirmed the sole S23 reviewer's
-individual public access under Path B. These source-level decisions do not
-authorize final G1 or clear S19 item-level third-party reuse.
+individual public access under Path B. These source-level decisions did not themselves authorize final G1 or clear
+S19 item-level third-party reuse. The separate final G1 GO is now recorded
+above; it does not change any source rights or evidence limitations.
 
-## Recommendation and scope of verification
+## Scope of verification and authorization
 
-**The source package is ready for a separate final G1 decision; G1 remains
-unauthorized and G2 is NO-GO.** The maintainer attests that they are the sole
+**The source package received final G1 GO for synthetic-only G2-A work.**
+The maintainer attests that they are the sole
 assigned reviewer and obtained the S23 publisher main article and separate
 supplement through public publisher access. This is firsthand access
 confirmation, not a new hash-verification test. The existing component
@@ -85,9 +95,10 @@ The maintainer accepted official ClinicalTrials.gov history locators S20 v20,
 S17 v13, S4 v32, and S9 v26 without requiring duplicate local archives.
 Conservative PEC-Direct program grouping is accepted despite unresolved
 participant overlap. S23's individual access path is confirmed, but shared
-retention/sharing rights are not. Final G1 authorization remains pending;
-implementation, outcome extraction, classification, and all G2 work remain
-NO-GO.
+retention/sharing rights are not. The final GO authorizes only synthetic-data
+G2-A after this authorization PR is reviewed and merged. Real-source outcome
+extraction, classification, and analysis remain NO-GO until the synthetic
+controls pass and a reviewer explicitly accepts G2 readiness.
 
 The eight-row [source manifest](source-manifest.csv) identifies each
 version, target population, dates, rights decision, recovery path, and blocker.
@@ -298,71 +309,73 @@ same accepted source facts, not complementary facts across publications.
 
 The statuses are deliberately separate: source bytes/identity may be verified
 without source-version acceptance; acceptance does not grant reuse rights;
-an archive restore does not resolve either; and none of these substitutes for
-methodological approval or explicit final G1 authorization. On 2026-10-24,
+an archive restore does not resolve either. These are distinct from
+methodological approval and explicit final G1 authorization. On 2026-10-24,
 the maintainer approved the S18, S19, and S23 source representations, accepted
 the S19 inventory with its documented historical-evidence limitation, and
 confirmed the sole S23 reviewer's Path B access. S19's item-level reuse review
 and S23 storage/sharing rights remain distinct and unresolved; neither is
-represented as granted.
+represented as granted. The maintainer's separate G1 GO authorizes only
+synthetic-data G2-A after the authorization PR is reviewed and merged.
 
 | Checkpoint | Required condition | Evidence and status | Limitation; blocking? | Exact next action |
 | --- | --- | --- | --- | --- |
-| 1. G0 committed/versioned | Frozen preregistration and rules remain intact; approved prospective amendment is governing. | **Satisfied.** G0 commit `fe536fe8bea86b991f3f73e515751ead70146ca9` and both frozen hashes are recorded. Eight report IDs, five programs, targets, and controls are preserved. PR #28 is merged; the maintainer's approval/audit comment is recorded. A1 and governing v1.1 are approved. | None. This decision does not authorize G2. | Preserve v1.0/v1.1 separately and wait for the distinct final G1 decision. |
+| 1. G0 committed/versioned | Frozen preregistration and rules remain intact; approved prospective amendment is governing. | **Satisfied.** G0 commit `fe536fe8bea86b991f3f73e515751ead70146ca9` and both frozen hashes are recorded. Eight report IDs, five programs, targets, and controls are preserved. PR #28 is merged; the maintainer's approval/audit comment is recorded. A1 and governing v1.1 are approved. | G1 GO does not authorize real-source analysis. | Preserve v1.0/v1.1 separately; begin #33 only after this authorization PR is reviewed and merged. |
 | 2. Source access and identity | Each frozen source representation and necessary material has a verified official identity/recovery route, without treating access as rights clearance. | **Satisfied for the G1 identity review.** The eight frozen source identities and routes are documented; exact S18/S19 hashes and the previously recorded S23 main/supplement identities remain unchanged. The sole S23 reviewer attests to individual public access to both publisher components. | S23 access is limited to the sole assigned reviewer; no future/additional reviewer is covered. This does not confer PDF storage or sharing rights. | If another reviewer is assigned, that person must independently confirm lawful access and follow Path B. |
 | 3. Permitted use and rights | Rights conditions for the planned factual analysis and any archive/reproduction are documented; no unknown permission is represented as granted. | **Documented for the current source-level scope.** S18 CC BY-NC-ND 4.0 conditions, S19 CC BY 4.0 and third-party exception, and S23's individual public-access route are recorded. S23 storage/sharing remains `unverified`; no shared PDF archive is planned or authorized. | S19 item-level third-party content is not cleared for reproduction; that remains separate and may require item-specific permission. S23 public publisher access is not permission to retain/share PDFs. | Do not reproduce S19 third-party items without credit-line review/permission. Keep S23 PDFs out of shared storage; apply each individual's access terms. |
 | 4. Source version accepted and recovery path established | Maintainer explicitly accepts each source representation; archive and lawful recovery evidence are recorded independently. | **Satisfied for the approved source set.** The maintainer approved S18 `PMC8714853.1` and its exact XML hash, S19 `PMC11471599.1` and its exact XML hash, and S23 `publisher-pdf-human-copy-2026-10-23`; all other source approvals remain intact. S19-INVENTORY is separately approved. | S19's original restore verifier output and restored download are unavailable for independent reinspection. The historical public restore record and 2026-10-23 maintainer acceptance survive; the maintainer accepts this limitation under the approved non-immutable policy. No new restore or independent verification is claimed. S18/S19 `.1` values are archive locators, not publisher version labels. | Preserve the recorded evidence limitation and exact hashes. Do not repeat S19 upload/restore. For S23 use individual lawful reacquisition; no shared archive. |
-| 5. Missing reporting vs. incomplete extraction | G0 defines six field statuses, locator/review-scope requirements, failure-before-unknown precedence, and a separate correction log. | **Specified; not applied to outcomes.** The field-state rules are documented, but no source fields or outcome-bearing supplement tables were adjudicated. | Inaccessible, unreviewed, or incompletely extracted material must not be treated as absent reporting. This is a scientific safeguard for G2, not an outcome-level finding in G1. | After separately authorized G1 and within G2, apply the field-state model only to reviewed accepted source versions; record review scope and locators, and keep unknown distinct from not reported. |
+| 5. Missing reporting vs. incomplete extraction | G0 defines six field statuses, locator/review-scope requirements, failure-before-unknown precedence, and a separate correction log. | **Specified; not applied to outcomes.** The field-state rules are documented, but no source fields or outcome-bearing supplement tables were adjudicated. | Inaccessible, unreviewed, or incompletely extracted material must not be treated as absent reporting. This remains a scientific safeguard for G2. | Keep #33 synthetic-only. Apply the field-state model to accepted real-source versions only after all seven controls and required invariants pass and a reviewer explicitly accepts G2 readiness. |
 | 6. Conservative identity | Frozen reports remain distinct; uncertain participant overlap is handled conservatively without pooling. | **Satisfied for the G1 grouping decision.** Maintainer accepted one PEC-Direct program; S23 confirms partial overlap with S18. Frozen source/target IDs remain unchanged. | Full S18/S23 equivalence, S19 overlap, and publication-to-registry equivalence remain uncertain. This is nonblocking if no unique-participant totals or cross-report field borrowing are used. | Preserve program grouping; resolve outcome-to-target linkage only from lawful evidence before extraction. |
-| 7. Controls, sensitivities, and stops | Required synthetic controls and invariant checks are specified before any real-source analysis. | **Specification complete.** G0 defines controls, sensitivity analyses, precedence/invariant checks, no-estimate handling, and stop conditions. | Controls are not executed here and no implementation is authorized. Their execution belongs to G2, not an extra G1 approval gate. | At G2, execute controls before analysis of the frozen source set; stop on any preregistered failure. |
+| 7. Controls, sensitivities, and stops | Required synthetic controls and invariant checks are specified before any real-source analysis. | **Specification complete.** G0 defines controls, sensitivity analyses, precedence/invariant checks, no-estimate handling, and stop conditions. | Controls are not executed here. This authorization permits their synthetic-only implementation and execution in #33 after the PR merges; they are not an additional G1 gate. | Pass all seven controls and invariants, then obtain explicit reviewer acceptance of G2 readiness before any real-source outcome work. |
 
-**Overall assessment: ready for a separate final G1 decision; G1 has not been
-authorized and G2 remains NO-GO.** The four source-level decisions are
-recorded, including the S19 inventory approval with its historical restore
-evidence limitation and the S23 sole-reviewer Path B access attestation.
-Remaining rights boundaries are explicit: S19 item-level third-party reuse
-is pending, and S23 storage/sharing permission is unverified. The source-field
-state safeguards and computational controls are specified but not applied or
-executed; that work belongs to G2 after its own authorization. No earlier
-source approval, archive restore, CI result, or merged PR substitutes for the
-separate final G1 decision. G1 must remain `pending_maintainer` until that
-separate dated authorization is explicitly made.
+**Overall assessment: final G1 GO is recorded; G2-A synthetic-only
+implementation readiness may begin after this PR is reviewed and merged.**
+The four source-level decisions are recorded, including the S19 inventory
+approval with its historical restore evidence limitation and the S23
+sole-reviewer Path B access attestation. S19 item-level third-party reuse
+remains pending, and S23 storage/sharing permission is unverified. The
+source-field safeguards and computational controls are specified but not
+executed. This GO does not authorize real-source extraction, classification,
+or analysis: all seven controls and invariants must pass and a reviewer must
+explicitly accept G2 readiness first. The signed decision is the separate
+maintainer comment linked above, not an inference from source approvals.
 
 The decision record
 [G1-MAINTAINER-DECISIONS.md](G1-MAINTAINER-DECISIONS.md) contains the
 maintainer's dated approvals, accepted alternatives and consequences, and
-source-version scope. The
+the G1 decision entry. The
 [OneDrive procedure](ONEDRIVE-ARCHIVE.md) contains the detailed upload/restore
-instructions and safe attribution-sidecar template. The recorded approvals
-are limited to the named decisions above; they do not constitute final G1
-authorization or S23 rights clearance.
+instructions and safe attribution-sidecar template. Source-specific approvals
+remain distinct from the authenticated final G1 decision recorded above.
+Neither the G1 GO nor source approvals clear S23 storage/sharing rights.
 
-**Readiness status:** ready for a separate final G1 decision; final G1
-authorization remains pending and G2 remains NO-GO. S23 sole-reviewer access
-is confirmed under Path B, but its PDF is not approved for shared storage or
-redistribution. OneDrive is approved but not immutable. If a future source
-condition cannot be resolved, stop under the frozen eight-source scope or
-seek a separate, dated, prospective amendment; never silently drop or
-replace S23.
+**Authorization status:** final G1 GO recorded; G2-A is authorized for
+synthetic-only work after this PR is reviewed and merged. Real-source analysis
+remains NO-GO pending controls and reviewer acceptance. S23 sole-reviewer
+access is confirmed under Path B, but its PDF is not approved for shared
+storage or redistribution. OneDrive is approved but not immutable. If a
+future source condition cannot be resolved, stop under the frozen eight-source
+scope or seek a separate, dated, prospective amendment; never silently drop
+or replace S23.
 
 ## Remaining authorization boundary
 
-1. The maintainer may make a separate, explicit, dated final G1 decision.
-   Source-level approvals and inventory acceptance do not authorize G1.
+1. Begin #33 only after this G1 authorization PR has been reviewed and merged.
 2. If another reviewer is assigned, that individual must separately confirm
    lawful S23 access under Path B. No shared publisher-PDF storage or
    redistribution is authorized.
 3. Review S19 item-level credit lines and obtain permission before any
    reproduction of excluded third-party content.
-4. Do not begin G2, extract outcomes, classify real reports, or run
-   experiments before separate final G1 authorization.
+4. Do not extract outcomes, classify real reports, or run the experiment
+   until all seven synthetic controls and required invariants pass and a
+   reviewer explicitly accepts G2 readiness.
 
-**Handoff boundary:** this PR records Q3 source-level decisions,
-rights/access boundaries, evidence limitations, and approved v1.1. G1
-authorization remains pending and G2 remains NO-GO until the maintainer
-separately authorizes G1. Do not implement, classify real reports, compute
-results, merge this PR, or close #15 as part of Phase 1. Issue #15's
-pipeline/results acceptance criteria intentionally remain unfinished.
+**Handoff boundary:** this authorization PR records the authenticated G1 GO,
+Q3 source-level decisions, rights/access boundaries, evidence limitations,
+and approved v1.1. It authorizes only synthetic-data G2-A after review and
+merge. Do not classify real reports, compute research results, or close #15.
+Issue #15's real-source pipeline/results acceptance criteria remain
+unfinished.
 
 ## Phase 1 validation
 
@@ -373,15 +386,17 @@ manifest and 44-record retrieval log, and
 also match the frozen values above. The validator checks frozen G0 hashes,
 After recording the 2026-10-24 source decisions, the validator passed and
 `python3 -m unittest discover -s tests -v` passed all 82 tests. Regression
-coverage confirms the actual G1 row remains `pending_maintainer` even with
-the four source-level decisions recorded, while a separate synthetic dated
-G1 approval is technically valid when the approval is explicitly supplied.
-`git diff --check` passed. The validator checks frozen G0 hashes,
+coverage confirmed that source-level decisions alone do not authorize G1.
+The current G1 GO is a separate dated decision linked to the authenticated
+maintainer comment; added tests preserve that distinction and check the
+comment reference. `git diff --check` passed. The validator checks frozen G0 hashes,
 all eight manifest IDs and targets, CSV widths, provenance fields, hash
 formats, transport-neutral archive restoration evidence, exact
 approved-version binding, evidence-backed rights/access transitions, explicit
 G1 authorization prerequisites, and faithful generation of governing v1.1
-from the approved amendment patch. Metadata tests verify S19's archive restore
+from the approved amendment patch. Metadata tests verify the distinct dated
+G1 decision remains separate from source approvals and that the authenticated
+maintainer comment is linked. They also verify S19's archive restore
 without inferring source approval or clearing third-party reuse, permit a
 documented third-party review to complete, keep S23 reviewer access separate
 from storage/sharing permission, and reject premature G1 authorization.
