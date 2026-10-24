@@ -27,8 +27,9 @@ Final G1 authorization remains pending.
 **Approval provenance:** G0, A1, S13, REG, PEC, and ARCHIVE were explicitly
 approved by repository maintainer `@aditmer` on 2026-10-23; their historical
 approval dates are unchanged. S18, S19, S19-INVENTORY, and S23 were explicitly
-approved by `@aditmer` on 2026-10-24 in the maintainer's authenticated
-instructions for this PR. S19 source approval, its previously accepted
+approved by `@aditmer` on 2026-10-24 in the authenticated
+[maintainer approval comment on PR #31](https://github.com/aditmer/type1-diabetes-cure-research/pull/31#issuecomment-6385261837).
+S19 source approval, its previously accepted
 restore, and the newly accepted inventory reconciliation are separate
 decisions. The restore's historical log and maintainer acceptance survive,
 but its original verifier output and restored download are unavailable for

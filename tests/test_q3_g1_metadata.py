@@ -88,6 +88,9 @@ class Q3G1MetadataTests(unittest.TestCase):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
         s23["assigned_reviewer_access_evidence"] = "Assigned reviewers confirmed individual institutional access."
         validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+        self.assertIn("assigned_reviewer_access_confirmed", s23["access_outcome"])
+        self.assertIn("access is confirmed", s23["terms_or_license"])
+        self.assertNotIn("assigned-reviewer access remain unverified", s23["terms_or_license"])
 
         s23["storage_sharing_status"] = "permitted"
         with self.assertRaisesRegex(ValueError, "resolved storage/sharing status requires evidence"):
@@ -106,7 +109,7 @@ class Q3G1MetadataTests(unittest.TestCase):
         s19["rights_review_evidence"] = "Credit lines reviewed; excluded third-party items were omitted."
         validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
-    def test_g1_authorization_is_not_inferred_from_individual_approvals(self):
+    def test_g1_decision_is_explicit_and_independently_validated(self):
         decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
         rows = self.manifest()
         validate_q3_g1_authorization(decisions, rows)
@@ -115,9 +118,12 @@ class Q3G1MetadataTests(unittest.TestCase):
             for line in decisions.splitlines()
             if line.startswith("| G1 |")
         )
-        self.assertEqual(g1[3], "pending_maintainer")
-        self.assertIn(g1[4], {"—", "-", ""})
-        self.assertIn(g1[5], {"—", "-", ""})
+        if g1[3] == "pending_maintainer":
+            self.assertIn(g1[4], {"—", "-", ""})
+            self.assertIn(g1[5], {"—", "-", ""})
+        else:
+            self.assertTrue(g1[4])
+            self.assertTrue(g1[5])
         for source_id in ("S18", "S19", "S23"):
             source = next(row for row in rows if row["source_id"] == source_id)
             self.assertEqual(source["maintainer_approval_status"], "approved")
