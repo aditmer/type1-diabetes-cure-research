@@ -22,6 +22,8 @@ def baseline():
         "fields": [],
     }
     for fid in sorted(SPECS):
+        if SPECS[fid].group == "screen_optional":
+            continue
         value = seed["values"].get(fid)
         if fid not in seed["values"] and "." in fid and fid.split(".")[0] in DOMAINS:
             value = seed["endpoint_defaults"].get(fid.split(".", 1)[1])

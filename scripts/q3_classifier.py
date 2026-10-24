@@ -83,6 +83,8 @@ def _specifications():
                  ("insulin_independence", "severe_hypoglycemia") else "number",
                  "NUMERATOR_MISSING" if domain == "insulin_independence"
                  else "CLINICAL_DOMAIN_MISSING")
+        endpoint("screen_quantity", "screen_optional", "quantity",
+                 "QUANTITATIVE_CLINICAL_OUTCOME_MISSING")
         endpoint("baseline", "H2", "number", "ENDPOINT_DEFINITION_MISSING")
         endpoint("definition", "H2", "text", "ENDPOINT_DEFINITION_MISSING")
         endpoint("hierarchy", "H2", "enum", "ENDPOINT_DEFINITION_MISSING",
@@ -140,6 +142,9 @@ def _synthetic_id(value):
 
 
 def _valid_value(value, spec):
+    if spec.kind == "quantity":
+        return (isinstance(value, dict) and set(value) == {"value", "units"} and
+                _valid_value(value["value"], Spec("", "number", "")) and _text(value["units"]))
     if spec.kind == "bool":
         return type(value) is bool
     if spec.kind == "count":
@@ -254,7 +259,8 @@ def validate(document):
                 _require(field["review_complete"] and _text(field["structural_basis"]) and
                          sources[version]["material"].get(fid + ".structural_basis") ==
                          field["structural_basis"], f"{fid}: explicit structural evidence required")
-        _require(set(by_id) == set(SPECS), "missing field records: use explicit field states")
+        _require({fid for fid, spec in SPECS.items() if spec.group != "screen_optional"} <= set(by_id),
+                 "missing field records: use explicit field states")
         _validate_consistency(by_id)
     _require(seen == set(inventory), "inventory coverage mismatch")
     _require(set(sources) == {r["source_version_id"] for r in document["reports"]},
@@ -479,11 +485,18 @@ def _classify(report):
     evaluated["target_enrolled"] = enrollment
     if fields["counts.enrolled"]["status"] == "reported" and fields["counts.enrolled"]["value"] == 0:
         enrollment = _result("unmet", "NO_TARGET_ENROLLMENT", *enrollment["reason_codes"])
+    elif fields["counts.enrolled"]["status"] == "reported" and fields["counts.enrolled"]["value"] > 0:
+        enrollment = _result("met")
     candidates = [_all([evaluated[d + ".observation"], evaluated[d + ".value"],
                         evaluated[d + ".attribution"]]) for d in DOMAINS]
     candidates.append(_all([evaluated["severe_hypoglycemia.observation"],
                             evaluated["severe_hypoglycemia.participants_affected"],
                             evaluated["severe_hypoglycemia.attribution"]]))
+    for domain in DOMAINS:
+        if domain + ".screen_quantity" in evaluated:
+            candidates.append(_all([evaluated[domain + ".observation"],
+                                    evaluated[domain + ".screen_quantity"],
+                                    evaluated[domain + ".attribution"]]))
     p1 = _any(candidates)
     if p1["state"] == "unmet":
         observations = [fields[d + ".observation"] for d in DOMAINS]

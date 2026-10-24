@@ -554,9 +554,69 @@ class Q3ClassifierTests(unittest.TestCase):
         for status in ("unreported_in_reviewed_material", "not_yet_extracted", "conflicting"):
             document = baseline()
             change(document, "target_enrolled", status=status)
+            change(document, "counts.enrolled", status="not_yet_extracted")
             result = self.result(document)
             self.assert_pair(result, "unresolved", "unresolved")
             self.assert_reason(result, "TARGET_ENROLLMENT_UNKNOWN")
+
+    def test_positive_enrollment_count_proves_enrollment_preserving_unknown_boolean(self):
+        for status in ("not_yet_extracted", "inaccessible", "conflicting",
+                       "unreported_in_reviewed_material"):
+            with self.subTest(status=status):
+                document = baseline()
+                change(document, "target_enrolled", status=status)
+                result = self.result(document)
+                self.assert_pair(result, "supported", "supported")
+                for rule in result["predicates"]:
+                    self.assertEqual(result["predicates"][rule]["enrollment"], _result("met"))
+                self.assertIn("target_enrolled", {f["field_id"] for f in result["unknown_flags"]})
+
+    def test_proportion_only_observation_passes_screen_without_reconstructing_counts(self):
+        for domain in ("insulin_independence", "severe_hypoglycemia"):
+            document = baseline()
+            for endpoint in DOMAINS:
+                change(document, endpoint + ".value", status="unreported_in_reviewed_material")
+            change(document, "severe_hypoglycemia.participants_affected",
+                   status="unreported_in_reviewed_material")
+            change(document, domain + ".denominator", status="unreported_in_reviewed_material")
+            if domain == "insulin_independence":
+                change(document, "independence.none_through_horizon", False)
+                change(document, "independence.onset", "Synthetic month 3")
+                change(document, "independence.duration", "Synthetic one month")
+            quantity = copy.deepcopy(field(document, domain + ".value"))
+            quantity["field_id"] = domain + ".screen_quantity"
+            document["reports"][0]["fields"].append(quantity)
+            change(document, quantity["field_id"], {"value": 0.25, "units": "proportion"})
+            result = self.result(document)
+            self.assert_pair(result, "supported", "not_supported")
+            self.assert_reason(result, "DENOMINATOR_MISSING")
+            self.assertIsNone(field(document, domain + ".value")["value"])
+            self.assertEqual(next(f["value"] for f in result["fields"] if
+                                  f["field_id"] == quantity["field_id"]),
+                             {"value": 0.25, "units": "proportion"})
+            change(document, domain + ".observation", "planned")
+            self.assert_pair(self.result(document), "not_supported", "not_supported")
+
+    def test_screen_quantity_requires_numeric_value_units_and_source_provenance(self):
+        for value in ({"value": 0.25}, {"value": "0.25", "units": "proportion"},
+                      {"value": -1, "units": "events/person-year"},
+                      {"value": 0.25, "units": ""}):
+            document = baseline()
+            quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+            quantity.update(field_id="insulin_independence.screen_quantity", value=value)
+            document["reports"][0]["fields"].append(quantity)
+            seal(document)
+            with self.assertRaises(InputError):
+                classify(document)
+        document = baseline()
+        quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+        quantity.update(field_id="insulin_independence.screen_quantity",
+                        value={"value": 25, "units": "%"})
+        document["reports"][0]["fields"].append(quantity)
+        seal(document)
+        quantity["value"] = {"value": 30, "units": "%"}
+        with self.assertRaisesRegex(InputError, "PROVENANCE_INVALID"):
+            classify(document)
 
     def test_proven_failure_precedes_unknown_retaining_all_reasons(self):
         document = baseline()

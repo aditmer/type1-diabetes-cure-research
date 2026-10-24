@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 161 tests, including 76 classifier tests.
+The review-corrected suite has 164 tests, including 79 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -259,3 +259,21 @@ A confirmed omission of H1 `identity.linkage` uses
 `IDENTITY_DESIGN_MISSING`; reported uncertain linkage continues to use
 `COHORT_LINKAGE_CONFLICT` with an unknown predicate. This corrects a
 reason-code mismatch identified in review without changing either rule.
+
+Optional `<endpoint>.screen_quantity` records preserve additional quantitative
+screen evidence as `{"value": 0.25, "units": "proportion"}` (or source-stated
+percent/rate units), with the same status and provenance requirements as other
+fields. They are separate from mandatory harmonized counts and participate
+only in P1, together with observed status and target attribution. Absence of
+this optional representation does not create missingness; a provided unknown
+record retains its uncertainty flags. No counts, denominators or unit
+conversions are reconstructed from it. A proportion-only observation can pass
+the permissive screen while confirmed missing counts/analysis denominators
+still fail harmonization. The complete synthetic seed need not invent
+additional screen quantities.
+
+A source-reported positive `counts.enrolled` now proves aggregate enrollment
+even when `target_enrolled` is unknown. The Boolean's original unknown field
+flag is preserved. With neither proof available enrollment remains unknown;
+a reported zero still establishes no-enrollment precedence. Schema/provenance
+validation does not establish the truth or completeness of source review.
