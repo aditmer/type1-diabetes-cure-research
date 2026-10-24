@@ -134,6 +134,31 @@ class Q3G1MetadataTests(unittest.TestCase):
         self.assertEqual(s23["assigned_reviewer_access_status"], "confirmed")
         self.assertEqual(s23["storage_sharing_status"], "unverified")
 
+    def test_g1_go_links_exact_authenticated_maintainer_comment(self):
+        decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
+        approval_url = (
+            "https://github.com/aditmer/type1-diabetes-cure-research/"
+            "issues/32#issuecomment-6385483877"
+        )
+        self.assertIn(approval_url, decisions)
+        self.assertIn("14:36:43 UTC", decisions)
+        row = next(line for line in decisions.splitlines() if line.startswith("| G1 |"))
+        cells = [cell.strip() for cell in row.strip().strip("|").split("|")]
+        self.assertEqual(cells[3:], ["approved", "2026-10-24", "@aditmer"])
+
+    def test_source_approvals_do_not_imply_final_g1_authorization(self):
+        decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
+        rows = self.manifest()
+        self.assertTrue(all(row["maintainer_approval_status"] == "approved" for row in rows))
+        pending = re.sub(
+            r"(?m)^(\| G1 \| Final feasibility gate \|).*?\| approved \| 2026-10-24 \| @aditmer \|$",
+            r"\1 Final G1 authorization remains pending. | pending_maintainer | — | — |",
+            decisions,
+            count=1,
+        )
+        self.assertNotEqual(pending, decisions)
+        validate_q3_g1_authorization(pending, rows)
+
     def test_g1_requires_s23_access_and_s19_rights_evidence_after_version_approval(self):
         rows = self.manifest()
         s19 = next(row for row in rows if row["source_id"] == "S19")

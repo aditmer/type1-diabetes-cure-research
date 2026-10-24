@@ -4,9 +4,11 @@
 
 **Owner:** repository maintainer
 
-**Scope:** source feasibility and authorization only. No G2 implementation,
-source outcome extraction, classification, or experiment is authorized here.
-Final G1 authorization remains pending.
+**Scope:** source feasibility and staged authorization. The maintainer's
+final G1 GO authorizes synthetic-data-only G2-A implementation readiness
+after this authorization PR is reviewed and merged. Real-source outcome
+extraction, classification, and analysis remain NO-GO until the synthetic
+controls and invariants pass and a reviewer explicitly accepts G2 readiness.
 
 ## Decision register
 
@@ -22,7 +24,7 @@ Final G1 authorization remains pending.
 | REG | Four historical ClinicalTrials.gov versions | Accept official history locators S20 v20, S17 v13, S4 v32, and S9 v26; keep current API responses separately labeled. | accepted | 2026-10-23 | @aditmer |
 | PEC | PEC-Direct overlap handling | Accept conservative program-level grouping; preserve known partial overlap and uncertainty about other participant overlap. | accepted | 2026-10-23 | @aditmer |
 | ARCHIVE | Q3 private source preservation policy | Approve private OneDrive with restricted access, content-addressed naming, no-overwrite procedures, verified cloud restores, and independent backups where permitted; accept its deletion, account-access, and retention risks and that it is not immutable. | approved | 2026-10-23 | @aditmer |
-| G1 | Final feasibility gate | Final G1 authorization remains pending; G2 remains NO-GO. | pending_maintainer | — | — |
+| G1 | Final feasibility gate | GO for synthetic-only G2-A under governing v1.1 after this authorization PR is reviewed and merged; real-source analysis remains NO-GO until controls pass and a reviewer accepts G2 readiness. | approved | 2026-10-24 | @aditmer |
 
 **Approval provenance:** G0, A1, S13, REG, PEC, and ARCHIVE were explicitly
 approved by repository maintainer `@aditmer` on 2026-10-23; their historical
@@ -36,19 +38,22 @@ but its original verifier output and restored download are unavailable for
 independent reinspection; no new restore or independent verification is
 claimed. S19's item-level third-party reuse review remains pending. S23
 access confirmation applies to the sole assigned reviewer under Path B and
-does not authorize storage or sharing of publisher PDFs. None of these
-decisions authorizes redistribution of copyrighted publisher files or final
-G1.
+does not authorize storage or sharing of publisher PDFs. The separate final
+G1 GO was posted by `@aditmer` on 2026-10-24 at 14:36:43 UTC in the
+authenticated [Issue #32 approval comment](https://github.com/aditmer/type1-diabetes-cure-research/issues/32#issuecomment-6385483877).
+It authorizes only synthetic-data G2-A implementation readiness, after this
+PR is reviewed and merged; it does not authorize real-source analysis or
+redistribution of copyrighted publisher files.
 
 `recommended`, `pending_maintainer`, and `blocked` are not approvals.
 
-Before final G1 authorization, all eight frozen sources must retain explicit
-dated maintainer approval of their matching manifest versions. The separate `S19-INVENTORY` row records the 2026-10-24 approval of the
+At the time of final G1 approval, all eight frozen sources retained explicit
+dated maintainer approval of their matching manifest versions. The separate
+`S19-INVENTORY` row records the 2026-10-24 approval of the
 reconciled private attribution record under the existing archive policy,
 including its historical-evidence limitation. It is not a substitute for
-item-level rights review or final G1 authorization. No new upload or restore
-is needed, and no private inventory contents, location, or account details
-should be published.
+item-level rights review. No new upload or restore is needed, and no private
+inventory contents, location, or account details should be published.
 
 ## Recorded source decisions
 
@@ -223,11 +228,13 @@ The seven checkpoint reassessment is in
 [SOURCE-FEASIBILITY.md](SOURCE-FEASIBILITY.md). It preserves the separate
 states for source identity/access, source-version acceptance, rights,
 archive or lawful recovery, methodological approval, and final G1
-authorization. The source package is **ready for a separate final G1 decision; G1 is not
-authorized**: the four source-level decisions are recorded, while G1 itself
-still requires a separate explicit maintainer decision. Existing approvals,
-the S19 restore, passing checks, and PR #28 do not imply final G1
-authorization. G2 remains NO-GO.
+authorization. The source package received an explicit, dated maintainer GO
+in the [Issue #32 approval comment](https://github.com/aditmer/type1-diabetes-cure-research/issues/32#issuecomment-6385483877).
+That GO permits synthetic-only G2-A implementation readiness after this PR
+is reviewed and merged. It does not authorize real-source extraction,
+classification, or analysis; those remain NO-GO until controls pass and a
+reviewer explicitly accepts G2 readiness. Earlier source approvals, restore
+evidence, test results, and merged PR #31 did not themselves imply G1 GO.
 
 | ID | Alternative and consequence |
 |---|---|
@@ -239,7 +246,7 @@ authorization. G2 remains NO-GO.
 | REG | Save permitted historical bytes as an additional safeguard if a version locator becomes unavailable; do not substitute current API bytes for the historical version. |
 | PEC | Treating reports as disjoint or summing their sample counts risks double-counting; retain uncertainty and program-level grouping. |
 | ARCHIVE | Reject OneDrive as insufficiently durable: select an approved immutable archive or keep G1 blocked; OneDrive version history is not write-once retention. |
-| G1 | A separate dated maintainer authorization is still required before G2; this source-closeout decision is not final G1 authorization. |
+| G1 | A separate dated maintainer GO is recorded in the authenticated Issue #32 comment; synthetic-only G2-A may begin after the authorization PR is reviewed and merged. Real-source analysis remains blocked by the G2 readiness gate. |
 
 ## Rationale and remaining actions
 
@@ -377,7 +384,9 @@ exceptions remains separate and pending.
 
 G0/A1/S13/REG/PEC/ARCHIVE entries below were explicitly supplied by
 `@aditmer` on 2026-10-23. S18/S19/S19-INVENTORY/S23 were approved on
-2026-10-24. Final G1 remains pending and G2 remains NO-GO.
+2026-10-24. The separate final G1 GO was posted on 2026-10-24; G2-A is
+limited to synthetic data and starts only after this PR is reviewed and
+merged. Real-source analysis remains NO-GO pending G2 readiness acceptance.
 
 | Decision | Exact item to decide | Current choice |
 |---|---|---|
@@ -391,7 +400,7 @@ G0/A1/S13/REG/PEC/ARCHIVE entries below were explicitly supplied by
 | S19 | Accept `PMC11471599.1` as archive locator and Europe PMC XML SHA-256 `3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839` (122,548 bytes), subject to third-party exceptions. | Source version approved 2026-10-24 by @aditmer; restore accepted 2026-10-23 |
 | S19 inventory | Accept reconciled private attribution inventory under the approved non-immutable policy, with historical restore evidence limitation. | Approved 2026-10-24 by @aditmer; no new verification claimed |
 | S23 | Select individual lawful reacquisition; sole reviewer attests public publisher access. No shared storage unless expressly allowed. | Approved 2026-10-24 by @aditmer; access confirmed, storage/sharing unverified |
-| G1 | Separate final authorization decision; G2 remains NO-GO. | Pending; G2 NO-GO |
+| G1 | Authorize synthetic-only G2-A readiness work under v1.1; real-source analysis remains blocked until the controls pass and a reviewer accepts G2 readiness. | GO, 2026-10-24 by @aditmer; [authenticated Issue #32 comment](https://github.com/aditmer/type1-diabetes-cure-research/issues/32#issuecomment-6385483877). Effective for implementation after this PR is reviewed and merged. |
 
 ### ClinicalTrials.gov and cohort identity
 
@@ -430,14 +439,17 @@ linkage is inferred.
 
 ## Gate outcome
 
-**Ready for a separate final G1 decision; G1 is not authorized and G2 remains
-NO-GO.** G0, A1, S13, REG, PEC, and ARCHIVE decisions retain their
+**Final G1 GO recorded; synthetic-only G2-A implementation readiness is
+authorized after this PR is reviewed and merged. Real-source analysis remains
+NO-GO until the G2 controls pass and a reviewer explicitly accepts
+readiness.** G0, A1, S13, REG, PEC, and ARCHIVE decisions retain their
 2026-10-23 dates. S18, S19, S19-INVENTORY, and S23 source-level decisions are
 recorded as approved on 2026-10-24. S19's restore is accepted under the
 documented historical-evidence limitation; item-specific third-party reuse
 review remains pending. S23's sole-reviewer public access is confirmed under
 Path B, while publisher-PDF storage/sharing rights remain unverified. The
-seven-checkpoint reassessment is in
-[SOURCE-FEASIBILITY.md](SOURCE-FEASIBILITY.md). G2 remains unauthorized until
-the maintainer separately authorizes G1. No clinical data,
-classifications, controls, or experiments were run for this record.
+seven-checkpoint reassessment and explicit GO are documented in
+[SOURCE-FEASIBILITY.md](SOURCE-FEASIBILITY.md) and the authenticated
+[Issue #32 comment](https://github.com/aditmer/type1-diabetes-cure-research/issues/32#issuecomment-6385483877).
+No clinical data, classifications, controls, or experiments were run for
+this decision record.
