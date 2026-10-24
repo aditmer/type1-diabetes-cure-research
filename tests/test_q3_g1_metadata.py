@@ -82,6 +82,7 @@ class Q3G1MetadataTests(unittest.TestCase):
         rows = self.manifest()
         s23 = next(row for row in rows if row["source_id"] == "S23")
         self.approve_source(s23)
+        s23["assigned_reviewer_access_evidence"] = ""
         s23["assigned_reviewer_access_status"] = "confirmed"
         with self.assertRaisesRegex(ValueError, "confirmed reviewer access requires evidence"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
@@ -107,9 +108,25 @@ class Q3G1MetadataTests(unittest.TestCase):
 
     def test_g1_authorization_is_not_inferred_from_individual_approvals(self):
         decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
-        premature = self.with_g1_decision(decisions, "approved")
-        with self.assertRaisesRegex(ValueError, "requires an approved matching source version"):
-            validate_q3_g1_authorization(premature, self.manifest())
+        rows = self.manifest()
+        validate_q3_g1_authorization(decisions, rows)
+        g1 = next(
+            [cell.strip() for cell in line.strip().strip("|").split("|")]
+            for line in decisions.splitlines()
+            if line.startswith("| G1 |")
+        )
+        self.assertEqual(g1[3], "pending_maintainer")
+        self.assertIn(g1[4], {"—", "-", ""})
+        self.assertIn(g1[5], {"—", "-", ""})
+        for source_id in ("S18", "S19", "S23"):
+            source = next(row for row in rows if row["source_id"] == source_id)
+            self.assertEqual(source["maintainer_approval_status"], "approved")
+            self.assertEqual(source["approval_date"], "2026-10-24")
+        s19 = next(row for row in rows if row["source_id"] == "S19")
+        s23 = next(row for row in rows if row["source_id"] == "S23")
+        self.assertEqual(s19["rights_review_status"], "third_party_review_pending")
+        self.assertEqual(s23["assigned_reviewer_access_status"], "confirmed")
+        self.assertEqual(s23["storage_sharing_status"], "unverified")
 
     def test_g1_requires_s23_access_and_s19_rights_evidence_after_version_approval(self):
         rows = self.manifest()
@@ -124,6 +141,8 @@ class Q3G1MetadataTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "requires documented S19 rights-review evidence"):
             validate_q3_g1_authorization(approved, rows)
         s19["rights_review_evidence"] = "CC BY conditions documented; third-party material excluded from planned annotations."
+        s23["assigned_reviewer_access_status"] = "unverified"
+        s23["assigned_reviewer_access_evidence"] = ""
         with self.assertRaisesRegex(ValueError, "requires confirmed S23 assigned-reviewer access"):
             validate_q3_g1_authorization(approved, rows)
         s23["assigned_reviewer_access_status"] = "confirmed"
@@ -134,13 +153,10 @@ class Q3G1MetadataTests(unittest.TestCase):
         rows = self.manifest()
         s19 = next(row for row in rows if row["source_id"] == "S19")
         s23 = next(row for row in rows if row["source_id"] == "S23")
-        for source_id in ("S18", "S19", "S23"):
-            self.approve_source(next(row for row in rows if row["source_id"] == source_id))
-        s19["rights_review_status"] = "third_party_review_complete"
-        s19["rights_review_evidence"] = "Credit lines reviewed; excluded third-party items were omitted."
-        s23["assigned_reviewer_access_status"] = "confirmed"
-        s23["assigned_reviewer_access_evidence"] = "Assigned reviewers confirmed individual institutional access."
         validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
+        self.assertEqual(s19["rights_review_status"], "third_party_review_pending")
+        self.assertEqual(s23["assigned_reviewer_access_status"], "confirmed")
+        self.assertEqual(s23["storage_sharing_status"], "unverified")
 
         decisions = (self.q3 / "G1-MAINTAINER-DECISIONS.md").read_text(encoding="utf-8")
         approved = self.with_s19_inventory_confirmation(self.with_g1_decision(decisions, "approved"))
@@ -210,7 +226,7 @@ class Q3G1MetadataTests(unittest.TestCase):
                     validate_q3_g1_authorization(decisions, rows)
 
     def with_s19_inventory_confirmation(
-        self, decisions, status="approved", approval_date="2026-10-23", approver="@maintainer",
+        self, decisions, status="approved", approval_date="2026-10-24", approver="@aditmer",
     ):
         row = (
             "| S19-INVENTORY | Private archive attribution inventory | "
@@ -224,13 +240,13 @@ class Q3G1MetadataTests(unittest.TestCase):
     def approve_source(self, row):
         row["maintainer_approval_status"] = "approved"
         row["approved_version_id"] = row["source_version_id"]
-        row["approval_date"] = "2026-10-23"
-        row["approving_maintainer"] = "@maintainer"
+        row["approval_date"] = "2026-10-24"
+        row["approving_maintainer"] = "@aditmer"
 
     def with_g1_decision(self, decisions, status):
         replacement = (
             f"| G1 | Final feasibility gate | Explicitly authorize G1; G2 remains NO-GO. "
-            f"| {status} | 2026-10-23 | @maintainer |"
+            f"| {status} | 2026-10-24 | @aditmer |"
         )
         return re.sub(
             r"(?m)^\| G1 \| Final feasibility gate \|.*$",
@@ -361,7 +377,10 @@ class Q3G1MetadataTests(unittest.TestCase):
     def test_recommendation_cannot_populate_maintainer_approval_fields(self):
         rows = self.manifest()
         s18 = next(row for row in rows if row["source_id"] == "S18")
+        s18["maintainer_approval_status"] = "pending_maintainer"
         s18["approved_version_id"] = s18["source_version_id"]
+        s18["approval_date"] = ""
+        s18["approving_maintainer"] = ""
         with self.assertRaisesRegex(ValueError, "recommendations cannot populate approval fields"):
             validate_q3_source_manifest(rows, self.rules["reports"], self.retrieval_log())
 
