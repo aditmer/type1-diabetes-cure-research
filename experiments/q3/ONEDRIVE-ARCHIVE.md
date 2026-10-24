@@ -63,6 +63,12 @@ Restore event `S19-onedrive-restore-2026-10-23T181816Z` is recorded in the
 public log under an opaque alias; the actual location and item details remain
 in the private inventory. This verifies restoration, not source-version
 approval or third-party credit-line review.
+The private sidecar's `retrieved_utc` of `2026-10-23T17:48:45Z` is the
+sidecar-preparation time, not a source retrieval; genuine Europe PMC
+retrievals are only the logged `16:08:28Z` and `17:15:01Z` events. The private
+inventory now cites the restore event above as existing evidence (not a new
+test); the original verifier output was not located locally, so no
+independent corroboration is claimed.
 The public manifest includes the title, all authors, DOI, license, retrieval
 time, source hash, and safe archive alias. The private inventory itself is
 not part of this repository and was not inspected in this review; the
