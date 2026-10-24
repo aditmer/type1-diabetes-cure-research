@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 153 tests, including 68 classifier tests.
+The review-corrected suite has 156 tests, including 71 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -233,3 +233,11 @@ above. Synthetic regressions cover 10 enrolled / 20 devices (screen supported,
 harmonized not_supported), the corresponding 20-person analysis denominator
 (validation error), each denominator basis, and participant/event count
 checks only where units are comparable.
+
+Independently of denominator basis or availability, observed target-attributed
+insulin-independent and severe-hypoglycemia-affected participant counts cannot
+exceed known target enrollment. Device-based or inaccessible denominators do
+not suppress this participant-versus-participant contradiction check. Planned
+and contextual outcomes are exempt from this target bound, and unknown
+enrollment is not imputed. Hypoglycemia event counts are never bounded by
+participant enrollment: repeated events in one participant are permissible.

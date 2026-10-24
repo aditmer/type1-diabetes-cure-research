@@ -315,6 +315,13 @@ def _validate_consistency(fields):
                  observation == "planned" or
                  denominator is None or enrolled is None or denominator <= enrolled,
                  "analysis denominator exceeds target enrollment")
+        if observation == "observed" and value(domain + ".attribution") == "target":
+            participant_count = (
+                value(domain + ".value") if domain == "insulin_independence" else
+                value(domain + ".participants_affected") if domain == "severe_hypoglycemia" else None
+            )
+            _require(participant_count is None or enrolled is None or participant_count <= enrolled,
+                     "observed target participant count exceeds target enrollment")
         if domain == "insulin_independence":
             numerator = value(domain + ".value")
             _require(not participant_denominator or numerator is None or denominator is None or

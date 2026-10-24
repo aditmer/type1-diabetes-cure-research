@@ -142,6 +142,68 @@ class Q3ClassifierTests(unittest.TestCase):
         self.assertEqual(result["program_coverage"][0]["relationships"][0]["relationship"], "same")
         self.assertNotIn("unique_participants", canonical_json(result))
 
+    def test_observed_participant_counts_bounded_independently_of_denominator(self):
+        for domain in ("severe_hypoglycemia", "insulin_independence"):
+            for basis in ("device_count", "enrollment", "other_endpoint", "endpoint_analysis"):
+                for denominator_status in ("reported", "inaccessible"):
+                    with self.subTest(domain=domain, basis=basis, denominator=denominator_status):
+                        document = baseline()
+                        change(document, domain + ".denominator_basis", basis)
+                        change(document, domain + ".denominator",
+                               20 if denominator_status == "reported" else None,
+                               status=denominator_status)
+                        if domain == "severe_hypoglycemia":
+                            change(document, domain + ".value", 12)
+                            change(document, domain + ".participants_affected", 11)
+                        else:
+                            change(document, domain + ".value", 11)
+                            change(document, "independence.none_through_horizon", False)
+                            change(document, "independence.onset", "Synthetic month 3")
+                            change(document, "independence.duration", "Synthetic one month")
+                        seal(document)
+                        with self.assertRaisesRegex(InputError, "exceeds target enrollment"):
+                            classify(document)
+
+    def test_participant_enrollment_bound_preserves_contextual_planned_and_unknown(self):
+        for domain in ("severe_hypoglycemia", "insulin_independence"):
+            for exception in ("contextual", "planned", "unknown_enrollment"):
+                with self.subTest(domain=domain, exception=exception):
+                    document = baseline()
+                    change(document, domain + ".denominator_basis", "device_count")
+                    change(document, domain + ".denominator", 20)
+                    if domain == "severe_hypoglycemia":
+                        change(document, domain + ".value", 12)
+                        change(document, domain + ".participants_affected", 11)
+                    else:
+                        change(document, domain + ".value", 11)
+                        change(document, "independence.none_through_horizon", False)
+                        change(document, "independence.onset", "Synthetic month 3")
+                        change(document, "independence.duration", "Synthetic one month")
+                    if exception == "contextual":
+                        change(document, domain + ".attribution", "contextual")
+                    elif exception == "planned":
+                        change(document, domain + ".observation", "planned")
+                    else:
+                        change(document, "counts.enrolled", status="inaccessible")
+                    result = self.result(document)
+                    self.assert_pair(result, "supported", "not_supported")
+                    self.assert_reason(result, "DENOMINATOR_MISSING")
+                    if exception == "unknown_enrollment":
+                        self.assertIn("counts.enrolled", {f["field_id"] for f in result["unknown_flags"]})
+
+    def test_device_denominator_and_repeated_events_remain_valid_reporting_failures(self):
+        document = baseline()
+        change(document, "severe_hypoglycemia.denominator", 20)
+        change(document, "severe_hypoglycemia.denominator_basis", "device_count")
+        change(document, "severe_hypoglycemia.value", 12)
+        change(document, "severe_hypoglycemia.participants_affected", 10)
+        result = self.result(document)
+        self.assert_pair(result, "supported", "not_supported")
+        self.assert_reason(result, "DENOMINATOR_MISSING")
+        change(document, "severe_hypoglycemia.denominator", 10)
+        change(document, "severe_hypoglycemia.denominator_basis", "endpoint_analysis")
+        self.assert_pair(self.result(document), "supported", "supported")
+
     def test_uncertain_overlap_is_coverage_only_and_default(self):
         document = controls()["duplicate_cohort"]
         document["overlap"] = []
