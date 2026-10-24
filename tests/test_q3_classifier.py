@@ -99,6 +99,93 @@ class Q3ClassifierTests(unittest.TestCase):
         )
         self.assertNotIn("unique_participants", canonical_json(full))
 
+    def test_point_assessments_cannot_exceed_known_horizon_count(self):
+        document = baseline()
+        change(document, "counts.at_horizon", 0)
+        seal(document)
+        with self.assertRaisesRegex(InputError, "point-assessment denominator"):
+            classify(document)
+        for domain in ("insulin_dose", "hba1c", "cgm"):
+            for horizon in HORIZONS:
+                for count in (0, 5):
+                    with self.subTest(domain=domain, horizon=horizon, count=count):
+                        document = baseline()
+                        change(document, "counts.at_horizon", count)
+                        for other in ("insulin_dose", "hba1c", "cgm"):
+                            change(document, other + ".denominator", count or 1)
+                            if other != domain:
+                                change(document, other + ".observation", "planned")
+                        change(document, domain + ".denominator", 10)
+                        change(document, domain + ".horizon", horizon)
+                        change(document, domain + ".interval_end", horizon)
+                        seal(document)
+                        with self.assertRaisesRegex(InputError, "point-assessment denominator"):
+                            classify(document)
+
+    def test_horizon_bound_preserves_noncomparable_assessments(self):
+        for exception in ("planned", "contextual", "device_count", "unknown_horizon_count",
+                          "different_horizon", "different_anchor", "unknown_enrollment"):
+            with self.subTest(exception=exception):
+                document = baseline()
+                change(document, "counts.at_horizon", 0)
+                for domain in ("insulin_dose", "hba1c", "cgm"):
+                    if exception == "planned":
+                        change(document, domain + ".observation", "planned")
+                    elif exception == "contextual":
+                        change(document, domain + ".attribution", "contextual")
+                    elif exception == "device_count":
+                        change(document, domain + ".denominator", 20)
+                        change(document, domain + ".denominator_basis", "device_count")
+                    elif exception == "different_horizon":
+                        change(document, domain + ".horizon", "month_6")
+                        change(document, domain + ".interval_end", "month_6")
+                    elif exception == "different_anchor":
+                        change(document, domain + ".anchor", "repeat_administration")
+                if exception == "unknown_horizon_count":
+                    change(document, "counts.at_horizon", status="inaccessible")
+                elif exception == "unknown_enrollment":
+                    change(document, "counts.enrolled", status="inaccessible")
+                    change(document, "counts.at_horizon", 10)
+                result = self.result(document)
+                self.assertEqual(result["labels"]["provisional-v1.1"], "supported")
+                self.assertNotEqual(result["labels"]["harmonized-v1.1"], "supported")
+
+    def test_cumulative_events_are_not_bounded_by_horizon_completers(self):
+        document = baseline()
+        change(document, "counts.at_horizon", 0)
+        for domain in ("insulin_dose", "hba1c", "cgm"):
+            change(document, domain + ".observation", "planned")
+        change(document, "severe_hypoglycemia.value", 12)
+        change(document, "severe_hypoglycemia.participants_affected", 10)
+        change(document, "independence.none_through_horizon", False)
+        change(document, "insulin_independence.value", 5)
+        change(document, "independence.onset", "Synthetic month 3")
+        change(document, "independence.duration", "Synthetic one-month episodes before horizon")
+        result = self.result(document)
+        self.assert_pair(result, "supported", "not_supported")
+        self.assert_reason(result, "PLANNED_ONLY")
+
+    def test_horizon_count_allows_comparable_point_analysis_subset(self):
+        document = baseline()
+        change(document, "counts.at_horizon", 5)
+        for domain in ("insulin_dose", "hba1c", "cgm"):
+            change(document, domain + ".denominator", 5)
+            change(document, domain + ".analysis_population", "documented_attrition_subset")
+        self.assert_pair(self.result(document), "supported", "supported")
+
+    def test_linkage_omission_uses_failure_not_uncertainty_reason(self):
+        document = baseline()
+        change(document, "identity.linkage", status="unreported_in_reviewed_material")
+        result = self.result(document)
+        self.assert_pair(result, "supported", "not_supported")
+        self.assert_reason(result, "IDENTITY_DESIGN_MISSING")
+        self.assertNotIn("COHORT_LINKAGE_CONFLICT", result["reason_codes"]["harmonized-v1.1"])
+        self.assertFalse(result["unknown_flags"])
+        change(document, "identity.linkage", "uncertain")
+        result = self.result(document)
+        self.assert_pair(result, "supported", "unresolved")
+        self.assert_reason(result, "COHORT_LINKAGE_CONFLICT")
+
     def test_endpoint_analysis_participant_denominator_cannot_exceed_enrollment(self):
         document = baseline()
         change(document, "counts.enrolled", 10)

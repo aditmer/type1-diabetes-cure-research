@@ -56,7 +56,7 @@ def _specifications():
     add("identity.population identity.disease_stage identity.eligibility "
         "identity.intervention identity.dose identity.design identity.baseline_context "
         "identity.comparator identity.mapping", "H1", "text", "IDENTITY_DESIGN_MISSING")
-    add("identity.linkage", "H1", "enum", "COHORT_LINKAGE_CONFLICT",
+    add("identity.linkage", "H1", "enum", "IDENTITY_DESIGN_MISSING",
         ("verified", "uncertain", "contextual"))
     add("counts.enrolled counts.treated counts.followed", "H3", "count", "DENOMINATOR_MISSING")
     add("counts.at_horizon counts.censored counts.withdrawals", "H3", "count",
@@ -315,6 +315,15 @@ def _validate_consistency(fields):
                  observation == "planned" or
                  denominator is None or enrolled is None or denominator <= enrolled,
                  "analysis denominator exceeds target enrollment")
+        if (domain in ("insulin_dose", "hba1c", "cgm") and
+                observation == "observed" and value(domain + ".attribution") == "target" and
+                participant_denominator and value(domain + ".horizon") in HORIZONS and
+                value(domain + ".interval_end") in HORIZONS and
+                value(domain + ".anchor") == "first_cell_administration" and
+                value(domain + ".analysis_population") in ("target", "documented_attrition_subset")):
+            at_horizon = value("counts.at_horizon")
+            _require(denominator is None or at_horizon is None or denominator <= at_horizon,
+                     "point-assessment denominator exceeds participants reaching horizon")
         if observation == "observed" and value(domain + ".attribution") == "target":
             participant_count = (
                 value(domain + ".value") if domain == "insulin_independence" else

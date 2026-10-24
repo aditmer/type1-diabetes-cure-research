@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 156 tests, including 71 classifier tests.
+The review-corrected suite has 161 tests, including 76 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -241,3 +241,21 @@ not suppress this participant-versus-participant contradiction check. Planned
 and contextual outcomes are exempt from this target bound, and unknown
 enrollment is not imputed. Hypoglycemia event counts are never bounded by
 participant enrollment: repeated events in one participant are permissible.
+
+H3's count reaching the horizon also constrains H4's comparable point
+assessments: observed target-attributed insulin-dose, HbA1c and CGM participant
+analysis denominators at an accepted nominal horizon, ending at that horizon
+and anchored to first cell administration, cannot exceed known
+`counts.at_horizon`. This includes documented attrition subsets linked to the
+target. Zero horizon completers therefore contradict ten observed month-12
+HbA1c participants. Unknown counts are not imputed, and this bound is not
+applied to planned/contextual data, device denominators, or different/unknown
+windows or anchors. Cumulative severe-hypoglycemia and independence-episode
+interval populations are not bounded by point-assessment completers; events
+and episodes may occur before participants withdraw. Narrative source
+definitions and window compatibility still require human adjudication.
+
+A confirmed omission of H1 `identity.linkage` uses
+`IDENTITY_DESIGN_MISSING`; reported uncertain linkage continues to use
+`COHORT_LINKAGE_CONFLICT` with an unknown predicate. This corrects a
+reason-code mismatch identified in review without changing either rule.
