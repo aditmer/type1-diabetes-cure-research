@@ -172,3 +172,34 @@ checks do not resolve S19/S23 rights/access limitations or PEC-Direct overlap.
 No eight-report research transition table, robustness fraction, sensitivity
 analysis, real extraction ledger, or research conclusion is produced here;
 those remain downstream gated work under the unchanged preregistration.
+
+## PR review correction and field-mapping audit (24 October 2026)
+
+The follow-up attribution dispatch now names `followup_attribution` explicitly,
+alongside the endpoint `.attribution` enum fields: `target` is met,
+`contextual` is unmet with `TARGET_POPULATION_MISMATCH`, and `uncertain` is
+unknown with `TARGET_ATTRIBUTION_UNCERTAIN`. Isolated tests change only that
+field from the complete baseline, preserving every endpoint's target
+attribution, and assert P3, both labels, both reason lists, and unknown flags.
+Inaccessible, conflicting and incomplete-review variants remain unknown.
+At the reviewed commit `f258b27`, the broader suffix test already matched
+`followup_attribution`; the alleged default-to-met behavior was not reproduced.
+The explicit dispatch removes the naming ambiguity and the isolated regressions
+close a test gap previously masked by simultaneous endpoint attribution changes.
+
+The audit traced the declared field families to P1-P3/H1-H5, checked every enum
+choice and special Boolean/CGM-range branch, and checked state handling and
+the deliberate cross-field uses of `other_evidence` and
+`independence.none_through_horizon`. Narrative fields remain adjudicated text,
+not independently machine-verifiable claims. No further naming-dispatch or
+predicate omission was identified.
+
+Two related consistency defects, also raised by Copilot review, were confirmed
+and corrected: proven no target enrollment now rejects positive global target
+counts even when intermediate counts are unknown; contextual or uncertain
+endpoint denominators are no longer bounded by the fixed target's enrollment.
+Only target-attributed denominators receive that bound. Endpoint-local
+numerator/denominator and event/affected-participant checks remain enforced.
+Tests retain contextual observations under a proven un-enrolled target and
+verify that their presence does not prevent `not_applicable` precedence.
+These corrections do not change governing rules, source facts, or authorization.

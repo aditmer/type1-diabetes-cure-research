@@ -286,6 +286,10 @@ def _validate_consistency(fields):
     target = value("target_enrolled")
     _require(enrolled is None or target is None or target == (enrolled > 0),
              "contradictory target enrollment")
+    if target is False or enrolled == 0:
+        _require(all(value("counts." + name) in (None, 0) for name in
+                     ("treated", "followed", "at_horizon", "censored", "withdrawals")),
+                 "positive target counts contradict no target enrollment")
     for lower, upper in (("treated", "enrolled"), ("followed", "treated"),
                          ("at_horizon", "followed"), ("withdrawals", "enrolled"),
                          ("censored", "enrolled")):
@@ -293,7 +297,8 @@ def _validate_consistency(fields):
         _require(a is None or b is None or a <= b, "contradictory global counts")
     for domain in DOMAINS:
         denominator = value(domain + ".denominator")
-        _require(denominator is None or enrolled is None or denominator <= enrolled,
+        _require(value(domain + ".attribution") != "target" or
+                 denominator is None or enrolled is None or denominator <= enrolled,
                  "analysis denominator exceeds target enrollment")
         if domain == "insulin_independence":
             numerator = value(domain + ".value")
@@ -398,11 +403,11 @@ def _evaluate(field):
         return _result("met" if value else "unmet", *([] if value else ["NO_TARGET_ENROLLMENT"]))
     if fid == "population_identified":
         return _result("met") if value else _result("unmet", spec.failure)
-    if fid.endswith("attribution"):
-        if spec.kind == "enum":
-            return (_result("unknown", "TARGET_ATTRIBUTION_UNCERTAIN") if value == "uncertain"
-                    else _result("unmet", "TARGET_POPULATION_MISMATCH") if value == "contextual"
-                    else _result("met"))
+    if fid == "followup_attribution" or (
+            fid.endswith(".attribution") and spec.kind == "enum"):
+        return (_result("unknown", "TARGET_ATTRIBUTION_UNCERTAIN") if value == "uncertain"
+                else _result("unmet", "TARGET_POPULATION_MISMATCH") if value == "contextual"
+                else _result("met"))
     if fid == "identity.linkage":
         return (_result("unknown", "COHORT_LINKAGE_CONFLICT") if value == "uncertain" else
                 _result("unmet", "IDENTITY_DESIGN_MISSING") if value == "contextual"

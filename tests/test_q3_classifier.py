@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 from scripts.q3_classifier import (
-    DOMAINS, HORIZONS, ID_KEYS, LABELS, ROOT, SPECS, InputError, _label, _result,
+    DOMAINS, HORIZONS, ID_KEYS, LABELS, ROOT, SPECS, InputError, _evaluate, _label, _result,
     canonical_json, classify, csv_output, load_json,
 )
 from scripts.q3_synthetic import (
@@ -185,6 +185,123 @@ class Q3ClassifierTests(unittest.TestCase):
         result = self.result(document)
         self.assert_pair(result, "unresolved", "unresolved")
         self.assert_reason(result, "TARGET_ATTRIBUTION_UNCERTAIN", "provisional-v1.1")
+
+    def test_isolated_followup_attribution_values_drive_p3_and_both_rules(self):
+        for value, state, label, reasons in (
+            ("target", "met", "supported", []),
+            ("contextual", "unmet", "not_supported", ["TARGET_POPULATION_MISMATCH"]),
+            ("uncertain", "unknown", "unresolved", ["TARGET_ATTRIBUTION_UNCERTAIN"]),
+        ):
+            with self.subTest(value=value):
+                document = baseline()
+                original = copy.deepcopy(document["reports"][0]["fields"])
+                change(document, "followup_attribution", value)
+                self.assertEqual([f for f in original if f["field_id"] != "followup_attribution"],
+                                 [f for f in document["reports"][0]["fields"]
+                                  if f["field_id"] != "followup_attribution"])
+                self.assertTrue(all(field(document, d + ".attribution")["value"] == "target"
+                                    for d in DOMAINS))
+                result = self.result(document)
+                self.assert_pair(result, label, label)
+                for rule in ("provisional-v1.1", "harmonized-v1.1"):
+                    self.assertEqual(result["predicates"][rule]["P3"], _result(state, *reasons))
+                    self.assertEqual(result["reason_codes"][rule], reasons)
+                    self.assertEqual(result["predicates"][rule]["P1"], _result("met"))
+                self.assertEqual(result["unknown_flags"],
+                                 [{"field_id": "followup_attribution", **_result(state, *reasons)}]
+                                 if state == "unknown" else [])
+
+    def test_isolated_followup_attribution_unknown_field_states(self):
+        for status, reason in (
+            ("inaccessible", "SOURCE_INACCESSIBLE"),
+            ("conflicting", "SOURCE_CONFLICT"),
+            ("not_yet_extracted", "EXTRACTION_INCOMPLETE"),
+        ):
+            with self.subTest(status=status):
+                document = baseline()
+                change(document, "followup_attribution", status=status)
+                result = self.result(document)
+                self.assert_pair(result, "unresolved", "unresolved")
+                for rule in ("provisional-v1.1", "harmonized-v1.1"):
+                    self.assertEqual(result["predicates"][rule]["P3"], _result("unknown", reason))
+                    self.assertEqual(result["reason_codes"][rule], [reason])
+                self.assertEqual(result["unknown_flags"],
+                                 [{"field_id": "followup_attribution", **_result("unknown", reason)}])
+                retained = next(f for f in result["fields"] if f["field_id"] == "followup_attribution")
+                self.assertEqual(retained["status"], status)
+                self.assertIsNone(retained["value"])
+                self.assertEqual(retained["locator"], field(document, "followup_attribution")["locator"])
+                self.assertEqual(retained["access_log"], field(document, "followup_attribution")["access_log"])
+
+    def test_all_enum_field_choices_have_explicit_governing_mapping(self):
+        covered = set()
+        for fid, spec in SPECS.items():
+            if spec.kind != "enum":
+                continue
+            if fid == "other_evidence":
+                # P1's fallback reason is evaluated across endpoints, not as a standalone gate.
+                continue
+            if fid == "followup_attribution" or fid.endswith(".attribution"):
+                expected = {"target": ("met", ()),
+                            "contextual": ("unmet", ("TARGET_POPULATION_MISMATCH",)),
+                            "uncertain": ("unknown", ("TARGET_ATTRIBUTION_UNCERTAIN",))}
+            elif fid == "identity.linkage":
+                expected = {"verified": ("met", ()),
+                            "contextual": ("unmet", ("IDENTITY_DESIGN_MISSING",)),
+                            "uncertain": ("unknown", ("COHORT_LINKAGE_CONFLICT",))}
+            elif fid == "overall_followup":
+                expected = {v: ("met", ()) for v in HORIZONS + ("later_only",)}
+                expected.update(below_12_months=("unmet", ("FOLLOWUP_LT_12_MONTHS",)),
+                                maximum_only=("unmet", ("FOLLOWUP_UNREPORTED",)),
+                                unspecified=("unmet", ("FOLLOWUP_UNREPORTED",)))
+            elif fid.endswith(".observation"):
+                expected = {"observed": ("met", ()), "planned": ("unmet", ("PLANNED_ONLY",)),
+                            "none": ("unmet", ("CLINICAL_DOMAIN_MISSING",))}
+            elif fid.endswith(".denominator_basis"):
+                expected = {v: ("met", ()) if v == "endpoint_analysis" else
+                            ("unmet", ("DENOMINATOR_MISSING",)) for v in spec.choices}
+            elif fid.endswith((".horizon", ".interval_end")):
+                expected = {v: ("met", ()) if v in HORIZONS else
+                            ("unmet", ("TIMING_UNREPORTED" if v == "unspecified"
+                                       else "WINDOW_MISMATCH",)) for v in spec.choices}
+            elif fid.endswith(".analysis_population"):
+                expected = {"target": ("met", ()), "documented_attrition_subset": ("met", ()),
+                            "contextual": ("unmet", ("TARGET_POPULATION_MISMATCH",)),
+                            "uncertain": ("unknown", ("COHORT_LINKAGE_CONFLICT",))}
+            elif fid.endswith(".anchor"):
+                expected = {v: ("met", ()) if v == "first_cell_administration" else
+                            ("unmet", ("TIMING_UNREPORTED" if v == "unspecified"
+                                       else "ANCHOR_MISMATCH",)) for v in spec.choices}
+            elif fid.endswith(".hierarchy"):
+                expected = {v: ("met", ()) for v in ("primary", "secondary", "post_hoc", "composite")}
+            else:
+                self.fail(f"unreviewed enum field mapping: {fid}")
+            self.assertEqual(set(expected), set(spec.choices), fid)
+            covered.add(fid)
+            for value, (state, reasons) in expected.items():
+                with self.subTest(field=fid, value=value):
+                    item = copy.deepcopy(field(baseline(), fid))
+                    item.update(status="reported", value=value)
+                    self.assertEqual(_evaluate(item), _result(state, *reasons))
+        self.assertEqual(covered, {fid for fid, spec in SPECS.items()
+                                   if spec.kind == "enum" and fid != "other_evidence"})
+
+    def test_special_non_enum_field_mappings(self):
+        for fid, value, state, reasons in (
+            ("target_enrolled", True, "met", ()),
+            ("target_enrolled", False, "unmet", ("NO_TARGET_ENROLLMENT",)),
+            ("population_identified", True, "met", ()),
+            ("population_identified", False, "unmet", ("REPORT_POPULATION_MISSING",)),
+            ("independence.none_through_horizon", False, "met", ()),
+            ("independence.none_through_horizon", True, "met", ()),
+            ("cgm.range", "70-180 mg/dL", "met", ()),
+            ("cgm.range", "80-180 mg/dL", "unmet", ("ENDPOINT_DEFINITION_MISSING",)),
+            ("safety.attribution", "Synthetic procedure-related harms", "met", ()),
+        ):
+            with self.subTest(field=fid, value=value):
+                item = copy.deepcopy(field(baseline(), fid))
+                item.update(status="reported", value=value)
+                self.assertEqual(_evaluate(item), _result(state, *reasons))
 
     def test_screen_does_not_acquire_verified_linkage_gate(self):
         document = baseline()
@@ -476,6 +593,46 @@ class Q3InputValidationTests(unittest.TestCase):
         change(document, "counts.enrolled", status="not_yet_extracted")
         seal(document)
         with self.assertRaisesRegex(InputError, "contradict no target enrollment"):
+            classify(document)
+
+    def test_no_enrollment_rejects_positive_counts_despite_unknown_intermediates(self):
+        for proof in ("target_enrolled", "counts.enrolled"):
+            for name in ("treated", "followed", "at_horizon", "censored", "withdrawals"):
+                with self.subTest(proof=proof, count=name):
+                    document = controls()["inaccessible"]
+                    change(document, proof, False if proof == "target_enrolled" else 0)
+                    change(document, "counts." + name, 1)
+                    seal(document)
+                    with self.assertRaisesRegex(InputError, "positive target counts"):
+                        classify(document)
+
+    def test_contextual_denominator_not_bounded_by_target_enrollment(self):
+        for enrolled in (0, 10):
+            with self.subTest(enrolled=enrolled):
+                document = controls()["inaccessible"]
+                change(document, "target_enrolled", enrolled > 0)
+                change(document, "counts.enrolled", enrolled)
+                change(document, "hba1c.observation", "observed")
+                change(document, "hba1c.attribution", "contextual")
+                change(document, "hba1c.value", 9.2)
+                change(document, "hba1c.denominator", 20)
+                seal(document)
+                result = classify(document)["reports"][0]
+                label = "not_applicable" if enrolled == 0 else "unresolved"
+                self.assertEqual(result["labels"]["provisional-v1.1"], label)
+                self.assertEqual(result["labels"]["harmonized-v1.1"],
+                                 "not_applicable" if enrolled == 0 else "not_supported")
+                self.assertEqual(next(f["value"] for f in result["fields"]
+                                      if f["field_id"] == "hba1c.denominator"), 20)
+        document = baseline()
+        change(document, "insulin_independence.attribution", "contextual")
+        change(document, "insulin_independence.denominator", 20)
+        change(document, "insulin_independence.value", 21)
+        change(document, "independence.none_through_horizon", False)
+        change(document, "independence.onset", "Synthetic month 3")
+        change(document, "independence.duration", "Synthetic one month")
+        seal(document)
+        with self.assertRaisesRegex(InputError, "numerator exceeds"):
             classify(document)
 
     def test_contradictory_overlap_and_subset_direction_halt(self):
