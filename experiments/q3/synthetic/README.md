@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 183 tests, including 98 classifier tests.
+The review-corrected suite has 185 tests, including 100 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -291,6 +291,11 @@ Endpoint-relative percentage comparisons additionally require accepted
 nominal horizon and interval-end values and the first-cell-administration
 anchor; `month_12`, `day_365`, and `week_52` are equivalent nominal labels and
 need not be textually identical.
+Comparable point-assessment denominators are also bounded by each known
+participant-count ancestor (enrolled, treated, followed, and at-horizon);
+unknown intermediate counts do not hide contradictions with a known ancestor.
+For comparable hypoglycemia percentage evidence, proven zero events requires
+zero affected percentage even when the affected-participant count is unknown.
 Independence percentages are checked against the positive numerator and
 participant-analysis denominator with the same rounding tolerance.
 

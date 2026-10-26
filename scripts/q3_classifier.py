@@ -337,9 +337,11 @@ def _validate_consistency(fields):
                 value(domain + ".interval_end") in HORIZONS and
                 value(domain + ".anchor") == "first_cell_administration" and
                 value(domain + ".analysis_population") in ("target", "documented_attrition_subset")):
-            at_horizon = value("counts.at_horizon")
-            _require(denominator is None or at_horizon is None or denominator <= at_horizon,
-                     "point-assessment denominator exceeds participants reaching horizon")
+            for count_name in ("enrolled", "treated", "followed", "at_horizon"):
+                ancestor_count = value("counts." + count_name)
+                _require(denominator is None or ancestor_count is None or
+                         denominator <= ancestor_count,
+                         "point-assessment denominator exceeds known participant count")
         if observation == "observed" and value(domain + ".attribution") == "target":
             participant_count = (
                 value(domain + ".value") if domain == "insulin_independence" else
@@ -425,7 +427,10 @@ def _validate_consistency(fields):
             value("severe_hypoglycemia.denominator") > 0):
         affected = value("severe_hypoglycemia.participants_affected")
         denominator = value("severe_hypoglycemia.denominator")
-        if affected is not None:
+        if affected is None and value("severe_hypoglycemia.value") == 0:
+            _require(hypo_quantity["value"] == 0,
+                     "zero events and positive affected percentage")
+        elif affected is not None:
             expected_percent = 100 * affected / denominator
             _require(abs(hypo_quantity["value"] - expected_percent) <= 0.5,
                      "contradictory affected-participant percentage and count")

@@ -675,6 +675,44 @@ class Q3ClassifierTests(unittest.TestCase):
         with self.assertRaisesRegex(InputError, "contradictory affected-participant"):
             classify(document)
 
+    def test_point_assessment_denominator_is_bounded_by_each_known_ancestor(self):
+        for known_count in ("followed", "treated"):
+            document = baseline()
+            change(document, "counts." + known_count, 5)
+            for other in ("enrolled", "treated", "followed", "at_horizon"):
+                if other != known_count:
+                    change(document, "counts." + other, status="inaccessible")
+            for domain in ("insulin_dose", "hba1c", "cgm"):
+                change(document, domain + ".denominator", 10)
+                change(document, domain + ".denominator_basis", "endpoint_analysis")
+                change(document, domain + ".observation", "observed")
+                change(document, domain + ".attribution", "target")
+                change(document, domain + ".anchor", "first_cell_administration")
+                change(document, domain + ".horizon", "month_12")
+                change(document, domain + ".interval_end", "day_365")
+                change(document, domain + ".analysis_population", "target")
+            seal(document)
+            with self.subTest(known_count=known_count):
+                with self.assertRaisesRegex(InputError, "denominator exceeds known participant"):
+                    classify(document)
+
+    def test_zero_hypoglycemia_events_conflict_with_positive_comparable_percentage(self):
+        document = baseline()
+        change(document, "severe_hypoglycemia.value", 0)
+        change(document, "severe_hypoglycemia.participants_affected",
+               status="not_yet_extracted")
+        quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+        quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+        document["reports"][0]["fields"].append(quantity)
+        change(document, "severe_hypoglycemia.screen_quantity", {
+            "value": 50, "units": "%",
+            "measure": "participants_affected_percentage",
+            "window": "endpoint_interval",
+        })
+        seal(document)
+        with self.assertRaisesRegex(InputError, "zero events and positive affected percentage"):
+            classify(document)
+
     def test_comparable_hypoglycemia_percentage_matches_count_with_rounding(self):
         for percent, affected in ((50, 5), (49.6, 5), (0, 0)):
             document = baseline()
