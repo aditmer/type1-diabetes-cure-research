@@ -84,7 +84,9 @@ def _specifications():
                  "NUMERATOR_MISSING" if domain == "insulin_independence"
                  else "CLINICAL_DOMAIN_MISSING")
         endpoint("screen_quantity", "screen_optional", "quantity",
-                 "QUANTITATIVE_CLINICAL_OUTCOME_MISSING")
+                 "QUANTITATIVE_CLINICAL_OUTCOME_MISSING",
+                 ("nonnegative",) if domain in ("insulin_independence", "severe_hypoglycemia")
+                 else ("signed",))
         endpoint("baseline", "H2", "number", "ENDPOINT_DEFINITION_MISSING")
         endpoint("definition", "H2", "text", "ENDPOINT_DEFINITION_MISSING")
         endpoint("hierarchy", "H2", "enum", "ENDPOINT_DEFINITION_MISSING",
@@ -144,7 +146,10 @@ def _synthetic_id(value):
 def _valid_value(value, spec):
     if spec.kind == "quantity":
         return (isinstance(value, dict) and set(value) == {"value", "units"} and
-                _valid_value(value["value"], Spec("", "number", "")) and _text(value["units"]))
+                _text(value["units"]) and
+                (_valid_value(value["value"], Spec("", "number", "")) or
+                 ("signed" in spec.choices and type(value["value"]) in (int, float) and
+                  math.isfinite(value["value"]))))
     if spec.kind == "bool":
         return type(value) is bool
     if spec.kind == "count":
@@ -356,6 +361,10 @@ def _validate_consistency(fields):
     if none is True:
         _require(value("insulin_independence.value") in (None, 0),
                  "contradictory no-independence evidence")
+    quantity = (value("insulin_independence.screen_quantity")
+                if "insulin_independence.screen_quantity" in fields else None)
+    if none is True and quantity is not None:
+        _require(quantity["value"] == 0, "contradictory no-independence screen quantity")
     for fid in ("independence.onset", "independence.duration"):
         if fields[fid]["status"] == "not_applicable":
             _require(none is True, "zero at horizon does not prove no earlier independence")

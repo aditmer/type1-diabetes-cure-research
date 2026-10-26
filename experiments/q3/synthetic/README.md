@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 164 tests, including 79 classifier tests.
+The review-corrected suite has 166 tests, including 81 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -271,6 +271,10 @@ conversions are reconstructed from it. A proportion-only observation can pass
 the permissive screen while confirmed missing counts/analysis denominators
 still fail harmonization. The complete synthetic seed need not invent
 additional screen quantities.
+Insulin-independence and severe-hypoglycemia quantities must be nonnegative;
+insulin-dose, HbA1c and CGM quantities may be finite signed changes (either
+sign is quantitative evidence). An independence quantity above zero contradicts
+explicit `independence.none_through_horizon=true` and halts validation.
 
 A source-reported positive `counts.enrolled` now proves aggregate enrollment
 even when `target_enrolled` is unknown. The Boolean's original unknown field

@@ -597,6 +597,40 @@ class Q3ClassifierTests(unittest.TestCase):
             change(document, domain + ".observation", "planned")
             self.assert_pair(self.result(document), "not_supported", "not_supported")
 
+    def _with_quantity(self, domain, quantity):
+        document = baseline()
+        record = copy.deepcopy(field(document, domain + ".value"))
+        record["field_id"] = domain + ".screen_quantity"
+        document["reports"][0]["fields"].append(record)
+        change(document, record["field_id"], quantity)
+        return document
+
+    def test_signed_change_quantity_passes_screen_for_numeric_domains(self):
+        for domain in ("hba1c", "cgm", "insulin_dose"):
+            for number in (-0.2, 0.2):
+                with self.subTest(domain=domain, number=number):
+                    document = self._with_quantity(domain, {"value": number, "units": "change"})
+                    for endpoint in DOMAINS:
+                        change(document, endpoint + ".value",
+                               status="unreported_in_reviewed_material")
+                    change(document, "severe_hypoglycemia.participants_affected",
+                           status="unreported_in_reviewed_material")
+                    result = self.result(document)
+                    self.assert_pair(result, "supported", "not_supported")
+        for domain in ("insulin_independence", "severe_hypoglycemia"):
+            with self.assertRaises(InputError):
+                seal(doc := self._with_quantity(domain, {"value": -0.2, "units": "proportion"}))
+                classify(doc)
+
+    def test_independence_quantity_contradicting_explicit_absence_is_rejected(self):
+        for quantity in ({"value": 25, "units": "%"}, {"value": 0.25, "units": "proportion"}):
+            document = self._with_quantity("insulin_independence", quantity)
+            seal(document)
+            with self.assertRaisesRegex(InputError, "contradictory no-independence"):
+                classify(document)
+        document = self._with_quantity("insulin_independence", {"value": 0, "units": "%"})
+        self.assert_pair(self.result(document), "supported", "supported")
+
     def test_screen_quantity_requires_numeric_value_units_and_source_provenance(self):
         for value in ({"value": 0.25}, {"value": "0.25", "units": "proportion"},
                       {"value": -1, "units": "events/person-year"},
