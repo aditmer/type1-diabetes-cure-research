@@ -38,17 +38,20 @@ SOURCE_RECORD_KEYS = (
 )
 HUMAN_REVIEW_KEYS = (
     "reviewer_identity", "decision_date", "independent_review_pending",
+    "independent_reviewer_identity", "independent_review_date",
+    "independent_review_scope", "independent_review_decision",
 )
 REVIEW_LOG_COLUMNS = (
     "source_id", "report_id", "program_id", "source_version_id", "material_reviewed",
     "version_evidence_class", "version_evidence_note", "clinical_content_reviewed",
-    "approved_review_locators", "review_complete", "access_attempts",
-    "rights_and_access", "scope_restrictions", "reviewer_identity", "decision_date",
-    "review_status",
+    "approved_review_directions", "excluded_or_unreviewed_material", "review_complete",
+    "access_attempts", "rights_and_access", "scope_restrictions", "reviewer_identity",
+    "decision_date", "review_status",
 )
 LINK_COLUMNS = (
     "from_population_id", "to_population_id", "relationship", "direction_if_subset",
-    "from_source_version_id", "to_source_version_id", "locator", "adjudication_note",
+    "from_source_version_id", "to_source_version_id", "from_locator", "to_locator",
+    "reviewer_identity", "decision_date", "adjudication_note",
 )
 CORRECTION_COLUMNS = (
     "correction_category", "source_id", "report_id", "field_id", "tracker_file",
@@ -84,6 +87,15 @@ def _read_csv(path, expected_columns):
 
 def _nonempty(value):
     return isinstance(value, str) and bool(value.strip())
+
+
+def _valid_date(value):
+    if not _nonempty(value):
+        return False
+    try:
+        return date.fromisoformat(value).isoformat() == value
+    except ValueError:
+        return False
 
 
 def _validate_public_content(value, location):
@@ -181,6 +193,17 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                  f"{spec['report_id']}: invalid human-review record")
         _require(type(human["independent_review_pending"]) is bool,
                  f"{spec['report_id']}: invalid independent-review state")
+        independent_fields = (
+            human["independent_reviewer_identity"], human["independent_review_date"],
+            human["independent_review_scope"], human["independent_review_decision"],
+        )
+        if human["independent_review_pending"]:
+            _require(all(value is None for value in independent_fields),
+                     f"{spec['report_id']}: pending independent review cannot have a completed record")
+        else:
+            _require(all(_nonempty(value) for value in independent_fields) and
+                     _valid_date(human["independent_review_date"]),
+                     f"{spec['report_id']}: completed independent review needs reviewer, date, scope, and decision")
 
         log = review_by_id[spec["report_id"]]
         _require(log["source_id"] == spec["source_id"] and
@@ -208,23 +231,31 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
             _require(_nonempty(log["reviewer_identity"]) and
                      human["reviewer_identity"] == log["reviewer_identity"] and
                      human["decision_date"] == log["decision_date"] and
-                     _nonempty(log["material_reviewed"]),
+                     _nonempty(log["material_reviewed"]) and
+                     _valid_date(log["decision_date"]),
                      f"{spec['report_id']}: completed content review needs reviewer, date, and scope")
-            try:
-                date.fromisoformat(log["decision_date"])
-            except ValueError as exc:
-                raise ValidationError(
-                    f"{spec['report_id']}: reviewer decision date must be ISO YYYY-MM-DD"
-                ) from exc
         else:
             _require(human["reviewer_identity"] is None and human["decision_date"] is None and
                      not _nonempty(log["reviewer_identity"]) and
                      not _nonempty(log["decision_date"]),
                      f"{spec['report_id']}: unreviewed scaffold cannot claim a reviewer")
-        for key in ("version_evidence_note", "approved_review_locators", "access_attempts",
-                    "rights_and_access", "scope_restrictions"):
+        if not human["independent_review_pending"]:
+            _require(log["review_complete"] == "true" and
+                     human["independent_reviewer_identity"] != log["reviewer_identity"],
+                     f"{spec['report_id']}: independent review requires completed source review by another reviewer")
+        for key in ("version_evidence_note", "approved_review_directions",
+                    "excluded_or_unreviewed_material", "access_attempts", "rights_and_access",
+                    "scope_restrictions"):
             _require(_nonempty(log[key]),
                      f"{spec['report_id']}: review log missing {key}")
+        if spec["source_id"] == "S18":
+            _require("mmc2" not in log["approved_review_directions"].lower() and
+                     "mmc2.xlsx" in log["excluded_or_unreviewed_material"].lower(),
+                     "S18 excluded mmc2.xlsx cannot be an approved review direction")
+        if spec["source_id"] == "S19":
+            _require("moesm4" not in log["approved_review_directions"].lower() and
+                     "moesm4" in log["excluded_or_unreviewed_material"].lower(),
+                     "S19 unreviewed MOESM4 cannot be an approved review direction")
         _validate_public_content(log, spec["report_id"])
 
         fields = report["fields"]
@@ -282,11 +313,15 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                          _nonempty(log["decision_date"]),
                          f"{spec['report_id']}/{fid}: confirmed omission requires complete human review")
             elif status == "inaccessible":
-                _require(_nonempty(field["access_log"]),
+                _require(_nonempty(field["access_log"]) and field["review_complete"] and
+                         log["clinical_content_reviewed"] == "true" and
+                         _nonempty(log["reviewer_identity"]),
                          f"{spec['report_id']}/{fid}: inaccessible field needs access log")
             elif status == "conflicting":
                 _require(len(set(field["locator"])) >= 2 and
-                         _nonempty(field["adjudication_note"]),
+                         _nonempty(field["adjudication_note"]) and field["review_complete"] and
+                         log["clinical_content_reviewed"] == "true" and
+                         _nonempty(log["reviewer_identity"]),
                          f"{spec['report_id']}/{fid}: conflict needs both locators and explanation")
             elif status == "not_applicable":
                 _require((fid.endswith(".baseline") or fid in
@@ -298,6 +333,14 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                          _nonempty(log["decision_date"]),
                          f"{spec['report_id']}/{fid}: unsupported or unevidenced inapplicability")
             _validate_public_content(field, f"{spec['report_id']}/{fid}")
+
+        if log["review_complete"] == "true":
+            _require(all(field["review_complete"] and
+                         field["status"] != "not_yet_extracted" for field in fields),
+                     f"{spec['report_id']}: complete report review requires every field complete")
+        if not human["independent_review_pending"]:
+            _require(all(field["review_complete"] for field in fields),
+                     f"{spec['report_id']}: independent review requires complete field-level review")
 
     links = _read_csv(extraction_dir / "cohort-links.csv", LINK_COLUMNS)
     population_owner = {r["target_population_id"]: r for r in reports}
@@ -315,25 +358,48 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
         _require(pair not in seen_links, "duplicate cohort relationship")
         seen_links.add(pair)
         _require(link["relationship"] in RELATIONSHIPS and
-                 _nonempty(link["locator"]) and _nonempty(link["adjudication_note"]),
+                 _nonempty(link["adjudication_note"]),
                  "invalid cohort relationship or missing provenance")
         left_report, right_report = population_owner[left], population_owner[right]
         _require(link["from_source_version_id"] == left_report["source_version_id"] and
                  link["to_source_version_id"] == right_report["source_version_id"],
                  "cohort relationship borrows an incorrect source version")
         if link["relationship"] == "subset":
-            _require(link["direction_if_subset"] == "from_is_subset_of_to",
+            _require(link["direction_if_subset"] in (
+                "from_is_subset_of_to", "to_is_subset_of_from",
+            ),
                      "subset relationship requires explicit direction")
         else:
             _require(not link["direction_if_subset"],
                      "only subset relationships may specify a direction")
+        if link["relationship"] == "uncertain":
+            _require(not _nonempty(link["reviewer_identity"]) and
+                     not _nonempty(link["decision_date"]),
+                     "uncertain cohort relationships cannot claim completed adjudication")
+        else:
+            _require(_nonempty(link["from_locator"]) and _nonempty(link["to_locator"]) and
+                     _nonempty(link["reviewer_identity"]) and
+                     _valid_date(link["decision_date"]),
+                     "resolved cohort relationships require two source locators and human adjudication")
+            for locator, source_row, owner in (
+                    (link["from_locator"], manifest[left_report["source_id"]], left_report),
+                    (link["to_locator"], manifest[right_report["source_id"]], right_report)):
+                identifiers = (
+                    owner["source_version_id"], source_row["identifier"],
+                    source_row.get("registry_id", ""), owner["source_id"],
+                )
+                _require(any(identifier and identifier in locator for identifier in identifiers),
+                         "resolved cohort locator must identify its corresponding source version")
+            for owner in (left_report, right_report):
+                review = review_by_id[owner["report_id"]]
+                _require(review["clinical_content_reviewed"] == "true" and
+                         _nonempty(review["reviewer_identity"]) and
+                         _valid_date(review["decision_date"]),
+                         "resolved cohort relationships require reviewed source content for both reports")
         _validate_public_content(link, "cohort-links.csv")
         if pair == frozenset(("pec-s18-target", "pec-s23-target")):
             _require(link["relationship"] != "distinct_within_program",
                      "S18/S23 documented overlap cannot be called distinct")
-        if "pec-s19-target" in pair:
-            _require(link["relationship"] != "distinct_within_program",
-                     "S19 overlap cannot be asserted distinct without adjudication")
     _require(seen_links == expected_pairs,
              "cohort-links.csv must explicitly cover every PEC-Direct report pair")
     ordered_pec = [r["target_population_id"] for r in pec]

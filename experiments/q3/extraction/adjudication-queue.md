@@ -28,8 +28,11 @@ assigned human reviewer records actual materials, decisions, and dates.
   discontinuations where applicable.
 - [ ] Record unresolved conflicts with both locators and rationale; record
   structural `not_applicable` only with explicit source evidence.
-- [ ] Update the source review log and actual reviewer identity/date. Preserve
-  independent review as pending until it occurs.
+- [ ] Do not mark the report review complete while any field remains
+  `not_yet_extracted` or has incomplete field-level review. Update the source
+  review log and actual reviewer identity/date.
+- [ ] Preserve independent review as pending until it occurs; when completed,
+  record the independent reviewer, date, scope, and decision.
 - [ ] Keep tracker corrections in `tracker-corrections.csv`, never as source
   facts. Do not produce rule labels or analyses under Issue #34.
 
@@ -130,7 +133,10 @@ All six PEC-Direct report pairs are currently `uncertain` in
 `cohort-links.csv`. The preregistration records S18/S23 population overlap,
 without a verified directional subset in this ledger. S19 links remain
 uncertain; S20's registry cohort relationship requires explicit verification.
-For every revised link, cite both exact approved versions and source locators.
+To resolve any link, cite each exact source/version with its own locator,
+record the human adjudicator/date, and ensure source-content review is logged
+for both reports. A subset direction may state either population is the
+subset; keep rows in their deterministic report order.
 Do not sum participants, infer unique participants, combine endpoint
 measurements across reports, or call reports independent replications.
 

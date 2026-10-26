@@ -63,6 +63,31 @@ class Q3ExtractionTests(unittest.TestCase):
             writer.writeheader()
             writer.writerows(rows)
 
+    def mark_report_source_review_complete(self, document, source_id="S13"):
+        report = next(r for r in document["reports"] if r["source_id"] == source_id)
+        report["source_record"]["source_material_reviewed"] = True
+        report["human_review"]["reviewer_identity"] = "Reviewer A"
+        report["human_review"]["decision_date"] = "2026-10-26"
+        for field in report["fields"]:
+            field.update(
+                status="inaccessible",
+                value=None,
+                reason_codes=["SOURCE_INACCESSIBLE"],
+                review_complete=True,
+                access_log="Approved material unavailable after documented access attempt.",
+                adjudication_note="Human reviewed the access limitation; source fact not asserted.",
+            )
+        self.update_review_log(
+            source_id,
+            material_reviewed="All permitted source routes and access attempts for this report",
+            clinical_content_reviewed="true",
+            review_complete="true",
+            reviewer_identity="Reviewer A",
+            decision_date="2026-10-26",
+            review_status="source_review_complete",
+        )
+        return report
+
     def report(self, source_id):
         return next(r for r in self.reports["reports"] if r["source_id"] == source_id)
 
@@ -142,7 +167,7 @@ class Q3ExtractionTests(unittest.TestCase):
 
     def test_accepts_field_level_confirmed_omission_after_human_review(self):
         document = copy.deepcopy(self.reports)
-        report = document["reports"][0]
+        report = self.mark_report_source_review_complete(document)
         field = self.field(report, "population_identified")
         field.update(
             status="unreported_in_reviewed_material",
@@ -151,19 +176,49 @@ class Q3ExtractionTests(unittest.TestCase):
             reason_codes=[],
             review_complete=True,
         )
-        report["source_record"]["source_material_reviewed"] = True
-        report["human_review"]["reviewer_identity"] = "Reviewer A"
-        report["human_review"]["decision_date"] = "2026-10-26"
         self.write_reports(document)
-        self.update_review_log(
-            "S13",
-            material_reviewed="S13 label, all relevant population sections and supplements",
-            clinical_content_reviewed="true",
-            review_complete="true",
-            reviewer_identity="Reviewer A",
-            decision_date="2026-10-26",
-            review_status="source_review_complete",
+        self.assertEqual(self.validate()[0], 8)
+
+    def test_report_cannot_be_complete_while_any_field_is_unextracted(self):
+        document = copy.deepcopy(self.reports)
+        report = self.mark_report_source_review_complete(document)
+        field = self.field(report, "population_identified")
+        field.update(
+            status="not_yet_extracted",
+            reason_codes=["EXTRACTION_INCOMPLETE"],
+            review_complete=False,
+            access_log="",
+            adjudication_note="This field has not been extracted.",
         )
+        self.write_reports(document)
+        with self.assertRaisesRegex(ValidationError, "complete report review requires every field"):
+            self.validate()
+
+    def test_independent_review_cannot_be_closed_without_an_independent_record(self):
+        document = copy.deepcopy(self.reports)
+        report = self.mark_report_source_review_complete(document)
+        report["human_review"]["independent_review_pending"] = False
+        self.write_reports(document)
+        with self.assertRaisesRegex(ValidationError, "completed independent review needs"):
+            self.validate()
+
+    def test_independent_review_record_is_accepted_after_full_review(self):
+        document = copy.deepcopy(self.reports)
+        report = self.mark_report_source_review_complete(document)
+        report["human_review"].update({
+            "independent_review_pending": False,
+            "independent_reviewer_identity": "Reviewer B",
+            "independent_review_date": "2026-10-27",
+            "independent_review_scope": "Rechecked all source states and locators.",
+            "independent_review_decision": "Confirmed the extraction and remaining access limitations.",
+        })
+        self.write_reports(document)
+        self.assertEqual(self.validate()[0], 8)
+
+    def test_complete_report_is_accepted_when_every_field_is_adjudicated(self):
+        document = copy.deepcopy(self.reports)
+        self.mark_report_source_review_complete(document)
+        self.write_reports(document)
         self.assertEqual(self.validate()[0], 8)
 
     def test_confirmed_omission_requires_complete_human_review(self):
@@ -210,6 +265,106 @@ class Q3ExtractionTests(unittest.TestCase):
             writer.writerows(rows)
         with self.assertRaisesRegex(ValidationError, "invalid cohort relationship"):
             self.validate()
+
+    def test_reverse_direction_subset_requires_source_review_and_is_supported(self):
+        path = self.extraction / "cohort-links.csv"
+        with path.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        rows[0].update({
+            "relationship": "subset",
+            "direction_if_subset": "to_is_subset_of_from",
+            "from_locator": "PMC8714853.1, Results section, Table 1",
+            "to_locator": "PMC11471599.1, Supplementary Table 1",
+            "reviewer_identity": "Reviewer A",
+            "decision_date": "2026-10-26",
+        })
+        with path.open("w", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
+            writer.writeheader()
+            writer.writerows(rows)
+        document = copy.deepcopy(self.reports)
+        for report in document["reports"]:
+            if report["source_id"] not in ("S18", "S19", "S23"):
+                continue
+            report["source_record"]["source_material_reviewed"] = True
+            report["human_review"]["reviewer_identity"] = "Reviewer A"
+            report["human_review"]["decision_date"] = "2026-10-26"
+        self.write_reports(document)
+        for source_id in ("S18", "S19", "S23"):
+            self.update_review_log(
+                source_id,
+                material_reviewed="Approved source identity and cohort mapping sections",
+                clinical_content_reviewed="true",
+                review_complete="false",
+                reviewer_identity="Reviewer A",
+                decision_date="2026-10-26",
+                review_status="source_review_in_progress",
+            )
+        self.assertEqual(self.validate()[2], 6)
+
+    def test_resolved_cohort_relationship_requires_reviewed_sources(self):
+        path = self.extraction / "cohort-links.csv"
+        with path.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        rows[0].update({
+            "relationship": "same",
+            "from_locator": "PMC8714853.1, Table 1",
+            "to_locator": "PMC11471599.1, Table 1",
+            "reviewer_identity": "Reviewer A",
+            "decision_date": "2026-10-26",
+        })
+        with path.open("w", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
+            writer.writeheader()
+            writer.writerows(rows)
+        with self.assertRaisesRegex(ValidationError, "resolved cohort relationships require reviewed source content"):
+            self.validate()
+
+    def test_resolved_cohort_relationship_requires_two_source_specific_locators(self):
+        path = self.extraction / "cohort-links.csv"
+        with path.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        rows[0].update({
+            "relationship": "subset",
+            "direction_if_subset": "from_is_subset_of_to",
+            "from_locator": "experiments/q3/PREREGISTRATION.md",
+            "to_locator": "experiments/q3/PREREGISTRATION.md",
+            "reviewer_identity": "Reviewer A",
+            "decision_date": "2026-10-26",
+        })
+        with path.open("w", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
+            writer.writeheader()
+            writer.writerows(rows)
+        with self.assertRaisesRegex(ValidationError, "resolved cohort locator must identify"):
+            self.validate()
+
+    def test_excluded_material_is_not_an_approved_review_direction(self):
+        with (self.extraction / "source-review-log.csv").open(
+                newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        for source_id, excluded in (("S18", "mmc2.xlsx"), ("S19", "MOESM4")):
+            row = next(item for item in rows if item["source_id"] == source_id)
+            self.assertNotIn(excluded.lower(), row["approved_review_directions"].lower())
+            self.assertIn(excluded.lower(), row["excluded_or_unreviewed_material"].lower())
+
+    def test_validator_rejects_excluded_material_as_review_direction(self):
+        for source_id, prohibited, error in (
+                ("S18", "mmc2.xlsx", "S18 excluded mmc2.xlsx"),
+                ("S19", "MOESM4", "S19 unreviewed MOESM4")):
+            path = self.extraction / "source-review-log.csv"
+            with path.open(newline="", encoding="utf-8") as stream:
+                rows = list(csv.DictReader(stream))
+            row = next(item for item in rows if item["source_id"] == source_id)
+            row["approved_review_directions"] += f"; {prohibited}"
+            with path.open("w", newline="", encoding="utf-8") as stream:
+                writer = csv.DictWriter(stream, fieldnames=REVIEW_LOG_COLUMNS)
+                writer.writeheader()
+                writer.writerows(rows)
+            with self.subTest(source_id=source_id):
+                with self.assertRaisesRegex(ValidationError, error):
+                    self.validate()
+            path.write_text(self.review_log, encoding="utf-8")
 
     def test_tracker_corrections_use_only_separate_approved_categories(self):
         with (self.extraction / "tracker-corrections.csv").open(

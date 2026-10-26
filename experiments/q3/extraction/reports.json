@@ -20,7 +20,11 @@
       "human_review": {
         "reviewer_identity": null,
         "decision_date": null,
-        "independent_review_pending": true
+        "independent_review_pending": true,
+        "independent_reviewer_identity": null,
+        "independent_review_date": null,
+        "independent_review_scope": null,
+        "independent_review_decision": null
       },
       "fields": [
         {
@@ -2100,7 +2104,11 @@
       "human_review": {
         "reviewer_identity": null,
         "decision_date": null,
-        "independent_review_pending": true
+        "independent_review_pending": true,
+        "independent_reviewer_identity": null,
+        "independent_review_date": null,
+        "independent_review_scope": null,
+        "independent_review_decision": null
       },
       "fields": [
         {
@@ -4180,7 +4188,11 @@
       "human_review": {
         "reviewer_identity": null,
         "decision_date": null,
-        "independent_review_pending": true
+        "independent_review_pending": true,
+        "independent_reviewer_identity": null,
+        "independent_review_date": null,
+        "independent_review_scope": null,
+        "independent_review_decision": null
       },
       "fields": [
         {
@@ -6260,7 +6272,11 @@
       "human_review": {
         "reviewer_identity": null,
         "decision_date": null,
-        "independent_review_pending": true
+        "independent_review_pending": true,
+        "independent_reviewer_identity": null,
+        "independent_review_date": null,
+        "independent_review_scope": null,
+        "independent_review_decision": null
       },
       "fields": [
         {
@@ -8340,7 +8356,11 @@
       "human_review": {
         "reviewer_identity": null,
         "decision_date": null,
-        "independent_review_pending": true
+        "independent_review_pending": true,
+        "independent_reviewer_identity": null,
+        "independent_review_date": null,
+        "independent_review_scope": null,
+        "independent_review_decision": null
       },
       "fields": [
         {
@@ -10420,7 +10440,11 @@
       "human_review": {
         "reviewer_identity": null,
         "decision_date": null,
-        "independent_review_pending": true
+        "independent_review_pending": true,
+        "independent_reviewer_identity": null,
+        "independent_review_date": null,
+        "independent_review_scope": null,
+        "independent_review_decision": null
       },
       "fields": [
         {
@@ -12500,7 +12524,11 @@
       "human_review": {
         "reviewer_identity": null,
         "decision_date": null,
-        "independent_review_pending": true
+        "independent_review_pending": true,
+        "independent_reviewer_identity": null,
+        "independent_review_date": null,
+        "independent_review_scope": null,
+        "independent_review_decision": null
       },
       "fields": [
         {
@@ -14580,7 +14608,11 @@
       "human_review": {
         "reviewer_identity": null,
         "decision_date": null,
-        "independent_review_pending": true
+        "independent_review_pending": true,
+        "independent_reviewer_identity": null,
+        "independent_review_date": null,
+        "independent_review_scope": null,
+        "independent_review_decision": null
       },
       "fields": [
         {

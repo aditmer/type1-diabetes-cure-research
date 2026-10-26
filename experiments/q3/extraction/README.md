@@ -29,13 +29,16 @@ particular, the assigned S23 human review was not performed by this automation.
   converted into zeroes or negative outcomes.
 - `source-review-log.csv` records the scope actually reviewed (manifest
   metadata only), accepted-version evidence class and limitations, approved
-  review locators, source-specific access and rights restrictions, and
-  pending reviewer fields. Approved locators are review directions, not
-  claims that the cited source material was examined.
+  review directions, explicitly excluded or unreviewed materials,
+  source-specific access and rights restrictions, and pending reviewer fields.
+  Review directions are not claims that the cited source material was examined.
 - `cohort-links.csv` contains the six PEC-Direct pairings, all conservatively
   marked `uncertain`. It retains the preregistration's documented S18/S23
   overlap without asserting a directional subset; S19 and registry-to-
-  publication relationships remain unresolved.
+  publication relationships remain unresolved. Resolved links require
+  source-specific locators for both records, actual content-review evidence
+  for both reports, and the human adjudicator and date. Subset direction can
+  point either way while canonical row ordering remains fixed.
 - `tracker-corrections.csv` is a separate, currently empty correction ledger.
   It is not consumed as source evidence. Use only `LEDGER_EXTRACTION_GAP`,
   `LEDGER_EXTRACTION_ERROR`, or `SOURCE_VERSION_CHANGE`, with the original
@@ -115,8 +118,11 @@ For each report, the assigned reviewer should:
    appropriate. For unresolved conflicts, retain both exact locators and an
    explanation. Use `not_applicable` only for allowed, evidence-backed
    structural cases.
-5. Record the actual reviewer identity/date and whether independent review is
-   pending. Do not mark the ledger accepted or use it to execute Issue #35.
+5. Mark report review complete only after every field is out of
+   `not_yet_extracted` and its field-level review is complete. Record actual
+   reviewer identity/date. If independent review is closed, record the
+   independent reviewer, date, scope, and decision. Do not mark the ledger
+   accepted or use it to execute Issue #35.
 
 Source-specific guardrails:
 
