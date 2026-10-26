@@ -175,10 +175,12 @@ The validator compares every report/version/target with the approved rules
 and manifest, requires the exact classifier field inventory, validates value
 types and provenance, checks review evidence for omissions/inapplicability,
 validates cohort vocabulary and correction separation, and rejects
-credential-like content and private filesystem paths. It does not verify the
-truth of source facts or substitute for human rights/access review. The
-existing classifier remains synthetic-only; this package adds no real-source
-classification path.
+subset cycles and contradictory distinct relationships by directed
+subset-reachability (shared larger cohorts are allowed; a known shared
+subcohort is not). It also rejects credential-like content and private
+filesystem paths. It does not verify the truth of source facts or substitute
+for human rights/access review. The existing classifier remains synthetic-only;
+this package adds no real-source classification path.
 
 At this stage, **all eight reports are pending source-content review**, all
 968 fields are `not_yet_extracted`, all six PEC-Direct links remain

@@ -63,6 +63,29 @@ class Q3ExtractionTests(unittest.TestCase):
             writer.writeheader()
             writer.writerows(rows)
 
+    def write_resolved_links(self, resolved):
+        path = self.extraction / "cohort-links.csv"
+        with path.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        for row in rows:
+            pair = frozenset((row["from_population_id"], row["to_population_id"]))
+            if pair not in resolved:
+                continue
+            relationship, direction, from_locator, to_locator, reviewer = resolved[pair]
+            row.update({
+                "relationship": relationship,
+                "direction_if_subset": direction,
+                "from_locator": from_locator,
+                "to_locator": to_locator,
+                "reviewer_identity": reviewer,
+                "decision_date": "2026-10-26",
+                "adjudication_note": "Reviewed source evidence supports this relationship.",
+            })
+        with path.open("w", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
+            writer.writeheader()
+            writer.writerows(rows)
+
     def mark_report_access_and_adjudication_complete(self, document, source_id="S13"):
         report = next(r for r in document["reports"] if r["source_id"] == source_id)
         reviewer = "@aditmer" if source_id == "S23" else "Reviewer A"
@@ -402,13 +425,29 @@ class Q3ExtractionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValidationError, "contradictory subset cycle"):
             self.validate()
 
-    def test_rejects_distinct_populations_with_a_common_subset_ancestor(self):
-        path = self.extraction / "cohort-links.csv"
-        with path.open(newline="", encoding="utf-8") as stream:
-            rows = list(csv.DictReader(stream))
+    def test_accepts_distinct_subcohorts_with_a_shared_parent(self):
         resolved = {
             frozenset(("pec-s18-target", "pec-s19-target")): (
-                "subset", "to_is_subset_of_from", "PMC8714853.1, Results section",
+                "distinct_within_program", "", "PMC8714853.1, Results section",
+                "PMC11471599.1, Results section", "Reviewer A",
+            ),
+            frozenset(("pec-s18-target", "pec-s23-target")): (
+                "subset", "from_is_subset_of_to", "PMC8714853.1, Results section",
+                "publisher-pdf-human-copy-2026-10-23, Table 1", "@aditmer",
+            ),
+            frozenset(("pec-s19-target", "pec-s23-target")): (
+                "subset", "from_is_subset_of_to", "PMC11471599.1, Results section",
+                "publisher-pdf-human-copy-2026-10-23, Table 1", "@aditmer",
+            ),
+        }
+        self.write_resolved_links(resolved)
+        self._mark_pec_sources_reviewed()
+        self.assertEqual(self.validate()[2], 6)
+
+    def test_rejects_distinct_populations_with_a_common_nonempty_subset(self):
+        resolved = {
+            frozenset(("pec-s18-target", "pec-s19-target")): (
+                "distinct_within_program", "", "PMC8714853.1, Results section",
                 "PMC11471599.1, Results section", "Reviewer A",
             ),
             frozenset(("pec-s18-target", "pec-s23-target")): (
@@ -416,30 +455,13 @@ class Q3ExtractionTests(unittest.TestCase):
                 "publisher-pdf-human-copy-2026-10-23, Table 1", "@aditmer",
             ),
             frozenset(("pec-s19-target", "pec-s23-target")): (
-                "distinct_within_program", "", "PMC11471599.1, Results section",
+                "subset", "to_is_subset_of_from", "PMC11471599.1, Results section",
                 "publisher-pdf-human-copy-2026-10-23, Table 1", "@aditmer",
             ),
         }
-        for row in rows:
-            pair = frozenset((row["from_population_id"], row["to_population_id"]))
-            if pair not in resolved:
-                continue
-            relationship, direction, from_locator, to_locator, reviewer = resolved[pair]
-            row.update({
-                "relationship": relationship,
-                "direction_if_subset": direction,
-                "from_locator": from_locator,
-                "to_locator": to_locator,
-                "reviewer_identity": reviewer,
-                "decision_date": "2026-10-26",
-                "adjudication_note": "Reviewed source evidence supports this relationship.",
-            })
-        with path.open("w", newline="", encoding="utf-8") as stream:
-            writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
-            writer.writeheader()
-            writer.writerows(rows)
+        self.write_resolved_links(resolved)
         self._mark_pec_sources_reviewed()
-        with self.assertRaisesRegex(ValidationError, "distinct populations share a same/subset lineage"):
+        with self.assertRaisesRegex(ValidationError, "distinct populations share a known subset"):
             self.validate()
 
     def _mark_pec_sources_reviewed(self):

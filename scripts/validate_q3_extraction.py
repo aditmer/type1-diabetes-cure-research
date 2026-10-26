@@ -168,20 +168,20 @@ def _validate_relationship_consistency(links):
     for population in subset_graph:
         visit(population)
 
-    def ancestors(population):
-        result = {population}
-        for superset in subset_graph.get(population, ()):
-            result.update(ancestors(superset))
-        return result
-
-    ancestor_sets = {
-        population: ancestors(population)
+    reachable = {
+        population: {population, *subset_graph.get(population, ())}
         for population in set(subset_graph) |
         {root for pair in distinct_pairs for root in pair}
     }
+    for middle in sorted(reachable):
+        for population in sorted(reachable):
+            if middle in reachable[population]:
+                reachable[population].update(reachable[middle])
+
     for left, right in distinct_pairs:
-        _require(not (ancestor_sets[left] & ancestor_sets[right]),
-                 "contradictory cohort map: distinct populations share a same/subset lineage")
+        _require(not any(left in descendants and right in descendants
+                         for descendants in reachable.values()),
+                 "contradictory cohort map: distinct populations share a known subset")
 
 
 def _validate_public_content(value, location):
