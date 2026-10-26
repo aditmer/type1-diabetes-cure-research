@@ -368,7 +368,8 @@ def _validate_consistency(fields):
                  "contradictory no-independence evidence")
     quantity = (value("insulin_independence.screen_quantity")
                 if "insulin_independence.screen_quantity" in fields else None)
-    if none is True and quantity is not None:
+    if (none is True and quantity is not None and
+            quantity.get("window", "through_horizon") in ("through_horizon", "endpoint_interval")):
         _require(quantity["value"] == 0, "contradictory no-independence screen quantity")
     for fid in ("independence.onset", "independence.duration"):
         if fields[fid]["status"] == "not_applicable":
@@ -383,9 +384,15 @@ def _validate_consistency(fields):
             value("severe_hypoglycemia.attribution") == "target" and
             value("severe_hypoglycemia.analysis_population") in
             ("target", "documented_attrition_subset") and
-            value("severe_hypoglycemia.participants_affected") == 0):
-        _require(hypo_quantity["value"] == 0,
-                 "contradictory affected-participant percentage and count")
+            value("severe_hypoglycemia.denominator_basis") == "endpoint_analysis" and
+            type(value("severe_hypoglycemia.denominator")) is int and
+            value("severe_hypoglycemia.denominator") > 0):
+        affected = value("severe_hypoglycemia.participants_affected")
+        denominator = value("severe_hypoglycemia.denominator")
+        if affected is not None:
+            expected_percent = 100 * affected / denominator
+            _require(abs(hypo_quantity["value"] - expected_percent) <= 0.5,
+                     "contradictory affected-participant percentage and count")
 
 
 def _validate_overlap(document, populations):

@@ -576,9 +576,10 @@ class Q3ClassifierTests(unittest.TestCase):
                         change(document, "counts." + name, 1)
                     else:
                         change(document, "counts." + name, status="inaccessible")
-                if count_field == "at_horizon":
-                    for domain in ("insulin_dose", "hba1c", "cgm"):
-                        change(document, domain + ".denominator", 1)
+                for domain in DOMAINS:
+                    change(document, domain + ".denominator", status="inaccessible")
+                change(document, "severe_hypoglycemia.participants_affected",
+                       status="inaccessible")
                 result = self.result(document)
                 self.assert_pair(result, "supported", "unresolved")
                 unknowns = {f["field_id"] for f in result["unknown_flags"]}
@@ -593,7 +594,12 @@ class Q3ClassifierTests(unittest.TestCase):
                 for name in ("enrolled", "treated", "followed", "at_horizon",
                              "withdrawals", "censored"):
                     change(document, "counts." + name, status="inaccessible")
+                for domain in DOMAINS:
+                    change(document, domain + ".denominator", status="inaccessible")
+                change(document, "severe_hypoglycemia.participants_affected",
+                       status="inaccessible")
                 if proof == "analysis_denominator":
+                    change(document, "hba1c.denominator_basis", "endpoint_analysis")
                     change(document, "hba1c.denominator", 10)
                 elif proof == "independence_count":
                     change(document, "independence.none_through_horizon", False)
@@ -653,6 +659,49 @@ class Q3ClassifierTests(unittest.TestCase):
         seal(document)
         with self.assertRaisesRegex(InputError, "contradictory affected-participant"):
             classify(document)
+
+    def test_comparable_hypoglycemia_percentage_matches_count_with_rounding(self):
+        for percent, affected in ((50, 5), (49.6, 5), (0, 0)):
+            document = baseline()
+            change(document, "severe_hypoglycemia.participants_affected", affected)
+            if affected == 0:
+                change(document, "severe_hypoglycemia.value", 0)
+            quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+            quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+            document["reports"][0]["fields"].append(quantity)
+            change(document, "severe_hypoglycemia.screen_quantity", {
+                "value": percent, "units": "%",
+                "measure": "participants_affected_percentage",
+                "window": "endpoint_interval",
+            })
+            result = self.result(document)
+            self.assert_pair(result, "supported", "supported")
+
+    def test_zero_hypoglycemia_percentage_conflicts_with_positive_affected_count(self):
+        document = baseline()
+        quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+        quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+        document["reports"][0]["fields"].append(quantity)
+        change(document, "severe_hypoglycemia.screen_quantity", {
+            "value": 0, "units": "%",
+            "measure": "participants_affected_percentage",
+            "window": "endpoint_interval",
+        })
+        seal(document)
+        with self.assertRaisesRegex(InputError, "contradictory affected-participant"):
+            classify(document)
+
+    def test_independence_quantity_for_later_window_does_not_conflict_with_horizon_absence(self):
+        document = baseline()
+        quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+        quantity["field_id"] = "insulin_independence.screen_quantity"
+        document["reports"][0]["fields"].append(quantity)
+        change(document, "insulin_independence.screen_quantity", {
+            "value": 25, "units": "%",
+            "measure": "insulin_independence_percentage",
+            "window": "after_endpoint_interval",
+        })
+        self.assert_pair(self.result(document), "supported", "supported")
 
     def test_unmatched_hypoglycemia_quantity_metadata_is_not_compared(self):
         for measure, window, units in (
