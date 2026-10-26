@@ -723,6 +723,25 @@ class Q3ClassifierTests(unittest.TestCase):
                             InputError, "zero events and positive affected percentage"):
                         classify(document)
 
+    def test_hypoglycemia_percent_bounds_event_count_when_affected_count_unknown(self):
+        for events, percent in ((8, 0), (1, 100)):
+            document = baseline()
+            change(document, "severe_hypoglycemia.value", events)
+            change(document, "severe_hypoglycemia.participants_affected",
+                   status="inaccessible")
+            quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+            quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+            document["reports"][0]["fields"].append(quantity)
+            change(document, "severe_hypoglycemia.screen_quantity", {
+                "value": percent, "units": "%",
+                "measure": "participants_affected_percentage",
+                "window": "endpoint_interval",
+            })
+            with self.subTest(events=events, percent=percent):
+                with self.assertRaisesRegex(InputError, "percentage incompatible with event count"):
+                    seal(document)
+                    classify(document)
+
     def test_zero_independence_count_conflicts_with_percentage_without_valid_denominator(self):
         for denominator_state in ("inaccessible", "device_count"):
             for units, percent in (("%", 50), ("percent", 50), ("percentage", 50),
@@ -757,22 +776,26 @@ class Q3ClassifierTests(unittest.TestCase):
                  "participants_affected_percentage"),
                 ("insulin_independence", "insulin_independence.value",
                  "insulin_independence_percentage")):
-            document = baseline()
-            if domain == "insulin_independence":
-                change(document, "independence.none_through_horizon", False)
-                change(document, "independence.onset", "Synthetic month 3")
-                change(document, "independence.duration", "Synthetic one month")
-            change(document, count_field, 0)
-            quantity = copy.deepcopy(field(document, count_field))
-            quantity["field_id"] = domain + ".screen_quantity"
-            document["reports"][0]["fields"].append(quantity)
-            change(document, quantity["field_id"], {
-                "value": 0.1, "units": "percent", "measure": measure,
-                "window": "endpoint_interval",
-            })
-            with self.subTest(domain=domain):
-                with self.assertRaises(InputError):
-                    classify(seal(document))
+            for units, positive in (("%", 0.1), ("percent", 0.1),
+                                    ("percentage", 0.1), ("proportion", 0.001),
+                                    ("fraction", 0.001)):
+                document = baseline()
+                if domain == "insulin_independence":
+                    change(document, "independence.none_through_horizon", False)
+                    change(document, "independence.onset", "Synthetic month 3")
+                    change(document, "independence.duration", "Synthetic one month")
+                change(document, count_field, 0)
+                quantity = copy.deepcopy(field(document, count_field))
+                quantity["field_id"] = domain + ".screen_quantity"
+                document["reports"][0]["fields"].append(quantity)
+                change(document, quantity["field_id"], {
+                    "value": positive, "units": units, "measure": measure,
+                    "window": "endpoint_interval",
+                })
+                with self.subTest(domain=domain, units=units):
+                    with self.assertRaises(InputError):
+                        seal(document)
+                        classify(document)
 
     def test_percentage_and_proportion_screen_quantities_are_bounded(self):
         for domain, value in (
@@ -784,8 +807,51 @@ class Q3ClassifierTests(unittest.TestCase):
                 quantity["field_id"] = domain + ".screen_quantity"
                 document["reports"][0]["fields"].append(quantity)
                 change(document, quantity["field_id"], value)
-                with self.assertRaises(InputError):
-                    classify(seal(document))
+                with self.assertRaisesRegex(InputError, "invalid reported value"):
+                    seal(document)
+                    classify(document)
+
+    def test_positive_identified_percentages_prove_target_enrollment(self):
+        for domain, measure in (
+                ("insulin_independence", "insulin_independence_percentage"),
+                ("severe_hypoglycemia", "participants_affected_percentage")):
+            for units, number in (("%", 50), ("proportion", 0.5), ("fraction", 0.5)):
+                with self.subTest(domain=domain, units=units):
+                    document = baseline()
+                    change(document, "target_enrolled", status="inaccessible")
+                    for name in ("enrolled", "treated", "followed", "at_horizon",
+                                 "withdrawals", "censored"):
+                        change(document, "counts." + name, status="inaccessible")
+                    for endpoint in DOMAINS:
+                        change(document, endpoint + ".observation", status="inaccessible")
+                        change(document, endpoint + ".value", status="inaccessible")
+                        change(document, endpoint + ".denominator",
+                               status="inaccessible")
+                        change(document, endpoint + ".denominator_basis",
+                               status="inaccessible")
+                    change(document, "severe_hypoglycemia.participants_affected",
+                           status="inaccessible")
+                    if domain == "insulin_independence":
+                        change(document, "independence.none_through_horizon", False)
+                        change(document, "independence.onset", "Synthetic month 3")
+                        change(document, "independence.duration", "Synthetic one month")
+                        quantity_source_field = "insulin_independence.value"
+                    else:
+                        change(document, "severe_hypoglycemia.participants_affected",
+                               status="not_yet_extracted")
+                        quantity_source_field = "severe_hypoglycemia.value"
+                    change(document, domain + ".observation", "observed")
+                    quantity = copy.deepcopy(field(document, quantity_source_field))
+                    quantity["field_id"] = domain + ".screen_quantity"
+                    document["reports"][0]["fields"].append(quantity)
+                    change(document, quantity["field_id"], {
+                        "value": number, "units": units, "measure": measure,
+                        "window": "endpoint_interval",
+                    })
+                    result = self.result(document)
+                    self.assert_pair(result, "supported", "unresolved")
+                    self.assertIn("counts.enrolled",
+                                  {f["field_id"] for f in result["unknown_flags"]})
 
     def test_signed_hba1c_change_with_percent_units_remains_valid(self):
         document = baseline()

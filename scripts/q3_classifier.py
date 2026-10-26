@@ -163,7 +163,9 @@ def _valid_value(value, spec):
             return False
         number = value["value"]
         units = value["units"].strip().lower()
-        percentage_outcome = "nonnegative" in spec.choices
+        measure = value.get("measure", "").strip().lower()
+        percentage_outcome = ("nonnegative" in spec.choices or
+                              measure.endswith("_percentage"))
         if percentage_outcome and units in ("%", "percent", "percentage"):
             return (type(number) in (int, float) and math.isfinite(number) and
                     0 <= number <= 100)
@@ -457,11 +459,18 @@ def _validate_consistency(fields):
             type(value("severe_hypoglycemia.denominator")) is int and
             value("severe_hypoglycemia.denominator") > 0):
         affected = value("severe_hypoglycemia.participants_affected")
+        events = value("severe_hypoglycemia.value")
         denominator = value("severe_hypoglycemia.denominator")
         if affected is not None:
             expected_percent = 100 * affected / denominator
             _require(abs(_percentage_value(hypo_quantity) - expected_percent) <= 0.5,
                      "contradictory affected-participant percentage and count")
+        elif events is not None and events > 0:
+            percent = _percentage_value(hypo_quantity)
+            minimum_affected = max(1, math.ceil((percent - 0.5) * denominator / 100))
+            maximum_affected = min(events, math.floor((percent + 0.5) * denominator / 100))
+            _require(minimum_affected <= maximum_affected,
+                     "hypoglycemia percentage incompatible with event count")
 
 
 def _validate_overlap(document, populations):
@@ -610,6 +619,23 @@ def _classify(report):
                 fields[domain + ".participants_affected"]["status"] == "reported" and
                 fields[domain + ".participants_affected"]["value"] > 0)
             for domain in DOMAINS):
+        enrollment = _result("met")
+    elif any(
+            fields[domain + ".observation"]["status"] == "reported" and
+            fields[domain + ".observation"]["value"] == "observed" and
+            fields[domain + ".attribution"]["status"] == "reported" and
+            fields[domain + ".attribution"]["value"] == "target" and
+            fields[domain + ".analysis_population"]["status"] == "reported" and
+            fields[domain + ".analysis_population"]["value"] in
+            ("target", "documented_attrition_subset") and
+            domain + ".screen_quantity" in fields and
+            fields[domain + ".screen_quantity"]["status"] == "reported" and
+            fields[domain + ".screen_quantity"]["value"].get("measure") == measure and
+            _percentage_value(fields[domain + ".screen_quantity"]["value"]) is not None and
+            _percentage_value(fields[domain + ".screen_quantity"]["value"]) > 0
+            for domain, measure in (
+                ("insulin_independence", "insulin_independence_percentage"),
+                ("severe_hypoglycemia", "participants_affected_percentage"))):
         enrollment = _result("met")
     candidates = [_all([evaluated[d + ".observation"], evaluated[d + ".value"],
                         evaluated[d + ".attribution"]]) for d in DOMAINS]
