@@ -29,6 +29,14 @@ class Q3ClassifierTests(unittest.TestCase):
     def assert_reason(self, result, code, rule="harmonized-v1.1"):
         self.assertIn(code, result["reason_codes"][rule])
 
+    def five_treated_baseline(self):
+        document = baseline()
+        for name in ("enrolled", "treated", "followed", "at_horizon"):
+            change(document, "counts." + name, 10 if name == "enrolled" else 5)
+        for domain in DOMAINS:
+            change(document, domain + ".denominator", 5)
+        return document
+
     def test_all_seven_preregistered_controls(self):
         artifacts, summary = run_controls()
         self.assertEqual(len(artifacts), 7)
@@ -251,6 +259,71 @@ class Q3ClassifierTests(unittest.TestCase):
                         with self.assertRaisesRegex(InputError, "exceeds target enrollment"):
                             classify(document)
 
+    def test_observed_binary_participant_counts_cannot_exceed_treated(self):
+        for domain in ("insulin_independence", "severe_hypoglycemia"):
+            document = self.five_treated_baseline()
+            change(document, domain + ".denominator", status="inaccessible")
+            if domain == "insulin_independence":
+                change(document, domain + ".value", 6)
+                change(document, "independence.none_through_horizon", False)
+                change(document, "independence.onset", "Synthetic month 3")
+                change(document, "independence.duration", "Synthetic one month")
+            else:
+                change(document, domain + ".value", 8)
+                change(document, domain + ".participants_affected", 6)
+            seal(document)
+            with self.subTest(domain=domain), self.assertRaisesRegex(
+                    InputError, "exceeds known treated count"):
+                classify(document)
+
+    def test_binary_analysis_denominator_cannot_exceed_treated_even_with_zero_outcome(self):
+        for domain in ("insulin_independence", "severe_hypoglycemia"):
+            document = self.five_treated_baseline()
+            change(document, domain + ".denominator", 10)
+            if domain == "insulin_independence":
+                change(document, domain + ".value", 0)
+            else:
+                change(document, domain + ".value", 0)
+                change(document, domain + ".participants_affected", 0)
+            seal(document)
+            with self.subTest(domain=domain), self.assertRaisesRegex(
+                    InputError, "binary endpoint-analysis denominator exceeds known treated count"):
+                classify(document)
+
+    def test_cumulative_hypoglycemia_events_can_exceed_treated_participants(self):
+        document = self.five_treated_baseline()
+        change(document, "severe_hypoglycemia.value", 8)
+        change(document, "severe_hypoglycemia.participants_affected", 5)
+        result = self.result(document)
+        self.assert_pair(result, "supported", "supported")
+
+    def test_treated_count_check_preserves_planned_contextual_device_and_unknown_cases(self):
+        for domain in ("insulin_independence", "severe_hypoglycemia"):
+            for exception in ("planned", "contextual", "device_count", "unknown_treated"):
+                with self.subTest(domain=domain, exception=exception):
+                    document = self.five_treated_baseline()
+                    change(document, domain + ".denominator", 10)
+                    if exception == "planned":
+                        change(document, domain + ".observation", "planned")
+                    elif exception == "contextual":
+                        change(document, domain + ".attribution", "contextual")
+                    elif exception == "device_count":
+                        change(document, domain + ".denominator_basis", "device_count")
+                    else:
+                        change(document, "counts.treated", status="inaccessible")
+                        change(document, "counts.followed", 10)
+                        change(document, "counts.at_horizon", 10)
+                    result = self.result(document)
+                    if exception == "unknown_treated":
+                        self.assert_pair(result, "supported", "unresolved")
+                        self.assertIn("counts.treated",
+                                      {f["field_id"] for f in result["unknown_flags"]})
+                    else:
+                        self.assertEqual(result["labels"]["provisional-v1.1"], "supported")
+                        self.assertNotEqual(result["labels"]["harmonized-v1.1"], "supported")
+                        if exception == "device_count":
+                            self.assert_reason(result, "DENOMINATOR_MISSING")
+
     def test_participant_enrollment_bound_preserves_contextual_planned_and_unknown(self):
         for domain in ("severe_hypoglycemia", "insulin_independence"):
             for exception in ("contextual", "planned", "unknown_enrollment"):
@@ -272,6 +345,10 @@ class Q3ClassifierTests(unittest.TestCase):
                         change(document, domain + ".observation", "planned")
                     else:
                         change(document, "counts.enrolled", status="inaccessible")
+                        if domain == "severe_hypoglycemia":
+                            change(document, domain + ".participants_affected", 5)
+                        else:
+                            change(document, domain + ".value", 5)
                     result = self.result(document)
                     self.assert_pair(result, "supported", "not_supported")
                     self.assert_reason(result, "DENOMINATOR_MISSING")

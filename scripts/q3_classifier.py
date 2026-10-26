@@ -365,6 +365,19 @@ def _validate_consistency(fields):
                 _require(denominator is None or ancestor_count is None or
                          denominator <= ancestor_count,
                          "point-assessment denominator exceeds known participant count")
+        first_treatment_binary = (
+            domain in ("insulin_independence", "severe_hypoglycemia") and
+            observation == "observed" and value(domain + ".attribution") == "target" and
+            value(domain + ".anchor") == "first_cell_administration" and
+            value(domain + ".horizon") in HORIZONS and
+            value(domain + ".interval_end") in HORIZONS and
+            value(domain + ".analysis_population") in
+            ("target", "documented_attrition_subset"))
+        if first_treatment_binary:
+            treated = value("counts.treated")
+            _require(not participant_denominator or denominator is None or treated is None or
+                     denominator <= treated,
+                     "binary endpoint-analysis denominator exceeds known treated count")
         if observation == "observed" and value(domain + ".attribution") == "target":
             participant_count = (
                 value(domain + ".value") if domain == "insulin_independence" else
@@ -372,6 +385,11 @@ def _validate_consistency(fields):
             )
             _require(participant_count is None or enrolled is None or participant_count <= enrolled,
                      "observed target participant count exceeds target enrollment")
+            if first_treatment_binary:
+                treated = value("counts.treated")
+                _require(participant_count is None or treated is None or
+                         participant_count <= treated,
+                         "observed target participant count exceeds known treated count")
         if domain == "insulin_independence":
             numerator = value(domain + ".value")
             _require(not participant_denominator or numerator is None or denominator is None or
