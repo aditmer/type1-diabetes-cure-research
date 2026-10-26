@@ -784,6 +784,8 @@ class Q3ClassifierTests(unittest.TestCase):
                     change(document, "independence.none_through_horizon", False)
                     change(document, "independence.onset", "Synthetic month 3")
                     change(document, "independence.duration", "Synthetic one month")
+                else:
+                    change(document, "severe_hypoglycemia.participants_affected", 0)
                 change(document, count_field, 0)
                 quantity = copy.deepcopy(field(document, count_field))
                 quantity["field_id"] = domain + ".screen_quantity"
@@ -793,7 +795,10 @@ class Q3ClassifierTests(unittest.TestCase):
                     "window": "endpoint_interval",
                 })
                 with self.subTest(domain=domain, units=units):
-                    with self.assertRaises(InputError):
+                    error = ("zero events and positive affected percentage"
+                             if domain == "severe_hypoglycemia" else
+                             "zero independence count and positive independence percentage")
+                    with self.assertRaisesRegex(InputError, error):
                         seal(document)
                         classify(document)
 
@@ -854,15 +859,24 @@ class Q3ClassifierTests(unittest.TestCase):
                                   {f["field_id"] for f in result["unknown_flags"]})
 
     def test_signed_hba1c_change_with_percent_units_remains_valid(self):
-        document = baseline()
-        quantity = copy.deepcopy(field(document, "hba1c.value"))
-        quantity["field_id"] = "hba1c.screen_quantity"
-        document["reports"][0]["fields"].append(quantity)
-        change(document, "hba1c.screen_quantity", {
-            "value": -0.2, "units": "%", "measure": "hba1c_change",
-            "window": "endpoint_interval",
-        })
-        self.assert_pair(self.result(document), "supported", "supported")
+        for amount in (-0.2, 0.2):
+            document = baseline()
+            quantity = copy.deepcopy(field(document, "hba1c.value"))
+            quantity["field_id"] = "hba1c.screen_quantity"
+            document["reports"][0]["fields"].append(quantity)
+            change(document, "hba1c.screen_quantity", {
+                "value": amount, "units": "%",
+                "measure": "hba1c_change_percentage",
+                "window": "endpoint_interval",
+            })
+            change(document, "hba1c.value", status="inaccessible")
+            for domain in DOMAINS:
+                if domain != "hba1c":
+                    change(document, domain + ".observation", status="inaccessible")
+                    change(document, domain + ".value", status="inaccessible")
+            result = self.result(document)
+            with self.subTest(amount=amount):
+                self.assert_pair(result, "supported", "unresolved")
 
     def test_comparable_hypoglycemia_percentage_matches_count_with_rounding(self):
         for units, multiplier in (("%", 1), ("percent", 1), ("percentage", 1),

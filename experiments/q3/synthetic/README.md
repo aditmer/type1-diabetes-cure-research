@@ -300,7 +300,10 @@ Independence percentages are checked against the positive numerator and
 participant-analysis denominator with the same rounding tolerance.
 Affected-participant percentages are bounded to 0–100% and proportions to 0–1.
 These participant-percentage bounds do not reject signed HbA1c, CGM, or
-insulin-dose changes. A zero observed independence count conflicts with a
+insulin-dose changes, including explicitly named measures such as
+`hba1c_change_percentage`; positive and negative signed percentage changes are
+accepted as screen evidence but do not replace a missing absolute endpoint
+result for harmonization. A zero observed independence count conflicts with a
 positive percentage for the same target assessment even if its denominator is
 unavailable or not a participant-analysis denominator; percentage arithmetic
 still requires a valid participant-analysis denominator.

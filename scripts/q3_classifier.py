@@ -164,8 +164,11 @@ def _valid_value(value, spec):
         number = value["value"]
         units = value["units"].strip().lower()
         measure = value.get("measure", "").strip().lower()
-        percentage_outcome = ("nonnegative" in spec.choices or
-                              measure.endswith("_percentage"))
+        signed_change = (measure.endswith("_change") or
+                         measure.endswith("_change_percentage"))
+        percentage_outcome = (not signed_change and
+                              ("nonnegative" in spec.choices or
+                               measure.endswith("_percentage")))
         if percentage_outcome and units in ("%", "percent", "percentage"):
             return (type(number) in (int, float) and math.isfinite(number) and
                     0 <= number <= 100)
