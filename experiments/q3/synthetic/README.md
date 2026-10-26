@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 174 tests, including 89 classifier tests.
+The review-corrected suite has 176 tests, including 91 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -283,7 +283,10 @@ For affected-participant percentages, a comparable percentage is checked
 against the observed affected count and endpoint-analysis denominator, allowing
 up to 0.5 percentage points for source rounding. Independence absence applies
 to its through-horizon window and does not contradict explicitly later-window
-evidence.
+evidence. Contradiction checks for independence counts or quantities also
+require observed, target-attributed evidence in the target or documented
+attrition-subset analysis population; planned/contextual evidence is retained
+but not treated as a contradiction.
 
 A source-reported positive `counts.enrolled` now proves aggregate enrollment
 even when `target_enrolled` is unknown. Positive observed target-attributed

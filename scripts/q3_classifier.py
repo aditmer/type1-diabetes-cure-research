@@ -364,11 +364,21 @@ def _validate_consistency(fields):
             _require(denominator != 0, "observed endpoint with zero analysis denominator")
     none = value("independence.none_through_horizon")
     if none is True:
-        _require(value("insulin_independence.value") in (None, 0),
-                 "contradictory no-independence evidence")
+        if (value("insulin_independence.observation") == "observed" and
+                value("insulin_independence.attribution") == "target" and
+                value("insulin_independence.analysis_population") in
+                ("target", "documented_attrition_subset") and
+                value("insulin_independence.horizon") != "later_only" and
+                value("insulin_independence.interval_end") != "later_only"):
+            _require(value("insulin_independence.value") in (None, 0),
+                     "contradictory no-independence evidence")
     quantity = (value("insulin_independence.screen_quantity")
                 if "insulin_independence.screen_quantity" in fields else None)
     if (none is True and quantity is not None and
+            value("insulin_independence.observation") == "observed" and
+            value("insulin_independence.attribution") == "target" and
+            value("insulin_independence.analysis_population") in
+            ("target", "documented_attrition_subset") and
             quantity.get("window", "through_horizon") in ("through_horizon", "endpoint_interval")):
         _require(quantity["value"] == 0, "contradictory no-independence screen quantity")
     for fid in ("independence.onset", "independence.duration"):

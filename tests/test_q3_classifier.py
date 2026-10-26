@@ -703,6 +703,32 @@ class Q3ClassifierTests(unittest.TestCase):
         })
         self.assert_pair(self.result(document), "supported", "supported")
 
+    def test_independence_quantity_ignores_planned_and_contextual_evidence(self):
+        for observation, attribution in (("planned", "target"), ("observed", "contextual")):
+            with self.subTest(observation=observation, attribution=attribution):
+                document = baseline()
+                quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+                quantity["field_id"] = "insulin_independence.screen_quantity"
+                document["reports"][0]["fields"].append(quantity)
+                change(document, "insulin_independence.screen_quantity", {
+                    "value": 25, "units": "%",
+                    "measure": "insulin_independence_percentage",
+                    "window": "through_horizon",
+                })
+                change(document, "insulin_independence.observation", observation)
+                change(document, "insulin_independence.attribution", attribution)
+                self.result(document)
+
+    def test_later_window_independence_count_does_not_conflict_with_horizon_absence(self):
+        document = baseline()
+        change(document, "independence.none_through_horizon", True)
+        change(document, "insulin_independence.value", 1)
+        change(document, "insulin_independence.horizon", "later_only")
+        change(document, "insulin_independence.interval_end", "later_only")
+        result = self.result(document)
+        self.assert_pair(result, "supported", "not_supported")
+        self.assert_reason(result, "WINDOW_MISMATCH")
+
     def test_unmatched_hypoglycemia_quantity_metadata_is_not_compared(self):
         for measure, window, units in (
                 ("event_rate", "endpoint_interval", "%"),
