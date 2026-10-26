@@ -904,12 +904,24 @@ class Q3ClassifierTests(unittest.TestCase):
 
     def test_point_assessment_denominator_is_bounded_by_each_known_ancestor(self):
         for known_count in ("followed", "treated"):
-            document = baseline()
-            change(document, "counts." + known_count, 5)
-            for other in ("enrolled", "treated", "followed", "at_horizon"):
-                if other != known_count:
-                    change(document, "counts." + other, status="inaccessible")
             for domain in ("insulin_dose", "hba1c", "cgm"):
+                document = baseline()
+                change(document, "counts." + known_count, 5)
+                for other in ("enrolled", "treated", "followed", "at_horizon"):
+                    if other != known_count:
+                        change(document, "counts." + other, status="inaccessible")
+                for other_domain in ("insulin_dose", "hba1c", "cgm"):
+                    change(document, other_domain + ".observation",
+                           status="inaccessible")
+                    change(document, other_domain + ".denominator",
+                           status="inaccessible")
+                    change(document, other_domain + ".denominator_basis",
+                           status="inaccessible")
+                for binary_domain in ("insulin_independence", "severe_hypoglycemia"):
+                    change(document, binary_domain + ".denominator",
+                           status="inaccessible")
+                    change(document, binary_domain + ".denominator_basis",
+                           status="inaccessible")
                 change(document, domain + ".denominator", 10)
                 change(document, domain + ".denominator_basis", "endpoint_analysis")
                 change(document, domain + ".observation", "observed")
@@ -918,13 +930,13 @@ class Q3ClassifierTests(unittest.TestCase):
                 change(document, domain + ".horizon", "month_12")
                 change(document, domain + ".interval_end", "day_365")
                 change(document, domain + ".analysis_population", "target")
-            seal(document)
-            with self.subTest(known_count=known_count):
-                with self.assertRaisesRegex(InputError, "denominator exceeds known participant"):
-                    classify(document)
+                seal(document)
+                with self.subTest(known_count=known_count, domain=domain):
+                    with self.assertRaisesRegex(InputError, "denominator exceeds known participant"):
+                        classify(document)
 
     def test_zero_hypoglycemia_events_conflict_with_positive_comparable_percentage(self):
-        for denominator_state in ("inaccessible", "device_count"):
+        for denominator_state in ("endpoint_analysis", "inaccessible", "device_count"):
             for units, percent in (("%", 50), ("percent", 50), ("percentage", 50),
                                    ("proportion", 0.5), ("fraction", 0.5)):
                 with self.subTest(denominator_state=denominator_state, units=units):
@@ -932,7 +944,10 @@ class Q3ClassifierTests(unittest.TestCase):
                     change(document, "severe_hypoglycemia.value", 0)
                     change(document, "severe_hypoglycemia.participants_affected",
                            status="not_yet_extracted")
-                    if denominator_state == "inaccessible":
+                    if denominator_state == "endpoint_analysis":
+                        change(document, "severe_hypoglycemia.denominator_basis",
+                               "endpoint_analysis")
+                    elif denominator_state == "inaccessible":
                         change(document, "severe_hypoglycemia.denominator",
                                status="inaccessible")
                     else:
