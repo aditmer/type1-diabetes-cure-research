@@ -28,9 +28,14 @@ assigned human reviewer records actual materials, decisions, and dates.
   discontinuations where applicable.
 - [ ] Record unresolved conflicts with both locators and rationale; record
   structural `not_applicable` only with explicit source evidence.
-- [ ] Do not mark the report review complete while any field remains
-  `not_yet_extracted` or has incomplete field-level review. Update the source
-  review log and actual reviewer identity/date.
+- [ ] Track source-content review, access-attempt completion, and field
+  adjudication separately. An inaccessible field may have a final disposition
+  only after permitted access attempts are complete; it must not be represented
+  as clinical content reviewed.
+- [ ] Do not mark source-content review complete while any field remains
+  inaccessible or `not_yet_extracted`; do not mark adjudication complete while
+  any field remains `not_yet_extracted` or has incomplete field-level review.
+  Update the source review log and actual reviewer identity/date.
 - [ ] Preserve independent review as pending until it occurs; when completed,
   record the independent reviewer, date, scope, and decision.
 - [ ] Keep tracker corrections in `tracker-corrections.csv`, never as source
@@ -84,6 +89,8 @@ assigned human reviewer records actual materials, decisions, and dates.
   inferred.
 - The manifest's prior component hashes were not re-tested here. Record only
   the materials and locators the assigned reviewer actually verifies.
+- Any completed source review or cohort-link adjudication involving S23 must
+  identify the authorized Path B reviewer, `@aditmer`.
 - Preserve the full 15-person single-site population. S18/S23 overlap is
   documented, but any specific subset direction still requires source
   evidence.

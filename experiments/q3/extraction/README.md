@@ -36,6 +36,12 @@ particular, the assigned S23 human review was not performed by this automation.
   review directions, explicitly excluded or unreviewed materials,
   source-specific access and rights restrictions, and pending reviewer fields.
   Review directions are not claims that the cited source material was examined.
+  Its separate `clinical_content_reviewed`, `source_content_review_complete`,
+  `access_attempts_complete`, and `adjudication_complete` flags distinguish
+  inspected source content, exhaustive source review, completed access attempts,
+  and final field-level dispositions. An inaccessible-only report may have
+  completed access attempts and adjudication but cannot claim clinical-content
+  review.
 - `cohort-links.csv` contains the six PEC-Direct pairings, all conservatively
   marked `uncertain`. It retains the preregistration's documented S18/S23
   overlap without asserting a directional subset; S19 and registry-to-
@@ -123,11 +129,16 @@ For each report, the assigned reviewer should:
    appropriate. For unresolved conflicts, retain both exact locators and an
    explanation. Use `not_applicable` only for allowed, evidence-backed
    structural cases.
-5. Mark report review complete only after every field is out of
-   `not_yet_extracted` and its field-level review is complete. Record actual
-   reviewer identity/date. If independent review is closed, record the
-   independent reviewer, date, scope, and decision. Do not mark the ledger
-   accepted or use it to execute Issue #35.
+5. Mark source-content review complete only after the permitted source content
+   has been reviewed and no fields remain inaccessible or unextracted. Mark
+   access attempts complete only after all permitted access routes have been
+   exhausted. Mark adjudication complete only after every field has a final
+   reviewed state; inaccessible fields require completed access attempts but
+   do not count as clinical-content review. Record the actual reviewer/date.
+   S23 source review and any cohort-link adjudication involving S23 must be
+   performed by the specifically authorized Path B reviewer, `@aditmer`. If
+   independent review is closed, record its reviewer, date, scope, and
+   decision. Do not mark the ledger accepted or use it to execute Issue #35.
 
 Source-specific guardrails:
 

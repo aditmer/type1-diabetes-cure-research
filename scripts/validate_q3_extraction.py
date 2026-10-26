@@ -44,15 +44,17 @@ HUMAN_REVIEW_KEYS = (
 REVIEW_LOG_COLUMNS = (
     "source_id", "report_id", "program_id", "source_version_id", "material_reviewed",
     "version_evidence_class", "version_evidence_note", "clinical_content_reviewed",
-    "approved_review_directions", "excluded_or_unreviewed_material", "review_complete",
-    "access_attempts", "rights_and_access", "scope_restrictions", "reviewer_identity",
-    "decision_date", "review_status",
+    "source_content_review_complete", "access_attempts_complete",
+    "approved_review_directions", "excluded_or_unreviewed_material",
+    "adjudication_complete", "access_attempts", "rights_and_access",
+    "scope_restrictions", "reviewer_identity", "decision_date", "review_status",
 )
 LINK_COLUMNS = (
     "from_population_id", "to_population_id", "relationship", "direction_if_subset",
     "from_source_version_id", "to_source_version_id", "from_locator", "to_locator",
     "reviewer_identity", "decision_date", "adjudication_note",
 )
+S23_ASSIGNED_REVIEWER = "@aditmer"
 CORRECTION_COLUMNS = (
     "correction_category", "source_id", "report_id", "field_id", "tracker_file",
     "tracker_commit", "tracker_row", "original_annotation", "corrected_annotation",
@@ -110,6 +112,76 @@ def _has_source_locator_detail(value):
         value,
         re.IGNORECASE,
     ) is not None
+
+
+def _validate_relationship_consistency(links):
+    parents = {}
+
+    def find(population):
+        parents.setdefault(population, population)
+        if parents[population] != population:
+            parents[population] = find(parents[population])
+        return parents[population]
+
+    def union(left, right):
+        left_root, right_root = find(left), find(right)
+        if left_root != right_root:
+            parents[max(left_root, right_root)] = min(left_root, right_root)
+
+    for link in links:
+        if link["relationship"] == "same":
+            union(link["from_population_id"], link["to_population_id"])
+
+    subset_graph = {}
+    distinct_pairs = []
+    for link in links:
+        left, right = link["from_population_id"], link["to_population_id"]
+        left_root, right_root = find(left), find(right)
+        if link["relationship"] == "distinct_within_program":
+            _require(left_root != right_root,
+                     "contradictory cohort map: populations are both same and distinct")
+            distinct_pairs.append((left_root, right_root))
+        elif link["relationship"] == "subset":
+            child, superset = (
+                (left, right) if link["direction_if_subset"] == "from_is_subset_of_to"
+                else (right, left)
+            )
+            child_root, superset_root = find(child), find(superset)
+            _require(child_root != superset_root,
+                     "contradictory subset cycle through same populations")
+            subset_graph.setdefault(child_root, set()).add(superset_root)
+            subset_graph.setdefault(superset_root, set())
+
+    visiting = set()
+    visited = set()
+
+    def visit(population):
+        _require(population not in visiting, "contradictory subset cycle")
+        if population in visited:
+            return
+        visiting.add(population)
+        for superset in subset_graph.get(population, ()):
+            visit(superset)
+        visiting.remove(population)
+        visited.add(population)
+
+    for population in subset_graph:
+        visit(population)
+
+    def ancestors(population):
+        result = {population}
+        for superset in subset_graph.get(population, ()):
+            result.update(ancestors(superset))
+        return result
+
+    ancestor_sets = {
+        population: ancestors(population)
+        for population in set(subset_graph) |
+        {root for pair in distinct_pairs for root in pair}
+    }
+    for left, right in distinct_pairs:
+        _require(not (ancestor_sets[left] & ancestor_sets[right]),
+                 "contradictory cohort map: distinct populations share a same/subset lineage")
 
 
 def _validate_public_content(value, location):
@@ -225,42 +297,60 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                  log["source_version_id"] == report["source_version_id"],
                  f"{spec['report_id']}: review log provenance mismatch")
         _require(log["clinical_content_reviewed"] in ("true", "false") and
-                 log["review_complete"] in ("true", "false") and
+                 log["source_content_review_complete"] in ("true", "false") and
+                 log["access_attempts_complete"] in ("true", "false") and
+                 log["adjudication_complete"] in ("true", "false") and
                  bool(_nonempty(log["reviewer_identity"])) ==
                  bool(_nonempty(log["decision_date"])) and
-                 (log["review_complete"] != "true" or
-                  log["clinical_content_reviewed"] == "true"),
+                 (log["source_content_review_complete"] != "true" or
+                  log["clinical_content_reviewed"] == "true") and
+                 (log["adjudication_complete"] != "true" or
+                  (log["source_content_review_complete"] == "true" or
+                   log["access_attempts_complete"] == "true")),
                  f"{spec['report_id']}: invalid human review log state")
         expected_review_status = (
-            "pending_human_review" if log["clinical_content_reviewed"] == "false"
-            else "source_review_complete" if log["review_complete"] == "true"
-            else "source_review_in_progress"
+            "adjudication_complete" if log["adjudication_complete"] == "true" else
+            "source_content_review_complete"
+            if log["source_content_review_complete"] == "true" else
+            "source_review_in_progress"
+            if log["clinical_content_reviewed"] == "true" or
+            log["access_attempts_complete"] == "true" else
+            "pending_human_review"
         )
         _require(log["review_status"] == expected_review_status,
                  f"{spec['report_id']}: review status conflicts with review flags")
         _require(source_record["source_material_reviewed"] ==
                  (log["clinical_content_reviewed"] == "true"),
                  f"{spec['report_id']}: source-review state disagrees with review log")
-        if log["clinical_content_reviewed"] == "true":
+        if (log["clinical_content_reviewed"] == "true" or
+                log["access_attempts_complete"] == "true"):
             _require(_nonempty(log["reviewer_identity"]) and
                      human["reviewer_identity"] == log["reviewer_identity"] and
                      human["decision_date"] == log["decision_date"] and
-                     _nonempty(log["material_reviewed"]) and
                      _valid_date(log["decision_date"]),
-                     f"{spec['report_id']}: completed content review needs reviewer, date, and scope")
+                     f"{spec['report_id']}: completed review/access attempts need reviewer and date")
+            if log["clinical_content_reviewed"] == "true":
+                _require(_nonempty(log["material_reviewed"]),
+                         f"{spec['report_id']}: content review requires reviewed-material scope")
         else:
             _require(human["reviewer_identity"] is None and human["decision_date"] is None and
                      not _nonempty(log["reviewer_identity"]) and
                      not _nonempty(log["decision_date"]),
-                     f"{spec['report_id']}: unreviewed scaffold cannot claim a reviewer")
+                     f"{spec['report_id']}: untouched scaffold cannot claim a reviewer")
+        if spec["source_id"] == "S23" and (
+                log["clinical_content_reviewed"] == "true" or
+                log["access_attempts_complete"] == "true"):
+            _require(log["reviewer_identity"] == S23_ASSIGNED_REVIEWER and
+                     source["approving_maintainer"] == S23_ASSIGNED_REVIEWER,
+                     "S23 review and access attempts are restricted to the assigned Path B reviewer")
         if not human["independent_review_pending"]:
-            _require(log["review_complete"] == "true" and
+            _require(log["adjudication_complete"] == "true" and
                      _identity_key(human["independent_reviewer_identity"]) !=
                      _identity_key(log["reviewer_identity"]),
-                     f"{spec['report_id']}: independent review requires completed source review by another reviewer")
+                     f"{spec['report_id']}: independent review requires complete adjudication by another reviewer")
         for key in ("version_evidence_note", "approved_review_directions",
-                    "excluded_or_unreviewed_material", "access_attempts", "rights_and_access",
-                    "scope_restrictions"):
+                    "excluded_or_unreviewed_material", "access_attempts",
+                    "rights_and_access", "scope_restrictions"):
             _require(_nonempty(log[key]),
                      f"{spec['report_id']}: review log missing {key}")
         if spec["source_id"] == "S18":
@@ -329,7 +419,7 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                          f"{spec['report_id']}/{fid}: confirmed omission requires complete human review")
             elif status == "inaccessible":
                 _require(_nonempty(field["access_log"]) and field["review_complete"] and
-                         log["clinical_content_reviewed"] == "true" and
+                         log["access_attempts_complete"] == "true" and
                          _nonempty(log["reviewer_identity"]),
                          f"{spec['report_id']}/{fid}: inaccessible field needs access log")
             elif status == "conflicting":
@@ -349,13 +439,24 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                          f"{spec['report_id']}/{fid}: unsupported or unevidenced inapplicability")
             _validate_public_content(field, f"{spec['report_id']}/{fid}")
 
-        if log["review_complete"] == "true":
+        if log["clinical_content_reviewed"] == "true":
+            _require(any(field["status"] != "inaccessible" for field in fields),
+                     f"{spec['report_id']}: inaccessible fields cannot be the only claimed clinical review")
+        if log["source_content_review_complete"] == "true":
+            _require(all(field["review_complete"] and
+                         field["status"] != "not_yet_extracted" and
+                         field["status"] != "inaccessible" for field in fields),
+                     f"{spec['report_id']}: source-content review cannot be complete with inaccessible or unextracted fields")
+        if log["adjudication_complete"] == "true":
             _require(all(field["review_complete"] and
                          field["status"] != "not_yet_extracted" for field in fields),
-                     f"{spec['report_id']}: complete report review requires every field complete")
+                     f"{spec['report_id']}: complete adjudication requires every field complete")
+            _require(log["access_attempts_complete"] == "true" or
+                     all(field["status"] != "inaccessible" for field in fields),
+                     f"{spec['report_id']}: inaccessible fields require completed access attempts")
         if not human["independent_review_pending"]:
             _require(all(field["review_complete"] for field in fields),
-                     f"{spec['report_id']}: independent review requires complete field-level review")
+                     f"{spec['report_id']}: independent review requires complete field-level adjudication")
 
     links = _read_csv(extraction_dir / "cohort-links.csv", LINK_COLUMNS)
     population_owner = {r["target_population_id"]: r for r in reports}
@@ -408,6 +509,9 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                          _nonempty(review["reviewer_identity"]) and
                          _valid_date(review["decision_date"]),
                          "resolved cohort relationships require reviewed source content for both reports")
+            if "S23" in (left_report["source_id"], right_report["source_id"]):
+                _require(link["reviewer_identity"] == S23_ASSIGNED_REVIEWER,
+                         "S23 cohort adjudication is restricted to the assigned Path B reviewer")
         _validate_public_content(link, "cohort-links.csv")
         if pair == frozenset(("pec-s18-target", "pec-s23-target")):
             _require(link["relationship"] != "distinct_within_program",
@@ -422,6 +526,7 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
     ]
     _require([(link["from_population_id"], link["to_population_id"]) for link in links] ==
              expected_order, "cohort links must use deterministic frozen report order")
+    _validate_relationship_consistency(links)
 
     corrections = _read_csv(extraction_dir / "tracker-corrections.csv", CORRECTION_COLUMNS)
     correction_order = []
