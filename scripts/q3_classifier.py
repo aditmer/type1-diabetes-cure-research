@@ -145,11 +145,16 @@ def _synthetic_id(value):
 
 def _valid_value(value, spec):
     if spec.kind == "quantity":
-        return (isinstance(value, dict) and set(value) == {"value", "units"} and
-                _text(value["units"]) and
-                (_valid_value(value["value"], Spec("", "number", "")) or
-                 ("signed" in spec.choices and type(value["value"]) in (int, float) and
-                  math.isfinite(value["value"]))))
+        if not isinstance(value, dict) or set(value) not in (
+                {"value", "units"}, {"value", "units", "measure", "window"}):
+            return False
+        if not _text(value["units"]):
+            return False
+        if "measure" in value and not (_text(value["measure"]) and _text(value["window"])):
+            return False
+        return (_valid_value(value["value"], Spec("", "number", "")) or
+                ("signed" in spec.choices and type(value["value"]) in (int, float) and
+                 math.isfinite(value["value"])))
     if spec.kind == "bool":
         return type(value) is bool
     if spec.kind == "count":
@@ -368,6 +373,19 @@ def _validate_consistency(fields):
     for fid in ("independence.onset", "independence.duration"):
         if fields[fid]["status"] == "not_applicable":
             _require(none is True, "zero at horizon does not prove no earlier independence")
+    hypo_quantity = (value("severe_hypoglycemia.screen_quantity")
+                     if "severe_hypoglycemia.screen_quantity" in fields else None)
+    if (hypo_quantity is not None and
+            hypo_quantity.get("measure") == "participants_affected_percentage" and
+            hypo_quantity.get("window") == "endpoint_interval" and
+            hypo_quantity.get("units", "").strip().lower() in ("%", "percent", "percentage") and
+            value("severe_hypoglycemia.observation") == "observed" and
+            value("severe_hypoglycemia.attribution") == "target" and
+            value("severe_hypoglycemia.analysis_population") in
+            ("target", "documented_attrition_subset") and
+            value("severe_hypoglycemia.participants_affected") == 0):
+        _require(hypo_quantity["value"] == 0,
+                 "contradictory affected-participant percentage and count")
 
 
 def _validate_overlap(document, populations):
@@ -499,6 +517,23 @@ def _classify(report):
     elif any(fields["counts." + name]["status"] == "reported" and
              fields["counts." + name]["value"] > 0
              for name in ("treated", "followed", "at_horizon", "withdrawals", "censored")):
+        enrollment = _result("met")
+    elif any(
+            fields[domain + ".observation"]["status"] == "reported" and
+            fields[domain + ".observation"]["value"] == "observed" and
+            fields[domain + ".attribution"]["status"] == "reported" and
+            fields[domain + ".attribution"]["value"] == "target" and (
+                fields[domain + ".denominator_basis"]["status"] == "reported" and
+                fields[domain + ".denominator_basis"]["value"] == "endpoint_analysis" and
+                fields[domain + ".denominator"]["status"] == "reported" and
+                fields[domain + ".denominator"]["value"] > 0 or
+                domain == "insulin_independence" and
+                fields[domain + ".value"]["status"] == "reported" and
+                fields[domain + ".value"]["value"] > 0 or
+                domain == "severe_hypoglycemia" and
+                fields[domain + ".participants_affected"]["status"] == "reported" and
+                fields[domain + ".participants_affected"]["value"] > 0)
+            for domain in DOMAINS):
         enrollment = _result("met")
     candidates = [_all([evaluated[d + ".observation"], evaluated[d + ".value"],
                         evaluated[d + ".attribution"]]) for d in DOMAINS]

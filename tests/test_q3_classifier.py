@@ -557,6 +557,10 @@ class Q3ClassifierTests(unittest.TestCase):
             change(document, "counts.enrolled", status="not_yet_extracted")
             for name in ("treated", "followed", "at_horizon", "withdrawals", "censored"):
                 change(document, "counts." + name, status="not_yet_extracted")
+            for domain in DOMAINS:
+                change(document, domain + ".denominator", status="inaccessible")
+            change(document, "severe_hypoglycemia.participants_affected",
+                   status="inaccessible")
             result = self.result(document)
             self.assert_pair(result, "unresolved", "unresolved")
             self.assert_reason(result, "TARGET_ENROLLMENT_UNKNOWN")
@@ -580,6 +584,91 @@ class Q3ClassifierTests(unittest.TestCase):
                 unknowns = {f["field_id"] for f in result["unknown_flags"]}
                 self.assertIn("target_enrolled", unknowns)
                 self.assertIn("counts.enrolled", unknowns)
+
+    def test_observed_target_participant_evidence_proves_enrollment(self):
+        for proof in ("analysis_denominator", "independence_count", "hypoglycemia_affected"):
+            with self.subTest(proof=proof):
+                document = baseline()
+                change(document, "target_enrolled", status="inaccessible")
+                for name in ("enrolled", "treated", "followed", "at_horizon",
+                             "withdrawals", "censored"):
+                    change(document, "counts." + name, status="inaccessible")
+                if proof == "analysis_denominator":
+                    change(document, "hba1c.denominator", 10)
+                elif proof == "independence_count":
+                    change(document, "independence.none_through_horizon", False)
+                    change(document, "independence.onset", "Synthetic month 3")
+                    change(document, "independence.duration", "Synthetic one month")
+                    change(document, "insulin_independence.value", 1)
+                else:
+                    change(document, "severe_hypoglycemia.value", 1)
+                    change(document, "severe_hypoglycemia.participants_affected", 1)
+                result = self.result(document)
+                self.assert_pair(result, "supported", "unresolved")
+                self.assertIn("counts.enrolled",
+                              {f["field_id"] for f in result["unknown_flags"]})
+                self.assertEqual(result["predicates"]["provisional-v1.1"]["enrollment"],
+                                 _result("met"))
+
+    def test_planned_contextual_and_device_counts_do_not_prove_enrollment(self):
+        for change_field, value in (
+                ("hba1c.observation", "planned"),
+                ("hba1c.attribution", "contextual"),
+                ("hba1c.denominator_basis", "device_count")):
+            with self.subTest(change_field=change_field):
+                document = baseline()
+                change(document, "target_enrolled", status="inaccessible")
+                for name in ("enrolled", "treated", "followed", "at_horizon",
+                             "withdrawals", "censored"):
+                    change(document, "counts." + name, status="inaccessible")
+                for domain in DOMAINS:
+                    change(document, domain + ".observation", "none")
+                    change(document, domain + ".value",
+                           status="unreported_in_reviewed_material")
+                change(document, "severe_hypoglycemia.participants_affected",
+                       status="unreported_in_reviewed_material")
+                change(document, "hba1c.observation", "observed")
+                change(document, "hba1c.value", 9.2)
+                change(document, "hba1c.denominator", 10)
+                change(document, "hba1c.denominator_basis", "endpoint_analysis")
+                change(document, change_field, value)
+                if change_field == "hba1c.denominator_basis":
+                    change(document, "hba1c.denominator_basis", "device_count")
+                result = self.result(document)
+                enrollment = result["predicates"]["provisional-v1.1"]["enrollment"]
+                self.assertEqual(enrollment["state"], "unknown")
+                self.assertIn("TARGET_ENROLLMENT_UNKNOWN", enrollment["reason_codes"])
+
+    def test_comparable_hypoglycemia_quantity_conflict_is_rejected(self):
+        document = baseline()
+        change(document, "severe_hypoglycemia.value", 0)
+        change(document, "severe_hypoglycemia.participants_affected", 0)
+        quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+        quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+        document["reports"][0]["fields"].append(quantity)
+        change(document, "severe_hypoglycemia.screen_quantity", {
+            "value": 25, "units": "%", "measure": "participants_affected_percentage",
+            "window": "endpoint_interval",
+        })
+        seal(document)
+        with self.assertRaisesRegex(InputError, "contradictory affected-participant"):
+            classify(document)
+
+    def test_unmatched_hypoglycemia_quantity_metadata_is_not_compared(self):
+        for measure, window, units in (
+                ("event_rate", "endpoint_interval", "%"),
+                ("participants_affected_percentage", "different_window", "%"),
+                ("participants_affected_percentage", "endpoint_interval", "events")):
+            document = baseline()
+            change(document, "severe_hypoglycemia.value", 0)
+            change(document, "severe_hypoglycemia.participants_affected", 0)
+            quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+            quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+            document["reports"][0]["fields"].append(quantity)
+            change(document, "severe_hypoglycemia.screen_quantity", {
+                "value": 25, "units": units, "measure": measure, "window": window,
+            })
+            self.assert_pair(self.result(document), "supported", "supported")
 
     def test_positive_enrollment_count_proves_enrollment_preserving_unknown_boolean(self):
         for status in ("not_yet_extracted", "inaccessible", "conflicting",

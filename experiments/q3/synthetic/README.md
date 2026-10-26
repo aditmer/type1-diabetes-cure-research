@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 167 tests, including 82 classifier tests.
+The review-corrected suite has 171 tests, including 86 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -275,9 +275,18 @@ Insulin-independence and severe-hypoglycemia quantities must be nonnegative;
 insulin-dose, HbA1c and CGM quantities may be finite signed changes (either
 sign is quantitative evidence). An independence quantity above zero contradicts
 explicit `independence.none_through_horizon=true` and halts validation.
+Optional `measure` and `window` metadata must be supplied together when
+declaring quantity semantics. Cross-field consistency checks use such a
+quantity only when its measure and window explicitly match the corresponding
+endpoint facts; generic units alone are not treated as proof of comparability.
 
 A source-reported positive `counts.enrolled` now proves aggregate enrollment
-even when `target_enrolled` is unknown. The Boolean's original unknown field
-flag is preserved. With neither proof available enrollment remains unknown;
-a reported zero still establishes no-enrollment precedence. Schema/provenance
-validation does not establish the truth or completeness of source review.
+even when `target_enrolled` is unknown. Positive observed target-attributed
+participant-analysis denominators, insulin-independence counts, and
+hypoglycemia affected-participant counts also establish that some target
+participants enrolled. Planned or contextual observations and device
+denominators do not. The Boolean and missing enrolled-total unknown flags are
+preserved, so harmonization remains unresolved when required global counts are
+unknown. With no such proof, enrollment remains unknown; a reported zero
+establishes no-enrollment precedence. Schema/provenance validation does not
+establish the truth or completeness of source review.
