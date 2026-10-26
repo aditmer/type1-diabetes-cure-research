@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 196 tests, including 111 classifier tests.
+The review-corrected suite has 198 tests, including 113 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -315,7 +315,10 @@ tolerance used for nonzero count comparisons.
 Observed, target-attributed, first-cell-administration binary endpoints with a
 compatible target/attrition analysis population are checked against a known
 treated count: both the participant numerator and `endpoint_analysis`
-denominator cannot exceed it. This does not compare cumulative hypoglycemia
+denominator cannot exceed it, even when the assessment is explicitly earlier
+or later than the nominal horizon. Timing determines harmonized eligibility,
+not whether the same treated cohort could contain more participants than were
+treated. This does not compare cumulative hypoglycemia
 event totals with participants; event totals may exceed the treated count, while
 the affected-participant numerator and participant-analysis denominator may
 not. The cumulative event denominator is not bounded by the point-in-time

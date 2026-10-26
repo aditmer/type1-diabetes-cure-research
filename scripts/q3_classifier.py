@@ -16,6 +16,8 @@ STATES = frozenset(RULES["field_dictionary"]["statuses"])
 LABELS = tuple(RULES["classification"]["labels"])
 DOMAINS = ("insulin_dose", "insulin_independence", "hba1c", "cgm", "severe_hypoglycemia")
 HORIZONS = ("month_12", "day_365", "week_52")
+PERCENTAGE_ROUNDING_TOLERANCE = 0.5
+FLOAT_ROUNDING_EPSILON = 1e-12
 UNKNOWN = {
     "inaccessible": "SOURCE_INACCESSIBLE",
     "not_yet_extracted": "EXTRACTION_INCOMPLETE",
@@ -369,8 +371,6 @@ def _validate_consistency(fields):
             domain in ("insulin_independence", "severe_hypoglycemia") and
             observation == "observed" and value(domain + ".attribution") == "target" and
             value(domain + ".anchor") == "first_cell_administration" and
-            value(domain + ".horizon") in HORIZONS and
-            value(domain + ".interval_end") in HORIZONS and
             value(domain + ".analysis_population") in
             ("target", "documented_attrition_subset"))
         if first_treatment_binary:
@@ -451,7 +451,8 @@ def _validate_consistency(fields):
         denominator = value("insulin_independence.denominator")
         if numerator is not None:
             expected_percent = 100 * numerator / denominator
-            _require(abs(_percentage_value(quantity) - expected_percent) <= 0.5,
+            _require(abs(_percentage_value(quantity) - expected_percent) <=
+                     PERCENTAGE_ROUNDING_TOLERANCE + FLOAT_ROUNDING_EPSILON,
                      "contradictory insulin-independence percentage and count")
     for fid in ("independence.onset", "independence.duration"):
         if fields[fid]["status"] == "not_applicable":
@@ -484,7 +485,8 @@ def _validate_consistency(fields):
         denominator = value("severe_hypoglycemia.denominator")
         if affected is not None:
             expected_percent = 100 * affected / denominator
-            _require(abs(_percentage_value(hypo_quantity) - expected_percent) <= 0.5,
+            _require(abs(_percentage_value(hypo_quantity) - expected_percent) <=
+                     PERCENTAGE_ROUNDING_TOLERANCE + FLOAT_ROUNDING_EPSILON,
                      "contradictory affected-participant percentage and count")
         elif events is not None and events > 0:
             percent = _percentage_value(hypo_quantity)

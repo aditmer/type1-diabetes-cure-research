@@ -290,6 +290,36 @@ class Q3ClassifierTests(unittest.TestCase):
                     InputError, "binary endpoint-analysis denominator exceeds known treated count"):
                 classify(document)
 
+    def test_binary_treated_count_bounds_do_not_depend_on_assessment_horizon(self):
+        for domain in ("insulin_independence", "severe_hypoglycemia"):
+            for horizon in ("month_6", "later_only"):
+                for field_kind in ("denominator", "numerator"):
+                    with self.subTest(domain=domain, horizon=horizon, field=field_kind):
+                        document = self.five_treated_baseline()
+                        change(document, domain + ".horizon", horizon)
+                        change(document, domain + ".interval_end", horizon)
+                        if field_kind == "denominator":
+                            change(document, domain + ".denominator", 6)
+                            if domain == "insulin_independence":
+                                change(document, domain + ".value", 0)
+                            else:
+                                change(document, domain + ".value", 0)
+                                change(document, domain + ".participants_affected", 0)
+                            error = "binary endpoint-analysis denominator exceeds known treated count"
+                        elif domain == "insulin_independence":
+                            change(document, domain + ".value", 6)
+                            change(document, "independence.none_through_horizon", False)
+                            change(document, "independence.onset", "Synthetic month 3")
+                            change(document, "independence.duration", "Synthetic one month")
+                            error = "observed target participant count exceeds known treated count"
+                        else:
+                            change(document, domain + ".value", 8)
+                            change(document, domain + ".participants_affected", 6)
+                            error = "observed target participant count exceeds known treated count"
+                        seal(document)
+                        with self.assertRaisesRegex(InputError, error):
+                            classify(document)
+
     def test_cumulative_hypoglycemia_events_can_exceed_treated_participants(self):
         document = self.five_treated_baseline()
         change(document, "severe_hypoglycemia.value", 8)
@@ -1004,6 +1034,35 @@ class Q3ClassifierTests(unittest.TestCase):
                 })
                 result = self.result(document)
                 self.assert_pair(result, "supported", "supported")
+
+    def test_equivalent_proportion_and_percentage_at_rounding_boundary(self):
+        for domain in ("insulin_independence", "severe_hypoglycemia"):
+            for units, number in (("%", 57), ("proportion", 0.57)):
+                with self.subTest(domain=domain, units=units):
+                    document = baseline()
+                    for count_name in ("enrolled", "treated", "followed", "at_horizon"):
+                        change(document, "counts." + count_name, 40)
+                    for endpoint in DOMAINS:
+                        change(document, endpoint + ".denominator", 40)
+                    if domain == "insulin_independence":
+                        change(document, "independence.none_through_horizon", False)
+                        change(document, "independence.onset", "Synthetic month 3")
+                        change(document, "independence.duration", "Synthetic one month")
+                        change(document, domain + ".value", 23)
+                    else:
+                        change(document, domain + ".value", 23)
+                        change(document, domain + ".participants_affected", 23)
+                    quantity = copy.deepcopy(field(document, domain + ".value"))
+                    quantity["field_id"] = domain + ".screen_quantity"
+                    document["reports"][0]["fields"].append(quantity)
+                    measure = ("insulin_independence_percentage"
+                               if domain == "insulin_independence"
+                               else "participants_affected_percentage")
+                    change(document, quantity["field_id"], {
+                        "value": number, "units": units, "measure": measure,
+                        "window": "endpoint_interval",
+                    })
+                    self.assert_pair(self.result(document), "supported", "supported")
 
     def test_zero_hypoglycemia_percentage_conflicts_with_positive_affected_count(self):
         document = baseline()
