@@ -154,6 +154,14 @@ def _percentage_value(quantity):
     return None
 
 
+def _feasible_integer_counts(percent, denominator, minimum, maximum):
+    lower = (percent - PERCENTAGE_ROUNDING_TOLERANCE) * denominator / 100
+    upper = (percent + PERCENTAGE_ROUNDING_TOLERANCE) * denominator / 100
+    epsilon = FLOAT_ROUNDING_EPSILON * max(1, abs(lower), abs(upper))
+    return (max(minimum, math.ceil(lower - epsilon)),
+            min(maximum, math.floor(upper + epsilon)))
+
+
 def _valid_value(value, spec):
     if spec.kind == "quantity":
         if not isinstance(value, dict) or set(value) not in (
@@ -454,6 +462,11 @@ def _validate_consistency(fields):
             _require(abs(_percentage_value(quantity) - expected_percent) <=
                      PERCENTAGE_ROUNDING_TOLERANCE + FLOAT_ROUNDING_EPSILON,
                      "contradictory insulin-independence percentage and count")
+        else:
+            minimum, maximum = _feasible_integer_counts(
+                _percentage_value(quantity), denominator, 0, denominator)
+            _require(minimum <= maximum,
+                     "insulin-independence percentage incompatible with analysis denominator")
     for fid in ("independence.onset", "independence.duration"):
         if fields[fid]["status"] == "not_applicable":
             _require(none is True, "zero at horizon does not prove no earlier independence")
@@ -488,18 +501,18 @@ def _validate_consistency(fields):
             _require(abs(_percentage_value(hypo_quantity) - expected_percent) <=
                      PERCENTAGE_ROUNDING_TOLERANCE + FLOAT_ROUNDING_EPSILON,
                      "contradictory affected-participant percentage and count")
-        elif events is not None and events > 0:
-            percent = _percentage_value(hypo_quantity)
-            lower_affected = ((percent - PERCENTAGE_ROUNDING_TOLERANCE) *
-                              denominator / 100)
-            upper_affected = ((percent + PERCENTAGE_ROUNDING_TOLERANCE) *
-                              denominator / 100)
-            epsilon = FLOAT_ROUNDING_EPSILON * max(
-                1, abs(lower_affected), abs(upper_affected))
-            minimum_affected = max(1, math.ceil(lower_affected - epsilon))
-            maximum_affected = min(events, math.floor(upper_affected + epsilon))
+        else:
+            minimum_events = 1 if events is not None and events > 0 else 0
+            maximum_affected = min(events if events is not None else denominator,
+                                   denominator)
+            minimum_affected, maximum_affected = _feasible_integer_counts(
+                _percentage_value(hypo_quantity), denominator,
+                minimum_events, maximum_affected)
+            error = ("hypoglycemia percentage incompatible with event count"
+                     if events is not None else
+                     "hypoglycemia percentage incompatible with analysis denominator")
             _require(minimum_affected <= maximum_affected,
-                     "hypoglycemia percentage incompatible with event count")
+                     error)
 
 
 def _validate_overlap(document, populations):
@@ -641,6 +654,9 @@ def _classify(report):
                 fields[domain + ".denominator_basis"]["value"] == "endpoint_analysis" and
                 fields[domain + ".denominator"]["status"] == "reported" and
                 fields[domain + ".denominator"]["value"] > 0 or
+                domain in ("insulin_dose", "hba1c", "cgm") and
+                fields[domain + ".value"]["status"] == "reported" and
+                fields[domain + ".value"]["value"] is not None or
                 domain == "insulin_independence" and
                 fields[domain + ".value"]["status"] == "reported" and
                 fields[domain + ".value"]["value"] > 0 or

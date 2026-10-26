@@ -102,7 +102,7 @@ definitions and intervals. No numerical visit conversion or imputation occurs.
 | `independence.{onset,duration}` | H2 source-defined text, or justified structural inapplicability. |
 | `<endpoint>.{observation,attribution,value}` | `observation`: `observed`, `planned`, `none`; attribution: `target`, `contextual`, `uncertain`. Value: quantitative measurement/count. P1 is an OR over observed numeric target-attributed endpoints (including hypoglycemia events or affected participants), not a preassigned predicate. H2 requires every endpoint observed, H1 its target linkage. |
 | `<endpoint>.{baseline,definition,hierarchy}` | H2 baseline number where meaningful, definition text, hierarchy `primary`, `secondary`, `post_hoc`, `composite`. |
-| `<endpoint>.{denominator,denominator_basis}` | H3 analysis count; only `endpoint_analysis` is a valid participant analysis denominator. `enrollment`, `device_count`, and `other_endpoint` fail with `DENOMINATOR_MISSING`, even if numerically identical. Enrollment bounds, numerator-versus-denominator checks, and affected-participant-versus-denominator checks apply only when the basis is `endpoint_analysis`, because those values are participant counts. In particular, a device count can exceed participant enrollment without an input error, but is never accepted as the H3 denominator. |
+| `<endpoint>.{denominator,denominator_basis}` | H3 analysis count; only `endpoint_analysis` is a valid participant analysis denominator. `enrollment`, `device_count`, and `other_endpoint` fail with `DENOMINATOR_MISSING`, even if numerically identical. Enrollment bounds, numerator-versus-denominator checks, affected-participant-versus-denominator checks, and integer-count feasibility checks for reported percentages with unavailable numerators apply only when the basis is `endpoint_analysis`, because those values are participant counts. In particular, a device count can exceed participant enrollment without an input error, but is never accepted as the H3 denominator. |
 | `<continuous>.{units,summary}` | H3 source-defined units and summary text; not extra requirements for binary independence/event counts. |
 | `<endpoint>.{horizon,anchor}` | H4 only `month_12`, `day_365`, `week_52` and `first_cell_administration` pass. `month_6`, `later_only`, `maximum_only`, `through_one_year` fail horizon. `repeat_administration`, `independence_onset`, `empty_device_implantation` fail anchor; `unspecified` anchor fails as unreported timing. |
 | `<endpoint>.{analysis_population,population_link}` | H4: `target` or `documented_attrition_subset` with source-defined linkage text; `contextual` fails, `uncertain` is unknown. No substitution of another cohort. |
@@ -216,9 +216,16 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 199 tests, including 114 classifier tests.
+The review-corrected suite has 200 tests, including 115 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
+
+For comparable participant-analysis percentages, the engine verifies that at
+least one integer numerator within the stated rounding tolerance is possible
+when the numerator is unavailable; it does not infer or populate that count.
+An observed target-attributed continuous endpoint result supplies evidence of
+target enrollment for provisional screening, but does not reconstruct global
+counts or relax harmonized denominator requirements.
 
 Denominator consistency is basis-aware: a reported `endpoint_analysis` count
 is interpreted as participants and, when target-attributed, cannot exceed the

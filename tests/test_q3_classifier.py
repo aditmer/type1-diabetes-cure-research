@@ -665,8 +665,9 @@ class Q3ClassifierTests(unittest.TestCase):
             for name in ("treated", "followed", "at_horizon", "withdrawals", "censored"):
                 change(document, "counts." + name, status="not_yet_extracted")
             for domain in DOMAINS:
+                change(document, domain + ".observation", status="inaccessible")
+                change(document, domain + ".value", status="inaccessible")
                 change(document, domain + ".denominator", status="inaccessible")
-            change(document, "severe_hypoglycemia.value", status="inaccessible")
             change(document, "severe_hypoglycemia.participants_affected",
                    status="inaccessible")
             result = self.result(document)
@@ -695,8 +696,8 @@ class Q3ClassifierTests(unittest.TestCase):
                 self.assertIn("target_enrolled", unknowns)
                 self.assertIn("counts.enrolled", unknowns)
 
-    def test_observed_target_participant_evidence_proves_enrollment(self):
-        for proof in ("analysis_denominator", "independence_count",
+    def test_observed_target_evidence_proves_enrollment(self):
+        for proof in ("analysis_denominator", "continuous_result", "independence_count",
                       "hypoglycemia_affected", "hypoglycemia_events"):
             with self.subTest(proof=proof):
                 document = baseline()
@@ -705,28 +706,115 @@ class Q3ClassifierTests(unittest.TestCase):
                              "withdrawals", "censored"):
                     change(document, "counts." + name, status="inaccessible")
                 for domain in DOMAINS:
+                    change(document, domain + ".observation", status="inaccessible")
+                    change(document, domain + ".value", status="inaccessible")
                     change(document, domain + ".denominator", status="inaccessible")
+                    change(document, domain + ".denominator_basis", status="inaccessible")
                 change(document, "severe_hypoglycemia.value", status="inaccessible")
                 change(document, "severe_hypoglycemia.participants_affected",
                        status="inaccessible")
                 if proof == "analysis_denominator":
+                    change(document, "hba1c.observation", "observed")
+                    change(document, "hba1c.attribution", "target")
                     change(document, "hba1c.denominator_basis", "endpoint_analysis")
                     change(document, "hba1c.denominator", 10)
+                elif proof == "continuous_result":
+                    change(document, "hba1c.observation", "observed")
+                    change(document, "hba1c.value", 9.2)
+                    change(document, "hba1c.attribution", "target")
                 elif proof == "independence_count":
+                    change(document, "insulin_independence.observation", "observed")
+                    change(document, "insulin_independence.attribution", "target")
                     change(document, "independence.none_through_horizon", False)
                     change(document, "independence.onset", "Synthetic month 3")
                     change(document, "independence.duration", "Synthetic one month")
                     change(document, "insulin_independence.value", 1)
                 else:
+                    change(document, "severe_hypoglycemia.observation", "observed")
+                    change(document, "severe_hypoglycemia.attribution", "target")
                     change(document, "severe_hypoglycemia.value", 1)
                     if proof == "hypoglycemia_affected":
+                        change(document, "severe_hypoglycemia.value",
+                               status="inaccessible")
                         change(document, "severe_hypoglycemia.participants_affected", 1)
                 result = self.result(document)
-                self.assert_pair(result, "supported", "unresolved")
+                expected_provisional = (
+                    "unresolved" if proof == "analysis_denominator" else "supported")
+                self.assert_pair(result, expected_provisional, "unresolved")
                 self.assertIn("counts.enrolled",
                               {f["field_id"] for f in result["unknown_flags"]})
                 self.assertEqual(result["predicates"]["provisional-v1.1"]["enrollment"],
                                  _result("met"))
+
+    def test_percentage_feasibility_when_binary_numerator_is_unavailable(self):
+        cases = (
+            ("insulin_independence", "insulin_independence_percentage",
+             "insulin_independence.value", 25, 0.25,
+             "insulin-independence percentage incompatible with analysis denominator"),
+            ("severe_hypoglycemia", "participants_affected_percentage",
+             "severe_hypoglycemia.participants_affected", 25, 0.25,
+             "hypoglycemia percentage incompatible with analysis denominator"),
+        )
+        for domain, measure, numerator_field, percent, proportion, error in cases:
+            for units, number in (("%", percent), ("proportion", proportion)):
+                with self.subTest(domain=domain, units=units, value=number):
+                    document = baseline()
+                    change(document, domain + ".observation", "observed")
+                    change(document, domain + ".attribution", "target")
+                    change(document, domain + ".analysis_population", "target")
+                    change(document, domain + ".denominator_basis", "endpoint_analysis")
+                    change(document, domain + ".denominator", 10)
+                    change(document, numerator_field, status="inaccessible")
+                    if domain == "insulin_independence":
+                        change(document, "independence.none_through_horizon", False)
+                        change(document, "independence.onset", "Synthetic month 3")
+                        change(document, "independence.duration", "Synthetic one month")
+                    else:
+                        change(document, "severe_hypoglycemia.value",
+                               status="inaccessible")
+                    quantity = copy.deepcopy(field(document, numerator_field))
+                    quantity["field_id"] = domain + ".screen_quantity"
+                    document["reports"][0]["fields"].append(quantity)
+                    change(document, quantity["field_id"], {
+                        "value": number, "units": units, "measure": measure,
+                        "window": "endpoint_interval",
+                    })
+                    seal(document)
+                    with self.assertRaisesRegex(InputError, error):
+                        classify(document)
+
+        for domain, measure, numerator_field in (
+                ("insulin_independence", "insulin_independence_percentage",
+                 "insulin_independence.value"),
+                ("severe_hypoglycemia", "participants_affected_percentage",
+                 "severe_hypoglycemia.participants_affected")):
+            for units, number in (("%", 50), ("proportion", 0.5)):
+                with self.subTest(domain=domain, units=units, feasible=True):
+                    document = baseline()
+                    change(document, domain + ".observation", "observed")
+                    change(document, domain + ".attribution", "target")
+                    change(document, domain + ".analysis_population", "target")
+                    change(document, domain + ".denominator_basis", "endpoint_analysis")
+                    change(document, domain + ".denominator", 10)
+                    change(document, numerator_field, status="inaccessible")
+                    if domain == "insulin_independence":
+                        change(document, "independence.none_through_horizon", False)
+                        change(document, "independence.onset", "Synthetic month 3")
+                        change(document, "independence.duration", "Synthetic one month")
+                    else:
+                        change(document, "severe_hypoglycemia.value",
+                               status="inaccessible")
+                    quantity = copy.deepcopy(field(document, numerator_field))
+                    quantity["field_id"] = domain + ".screen_quantity"
+                    document["reports"][0]["fields"].append(quantity)
+                    change(document, quantity["field_id"], {
+                        "value": number, "units": units, "measure": measure,
+                        "window": "endpoint_interval",
+                    })
+                    result = self.result(document)
+                    self.assert_pair(result, "supported", "unresolved")
+                    unknowns = {f["field_id"] for f in result["unknown_flags"]}
+                    self.assertIn(numerator_field, unknowns)
 
     def test_positive_target_hypoglycemia_events_prove_enrollment_without_reconstructing_participants(self):
         document = baseline()
@@ -778,6 +866,7 @@ class Q3ClassifierTests(unittest.TestCase):
                 change(document, change_field, value)
                 if change_field == "hba1c.denominator_basis":
                     change(document, "hba1c.denominator_basis", "device_count")
+                    change(document, "hba1c.value", status="inaccessible")
                 result = self.result(document)
                 enrollment = result["predicates"]["provisional-v1.1"]["enrollment"]
                 self.assertEqual(enrollment["state"], "unknown")
