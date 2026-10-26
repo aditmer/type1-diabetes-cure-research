@@ -490,8 +490,14 @@ def _validate_consistency(fields):
                      "contradictory affected-participant percentage and count")
         elif events is not None and events > 0:
             percent = _percentage_value(hypo_quantity)
-            minimum_affected = max(1, math.ceil((percent - 0.5) * denominator / 100))
-            maximum_affected = min(events, math.floor((percent + 0.5) * denominator / 100))
+            lower_affected = ((percent - PERCENTAGE_ROUNDING_TOLERANCE) *
+                              denominator / 100)
+            upper_affected = ((percent + PERCENTAGE_ROUNDING_TOLERANCE) *
+                              denominator / 100)
+            epsilon = FLOAT_ROUNDING_EPSILON * max(
+                1, abs(lower_affected), abs(upper_affected))
+            minimum_affected = max(1, math.ceil(lower_affected - epsilon))
+            maximum_affected = min(events, math.floor(upper_affected + epsilon))
             _require(minimum_affected <= maximum_affected,
                      "hypoglycemia percentage incompatible with event count")
 

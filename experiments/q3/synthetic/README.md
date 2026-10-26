@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 198 tests, including 113 classifier tests.
+The review-corrected suite has 199 tests, including 114 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -310,7 +310,11 @@ still requires a valid participant-analysis denominator.
 Percentage comparisons normalize `%`, `percent`, `percentage`, `proportion`,
 and `fraction` to percentage points while preserving their original values and
 units in output. Exact-zero count conflicts are not relaxed by the rounding
-tolerance used for nonzero count comparisons.
+tolerance used for nonzero count comparisons. When an affected-participant
+count is inaccessible, the feasible integer count interval applies that same
+0.5-percentage-point tolerance, with only a scale-bounded floating-point
+epsilon before `ceil`/`floor` so equivalent percentage and proportion inputs
+remain equivalent at a rounding boundary.
 
 Observed, target-attributed, first-cell-administration binary endpoints with a
 compatible target/attrition analysis population are checked against a known

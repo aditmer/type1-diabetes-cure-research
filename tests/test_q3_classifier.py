@@ -880,6 +880,27 @@ class Q3ClassifierTests(unittest.TestCase):
                     seal(document)
                     classify(document)
 
+    def test_equivalent_hypoglycemia_percentage_units_with_inaccessible_count(self):
+        for units, percent in (("%", 57), ("proportion", 0.57)):
+            with self.subTest(units=units):
+                document = baseline()
+                for count_name in ("enrolled", "treated", "followed", "at_horizon"):
+                    change(document, "counts." + count_name, 40)
+                change(document, "severe_hypoglycemia.value", 23)
+                change(document, "severe_hypoglycemia.participants_affected",
+                       status="inaccessible")
+                change(document, "severe_hypoglycemia.denominator", 40)
+                quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+                quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+                document["reports"][0]["fields"].append(quantity)
+                change(document, quantity["field_id"], {
+                    "value": percent, "units": units,
+                    "measure": "participants_affected_percentage",
+                    "window": "endpoint_interval",
+                })
+                result = self.result(document)
+                self.assert_pair(result, "supported", "unresolved")
+
     def test_zero_independence_count_conflicts_with_percentage_without_valid_denominator(self):
         for denominator_state in ("inaccessible", "device_count"):
             for units, percent in (("%", 50), ("percent", 50), ("percentage", 50),
