@@ -366,9 +366,7 @@ def _validate_consistency(fields):
     independence_window_comparable = (
         value("insulin_independence.anchor") == "first_cell_administration" and
         value("insulin_independence.horizon") in HORIZONS and
-        value("insulin_independence.interval_end") in HORIZONS and
-        value("insulin_independence.horizon") ==
-        value("insulin_independence.interval_end"))
+        value("insulin_independence.interval_end") in HORIZONS)
     if none is True:
         if (value("insulin_independence.observation") == "observed" and
                 value("insulin_independence.attribution") == "target" and
@@ -422,8 +420,6 @@ def _validate_consistency(fields):
             value("severe_hypoglycemia.anchor") == "first_cell_administration" and
             value("severe_hypoglycemia.horizon") in HORIZONS and
             value("severe_hypoglycemia.interval_end") in HORIZONS and
-            value("severe_hypoglycemia.horizon") ==
-            value("severe_hypoglycemia.interval_end") and
             value("severe_hypoglycemia.denominator_basis") == "endpoint_analysis" and
             type(value("severe_hypoglycemia.denominator")) is int and
             value("severe_hypoglycemia.denominator") > 0):

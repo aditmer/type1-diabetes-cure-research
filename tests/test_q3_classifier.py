@@ -660,6 +660,21 @@ class Q3ClassifierTests(unittest.TestCase):
         with self.assertRaisesRegex(InputError, "contradictory affected-participant"):
             classify(document)
 
+    def test_equivalent_nominal_horizons_compare_hypoglycemia_percentages(self):
+        document = baseline()
+        change(document, "severe_hypoglycemia.interval_end", "day_365")
+        quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+        quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+        document["reports"][0]["fields"].append(quantity)
+        change(document, "severe_hypoglycemia.screen_quantity", {
+            "value": 0, "units": "%",
+            "measure": "participants_affected_percentage",
+            "window": "endpoint_interval",
+        })
+        seal(document)
+        with self.assertRaisesRegex(InputError, "contradictory affected-participant"):
+            classify(document)
+
     def test_comparable_hypoglycemia_percentage_matches_count_with_rounding(self):
         for percent, affected in ((50, 5), (49.6, 5), (0, 0)):
             document = baseline()
@@ -729,6 +744,25 @@ class Q3ClassifierTests(unittest.TestCase):
         self.assert_pair(result, "supported", "not_supported")
         self.assert_reason(result, "WINDOW_MISMATCH")
 
+    def test_equivalent_nominal_horizons_compare_independence_percentages(self):
+        document = baseline()
+        change(document, "independence.none_through_horizon", False)
+        change(document, "independence.onset", "Synthetic month 3")
+        change(document, "independence.duration", "Synthetic one month")
+        change(document, "insulin_independence.value", 5)
+        change(document, "insulin_independence.interval_end", "day_365")
+        quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+        quantity["field_id"] = "insulin_independence.screen_quantity"
+        document["reports"][0]["fields"].append(quantity)
+        change(document, "insulin_independence.screen_quantity", {
+            "value": 90, "units": "%",
+            "measure": "insulin_independence_percentage",
+            "window": "endpoint_interval",
+        })
+        seal(document)
+        with self.assertRaisesRegex(InputError, "contradictory insulin-independence"):
+            classify(document)
+
     def test_repeat_anchor_independence_count_reaches_classification(self):
         document = baseline()
         change(document, "independence.none_through_horizon", True)
@@ -737,6 +771,13 @@ class Q3ClassifierTests(unittest.TestCase):
         result = self.result(document)
         self.assert_pair(result, "supported", "not_supported")
         self.assert_reason(result, "ANCHOR_MISMATCH")
+
+    def test_equivalent_nominal_horizons_compare_independence_counts(self):
+        document = baseline()
+        change(document, "insulin_independence.value", 1)
+        change(document, "insulin_independence.interval_end", "day_365")
+        with self.assertRaisesRegex(InputError, "contradictory no-independence"):
+            self.result(document)
 
     def test_independence_percentage_matches_count_and_denominator(self):
         for percent in (50, 49.6):
