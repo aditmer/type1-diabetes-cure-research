@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 188 tests, including 103 classifier tests.
+The review-corrected suite has 189 tests, including 104 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -304,6 +304,10 @@ insulin-dose changes. A zero observed independence count conflicts with a
 positive percentage for the same target assessment even if its denominator is
 unavailable or not a participant-analysis denominator; percentage arithmetic
 still requires a valid participant-analysis denominator.
+Percentage comparisons normalize `%`, `percent`, `percentage`, `proportion`,
+and `fraction` to percentage points while preserving their original values and
+units in output. Exact-zero count conflicts are not relaxed by the rounding
+tolerance used for nonzero count comparisons.
 
 A source-reported positive `counts.enrolled` now proves aggregate enrollment
 even when `target_enrolled` is unknown. Positive observed target-attributed

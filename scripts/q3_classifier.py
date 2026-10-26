@@ -143,6 +143,15 @@ def _synthetic_id(value):
     return isinstance(value, str) and ID_PATTERN.fullmatch(value) is not None
 
 
+def _percentage_value(quantity):
+    units = quantity["units"].strip().lower()
+    if units in ("%", "percent", "percentage"):
+        return quantity["value"]
+    if units in ("proportion", "fraction"):
+        return quantity["value"] * 100
+    return None
+
+
 def _valid_value(value, spec):
     if spec.kind == "quantity":
         if not isinstance(value, dict) or set(value) not in (
@@ -154,9 +163,7 @@ def _valid_value(value, spec):
             return False
         number = value["value"]
         units = value["units"].strip().lower()
-        measure = value.get("measure", "").strip().lower()
-        percentage_outcome = ("nonnegative" in spec.choices or
-                              measure.endswith("_percentage"))
+        percentage_outcome = "nonnegative" in spec.choices
         if percentage_outcome and units in ("%", "percent", "percentage"):
             return (type(number) in (int, float) and math.isfinite(number) and
                     0 <= number <= 100)
@@ -394,7 +401,7 @@ def _validate_consistency(fields):
         quantity is not None and
         quantity.get("measure") == "insulin_independence_percentage" and
         quantity.get("window") == "endpoint_interval" and
-        quantity.get("units", "").strip().lower() in ("%", "percent", "percentage") and
+        _percentage_value(quantity) is not None and
         value("insulin_independence.observation") == "observed" and
         value("insulin_independence.attribution") == "target" and
         value("insulin_independence.analysis_population") in
@@ -402,7 +409,7 @@ def _validate_consistency(fields):
         independence_window_comparable)
     if (independence_percentage_comparable and
             value("insulin_independence.value") == 0):
-        _require(quantity["value"] <= 0.5,
+        _require(_percentage_value(quantity) == 0,
                  "zero independence count and positive independence percentage")
     if (none is True and quantity is not None and
             value("insulin_independence.observation") == "observed" and
@@ -421,7 +428,7 @@ def _validate_consistency(fields):
         denominator = value("insulin_independence.denominator")
         if numerator is not None:
             expected_percent = 100 * numerator / denominator
-            _require(abs(quantity["value"] - expected_percent) <= 0.5,
+            _require(abs(_percentage_value(quantity) - expected_percent) <= 0.5,
                      "contradictory insulin-independence percentage and count")
     for fid in ("independence.onset", "independence.duration"):
         if fields[fid]["status"] == "not_applicable":
@@ -432,7 +439,7 @@ def _validate_consistency(fields):
         hypo_quantity is not None and
             hypo_quantity.get("measure") == "participants_affected_percentage" and
             hypo_quantity.get("window") == "endpoint_interval" and
-            hypo_quantity.get("units", "").strip().lower() in ("%", "percent", "percentage") and
+            _percentage_value(hypo_quantity) is not None and
             value("severe_hypoglycemia.observation") == "observed" and
             value("severe_hypoglycemia.attribution") == "target" and
             value("severe_hypoglycemia.analysis_population") in
@@ -440,8 +447,10 @@ def _validate_consistency(fields):
             value("severe_hypoglycemia.anchor") == "first_cell_administration" and
             value("severe_hypoglycemia.horizon") in HORIZONS and
             value("severe_hypoglycemia.interval_end") in HORIZONS)
-    if hypo_percentage_comparable and value("severe_hypoglycemia.value") == 0:
-        _require(hypo_quantity["value"] <= 0.5,
+    if (hypo_percentage_comparable and
+            (value("severe_hypoglycemia.value") == 0 or
+             value("severe_hypoglycemia.participants_affected") == 0)):
+        _require(_percentage_value(hypo_quantity) == 0,
                  "zero events and positive affected percentage")
     if (hypo_percentage_comparable and
             value("severe_hypoglycemia.denominator_basis") == "endpoint_analysis" and
@@ -451,7 +460,7 @@ def _validate_consistency(fields):
         denominator = value("severe_hypoglycemia.denominator")
         if affected is not None:
             expected_percent = 100 * affected / denominator
-            _require(abs(hypo_quantity["value"] - expected_percent) <= 0.5,
+            _require(abs(_percentage_value(hypo_quantity) - expected_percent) <= 0.5,
                      "contradictory affected-participant percentage and count")
 
 
