@@ -657,7 +657,7 @@ class Q3ClassifierTests(unittest.TestCase):
             "window": "endpoint_interval",
         })
         seal(document)
-        with self.assertRaisesRegex(InputError, "contradictory affected-participant"):
+        with self.assertRaisesRegex(InputError, "affected percentage"):
             classify(document)
 
     def test_equivalent_nominal_horizons_compare_hypoglycemia_percentages(self):
@@ -697,21 +697,79 @@ class Q3ClassifierTests(unittest.TestCase):
                     classify(document)
 
     def test_zero_hypoglycemia_events_conflict_with_positive_comparable_percentage(self):
+        for denominator_state in ("inaccessible", "device_count"):
+            with self.subTest(denominator_state=denominator_state):
+                document = baseline()
+                change(document, "severe_hypoglycemia.value", 0)
+                change(document, "severe_hypoglycemia.participants_affected",
+                       status="not_yet_extracted")
+                if denominator_state == "inaccessible":
+                    change(document, "severe_hypoglycemia.denominator",
+                           status="inaccessible")
+                else:
+                    change(document, "severe_hypoglycemia.denominator_basis", "device_count")
+                quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
+                quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+                document["reports"][0]["fields"].append(quantity)
+                change(document, "severe_hypoglycemia.screen_quantity", {
+                    "value": 50, "units": "%",
+                    "measure": "participants_affected_percentage",
+                    "window": "endpoint_interval",
+                })
+                seal(document)
+                with self.assertRaisesRegex(
+                        InputError, "zero events and positive affected percentage"):
+                    classify(document)
+
+    def test_zero_independence_count_conflicts_with_percentage_without_valid_denominator(self):
+        for denominator_state in ("inaccessible", "device_count"):
+            with self.subTest(denominator_state=denominator_state):
+                document = baseline()
+                change(document, "independence.none_through_horizon", False)
+                change(document, "independence.onset", "Synthetic month 3")
+                change(document, "independence.duration", "Synthetic one month")
+                change(document, "insulin_independence.value", 0)
+                if denominator_state == "inaccessible":
+                    change(document, "insulin_independence.denominator",
+                           status="inaccessible")
+                else:
+                    change(document, "insulin_independence.denominator_basis", "device_count")
+                quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+                quantity["field_id"] = "insulin_independence.screen_quantity"
+                document["reports"][0]["fields"].append(quantity)
+                change(document, "insulin_independence.screen_quantity", {
+                    "value": 50, "units": "%",
+                    "measure": "insulin_independence_percentage",
+                    "window": "endpoint_interval",
+                })
+                seal(document)
+                with self.assertRaisesRegex(
+                        InputError, "zero independence count and positive independence percentage"):
+                    classify(document)
+
+    def test_percentage_and_proportion_screen_quantities_are_bounded(self):
+        for domain, value in (
+                ("severe_hypoglycemia", {"value": 125, "units": "%"}),
+                ("insulin_independence", {"value": 1.25, "units": "proportion"})):
+            with self.subTest(domain=domain):
+                document = baseline()
+                quantity = copy.deepcopy(field(document, domain + ".value"))
+                quantity["field_id"] = domain + ".screen_quantity"
+                document["reports"][0]["fields"].append(quantity)
+                change(document, quantity["field_id"], value)
+                with self.assertRaises(InputError):
+                    classify(seal(document))
+
+    def test_signed_hba1c_change_with_percent_units_remains_valid(self):
         document = baseline()
-        change(document, "severe_hypoglycemia.value", 0)
-        change(document, "severe_hypoglycemia.participants_affected",
-               status="not_yet_extracted")
-        quantity = copy.deepcopy(field(document, "severe_hypoglycemia.value"))
-        quantity["field_id"] = "severe_hypoglycemia.screen_quantity"
+        quantity = copy.deepcopy(field(document, "hba1c.value"))
+        quantity["field_id"] = "hba1c.screen_quantity"
         document["reports"][0]["fields"].append(quantity)
-        change(document, "severe_hypoglycemia.screen_quantity", {
-            "value": 50, "units": "%",
-            "measure": "participants_affected_percentage",
+        change(document, "hba1c.screen_quantity", {
+            "value": -0.2, "units": "%", "measure": "hba1c_change",
             "window": "endpoint_interval",
         })
-        seal(document)
-        with self.assertRaisesRegex(InputError, "zero events and positive affected percentage"):
-            classify(document)
+        self.assert_pair(self.result(document), "supported", "supported")
 
     def test_comparable_hypoglycemia_percentage_matches_count_with_rounding(self):
         for percent, affected in ((50, 5), (49.6, 5), (0, 0)):

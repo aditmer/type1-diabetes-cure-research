@@ -152,9 +152,20 @@ def _valid_value(value, spec):
             return False
         if "measure" in value and not (_text(value["measure"]) and _text(value["window"])):
             return False
-        return (_valid_value(value["value"], Spec("", "number", "")) or
-                ("signed" in spec.choices and type(value["value"]) in (int, float) and
-                 math.isfinite(value["value"])))
+        number = value["value"]
+        units = value["units"].strip().lower()
+        measure = value.get("measure", "").strip().lower()
+        percentage_outcome = ("nonnegative" in spec.choices or
+                              measure.endswith("_percentage"))
+        if percentage_outcome and units in ("%", "percent", "percentage"):
+            return (type(number) in (int, float) and math.isfinite(number) and
+                    0 <= number <= 100)
+        if percentage_outcome and units in ("proportion", "fraction"):
+            return (type(number) in (int, float) and math.isfinite(number) and
+                    0 <= number <= 1)
+        return (_valid_value(number, Spec("", "number", "")) or
+                ("signed" in spec.choices and type(number) in (int, float) and
+                 math.isfinite(number)))
     if spec.kind == "bool":
         return type(value) is bool
     if spec.kind == "count":
@@ -379,6 +390,20 @@ def _validate_consistency(fields):
                      "contradictory no-independence evidence")
     quantity = (value("insulin_independence.screen_quantity")
                 if "insulin_independence.screen_quantity" in fields else None)
+    independence_percentage_comparable = (
+        quantity is not None and
+        quantity.get("measure") == "insulin_independence_percentage" and
+        quantity.get("window") == "endpoint_interval" and
+        quantity.get("units", "").strip().lower() in ("%", "percent", "percentage") and
+        value("insulin_independence.observation") == "observed" and
+        value("insulin_independence.attribution") == "target" and
+        value("insulin_independence.analysis_population") in
+        ("target", "documented_attrition_subset") and
+        independence_window_comparable)
+    if (independence_percentage_comparable and
+            value("insulin_independence.value") == 0):
+        _require(quantity["value"] <= 0.5,
+                 "zero independence count and positive independence percentage")
     if (none is True and quantity is not None and
             value("insulin_independence.observation") == "observed" and
             value("insulin_independence.attribution") == "target" and
@@ -388,18 +413,10 @@ def _validate_consistency(fields):
             quantity.get("window", "through_horizon") in
             ("through_horizon", "endpoint_interval")):
         _require(quantity["value"] == 0, "contradictory no-independence screen quantity")
-    if (quantity is not None and
-            quantity.get("measure") == "insulin_independence_percentage" and
-            quantity.get("window") == "endpoint_interval" and
-            quantity.get("units", "").strip().lower() in ("%", "percent", "percentage") and
-            value("insulin_independence.observation") == "observed" and
-            value("insulin_independence.attribution") == "target" and
-            value("insulin_independence.analysis_population") in
-            ("target", "documented_attrition_subset") and
+    if (independence_percentage_comparable and
             value("insulin_independence.denominator_basis") == "endpoint_analysis" and
             type(value("insulin_independence.denominator")) is int and
-            value("insulin_independence.denominator") > 0 and
-            independence_window_comparable):
+            value("insulin_independence.denominator") > 0):
         numerator = value("insulin_independence.value")
         denominator = value("insulin_independence.denominator")
         if numerator is not None:
@@ -411,7 +428,8 @@ def _validate_consistency(fields):
             _require(none is True, "zero at horizon does not prove no earlier independence")
     hypo_quantity = (value("severe_hypoglycemia.screen_quantity")
                      if "severe_hypoglycemia.screen_quantity" in fields else None)
-    if (hypo_quantity is not None and
+    hypo_percentage_comparable = (
+        hypo_quantity is not None and
             hypo_quantity.get("measure") == "participants_affected_percentage" and
             hypo_quantity.get("window") == "endpoint_interval" and
             hypo_quantity.get("units", "").strip().lower() in ("%", "percent", "percentage") and
@@ -421,16 +439,17 @@ def _validate_consistency(fields):
             ("target", "documented_attrition_subset") and
             value("severe_hypoglycemia.anchor") == "first_cell_administration" and
             value("severe_hypoglycemia.horizon") in HORIZONS and
-            value("severe_hypoglycemia.interval_end") in HORIZONS and
+            value("severe_hypoglycemia.interval_end") in HORIZONS)
+    if hypo_percentage_comparable and value("severe_hypoglycemia.value") == 0:
+        _require(hypo_quantity["value"] <= 0.5,
+                 "zero events and positive affected percentage")
+    if (hypo_percentage_comparable and
             value("severe_hypoglycemia.denominator_basis") == "endpoint_analysis" and
             type(value("severe_hypoglycemia.denominator")) is int and
             value("severe_hypoglycemia.denominator") > 0):
         affected = value("severe_hypoglycemia.participants_affected")
         denominator = value("severe_hypoglycemia.denominator")
-        if affected is None and value("severe_hypoglycemia.value") == 0:
-            _require(hypo_quantity["value"] == 0,
-                     "zero events and positive affected percentage")
-        elif affected is not None:
+        if affected is not None:
             expected_percent = 100 * affected / denominator
             _require(abs(hypo_quantity["value"] - expected_percent) <= 0.5,
                      "contradictory affected-participant percentage and count")

@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 185 tests, including 100 classifier tests.
+The review-corrected suite has 188 tests, including 103 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -298,6 +298,12 @@ For comparable hypoglycemia percentage evidence, proven zero events requires
 zero affected percentage even when the affected-participant count is unknown.
 Independence percentages are checked against the positive numerator and
 participant-analysis denominator with the same rounding tolerance.
+Affected-participant percentages are bounded to 0–100% and proportions to 0–1.
+These participant-percentage bounds do not reject signed HbA1c, CGM, or
+insulin-dose changes. A zero observed independence count conflicts with a
+positive percentage for the same target assessment even if its denominator is
+unavailable or not a participant-analysis denominator; percentage arithmetic
+still requires a valid participant-analysis denominator.
 
 A source-reported positive `counts.enrolled` now proves aggregate enrollment
 even when `target_enrolled` is unknown. Positive observed target-attributed
