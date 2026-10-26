@@ -22,6 +22,10 @@ particular, the assigned S23 human review was not performed by this automation.
   version-evidence note, a human-review record, and the complete 121-field
   inventory from `SPECS` in `scripts/q3_classifier.py`. It contains no outcome
   values or classifications.
+- The human-review record includes the primary reviewer/date, independent
+  review pending state, and—if closed—the independent reviewer/date/scope/
+  decision. Reviewer identities are normalized before requiring distinct
+  primary and independent reviewers.
 - Each field retains the governing `field_id`, one of the six v1.1 statuses,
   typed `value` or `null`, source version, target population, subcohort,
   locator list, review scope, reason codes, adjudication note, review
@@ -36,9 +40,10 @@ particular, the assigned S23 human review was not performed by this automation.
   marked `uncertain`. It retains the preregistration's documented S18/S23
   overlap without asserting a directional subset; S19 and registry-to-
   publication relationships remain unresolved. Resolved links require
-  source-specific locators for both records, actual content-review evidence
-  for both reports, and the human adjudicator and date. Subset direction can
-  point either way while canonical row ordering remains fixed.
+  exact source-version identifiers and specific locators for both records,
+  actual content-review evidence for both reports, and the human adjudicator
+  and date. Subset direction can point either way while canonical row
+  ordering remains fixed.
 - `tracker-corrections.csv` is a separate, currently empty correction ledger.
   It is not consumed as source evidence. Use only `LEDGER_EXTRACTION_GAP`,
   `LEDGER_EXTRACTION_ERROR`, or `SOURCE_VERSION_CHANGE`, with the original

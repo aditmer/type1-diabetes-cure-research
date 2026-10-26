@@ -215,6 +215,20 @@ class Q3ExtractionTests(unittest.TestCase):
         self.write_reports(document)
         self.assertEqual(self.validate()[0], 8)
 
+    def test_independent_review_rejects_whitespace_variant_of_same_reviewer(self):
+        document = copy.deepcopy(self.reports)
+        report = self.mark_report_source_review_complete(document)
+        report["human_review"].update({
+            "independent_review_pending": False,
+            "independent_reviewer_identity": "Reviewer A ",
+            "independent_review_date": "2026-10-27",
+            "independent_review_scope": "Rechecked all source states and locators.",
+            "independent_review_decision": "Confirmed the extraction and remaining access limitations.",
+        })
+        self.write_reports(document)
+        with self.assertRaisesRegex(ValidationError, "another reviewer"):
+            self.validate()
+
     def test_complete_report_is_accepted_when_every_field_is_adjudicated(self):
         document = copy.deepcopy(self.reports)
         self.mark_report_source_review_complete(document)
@@ -322,22 +336,28 @@ class Q3ExtractionTests(unittest.TestCase):
 
     def test_resolved_cohort_relationship_requires_two_source_specific_locators(self):
         path = self.extraction / "cohort-links.csv"
-        with path.open(newline="", encoding="utf-8") as stream:
-            rows = list(csv.DictReader(stream))
-        rows[0].update({
-            "relationship": "subset",
-            "direction_if_subset": "from_is_subset_of_to",
-            "from_locator": "experiments/q3/PREREGISTRATION.md",
-            "to_locator": "experiments/q3/PREREGISTRATION.md",
-            "reviewer_identity": "Reviewer A",
-            "decision_date": "2026-10-26",
-        })
-        with path.open("w", newline="", encoding="utf-8") as stream:
-            writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
-            writer.writeheader()
-            writer.writerows(rows)
-        with self.assertRaisesRegex(ValidationError, "resolved cohort locator must identify"):
-            self.validate()
+        for from_locator, to_locator in (
+                ("S18", "S19"),
+                ("PMC8714853.1", "PMC11471599.1")):
+            with path.open(newline="", encoding="utf-8") as stream:
+                rows = list(csv.DictReader(stream))
+            rows[0].update({
+                "relationship": "subset",
+                "direction_if_subset": "from_is_subset_of_to",
+                "from_locator": from_locator,
+                "to_locator": to_locator,
+                "reviewer_identity": "Reviewer A",
+                "decision_date": "2026-10-26",
+            })
+            with path.open("w", newline="", encoding="utf-8") as stream:
+                writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
+                writer.writeheader()
+                writer.writerows(rows)
+            with self.subTest(from_locator=from_locator):
+                with self.assertRaisesRegex(
+                        ValidationError,
+                        "resolved cohort locator must include its exact source version and location"):
+                    self.validate()
 
     def test_excluded_material_is_not_an_approved_review_direction(self):
         with (self.extraction / "source-review-log.csv").open(

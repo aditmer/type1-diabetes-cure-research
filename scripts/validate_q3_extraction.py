@@ -98,6 +98,20 @@ def _valid_date(value):
         return False
 
 
+def _identity_key(value):
+    return value.strip().casefold() if _nonempty(value) else ""
+
+
+def _has_source_locator_detail(value):
+    return re.search(
+        r"\b(?:section|table\s+\S+|figure\s+\S+|pages?\s*\d+|"
+        r"protocolsection(?:\.[\w]+)*|resultssection(?:\.[\w]+)*|"
+        r"history\s+(?:field|panel))\b",
+        value,
+        re.IGNORECASE,
+    ) is not None
+
+
 def _validate_public_content(value, location):
     if isinstance(value, dict):
         for key, item in value.items():
@@ -241,7 +255,8 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                      f"{spec['report_id']}: unreviewed scaffold cannot claim a reviewer")
         if not human["independent_review_pending"]:
             _require(log["review_complete"] == "true" and
-                     human["independent_reviewer_identity"] != log["reviewer_identity"],
+                     _identity_key(human["independent_reviewer_identity"]) !=
+                     _identity_key(log["reviewer_identity"]),
                      f"{spec['report_id']}: independent review requires completed source review by another reviewer")
         for key in ("version_evidence_note", "approved_review_directions",
                     "excluded_or_unreviewed_material", "access_attempts", "rights_and_access",
@@ -381,15 +396,12 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                      _nonempty(link["reviewer_identity"]) and
                      _valid_date(link["decision_date"]),
                      "resolved cohort relationships require two source locators and human adjudication")
-            for locator, source_row, owner in (
-                    (link["from_locator"], manifest[left_report["source_id"]], left_report),
-                    (link["to_locator"], manifest[right_report["source_id"]], right_report)):
-                identifiers = (
-                    owner["source_version_id"], source_row["identifier"],
-                    source_row.get("registry_id", ""), owner["source_id"],
-                )
-                _require(any(identifier and identifier in locator for identifier in identifiers),
-                         "resolved cohort locator must identify its corresponding source version")
+            for locator, owner in (
+                    (link["from_locator"], left_report),
+                    (link["to_locator"], right_report)):
+                version_id = owner["source_version_id"]
+                _require(version_id in locator and _has_source_locator_detail(locator),
+                         "resolved cohort locator must include its exact source version and location")
             for owner in (left_report, right_report):
                 review = review_by_id[owner["report_id"]]
                 _require(review["clinical_content_reviewed"] == "true" and
