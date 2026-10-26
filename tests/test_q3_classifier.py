@@ -816,6 +816,86 @@ class Q3ClassifierTests(unittest.TestCase):
                     unknowns = {f["field_id"] for f in result["unknown_flags"]}
                     self.assertIn(numerator_field, unknowns)
 
+    def test_positive_percentage_cannot_be_explained_only_by_zero_count(self):
+        cases = (
+            ("insulin_independence", "insulin_independence.value",
+             "insulin-independence percentage incompatible with analysis denominator"),
+            ("severe_hypoglycemia", "severe_hypoglycemia.participants_affected",
+             "hypoglycemia percentage incompatible with analysis denominator"),
+        )
+        for domain, numerator_field, error in cases:
+            for units, number in (("%", 0.1), ("proportion", 0.001)):
+                with self.subTest(domain=domain, units=units):
+                    document = baseline()
+                    change(document, domain + ".observation", "observed")
+                    change(document, domain + ".attribution", "target")
+                    change(document, domain + ".analysis_population", "target")
+                    change(document, domain + ".denominator_basis", "endpoint_analysis")
+                    change(document, domain + ".denominator", 10)
+                    change(document, numerator_field, status="inaccessible")
+                    if domain == "insulin_independence":
+                        change(document, "independence.none_through_horizon", False)
+                        change(document, "independence.onset", "Synthetic month 3")
+                        change(document, "independence.duration", "Synthetic one month")
+                    else:
+                        change(document, "severe_hypoglycemia.value",
+                               status="inaccessible")
+                    quantity = copy.deepcopy(field(document, numerator_field))
+                    quantity["field_id"] = domain + ".screen_quantity"
+                    document["reports"][0]["fields"].append(quantity)
+                    change(document, quantity["field_id"], {
+                        "value": number, "units": units,
+                        "measure": ("insulin_independence_percentage"
+                                    if domain == "insulin_independence" else
+                                    "participants_affected_percentage"),
+                        "window": "endpoint_interval",
+                    })
+                    seal(document)
+                    with self.assertRaisesRegex(InputError, error):
+                        classify(document)
+
+    def test_continuous_screen_quantity_proves_enrollment_without_reconstructing_counts(self):
+        measures = {
+            "insulin_dose": "insulin_dose_change_percentage",
+            "hba1c": "hba1c_change_percentage",
+            "cgm": "cgm_change_percentage",
+        }
+        for domain, measure in measures.items():
+            for number in (-0.2, 0.2):
+                with self.subTest(domain=domain, number=number):
+                    document = baseline()
+                    change(document, "target_enrolled", status="inaccessible")
+                    for count_name in ("enrolled", "treated", "followed",
+                                       "at_horizon", "withdrawals", "censored"):
+                        change(document, "counts." + count_name,
+                               status="inaccessible")
+                    for endpoint in DOMAINS:
+                        change(document, endpoint + ".observation",
+                               status="inaccessible")
+                        change(document, endpoint + ".value",
+                               status="inaccessible")
+                        change(document, endpoint + ".denominator",
+                               status="inaccessible")
+                        change(document, endpoint + ".denominator_basis",
+                               status="inaccessible")
+                    change(document, domain + ".observation", "observed")
+                    change(document, domain + ".attribution", "target")
+                    quantity = copy.deepcopy(field(document, domain + ".value"))
+                    quantity["field_id"] = domain + ".screen_quantity"
+                    document["reports"][0]["fields"].append(quantity)
+                    change(document, quantity["field_id"], {
+                        "value": number, "units": "%",
+                        "measure": measure, "window": "endpoint_interval",
+                    })
+                    result = self.result(document)
+                    self.assert_pair(result, "supported", "unresolved")
+                    unknowns = {f["field_id"] for f in result["unknown_flags"]}
+                    self.assertIn("target_enrolled", unknowns)
+                    self.assertIn("counts.enrolled", unknowns)
+                    self.assertEqual(
+                        result["predicates"]["provisional-v1.1"]["enrollment"],
+                        _result("met"))
+
     def test_positive_target_hypoglycemia_events_prove_enrollment_without_reconstructing_participants(self):
         document = baseline()
         change(document, "target_enrolled", status="inaccessible")

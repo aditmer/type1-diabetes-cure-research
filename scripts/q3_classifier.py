@@ -464,7 +464,8 @@ def _validate_consistency(fields):
                      "contradictory insulin-independence percentage and count")
         else:
             minimum, maximum = _feasible_integer_counts(
-                _percentage_value(quantity), denominator, 0, denominator)
+                _percentage_value(quantity), denominator,
+                1 if _percentage_value(quantity) > 0 else 0, denominator)
             _require(minimum <= maximum,
                      "insulin-independence percentage incompatible with analysis denominator")
     for fid in ("independence.onset", "independence.duration"):
@@ -505,9 +506,11 @@ def _validate_consistency(fields):
             minimum_events = 1 if events is not None and events > 0 else 0
             maximum_affected = min(events if events is not None else denominator,
                                    denominator)
+            minimum_affected_count = max(
+                minimum_events, 1 if _percentage_value(hypo_quantity) > 0 else 0)
             minimum_affected, maximum_affected = _feasible_integer_counts(
                 _percentage_value(hypo_quantity), denominator,
-                minimum_events, maximum_affected)
+                minimum_affected_count, maximum_affected)
             error = ("hypoglycemia percentage incompatible with event count"
                      if events is not None else
                      "hypoglycemia percentage incompatible with analysis denominator")
@@ -684,6 +687,16 @@ def _classify(report):
             for domain, measure in (
                 ("insulin_independence", "insulin_independence_percentage"),
                 ("severe_hypoglycemia", "participants_affected_percentage"))):
+        enrollment = _result("met")
+    elif any(
+            fields[domain + ".observation"]["status"] == "reported" and
+            fields[domain + ".observation"]["value"] == "observed" and
+            fields[domain + ".attribution"]["status"] == "reported" and
+            fields[domain + ".attribution"]["value"] == "target" and
+            domain + ".screen_quantity" in fields and
+            fields[domain + ".screen_quantity"]["status"] == "reported" and
+            fields[domain + ".screen_quantity"]["value"]["value"] is not None
+            for domain in ("insulin_dose", "hba1c", "cgm")):
         enrollment = _result("met")
     candidates = [_all([evaluated[d + ".observation"], evaluated[d + ".value"],
                         evaluated[d + ".attribution"]]) for d in DOMAINS]

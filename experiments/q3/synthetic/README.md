@@ -216,16 +216,20 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 200 tests, including 115 classifier tests.
+The review-corrected suite has 202 tests, including 117 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
 For comparable participant-analysis percentages, the engine verifies that at
 least one integer numerator within the stated rounding tolerance is possible
-when the numerator is unavailable; it does not infer or populate that count.
+when the numerator is unavailable; a positive percentage must have at least
+one possible participant, and the engine does not infer or populate that count.
 An observed target-attributed continuous endpoint result supplies evidence of
 target enrollment for provisional screening, but does not reconstruct global
-counts or relax harmonized denominator requirements.
+counts or relax harmonized denominator requirements. An observed target-
+attributed continuous screen quantity also supplies this provisional
+enrollment evidence for insulin dose, HbA1c and CGM, including signed changes;
+unknown counts remain unknown.
 
 Denominator consistency is basis-aware: a reported `endpoint_analysis` count
 is interpreted as participants and, when target-attributed, cannot exceed the
