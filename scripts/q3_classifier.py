@@ -363,13 +363,18 @@ def _validate_consistency(fields):
         if observation == "observed" and participant_denominator:
             _require(denominator != 0, "observed endpoint with zero analysis denominator")
     none = value("independence.none_through_horizon")
+    independence_window_comparable = (
+        value("insulin_independence.anchor") == "first_cell_administration" and
+        value("insulin_independence.horizon") in HORIZONS and
+        value("insulin_independence.interval_end") in HORIZONS and
+        value("insulin_independence.horizon") ==
+        value("insulin_independence.interval_end"))
     if none is True:
         if (value("insulin_independence.observation") == "observed" and
                 value("insulin_independence.attribution") == "target" and
                 value("insulin_independence.analysis_population") in
                 ("target", "documented_attrition_subset") and
-                value("insulin_independence.horizon") != "later_only" and
-                value("insulin_independence.interval_end") != "later_only"):
+                independence_window_comparable):
             _require(value("insulin_independence.value") in (None, 0),
                      "contradictory no-independence evidence")
     quantity = (value("insulin_independence.screen_quantity")
@@ -379,8 +384,28 @@ def _validate_consistency(fields):
             value("insulin_independence.attribution") == "target" and
             value("insulin_independence.analysis_population") in
             ("target", "documented_attrition_subset") and
-            quantity.get("window", "through_horizon") in ("through_horizon", "endpoint_interval")):
+            independence_window_comparable and
+            quantity.get("window", "through_horizon") in
+            ("through_horizon", "endpoint_interval")):
         _require(quantity["value"] == 0, "contradictory no-independence screen quantity")
+    if (quantity is not None and
+            quantity.get("measure") == "insulin_independence_percentage" and
+            quantity.get("window") == "endpoint_interval" and
+            quantity.get("units", "").strip().lower() in ("%", "percent", "percentage") and
+            value("insulin_independence.observation") == "observed" and
+            value("insulin_independence.attribution") == "target" and
+            value("insulin_independence.analysis_population") in
+            ("target", "documented_attrition_subset") and
+            value("insulin_independence.denominator_basis") == "endpoint_analysis" and
+            type(value("insulin_independence.denominator")) is int and
+            value("insulin_independence.denominator") > 0 and
+            independence_window_comparable):
+        numerator = value("insulin_independence.value")
+        denominator = value("insulin_independence.denominator")
+        if numerator is not None:
+            expected_percent = 100 * numerator / denominator
+            _require(abs(quantity["value"] - expected_percent) <= 0.5,
+                     "contradictory insulin-independence percentage and count")
     for fid in ("independence.onset", "independence.duration"):
         if fields[fid]["status"] == "not_applicable":
             _require(none is True, "zero at horizon does not prove no earlier independence")
@@ -394,6 +419,11 @@ def _validate_consistency(fields):
             value("severe_hypoglycemia.attribution") == "target" and
             value("severe_hypoglycemia.analysis_population") in
             ("target", "documented_attrition_subset") and
+            value("severe_hypoglycemia.anchor") == "first_cell_administration" and
+            value("severe_hypoglycemia.horizon") in HORIZONS and
+            value("severe_hypoglycemia.interval_end") in HORIZONS and
+            value("severe_hypoglycemia.horizon") ==
+            value("severe_hypoglycemia.interval_end") and
             value("severe_hypoglycemia.denominator_basis") == "endpoint_analysis" and
             type(value("severe_hypoglycemia.denominator")) is int and
             value("severe_hypoglycemia.denominator") > 0):

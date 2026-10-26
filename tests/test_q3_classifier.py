@@ -729,6 +729,67 @@ class Q3ClassifierTests(unittest.TestCase):
         self.assert_pair(result, "supported", "not_supported")
         self.assert_reason(result, "WINDOW_MISMATCH")
 
+    def test_repeat_anchor_independence_count_reaches_classification(self):
+        document = baseline()
+        change(document, "independence.none_through_horizon", True)
+        change(document, "insulin_independence.value", 1)
+        change(document, "insulin_independence.anchor", "repeat_administration")
+        result = self.result(document)
+        self.assert_pair(result, "supported", "not_supported")
+        self.assert_reason(result, "ANCHOR_MISMATCH")
+
+    def test_independence_percentage_matches_count_and_denominator(self):
+        for percent in (50, 49.6):
+            document = baseline()
+            change(document, "independence.none_through_horizon", False)
+            change(document, "independence.onset", "Synthetic month 3")
+            change(document, "independence.duration", "Synthetic one month")
+            change(document, "insulin_independence.value", 5)
+            quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+            quantity["field_id"] = "insulin_independence.screen_quantity"
+            document["reports"][0]["fields"].append(quantity)
+            change(document, "insulin_independence.screen_quantity", {
+                "value": percent, "units": "%",
+                "measure": "insulin_independence_percentage",
+                "window": "endpoint_interval",
+            })
+            self.assert_pair(self.result(document), "supported", "supported")
+
+    def test_mismatched_independence_percentage_is_rejected(self):
+        document = baseline()
+        change(document, "independence.none_through_horizon", False)
+        change(document, "independence.onset", "Synthetic month 3")
+        change(document, "independence.duration", "Synthetic one month")
+        change(document, "insulin_independence.value", 5)
+        quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+        quantity["field_id"] = "insulin_independence.screen_quantity"
+        document["reports"][0]["fields"].append(quantity)
+        change(document, "insulin_independence.screen_quantity", {
+            "value": 90, "units": "%",
+            "measure": "insulin_independence_percentage",
+            "window": "endpoint_interval",
+        })
+        seal(document)
+        with self.assertRaisesRegex(InputError, "contradictory insulin-independence"):
+            classify(document)
+
+    def test_later_independence_percentage_is_not_compared_to_horizon_absence(self):
+        document = baseline()
+        change(document, "insulin_independence.value", 1)
+        change(document, "insulin_independence.horizon", "later_only")
+        change(document, "insulin_independence.interval_end", "later_only")
+        quantity = copy.deepcopy(field(document, "insulin_independence.value"))
+        quantity["field_id"] = "insulin_independence.screen_quantity"
+        document["reports"][0]["fields"].append(quantity)
+        change(document, "insulin_independence.screen_quantity", {
+            "value": 25, "units": "%",
+            "measure": "insulin_independence_percentage",
+            "window": "endpoint_interval",
+        })
+        result = self.result(document)
+        self.assert_pair(result, "supported", "not_supported")
+        self.assert_reason(result, "WINDOW_MISMATCH")
+
     def test_unmatched_hypoglycemia_quantity_metadata_is_not_compared(self):
         for measure, window, units in (
                 ("event_rate", "endpoint_interval", "%"),
