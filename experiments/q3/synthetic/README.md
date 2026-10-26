@@ -216,7 +216,7 @@ contradiction. A reported global enrolled count of zero supplies no-enrollment
 proof for label precedence even when `target_enrolled` is unknown; its original
 unknown field flag and other uncertainty/failure reasons remain visible.
 
-The review-corrected suite has 195 tests, including 110 classifier tests.
+The review-corrected suite has 196 tests, including 111 classifier tests.
 All seven controls and separate-process deterministic regeneration remain
 required. These checks do not constitute independent G2 acceptance.
 
@@ -327,8 +327,11 @@ A source-reported positive `counts.enrolled` now proves aggregate enrollment
 even when `target_enrolled` is unknown. Positive observed target-attributed
 participant-analysis denominators, insulin-independence counts, and
 hypoglycemia affected-participant counts also establish that some target
-participants enrolled. Planned or contextual observations and device
-denominators do not. The Boolean and missing enrolled-total unknown flags are
+participants enrolled. A positive observed target-attributed hypoglycemia
+event count is likewise evidence that target participants enrolled, but does
+not reconstruct the number affected or any denominator. Planned or contextual
+observations and device denominators do not. The Boolean and missing
+enrolled-total unknown flags are
 preserved, so harmonization remains unresolved when required global counts are
 unknown. With no such proof, enrollment remains unknown; a reported zero
 establishes no-enrollment precedence. Schema/provenance validation does not

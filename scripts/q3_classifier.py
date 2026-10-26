@@ -638,7 +638,10 @@ def _classify(report):
                 fields[domain + ".value"]["value"] > 0 or
                 domain == "severe_hypoglycemia" and
                 fields[domain + ".participants_affected"]["status"] == "reported" and
-                fields[domain + ".participants_affected"]["value"] > 0)
+                fields[domain + ".participants_affected"]["value"] > 0 or
+                domain == "severe_hypoglycemia" and
+                fields[domain + ".value"]["status"] == "reported" and
+                fields[domain + ".value"]["value"] > 0)
             for domain in DOMAINS):
         enrollment = _result("met")
     elif any(

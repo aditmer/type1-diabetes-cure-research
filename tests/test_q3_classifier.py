@@ -636,6 +636,7 @@ class Q3ClassifierTests(unittest.TestCase):
                 change(document, "counts." + name, status="not_yet_extracted")
             for domain in DOMAINS:
                 change(document, domain + ".denominator", status="inaccessible")
+            change(document, "severe_hypoglycemia.value", status="inaccessible")
             change(document, "severe_hypoglycemia.participants_affected",
                    status="inaccessible")
             result = self.result(document)
@@ -655,6 +656,7 @@ class Q3ClassifierTests(unittest.TestCase):
                         change(document, "counts." + name, status="inaccessible")
                 for domain in DOMAINS:
                     change(document, domain + ".denominator", status="inaccessible")
+                change(document, "severe_hypoglycemia.value", status="inaccessible")
                 change(document, "severe_hypoglycemia.participants_affected",
                        status="inaccessible")
                 result = self.result(document)
@@ -664,7 +666,8 @@ class Q3ClassifierTests(unittest.TestCase):
                 self.assertIn("counts.enrolled", unknowns)
 
     def test_observed_target_participant_evidence_proves_enrollment(self):
-        for proof in ("analysis_denominator", "independence_count", "hypoglycemia_affected"):
+        for proof in ("analysis_denominator", "independence_count",
+                      "hypoglycemia_affected", "hypoglycemia_events"):
             with self.subTest(proof=proof):
                 document = baseline()
                 change(document, "target_enrolled", status="inaccessible")
@@ -673,6 +676,7 @@ class Q3ClassifierTests(unittest.TestCase):
                     change(document, "counts." + name, status="inaccessible")
                 for domain in DOMAINS:
                     change(document, domain + ".denominator", status="inaccessible")
+                change(document, "severe_hypoglycemia.value", status="inaccessible")
                 change(document, "severe_hypoglycemia.participants_affected",
                        status="inaccessible")
                 if proof == "analysis_denominator":
@@ -685,13 +689,40 @@ class Q3ClassifierTests(unittest.TestCase):
                     change(document, "insulin_independence.value", 1)
                 else:
                     change(document, "severe_hypoglycemia.value", 1)
-                    change(document, "severe_hypoglycemia.participants_affected", 1)
+                    if proof == "hypoglycemia_affected":
+                        change(document, "severe_hypoglycemia.participants_affected", 1)
                 result = self.result(document)
                 self.assert_pair(result, "supported", "unresolved")
                 self.assertIn("counts.enrolled",
                               {f["field_id"] for f in result["unknown_flags"]})
                 self.assertEqual(result["predicates"]["provisional-v1.1"]["enrollment"],
                                  _result("met"))
+
+    def test_positive_target_hypoglycemia_events_prove_enrollment_without_reconstructing_participants(self):
+        document = baseline()
+        change(document, "target_enrolled", status="inaccessible")
+        for name in ("enrolled", "treated", "followed", "at_horizon",
+                     "withdrawals", "censored"):
+            change(document, "counts." + name, status="inaccessible")
+        for domain in DOMAINS:
+            change(document, domain + ".observation", status="inaccessible")
+            change(document, domain + ".value", status="inaccessible")
+            change(document, domain + ".denominator", status="inaccessible")
+            change(document, domain + ".denominator_basis", status="inaccessible")
+        change(document, "severe_hypoglycemia.observation", "observed")
+        change(document, "severe_hypoglycemia.attribution", "target")
+        change(document, "severe_hypoglycemia.value", 8)
+        change(document, "severe_hypoglycemia.participants_affected",
+               status="inaccessible")
+
+        result = self.result(document)
+        self.assert_pair(result, "supported", "unresolved")
+        unknowns = {f["field_id"] for f in result["unknown_flags"]}
+        self.assertIn("target_enrolled", unknowns)
+        self.assertIn("counts.enrolled", unknowns)
+        self.assertIn("severe_hypoglycemia.participants_affected", unknowns)
+        self.assertEqual(result["predicates"]["provisional-v1.1"]["enrollment"],
+                         _result("met"))
 
     def test_planned_contextual_and_device_counts_do_not_prove_enrollment(self):
         for change_field, value in (
