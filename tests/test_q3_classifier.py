@@ -555,9 +555,31 @@ class Q3ClassifierTests(unittest.TestCase):
             document = baseline()
             change(document, "target_enrolled", status=status)
             change(document, "counts.enrolled", status="not_yet_extracted")
+            for name in ("treated", "followed", "at_horizon", "withdrawals", "censored"):
+                change(document, "counts." + name, status="not_yet_extracted")
             result = self.result(document)
             self.assert_pair(result, "unresolved", "unresolved")
             self.assert_reason(result, "TARGET_ENROLLMENT_UNKNOWN")
+
+    def test_positive_target_participant_counts_prove_enrollment_only_for_screen(self):
+        for count_field in ("treated", "followed", "at_horizon", "withdrawals", "censored"):
+            with self.subTest(count_field=count_field):
+                document = baseline()
+                change(document, "target_enrolled", status="inaccessible")
+                change(document, "counts.enrolled", status="inaccessible")
+                for name in ("treated", "followed", "at_horizon", "withdrawals", "censored"):
+                    if name == count_field:
+                        change(document, "counts." + name, 1)
+                    else:
+                        change(document, "counts." + name, status="inaccessible")
+                if count_field == "at_horizon":
+                    for domain in ("insulin_dose", "hba1c", "cgm"):
+                        change(document, domain + ".denominator", 1)
+                result = self.result(document)
+                self.assert_pair(result, "supported", "unresolved")
+                unknowns = {f["field_id"] for f in result["unknown_flags"]}
+                self.assertIn("target_enrolled", unknowns)
+                self.assertIn("counts.enrolled", unknowns)
 
     def test_positive_enrollment_count_proves_enrollment_preserving_unknown_boolean(self):
         for status in ("not_yet_extracted", "inaccessible", "conflicting",

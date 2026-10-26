@@ -496,6 +496,10 @@ def _classify(report):
         enrollment = _result("unmet", "NO_TARGET_ENROLLMENT", *enrollment["reason_codes"])
     elif fields["counts.enrolled"]["status"] == "reported" and fields["counts.enrolled"]["value"] > 0:
         enrollment = _result("met")
+    elif any(fields["counts." + name]["status"] == "reported" and
+             fields["counts." + name]["value"] > 0
+             for name in ("treated", "followed", "at_horizon", "withdrawals", "censored")):
+        enrollment = _result("met")
     candidates = [_all([evaluated[d + ".observation"], evaluated[d + ".value"],
                         evaluated[d + ".attribution"]]) for d in DOMAINS]
     candidates.append(_all([evaluated["severe_hypoglycemia.observation"],
