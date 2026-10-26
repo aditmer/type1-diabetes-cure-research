@@ -165,6 +165,83 @@ class Q3ExtractionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValidationError, "typed value and locator"):
             self.validate()
 
+    def test_rejects_excluded_or_unreviewed_material_in_field_locators(self):
+        for source_id, field_id, locator in (
+                ("S18", "identity.population", "PMC8714853.1, mmc2.xlsx"),
+                ("S19", "identity.population", "PMC11471599.1, MOESM4 Table 1")):
+            document = copy.deepcopy(self.reports)
+            report = next(r for r in document["reports"] if r["source_id"] == source_id)
+            self.field(report, field_id)["locator"] = [locator]
+            self.write_reports(document)
+            with self.subTest(source_id=source_id):
+                with self.assertRaisesRegex(ValidationError, "excluded or unreviewed source component"):
+                    self.validate()
+
+    def test_rejects_inconsistent_reported_counts(self):
+        document = copy.deepcopy(self.reports)
+        report = document["reports"][0]
+        for field_id, value in (("counts.enrolled", 1), ("counts.treated", 2)):
+            self.field(report, field_id).update(
+                status="reported",
+                value=value,
+                locator=["DailyMed SPL v3, section 14"],
+                review_scope="The source count was reviewed.",
+                reason_codes=[],
+                review_complete=True,
+            )
+        report["source_record"]["source_material_reviewed"] = True
+        report["human_review"]["reviewer_identity"] = "Reviewer A"
+        report["human_review"]["decision_date"] = "2026-10-26"
+        self.write_reports(document)
+        self.update_review_log(
+            "S13",
+            clinical_content_reviewed="true",
+            material_reviewed="DailyMed SPL v3, section 14",
+            reviewer_identity="Reviewer A",
+            decision_date="2026-10-26",
+            review_status="source_review_in_progress",
+        )
+        with self.assertRaisesRegex(ValidationError, "contradictory field records: contradictory global counts"):
+            self.validate()
+
+    def test_independence_not_applicable_requires_no_independence_evidence(self):
+        document = copy.deepcopy(self.reports)
+        report = document["reports"][0]
+        none = self.field(report, "independence.none_through_horizon")
+        none.update(
+            status="reported",
+            value=False,
+            locator=["DailyMed SPL v3, section 14"],
+            review_scope="The source's independence statement was reviewed.",
+            reason_codes=[],
+            review_complete=True,
+        )
+        onset = self.field(report, "independence.onset")
+        onset.update(
+            status="not_applicable",
+            locator=["DailyMed SPL v3, section 14"],
+            review_scope="Source confirms no independence through the horizon.",
+            reason_codes=[],
+            review_complete=True,
+            structural_basis="No target participant achieved independence through the source-defined horizon.",
+        )
+        report["source_record"]["source_material_reviewed"] = True
+        report["human_review"]["reviewer_identity"] = "Reviewer A"
+        report["human_review"]["decision_date"] = "2026-10-26"
+        self.write_reports(document)
+        self.update_review_log(
+            "S13",
+            clinical_content_reviewed="true",
+            material_reviewed="DailyMed SPL v3, section 14",
+            reviewer_identity="Reviewer A",
+            decision_date="2026-10-26",
+            review_status="source_review_in_progress",
+        )
+        with self.assertRaisesRegex(
+                ValidationError,
+                "contradictory field records: zero at horizon does not prove no earlier independence"):
+            self.validate()
+
     def test_accepts_a_human_reviewed_source_fact_without_claiming_full_report_review(self):
         document = copy.deepcopy(self.reports)
         report = document["reports"][0]
@@ -546,7 +623,43 @@ class Q3ExtractionTests(unittest.TestCase):
             writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
             writer.writeheader()
             writer.writerows(rows)
-        with self.assertRaisesRegex(ValidationError, "resolved cohort relationships require reviewed source content"):
+        with self.assertRaisesRegex(ValidationError, "cohort decisions require reviewed source content for both reports"):
+            self.validate()
+
+    def test_accepts_reviewed_uncertain_cohort_decision_with_provenance(self):
+        resolved = {
+            frozenset(("pec-s18-target", "pec-s19-target")): (
+                "uncertain", "", "PMC8714853.1, Results section",
+                "PMC11471599.1, Results section", "Reviewer A",
+            ),
+        }
+        self.write_resolved_links(resolved)
+        self._mark_pec_sources_reviewed()
+        self.assertEqual(self.validate()[2], 6)
+
+    def test_s23_reviewed_uncertain_decision_requires_assigned_reviewer(self):
+        resolved = {
+            frozenset(("pec-s18-target", "pec-s23-target")): (
+                "uncertain", "", "PMC8714853.1, Results section",
+                "publisher-pdf-human-copy-2026-10-23, Table 1", "Reviewer A",
+            ),
+        }
+        self.write_resolved_links(resolved)
+        self._mark_pec_sources_reviewed()
+        with self.assertRaisesRegex(ValidationError, "S23 cohort adjudication is restricted"):
+            self.validate()
+
+    def test_rejects_partial_provenance_for_uncertain_cohort_decision(self):
+        path = self.extraction / "cohort-links.csv"
+        with path.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        rows[0]["reviewer_identity"] = "Reviewer A"
+        rows[0]["decision_date"] = "2026-10-26"
+        with path.open("w", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=LINK_COLUMNS)
+            writer.writeheader()
+            writer.writerows(rows)
+        with self.assertRaisesRegex(ValidationError, "reviewed cohort decisions require two source locators"):
             self.validate()
 
     def test_resolved_cohort_relationship_requires_two_source_specific_locators(self):
@@ -618,10 +731,21 @@ class Q3ExtractionTests(unittest.TestCase):
             self.validate()
 
     def test_rejects_private_paths_or_credential_like_content(self):
-        document = copy.deepcopy(self.reports)
-        document["reports"][0]["source_record"]["rights_notes"] = "/Users/private/source.pdf"
-        self.write_reports(document)
-        with self.assertRaisesRegex(ValidationError, "private path or credential"):
+        for path in (
+                "/Users/private/source.pdf",
+                "/home/reviewer/private/source.pdf",
+                "/tmp/reviewer/source.pdf",
+                "C:\\Users\\reviewer\\private\\source.pdf"):
+            document = copy.deepcopy(self.reports)
+            document["reports"][0]["source_record"]["rights_notes"] = path
+            self.write_reports(document)
+            with self.subTest(path=path):
+                with self.assertRaisesRegex(ValidationError, "private path or credential"):
+                    self.validate()
+
+    def test_review_log_evidence_class_must_match_report_provenance(self):
+        self.update_review_log("S13", version_evidence_class="version_specific_locator")
+        with self.assertRaisesRegex(ValidationError, "review log provenance mismatch"):
             self.validate()
 
     def test_no_scientific_classification_or_tracker_mutation_is_introduced(self):

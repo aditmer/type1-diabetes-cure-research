@@ -48,8 +48,11 @@ particular, the assigned S23 human review was not performed by this automation.
   publication relationships remain unresolved. Resolved links require
   exact source-version identifiers and specific locators for both records,
   actual content-review evidence for both reports, and the human adjudicator
-  and date. Subset direction can point either way while canonical row
-  ordering remains fixed.
+  and date. A reviewer may retain `uncertain` after reviewing both sources;
+  when doing so, record the same source-specific locators, reviewer, and date
+  rather than leaving the relationship indistinguishable from untouched
+  scaffold. Subset direction can point either way while canonical row ordering
+  remains fixed.
 - `tracker-corrections.csv` is a separate, currently empty correction ledger.
   It is not consumed as source evidence. Use only `LEDGER_EXTRACTION_GAP`,
   `LEDGER_EXTRACTION_ERROR`, or `SOURCE_VERSION_CHANGE`, with the original
@@ -177,10 +180,12 @@ types and provenance, checks review evidence for omissions/inapplicability,
 validates cohort vocabulary and correction separation, and rejects
 subset cycles and contradictory distinct relationships by directed
 subset-reachability (shared larger cohorts are allowed; a known shared
-subcohort is not). It also rejects credential-like content and private
-filesystem paths. It does not verify the truth of source facts or substitute
-for human rights/access review. The existing classifier remains synthetic-only;
-this package adds no real-source classification path.
+subcohort is not). Shared classifier consistency checks also reject
+contradictory field records. Excluded S18/S19 components cannot be cited in
+field locators, and private filesystem paths and mismatched version-evidence
+classes are rejected. It does not verify the truth of source facts or
+substitute for human rights/access review. The existing classifier remains
+synthetic-only; this package adds no real-source classification path.
 
 At this stage, **all eight reports are pending source-content review**, all
 968 fields are `not_yet_extracted`, all six PEC-Direct links remain

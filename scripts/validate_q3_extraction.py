@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if __package__ in (None, ""):
     sys.path.insert(0, str(ROOT))
 
-from scripts.q3_classifier import SPECS, _valid_value
+from scripts.q3_classifier import InputError, SPECS, _valid_value, _validate_consistency
 
 
 Q3 = ROOT / "experiments" / "q3"
@@ -61,7 +61,9 @@ CORRECTION_COLUMNS = (
     "source_version_id", "locator", "rationale",
 )
 PRIVATE_PATTERNS = (
-    re.compile(r"(?:^|[\s=:])/(?:Users|Volumes|private)/", re.IGNORECASE),
+    re.compile(r"(?:^|[\s=:])/(?:Users|Volumes|private|home|root|tmp|var/tmp)(?:/|$)",
+               re.IGNORECASE),
+    re.compile(r"(?:^|[\s=:])(?:[A-Za-z]:[\\/]|\\\\)"),
     re.compile(r"\b(?:private-archive-alias|OD-S19)-", re.IGNORECASE),
     re.compile(r"\b(?:authorization:\s*bearer|access_token\s*=|session_token\s*=)",
                re.IGNORECASE),
@@ -198,6 +200,16 @@ def _validate_public_content(value, location):
                      f"{location}: private path or credential-like content is prohibited")
 
 
+def _validate_field_locator_scope(locator, source_id, location):
+    excluded_component = {
+        "S18": re.compile(r"\bmmc2(?:\.xlsx)?\b", re.IGNORECASE),
+        "S19": re.compile(r"\bMOESM4\b", re.IGNORECASE),
+    }.get(source_id)
+    if excluded_component:
+        _require(not excluded_component.search(locator),
+                 f"{location}: excluded or unreviewed source component in field locator")
+
+
 def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
     """Validate ledger identity, field provenance, review evidence and separate logs."""
     rules = json.loads((q3_dir / "rules-v1.1.json").read_text(encoding="utf-8"))
@@ -294,7 +306,8 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
         log = review_by_id[spec["report_id"]]
         _require(log["source_id"] == spec["source_id"] and
                  log["program_id"] == spec["program_id"] and
-                 log["source_version_id"] == report["source_version_id"],
+                 log["source_version_id"] == report["source_version_id"] and
+                 log["version_evidence_class"] == evidence_class,
                  f"{spec['report_id']}: review log provenance mismatch")
         _require(log["clinical_content_reviewed"] in ("true", "false") and
                  log["source_content_review_complete"] in ("true", "false") and
@@ -380,6 +393,9 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
             _require(isinstance(field["locator"], list) and
                      all(_nonempty(loc) for loc in field["locator"]),
                      f"{spec['report_id']}/{fid}: invalid evidence locator")
+            for locator in field["locator"]:
+                _validate_field_locator_scope(locator, spec["source_id"],
+                                              f"{spec['report_id']}/{fid}")
             _require(_nonempty(field["review_scope"]) and
                      _nonempty(field["adjudication_note"]) and
                      type(field["review_complete"]) is bool and
@@ -439,6 +455,13 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                          f"{spec['report_id']}/{fid}: unsupported or unevidenced inapplicability")
             _validate_public_content(field, f"{spec['report_id']}/{fid}")
 
+        try:
+            _validate_consistency({field["field_id"]: field for field in fields})
+        except InputError as exc:
+            raise ValidationError(
+                f"{spec['report_id']}: contradictory field records: {exc}"
+            ) from exc
+
         if log["clinical_content_reviewed"] == "true":
             _require(any(field["status"] != "inaccessible" for field in fields),
                      f"{spec['report_id']}: inaccessible fields cannot be the only claimed clinical review")
@@ -488,15 +511,14 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
         else:
             _require(not link["direction_if_subset"],
                      "only subset relationships may specify a direction")
-        if link["relationship"] == "uncertain":
-            _require(not _nonempty(link["reviewer_identity"]) and
-                     not _nonempty(link["decision_date"]),
-                     "uncertain cohort relationships cannot claim completed adjudication")
-        else:
+        has_review_evidence = any(_nonempty(link[key]) for key in (
+            "from_locator", "to_locator", "reviewer_identity", "decision_date",
+        ))
+        if link["relationship"] != "uncertain" or has_review_evidence:
             _require(_nonempty(link["from_locator"]) and _nonempty(link["to_locator"]) and
                      _nonempty(link["reviewer_identity"]) and
                      _valid_date(link["decision_date"]),
-                     "resolved cohort relationships require two source locators and human adjudication")
+                     "reviewed cohort decisions require two source locators and human adjudication")
             for locator, owner in (
                     (link["from_locator"], left_report),
                     (link["to_locator"], right_report)):
@@ -508,7 +530,7 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                 _require(review["clinical_content_reviewed"] == "true" and
                          _nonempty(review["reviewer_identity"]) and
                          _valid_date(review["decision_date"]),
-                         "resolved cohort relationships require reviewed source content for both reports")
+                         "reviewed cohort decisions require reviewed source content for both reports")
             if "S23" in (left_report["source_id"], right_report["source_id"]):
                 _require(link["reviewer_identity"] == S23_ASSIGNED_REVIEWER,
                          "S23 cohort adjudication is restricted to the assigned Path B reviewer")
