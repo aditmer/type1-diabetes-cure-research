@@ -94,7 +94,10 @@ The six exact statuses are `reported`,
 `conflicting`, and `not_applicable`, as defined by
 `experiments/q3/rules-v1.1.json`. Use `reported` only with a typed,
 source-supported value and exact locator, including source-reported zero,
-false, or unfavorable values. Other statuses retain a null value and their
+false, or unfavorable values. Every field locator must name the exact approved
+source-version identifier carried by that report and a specific page, section,
+table, figure, or history field; copied version metadata alone does not bind a
+citation to the source. Other statuses retain a null value and their
 required review/access/conflict evidence. A completed omission requires
 completed human review of the relevant permitted material; an unreviewed
 supplement cannot establish omission. Conflicts need both locators. Structural

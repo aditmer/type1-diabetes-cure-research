@@ -160,15 +160,19 @@ class Q3ExtractionTests(unittest.TestCase):
     def test_reported_fields_require_typed_values_and_locators(self):
         document = copy.deepcopy(self.reports)
         field = self.field(document["reports"][0], "population_identified")
-        field.update(status="reported", value="true", locator=["public locator"])
+        field.update(
+            status="reported",
+            value="true",
+            locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14"],
+        )
         self.write_reports(document)
         with self.assertRaisesRegex(ValidationError, "typed value and locator"):
             self.validate()
 
     def test_rejects_excluded_or_unreviewed_material_in_field_locators(self):
         for source_id, field_id, locator in (
-                ("S18", "identity.population", "PMC8714853.1, mmc2.xlsx"),
-                ("S19", "identity.population", "PMC11471599.1, MOESM4 Table 1")):
+                ("S18", "identity.population", "PMC8714853.1, mmc2.xlsx, Table 1"),
+                ("S19", "identity.population", "PMC11471599.1, MOESM4, Table 1")):
             document = copy.deepcopy(self.reports)
             report = next(r for r in document["reports"] if r["source_id"] == source_id)
             self.field(report, field_id)["locator"] = [locator]
@@ -177,6 +181,35 @@ class Q3ExtractionTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValidationError, "excluded or unreviewed source component"):
                     self.validate()
 
+    def test_field_locator_must_match_its_approved_source_version(self):
+        document = copy.deepcopy(self.reports)
+        report = next(r for r in document["reports"] if r["source_id"] == "S18")
+        field = self.field(report, "population_identified")
+        field.update(
+            status="reported",
+            value=True,
+            locator=["PMC11471599.1, Table 1"],
+            review_scope="The population definition was reviewed.",
+            reason_codes=[],
+            review_complete=True,
+        )
+        report["source_record"]["source_material_reviewed"] = True
+        report["human_review"]["reviewer_identity"] = "Reviewer A"
+        report["human_review"]["decision_date"] = "2026-10-26"
+        self.write_reports(document)
+        self.update_review_log(
+            "S18",
+            clinical_content_reviewed="true",
+            material_reviewed="PMC8714853.1, population section",
+            reviewer_identity="Reviewer A",
+            decision_date="2026-10-26",
+            review_status="source_review_in_progress",
+        )
+        with self.assertRaisesRegex(
+                ValidationError,
+                "evidence locator must include its exact source version and location"):
+            self.validate()
+
     def test_rejects_inconsistent_reported_counts(self):
         document = copy.deepcopy(self.reports)
         report = document["reports"][0]
@@ -184,7 +217,7 @@ class Q3ExtractionTests(unittest.TestCase):
             self.field(report, field_id).update(
                 status="reported",
                 value=value,
-                locator=["DailyMed SPL v3, section 14"],
+                locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14"],
                 review_scope="The source count was reviewed.",
                 reason_codes=[],
                 review_complete=True,
@@ -211,7 +244,7 @@ class Q3ExtractionTests(unittest.TestCase):
         none.update(
             status="reported",
             value=False,
-            locator=["DailyMed SPL v3, section 14"],
+            locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14"],
             review_scope="The source's independence statement was reviewed.",
             reason_codes=[],
             review_complete=True,
@@ -219,7 +252,7 @@ class Q3ExtractionTests(unittest.TestCase):
         onset = self.field(report, "independence.onset")
         onset.update(
             status="not_applicable",
-            locator=["DailyMed SPL v3, section 14"],
+            locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14"],
             review_scope="Source confirms no independence through the horizon.",
             reason_codes=[],
             review_complete=True,
@@ -249,7 +282,7 @@ class Q3ExtractionTests(unittest.TestCase):
         field.update(
             status="reported",
             value=True,
-            locator=["main article, page 2"],
+            locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 2"],
             review_scope="Population definition on page 2 reviewed.",
             reason_codes=[],
             review_complete=True,
@@ -277,7 +310,7 @@ class Q3ExtractionTests(unittest.TestCase):
         field = self.field(report, "population_identified")
         field.update(
             status="unreported_in_reviewed_material",
-            locator=["main article, pages 1-3"],
+            locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 2"],
             review_scope="The complete relevant population description was reviewed.",
             reason_codes=[],
             review_complete=True,
@@ -383,7 +416,7 @@ class Q3ExtractionTests(unittest.TestCase):
         field = self.field(report, "population_identified")
         field.update(
             status="unreported_in_reviewed_material",
-            locator=["page 1"],
+            locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14"],
             review_complete=True,
         )
         self.write_reports(document)
@@ -395,7 +428,10 @@ class Q3ExtractionTests(unittest.TestCase):
         field = self.field(document["reports"][0], "population_identified")
         field.update(
             status="conflicting",
-            locator=["page 1"],
+            locator=[
+                "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 2",
+                "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14",
+            ],
             reason_codes=["SOURCE_CONFLICT"],
         )
         self.write_reports(document)
@@ -405,7 +441,11 @@ class Q3ExtractionTests(unittest.TestCase):
     def test_structural_inapplicability_requires_allowed_field_and_rationale(self):
         document = copy.deepcopy(self.reports)
         field = self.field(document["reports"][0], "target_enrolled")
-        field.update(status="not_applicable", locator=["page 1"], review_complete=True)
+        field.update(
+            status="not_applicable",
+            locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14"],
+            review_complete=True,
+        )
         self.write_reports(document)
         with self.assertRaisesRegex(ValidationError, "unsupported or unevidenced"):
             self.validate()

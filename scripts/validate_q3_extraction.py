@@ -200,7 +200,9 @@ def _validate_public_content(value, location):
                      f"{location}: private path or credential-like content is prohibited")
 
 
-def _validate_field_locator_scope(locator, source_id, location):
+def _validate_field_locator_scope(locator, source_id, source_version_id, location):
+    _require(source_version_id in locator and _has_source_locator_detail(locator),
+             f"{location}: evidence locator must include its exact source version and location")
     excluded_component = {
         "S18": re.compile(r"\bmmc2(?:\.xlsx)?\b", re.IGNORECASE),
         "S19": re.compile(r"\bMOESM4\b", re.IGNORECASE),
@@ -395,6 +397,7 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                      f"{spec['report_id']}/{fid}: invalid evidence locator")
             for locator in field["locator"]:
                 _validate_field_locator_scope(locator, spec["source_id"],
+                                              report["source_version_id"],
                                               f"{spec['report_id']}/{fid}")
             _require(_nonempty(field["review_scope"]) and
                      _nonempty(field["adjudication_note"]) and
@@ -526,7 +529,7 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                 _require(version_id in locator and _has_source_locator_detail(locator),
                          "resolved cohort locator must include its exact source version and location")
                 _validate_field_locator_scope(
-                    locator, owner["source_id"], "cohort-links.csv"
+                    locator, owner["source_id"], version_id, "cohort-links.csv"
                 )
             for owner in (left_report, right_report):
                 review = review_by_id[owner["report_id"]]
