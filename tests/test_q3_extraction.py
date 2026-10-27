@@ -542,6 +542,42 @@ class Q3ExtractionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValidationError, "contradictory subset cycle"):
             self.validate()
 
+    def test_documented_s18_s23_overlap_survives_same_population_normalization(self):
+        resolved = {
+            frozenset(("pec-s18-target", "pec-s19-target")): (
+                "same", "", "PMC8714853.1, Results section",
+                "PMC11471599.1, Results section", "Reviewer A",
+            ),
+            frozenset(("pec-s19-target", "pec-s23-target")): (
+                "distinct_within_program", "", "PMC11471599.1, Results section",
+                "publisher-pdf-human-copy-2026-10-23, Table 1", "@aditmer",
+            ),
+        }
+        self.write_resolved_links(resolved)
+        self._mark_pec_sources_reviewed()
+        with self.assertRaisesRegex(
+                ValidationError,
+                "distinct populations contradict documented overlap"):
+            self.validate()
+
+    def test_documented_overlap_rejects_distinct_supersets_of_s18_s23(self):
+        resolved = {
+            frozenset(("pec-s18-target", "pec-s19-target")): (
+                "subset", "from_is_subset_of_to", "PMC8714853.1, Results section",
+                "PMC11471599.1, Results section", "Reviewer A",
+            ),
+            frozenset(("pec-s19-target", "pec-s23-target")): (
+                "distinct_within_program", "", "PMC11471599.1, Results section",
+                "publisher-pdf-human-copy-2026-10-23, Table 1", "@aditmer",
+            ),
+        }
+        self.write_resolved_links(resolved)
+        self._mark_pec_sources_reviewed()
+        with self.assertRaisesRegex(
+                ValidationError,
+                "distinct populations contradict documented overlap"):
+            self.validate()
+
     def test_accepts_distinct_subcohorts_with_a_shared_parent(self):
         resolved = {
             frozenset(("pec-s18-target", "pec-s19-target")): (
@@ -816,6 +852,26 @@ class Q3ExtractionTests(unittest.TestCase):
         self.update_review_log("S13", version_evidence_class="version_specific_locator")
         with self.assertRaisesRegex(ValidationError, "review log provenance mismatch"):
             self.validate()
+
+    def test_s13_and_s18_evidence_classes_are_pinned_to_byte_identity(self):
+        for source_id in ("S13", "S18"):
+            document = copy.deepcopy(self.reports)
+            report = next(item for item in document["reports"]
+                          if item["source_id"] == source_id)
+            report["source_record"]["evidence_class"] = "human_access_attestation"
+            self.write_reports(document)
+            self.update_review_log(
+                source_id, version_evidence_class="human_access_attestation"
+            )
+            with self.subTest(source_id=source_id):
+                with self.assertRaisesRegex(
+                        ValidationError,
+                        "approved source requires recorded byte-identity evidence"):
+                    self.validate()
+            self.write_reports(copy.deepcopy(self.reports))
+            (self.extraction / "source-review-log.csv").write_text(
+                self.review_log, encoding="utf-8"
+            )
 
     def test_no_scientific_classification_or_tracker_mutation_is_introduced(self):
         document = copy.deepcopy(self.reports)

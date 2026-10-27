@@ -116,7 +116,7 @@ def _has_source_locator_detail(value):
     ) is not None
 
 
-def _validate_relationship_consistency(links):
+def _validate_relationship_consistency(links, known_overlaps=()):
     parents = {}
 
     def find(population):
@@ -173,7 +173,8 @@ def _validate_relationship_consistency(links):
     reachable = {
         population: {population, *subset_graph.get(population, ())}
         for population in set(subset_graph) |
-        {root for pair in distinct_pairs for root in pair}
+        {root for pair in distinct_pairs for root in pair} |
+        {find(population) for pair in known_overlaps for population in pair}
     }
     for middle in sorted(reachable):
         for population in sorted(reachable):
@@ -184,6 +185,13 @@ def _validate_relationship_consistency(links):
         _require(not any(left in descendants and right in descendants
                          for descendants in reachable.values()),
                  "contradictory cohort map: distinct populations share a known subset")
+        _require(not any(
+            (left in reachable[overlap_left] and right in reachable[overlap_right]) or
+            (right in reachable[overlap_left] and left in reachable[overlap_right])
+            for overlap_left, overlap_right in (
+                (find(a), find(b)) for a, b in known_overlaps
+            )
+        ), "contradictory cohort map: distinct populations contradict documented overlap")
 
 
 def _validate_public_content(value, location):
@@ -280,6 +288,9 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
         if spec["source_id"] in ("S20", "S17", "S4", "S9"):
             _require(evidence_class == "version_specific_locator",
                      f"{spec['report_id']}: registry hash cannot imply historical byte identity")
+        if spec["source_id"] in ("S13", "S18"):
+            _require(evidence_class == "verified_byte_identity_record",
+                     f"{spec['report_id']}: approved source requires recorded byte-identity evidence")
         if spec["source_id"] == "S19":
             _require(evidence_class == "historical_restore_attestation",
                      "S19 restore limitations must remain explicit")
@@ -554,7 +565,9 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
     ]
     _require([(link["from_population_id"], link["to_population_id"]) for link in links] ==
              expected_order, "cohort links must use deterministic frozen report order")
-    _validate_relationship_consistency(links)
+    _validate_relationship_consistency(
+        links, known_overlaps=(("pec-s18-target", "pec-s23-target"),)
+    )
 
     corrections = _read_csv(extraction_dir / "tracker-corrections.csv", CORRECTION_COLUMNS)
     correction_order = []
