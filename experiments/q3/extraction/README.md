@@ -48,7 +48,10 @@ particular, the assigned S23 human review was not performed by this automation.
   publication relationships remain unresolved. Resolved links require
   exact source-version identifiers and specific locators for both records,
   actual content-review evidence for both reports, and the human adjudicator
-  and date. A reviewer may retain `uncertain` after reviewing both sources;
+  and date. The validator also preserves the preregistration's known
+  S18/S23 overlap across `same` normalization and transitive subset links, so
+  a distinct relationship cannot separate populations known to overlap. A
+  reviewer may retain `uncertain` after reviewing both sources;
   when doing so, record the same source-specific locators, reviewer, and date
   rather than leaving the relationship indistinguishable from untouched
   scaffold. Subset direction can point either way while canonical row ordering
@@ -183,12 +186,16 @@ types and provenance, checks review evidence for omissions/inapplicability,
 validates cohort vocabulary and correction separation, and rejects
 subset cycles and contradictory distinct relationships by directed
 subset-reachability (shared larger cohorts are allowed; a known shared
-subcohort is not). Shared classifier consistency checks also reject
-contradictory field records. Excluded S18/S19 components cannot be cited in
-field locators, and private filesystem paths and mismatched version-evidence
-classes are rejected. It does not verify the truth of source facts or
-substitute for human rights/access review. The existing classifier remains
-synthetic-only; this package adds no real-source classification path.
+subcohort is not), including contradictions with the documented S18/S23
+overlap after normalization or transitive subset links. S13 and S18 are bound
+to their recorded byte-identity evidence class; report and review-log classes
+cannot be changed together to bypass that provenance requirement. Shared
+classifier consistency checks also reject contradictory field records.
+Excluded S18/S19 components cannot be cited in field locators, and private
+filesystem paths and mismatched version-evidence classes are rejected. It
+does not verify the truth of source facts or substitute for human rights/access
+review. The existing classifier remains synthetic-only; this package adds no
+real-source classification path.
 
 At this stage, **all eight reports are pending source-content review**, all
 968 fields are `not_yet_extracted`, all six PEC-Direct links remain
