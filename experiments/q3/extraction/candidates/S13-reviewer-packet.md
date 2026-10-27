@@ -3,7 +3,7 @@
 - **Review status:** pending; candidate evidence is not adjudicated.
 - **Report/target:** Q3-S13; all treated Lantidra participants in both pooled label studies, including repeat infusions.
 - **Approved source:** DailyMed SPL v3, `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc`.
-- **Version locator:** [DailyMed label](https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=24610d9f-0c5a-4f55-93b3-d456300bfd5d); approved archive 940595. ZIP SHA-256 `db33f66f3b6e3433d0c47667a0e367f4e1b464cc2875e023e950f1f049f1fd33`; XML SHA-256 `696ebb05a528236ea6077c912785e94cf103aa4d29fa61bacab3282e65307fd4`. No source archive is committed.
+- **Version locator:** [DailyMed SPL archive 940595](https://dailymed.nlm.nih.gov/dailymed/getArchivalFile.cfm?archive_id=940595); approved v3 XML member `a3163e14-0404-4e27-884b-f6f9f7f695bc.xml`. ZIP SHA-256 `db33f66f3b6e3433d0c47667a0e367f4e1b464cc2875e023e950f1f049f1fd33`; XML SHA-256 `696ebb05a528236ea6077c912785e94cf103aa4d29fa61bacab3282e65307fd4`. No source archive is committed.
 
 ## Candidate evidence to inspect
 
