@@ -687,6 +687,35 @@ class Q3ExtractionTests(unittest.TestCase):
                         "resolved cohort locator must include its exact source version and location"):
                     self.validate()
 
+    def test_rejects_excluded_or_unreviewed_material_in_cohort_locators(self):
+        cases = (
+            ("S18", "pec-s18-target", "pec-s19-target",
+             "PMC8714853.1, mmc2.xlsx, Table 1"),
+            ("S19", "pec-s18-target", "pec-s19-target",
+             "PMC11471599.1, MOESM4, Table 1"),
+        )
+        for source_id, from_population, to_population, excluded_locator in cases:
+            from_locator = (
+                excluded_locator if source_id == "S18"
+                else "PMC8714853.1, Results section"
+            )
+            to_locator = (
+                excluded_locator if source_id == "S19"
+                else "PMC11471599.1, Results section"
+            )
+            resolved = {
+                frozenset((from_population, to_population)): (
+                    "same", "", from_locator, to_locator, "Reviewer A",
+                ),
+            }
+            self.write_resolved_links(resolved)
+            self._mark_pec_sources_reviewed()
+            with self.subTest(source_id=source_id):
+                with self.assertRaisesRegex(
+                        ValidationError,
+                        "excluded or unreviewed source component in field locator"):
+                    self.validate()
+
     def test_excluded_material_is_not_an_approved_review_direction(self):
         with (self.extraction / "source-review-log.csv").open(
                 newline="", encoding="utf-8") as stream:

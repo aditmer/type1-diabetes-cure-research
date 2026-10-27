@@ -525,6 +525,9 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                 version_id = owner["source_version_id"]
                 _require(version_id in locator and _has_source_locator_detail(locator),
                          "resolved cohort locator must include its exact source version and location")
+                _validate_field_locator_scope(
+                    locator, owner["source_id"], "cohort-links.csv"
+                )
             for owner in (left_report, right_report):
                 review = review_by_id[owner["report_id"]]
                 _require(review["clinical_content_reviewed"] == "true" and
