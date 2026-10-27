@@ -22,9 +22,10 @@ The authoritative `reports.json` and `source-review-log.csv` remain unchanged.
   verification.
 - No current registry record or alternate history version was substituted.
   Search-result snippets and third-party registry mirrors were not used as
-  evidence. The official source content and exact historical version remain
-  available for the assigned human reviewer to inspect through the approved
-  locator, subject to access.
+  evidence. The authorized human reviewer must attempt access through the
+  approved locator. If the exact history-v13 content cannot be retrieved and
+  identified, record the permitted access attempts and blocker, then keep S17
+  unadjudicated; do not substitute another version.
 
 The candidate packet says its source review was previously performed in a
 browser and identifies history v13 as submitted 2022-02-25. This task could

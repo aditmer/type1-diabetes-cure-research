@@ -6,14 +6,15 @@ authoritative ledger without a field-level decision and exact source locator.
 
 ## Source identity and access
 
-- [ ] Inspect only the approved ClinicalTrials.gov history v13 locator:
+- [ ] Attempt access only through the approved ClinicalTrials.gov history v13
+  locator:
   https://clinicaltrials.gov/study/NCT02239354?tab=history&a=13#version-content-panel
 - [ ] Confirm the selected record is `NCT02239354-history-v13` (submitted
   2022-02-25 per manifest metadata); distinguish the displayed version label
   from any internal history request index.
 - [ ] If the exact version cannot be opened or identified, record the access
-  limitation and stop; do not use the current registry record or another
-  history version.
+  attempts and blocker, then stop with S17 unadjudicated; do not use the
+  current registry record or another history version.
 - [ ] Record the source sections/modules actually reviewed, not merely the
   approved directions or candidate locator strings.
 
