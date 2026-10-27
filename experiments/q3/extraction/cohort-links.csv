@@ -1,0 +1,7 @@
+from_population_id,to_population_id,relationship,direction_if_subset,from_source_version_id,to_source_version_id,from_locator,to_locator,reviewer_identity,decision_date,adjudication_note
+pec-s18-target,pec-s19-target,uncertain,,PMC8714853.1,PMC11471599.1,,,,,The preregistration leaves this S19 relationship uncertain; no source-reviewed participant linkage is established here.
+pec-s18-target,pec-s23-target,uncertain,,PMC8714853.1,publisher-pdf-human-copy-2026-10-23,,,,,"The preregistration records population overlap, but no source-reviewed subset direction is established here; retain uncertain pending human adjudication."
+pec-s18-target,pec-registry-cohort2,uncertain,,PMC8714853.1,NCT03163511-history-v20,,,,,This is a related registry/publication population; identical participants or endpoint attribution are not established here.
+pec-s19-target,pec-s23-target,uncertain,,PMC11471599.1,publisher-pdf-human-copy-2026-10-23,,,,,The preregistration leaves this S19 relationship uncertain; no source-reviewed participant linkage is established here.
+pec-s19-target,pec-registry-cohort2,uncertain,,PMC11471599.1,NCT03163511-history-v20,,,,,The preregistration leaves this S19 relationship uncertain; no source-reviewed participant linkage is established here.
+pec-s23-target,pec-registry-cohort2,uncertain,,publisher-pdf-human-copy-2026-10-23,NCT03163511-history-v20,,,,,This is a related registry/publication population; identical participants or endpoint attribution are not established here.
