@@ -59,8 +59,11 @@ particular, the assigned S23 human review was not performed by this automation.
 - `tracker-corrections.csv` is a separate, currently empty correction ledger.
   It is not consumed as source evidence. Use only `LEDGER_EXTRACTION_GAP`,
   `LEDGER_EXTRACTION_ERROR`, or `SOURCE_VERSION_CHANGE`, with the original
-  tracker commit/row, annotations, approved version, locator, and rationale.
-  Do not modify `data/evidence.csv`, `data/trials.csv`, or `data/sources.csv`.
+  tracker commit/row, annotations, approved version, a locator bound to that
+  report's exact source version and specific location, and rationale. The
+  source-specific excluded/unreviewed component restrictions also apply to
+  correction locators. Do not modify `data/evidence.csv`, `data/trials.csv`,
+  or `data/sources.csv`.
 - `adjudication-queue.md` is the report-by-report handoff and reviewer
   checklist.
 
@@ -191,11 +194,12 @@ overlap after normalization or transitive subset links. S13 and S18 are bound
 to their recorded byte-identity evidence class; report and review-log classes
 cannot be changed together to bypass that provenance requirement. Shared
 classifier consistency checks also reject contradictory field records.
-Excluded S18/S19 components cannot be cited in field locators, and private
-filesystem paths and mismatched version-evidence classes are rejected. It
-does not verify the truth of source facts or substitute for human rights/access
-review. The existing classifier remains synthetic-only; this package adds no
-real-source classification path.
+Excluded S18/S19 components cannot be cited in field, cohort, or tracker
+correction locators, and those citations are bound to their report's approved
+source version and specific location. Private filesystem paths and mismatched
+version-evidence classes are rejected. It does not verify the truth of source
+facts or substitute for human rights/access review. The existing classifier
+remains synthetic-only; this package adds no real-source classification path.
 
 At this stage, **all eight reports are pending source-content review**, all
 968 fields are `not_yet_extracted`, all six PEC-Direct links remain

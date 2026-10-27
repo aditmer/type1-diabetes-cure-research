@@ -835,6 +835,42 @@ class Q3ExtractionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValidationError, "unapproved category"):
             self.validate()
 
+    def test_tracker_correction_locator_must_match_source_scope(self):
+        report = next(item for item in self.reports["reports"] if item["source_id"] == "S18")
+        correction = {
+            "correction_category": "LEDGER_EXTRACTION_GAP",
+            "source_id": report["source_id"],
+            "report_id": report["report_id"],
+            "field_id": report["fields"][0]["field_id"],
+            "tracker_file": "data/evidence.csv",
+            "tracker_commit": "abc123",
+            "tracker_row": "2",
+            "original_annotation": "Pending extraction",
+            "corrected_annotation": "Source-supported correction",
+            "source_version_id": report["source_version_id"],
+            "locator": "PMC8714853.1, Table 1",
+            "rationale": "Correction supported by the approved report source.",
+        }
+
+        def write_correction(row):
+            with (self.extraction / "tracker-corrections.csv").open(
+                    "w", newline="", encoding="utf-8") as stream:
+                writer = csv.DictWriter(stream, fieldnames=CORRECTION_COLUMNS)
+                writer.writeheader()
+                writer.writerow(row)
+
+        write_correction(correction)
+        self.assertEqual(self.validate()[-1], 1)
+
+        for locator, message in (
+                ("PMC11471599.1, Table 1", "exact source version and location"),
+                ("PMC8714853.1, mmc2.xlsx, Table 1",
+                 "excluded or unreviewed source component")):
+            write_correction(correction | {"locator": locator})
+            with self.subTest(locator=locator):
+                with self.assertRaisesRegex(ValidationError, message):
+                    self.validate()
+
     def test_rejects_private_paths_or_credential_like_content(self):
         for path in (
                 "/Users/private/source.pdf",

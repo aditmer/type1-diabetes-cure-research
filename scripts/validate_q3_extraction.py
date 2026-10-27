@@ -585,6 +585,10 @@ def validate_extraction(extraction_dir=EXTRACTION, q3_dir=Q3):
                  _nonempty(correction["corrected_annotation"]) and
                  _nonempty(correction["locator"]) and _nonempty(correction["rationale"]),
                  "tracker correction is incomplete or has mismatched provenance")
+        _validate_field_locator_scope(
+            correction["locator"], report["source_id"], report["source_version_id"],
+            "tracker-corrections.csv",
+        )
         _validate_public_content(correction, "tracker-corrections.csv")
         correction_order.append((
             correction["report_id"], correction["field_id"], correction["correction_category"],
