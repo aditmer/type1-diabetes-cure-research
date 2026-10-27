@@ -16,6 +16,7 @@ from scripts.validate_q3_extraction import (
     ValidationError,
     validate_extraction,
 )
+from scripts.validate_q3_candidates import validate_candidates
 
 
 class Q3ExtractionTests(unittest.TestCase):
@@ -303,6 +304,7 @@ class Q3ExtractionTests(unittest.TestCase):
             review_status="source_review_in_progress",
         )
         self.assertEqual(self.validate()[0], 8)
+        validate_candidates(q3_dir=self.q3)
 
     def test_accepts_field_level_confirmed_omission_after_relevant_content_review(self):
         document = copy.deepcopy(self.reports)

@@ -2,7 +2,6 @@
 
 import csv
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -12,6 +11,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(ROOT))
 
 from scripts.q3_classifier import SPECS
+from scripts.validate_q3_extraction import _validate_field_locator_scope
 
 
 Q3 = ROOT / "experiments" / "q3"
@@ -40,7 +40,8 @@ def _read_json(path):
         raise CandidateValidationError(f"{path.name}: invalid JSON: {exc}") from exc
 
 
-def validate_candidate_document(document, expected, manifest_version, manifest_locator):
+def validate_candidate_document(document, expected, manifest_version, manifest_locator,
+                                source_id):
     source = document.get("source", {})
     target = document.get("target", {})
     _require(document.get("schema_version") == EXPECTED_SCHEMA,
@@ -86,14 +87,13 @@ def validate_candidate_document(document, expected, manifest_version, manifest_l
                  "candidate fact must include value, locator, scope, denominator, and limitation")
         _require("endpoint_timing" in fact,
                  "candidate fact must explicitly record timing or null")
-        if manifest_version.startswith("NCT") and "-history-v" in manifest_version:
-            approved_version = manifest_version.rsplit("-history-v", 1)[1]
-            locator_versions = re.findall(
-                r"\bClinicalTrials\.gov history v(\d+)\b", fact["locator"]
+        try:
+            _validate_field_locator_scope(
+                fact["locator"], source_id, manifest_version,
+                f"{source['report_id']}/{fact['field_id']}"
             )
-            _require(locator_versions and all(
-                version == approved_version for version in locator_versions
-            ), "candidate fact locator does not identify the approved registry history version")
+        except ValueError as exc:
+            raise CandidateValidationError(str(exc)) from exc
 
     candidate_fields = sorted({
         fact["field_id"] for fact in facts
@@ -113,49 +113,12 @@ def validate_candidate_document(document, expected, manifest_version, manifest_l
     return len(facts), unresolved_count
 
 
-def validate_official_ledger(extraction_dir=EXTRACTION):
-    document = _read_json(extraction_dir / "reports.json")
-    _require(len(document.get("reports", [])) == 8,
-             "official report inventory changed")
-    for report in document["reports"]:
-        _require(len(report.get("fields", [])) == len(SPECS) == 121,
-                 "official field inventory changed")
-        _require(report["source_record"]["source_material_reviewed"] is False,
-                 "official ledger cannot claim source review")
-        human_review = report["human_review"]
-        _require(human_review["reviewer_identity"] is None and
-                 human_review["decision_date"] is None and
-                 human_review["independent_review_pending"] is True,
-                 "official human review must remain pending")
-        for field in report["fields"]:
-            _require(field["status"] == "not_yet_extracted" and
-                     field["value"] is None and field["review_complete"] is False,
-                     "candidate evidence was promoted into the official ledger")
-
-    with (extraction_dir / "source-review-log.csv").open(
-            newline="", encoding="utf-8") as stream:
-        logs = list(csv.DictReader(stream))
-    _require(len(logs) == 8, "official source review log changed")
-    for log in logs:
-        _require(log["clinical_content_reviewed"] == "false" and
-                 log["source_content_review_complete"] == "false" and
-                 log["adjudication_complete"] == "false",
-                 "official source review log cannot claim completed human review")
-
-    with (extraction_dir / "cohort-links.csv").open(
-            newline="", encoding="utf-8") as stream:
-        links = list(csv.DictReader(stream))
-    _require(len(links) == 6 and
-             all(link["relationship"] == "uncertain" for link in links),
-             "official PEC-Direct cohort relationships must remain pending")
-
-
-def validate_candidates(candidate_dir=CANDIDATES, extraction_dir=EXTRACTION):
-    rules = _read_json(Q3 / "rules-v1.1.json")
+def validate_candidates(candidate_dir=CANDIDATES, q3_dir=Q3):
+    rules = _read_json(q3_dir / "rules-v1.1.json")
     expected_by_source = {
         row["source_id"]: row for row in rules["reports"]
     }
-    with (Q3 / "source-manifest.csv").open(newline="", encoding="utf-8") as stream:
+    with (q3_dir / "source-manifest.csv").open(newline="", encoding="utf-8") as stream:
         manifest = {row["source_id"]: row for row in csv.DictReader(stream)}
 
     paths = sorted(candidate_dir.glob("*-candidates.json"))
@@ -177,7 +140,7 @@ def validate_candidates(candidate_dir=CANDIDATES, extraction_dir=EXTRACTION):
         manifest_version = manifest_row["approved_version_id"]
         facts, unresolved = validate_candidate_document(
             document, expected_by_source[source_id], manifest_version,
-            manifest_row["version_locator"]
+            manifest_row["version_locator"], source_id
         )
         packet_path = candidate_dir / f"{source_id}-reviewer-packet.md"
         try:
@@ -197,7 +160,6 @@ def validate_candidates(candidate_dir=CANDIDATES, extraction_dir=EXTRACTION):
     _require(tuple(source_id for source_id, _, _ in summaries) ==
              EXPECTED_SOURCE_IDS,
              "candidate source order must match the requested five sources")
-    validate_official_ledger(extraction_dir)
     return summaries
 
 
