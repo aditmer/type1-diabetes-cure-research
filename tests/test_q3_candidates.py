@@ -43,7 +43,10 @@ class Q3CandidateEvidenceTests(unittest.TestCase):
             "subcohort_id": "lantidra-pooled-all",
         }
         with self.assertRaisesRegex(CandidateValidationError, "accepted ledger status"):
-            validate_candidate_document(document, expected, expected["source_version_id"])
+            validate_candidate_document(
+                document, expected, expected["source_version_id"],
+                "https://dailymed.nlm.nih.gov/dailymed/getArchivalFile.cfm?archive_id=940595"
+            )
 
     def test_candidate_cannot_claim_human_adjudication(self):
         document = json.loads(
@@ -59,7 +62,52 @@ class Q3CandidateEvidenceTests(unittest.TestCase):
             "subcohort_id": "pec-registry-cohort2-all",
         }
         with self.assertRaisesRegex(CandidateValidationError, "cannot claim human adjudication"):
-            validate_candidate_document(document, expected, expected["source_version_id"])
+            validate_candidate_document(
+                document, expected, expected["source_version_id"],
+                "https://clinicaltrials.gov/study/NCT03163511?tab=history&a=20#version-content-panel"
+            )
+
+    def test_candidate_source_locator_must_match_approved_manifest(self):
+        document = json.loads(
+            (CANDIDATES / "S20-candidates.json").read_text(encoding="utf-8")
+        )
+        document["source"]["version_locator"] = (
+            "https://clinicaltrials.gov/study/NCT03163511"
+            "?tab=history&a=19#version-content-panel"
+        )
+        expected = {
+            "source_id": "S20",
+            "report_id": "Q3-S20",
+            "program_id": "pec-direct",
+            "target_population_id": "pec-registry-cohort2",
+            "subcohort_id": "pec-registry-cohort2-all",
+        }
+        with self.assertRaisesRegex(CandidateValidationError, "differs from approved manifest"):
+            validate_candidate_document(
+                document, expected, "NCT03163511-history-v20",
+                "https://clinicaltrials.gov/study/NCT03163511?tab=history&a=20#version-content-panel"
+            )
+
+    def test_candidate_fact_locator_must_match_approved_registry_version(self):
+        document = json.loads(
+            (CANDIDATES / "S20-candidates.json").read_text(encoding="utf-8")
+        )
+        document["candidate_facts"][0]["locator"] = (
+            "ClinicalTrials.gov history v19, "
+            "protocolSection.designModule.designInfo.interventionModelDescription."
+        )
+        expected = {
+            "source_id": "S20",
+            "report_id": "Q3-S20",
+            "program_id": "pec-direct",
+            "target_population_id": "pec-registry-cohort2",
+            "subcohort_id": "pec-registry-cohort2-all",
+        }
+        with self.assertRaisesRegex(CandidateValidationError, "approved registry history version"):
+            validate_candidate_document(
+                document, expected, "NCT03163511-history-v20",
+                "https://clinicaltrials.gov/study/NCT03163511?tab=history&a=20#version-content-panel"
+            )
 
     def test_official_ledger_stays_unreviewed_and_cohort_links_stay_uncertain(self):
         validate_official_ledger()

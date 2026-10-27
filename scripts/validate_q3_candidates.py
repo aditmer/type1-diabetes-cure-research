@@ -2,6 +2,7 @@
 
 import csv
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -39,7 +40,7 @@ def _read_json(path):
         raise CandidateValidationError(f"{path.name}: invalid JSON: {exc}") from exc
 
 
-def validate_candidate_document(document, expected, manifest_version):
+def validate_candidate_document(document, expected, manifest_version, manifest_locator):
     source = document.get("source", {})
     target = document.get("target", {})
     _require(document.get("schema_version") == EXPECTED_SCHEMA,
@@ -56,6 +57,8 @@ def validate_candidate_document(document, expected, manifest_version):
              source.get("report_id") == expected["report_id"] and
              source.get("source_version_id") == manifest_version,
              "candidate source/report/version differs from frozen inventory")
+    _require(source.get("version_locator") == manifest_locator,
+             "candidate source version locator differs from approved manifest")
     for key in ("program_id", "target_population_id", "subcohort_id"):
         _require(target.get(key) == expected[key],
                  f"candidate {key} differs from frozen inventory")
@@ -83,6 +86,14 @@ def validate_candidate_document(document, expected, manifest_version):
                  "candidate fact must include value, locator, scope, denominator, and limitation")
         _require("endpoint_timing" in fact,
                  "candidate fact must explicitly record timing or null")
+        if manifest_version.startswith("NCT") and "-history-v" in manifest_version:
+            approved_version = manifest_version.rsplit("-history-v", 1)[1]
+            locator_versions = re.findall(
+                r"\bClinicalTrials\.gov history v(\d+)\b", fact["locator"]
+            )
+            _require(locator_versions and all(
+                version == approved_version for version in locator_versions
+            ), "candidate fact locator does not identify the approved registry history version")
 
     candidate_fields = sorted({
         fact["field_id"] for fact in facts
@@ -165,7 +176,8 @@ def validate_candidates(candidate_dir=CANDIDATES, extraction_dir=EXTRACTION):
                  f"{source_id}: source version is not approved")
         manifest_version = manifest_row["approved_version_id"]
         facts, unresolved = validate_candidate_document(
-            document, expected_by_source[source_id], manifest_version
+            document, expected_by_source[source_id], manifest_version,
+            manifest_row["version_locator"]
         )
         packet_path = candidate_dir / f"{source_id}-reviewer-packet.md"
         try:
