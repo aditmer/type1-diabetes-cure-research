@@ -1,12 +1,6 @@
 # S23 Path B human-review packet
 
-**Review status: not reviewed in this AI check.** The source is a publisher PDF
-with no established public redistribution or shared-storage permission. Under
-the approved Path B restriction, only the sole assigned human reviewer may
-inspect the article and supplement through their confirmed individual access.
-No publisher PDF, supplement, private URL, credentials or session data was
-retrieved or added here. The prior assigned-reviewer access attestation is not
-a source-content review or a new hash verification.
+**Review status: partial primary human source review now recorded on 2026-10-28, limited to 40 reported fields and one unresolved conflicting safety field; 80 S23 fields still pending.** The original AI preparatory check did not inspect the source. The maintainer later reported personal review of the main article and allowed supplement; [dated approved human decisions](human-source-review-approved-2026-10-28.md) and [Issue #52](https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840) record scope, uncertainty and the chat-upload exception. No full-main-source or independent review is asserted. The publisher PDF and supplement remain restricted, without verified repository storage/sharing rights.
 
 ## Frozen source and access
 
@@ -24,6 +18,10 @@ a source-content review or a new hash verification.
   Methods p. 20; separate supplement Methods S1–S7, Tables S1–S2 and Figures
   S1–S5. The exact publisher editorial-version sequence and supplement URL
   are not available in the manifest.
+
+## Limited human approval and unresolved issues (2026-10-28)
+
+The approved field-level record is [here](human-source-review-approved-2026-10-28.md). The main Results' **175 adverse reactions** conflict with supplement Table S1's grade totals **205** (175/24/4/2); `safety.harms` is `conflicting`, not silently corrected. Supplement Methods S3 assigns prednisone to **09 and 11**, and Methods S4 assigns patient 15 **five large and five sentinel devices**, correcting earlier overgeneralized notes. Full section coverage and endpoint-specific visit denominators remain open; an independent reviewer must obtain their own lawful access. **The table below is still the full-source completion checklist, not a list of the already-approved limited fields.**
 
 ## Human completion record
 

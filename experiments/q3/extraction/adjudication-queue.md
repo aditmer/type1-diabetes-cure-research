@@ -1,6 +1,6 @@
 # Q3 G2-B human adjudication queue
 
-**Status (2026-10-28): partial S17 and S13 primary human reviews recorded.**
+**Status (2026-10-28): partial S17, S13 and S23 primary human reviews recorded.**
 In [merged PR #49](https://github.com/aditmer/type1-diabetes-cure-research/pull/49),
 the maintainer `@aditmer` reported manual S17 checklist review and approved
 **10 of its 121 source fields**, including revised planned dose with VC-01-20
@@ -19,7 +19,9 @@ malignancy-category discrepancies, plus the variable safety follow-up and
 non-causal attribution limits. The S13 any-time 25/30 insulin-independence
 finding is not promoted as a fixed-horizon result. Overall, 24 of 968 fields
 are `reported`; 944 remain `not_yet_extracted`. Both source reviews are
-partial, and both independent reviews remain pending.
+partial, and both independent reviews remain pending. **S23 follow-up added below.**
+
+**S23 primary human review (2026-10-28):** The maintainer also approved 40 fields and one `safety.harms` `conflicting` disposition; 80 S23 fields remain `not_yet_extracted`. See the [S23 review record](reviews/S23/human-source-review-approved-2026-10-28.md) and [Issue #52](https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840). The main-paper total (175 adverse reactions) conflicts with supplement Table S1 grade totals (205); preserve both. Supplement Methods S3 fixes prednisone to patients 09/11 and Methods S4 records patient 15's device-count exception. An assistant checked a user-uploaded supplement in chat outside the human-only Path B inspection protocol, not as a primary or independent human reviewer; its rights/governance consequence remains to be resolved. **Current totals: 64 reported, one conflicting, 903 pending of 968. Three reports partially human reviewed; five not yet. No independent approval and #35 blocked.**
 
 The original preparatory evidence artifacts remain available:
 [S17 AI-assisted source check](reviews/S17/ai-assisted-evidence-verification-2026-10-27.md),
@@ -29,9 +31,7 @@ The original preparatory evidence artifacts remain available:
 [S23 Path B packet](reviews/S23/path-b-human-review-packet.md),
 [S20/S4/S9 access-limited status](reviews/remaining-source-check-status-2026-10-27.md),
 and [G2-B independent-review handoff](reviews/independent-review-and-g2b-acceptance-handoff-2026-10-27.md).
-The earlier AI source evidence checks remain preparation, not independent
-human signoff. The other six report reviews and all six PEC-Direct cohort-link
-decisions remain pending; Issue #35 stays blocked.
+The earlier AI source evidence checks remain preparation, not independent human signoff. The other **five** sources without primary review and all six PEC-Direct cohort-link decisions remain pending; Issue #35 stays blocked.
 
 ## Checklist required for each report
 
