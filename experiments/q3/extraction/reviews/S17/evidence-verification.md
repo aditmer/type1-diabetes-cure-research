@@ -1,11 +1,14 @@
 # S17 automated evidence cross-check
 
-> **Historical PR #45 access-blocker snapshot.** This note predates the
-> maintainer's subsequent JSON download, v13 latest-version screenshot, and
-> explicit approval of ten source-backed field decisions. For the current
-> partial source-review state and provenance limits, see
-> [`partial-adjudication-2026-10-27.md`](partial-adjudication-2026-10-27.md).
-> The original findings are retained for audit, not as the latest ledger state.
+> **Historical PR #45 automated access-blocker snapshot.** This document
+> predates the user's subsequent current-API JSON download, official latest-v13
+> Record History screenshot, and authorization to prepare ten AI-assisted
+> candidate values. The updated candidate packet is
+> [`maintainer-authorized-candidates-2026-10-27.json`](maintainer-authorized-candidates-2026-10-27.json),
+> with [provenance and human-review handoff](partial-adjudication-2026-10-27.md).
+> **These values have NOT been human source-adjudicated or promoted:** all 121
+> S17 authoritative fields remain `not_yet_extracted`. The original PR #45
+> access observations remain below for historical audit.
 
 **Status: source verification blocked; human adjudication pending.** This is an
 automated preparation note, not a human attestation or an accepted extraction.
