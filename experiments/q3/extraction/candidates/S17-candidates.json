@@ -208,7 +208,7 @@
       "field_id": "safety.harms",
       "candidate_value": "Cohort 1-only safety context: 114 adverse events reported, with 19 participants in the outcome denominator, through Month 24.",
       "units": "events; participants",
-      "locator": "NCT02239354-history-v13, ClinicalTrials.gov history v13, resultsSection.outcomeMeasuresModule.outcomeMeasures[Number of Adverse Events Reported During the Study].",
+      "locator": "NCT02239354-history-v13, ClinicalTrials.gov history v13, resultsSection.outcomeMeasuresModule.outcomeMeasures[title=Number of Adverse Events Reported During the Study.].",
       "population_scope": "Cohort 1, not the frozen Cohort 2 efficacy target.",
       "denominator_scope": "19 participants.",
       "endpoint_timing": "Through Month 24.",
