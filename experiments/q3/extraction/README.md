@@ -1,7 +1,7 @@
 # Q3 G2-B source extraction and adjudication ledger
 
-**Status: partial S17 source review in progress; the full G2-B ledger is not
-scientifically adjudicated or accepted.** This package is authorized by the authenticated G1 GO on Issue #32
+**Status: human source adjudication pending; no S17 fields have been promoted
+to the authoritative ledger.** This package is authorized by the authenticated G1 GO on Issue #32
 and G2 readiness acceptance on Issue #33 for Issue #34's eight approved
 source versions only. It implements source extraction and conservative
 cohort-link recording. It does **not** classify reports, produce paired
@@ -9,17 +9,23 @@ provisional/harmonized labels, estimate support loss, run sensitivities, or
 make scientific conclusions. Issue #35 remains unauthorized until this
 ledger is independently reviewed and accepted.
 
-At scaffold creation, no clinical article, supplement, or historical registry
-content was retrieved or inspected, and all 968 field records were
-`not_yet_extracted`. **Update 2026-10-27:** ten source-backed S17 fields have
-since been recorded as `reported` following the maintainer's explicit approval
-of AI-assisted field extraction; **958 fields remain unextracted overall**,
-including **111 in S17**. See
+No clinical article, supplement, or historical registry content was retrieved
+or inspected when this authoritative ledger scaffold was created. As of
+2026-10-27, all **968 fields**, including all **121 S17 fields**, remain
+`not_yet_extracted` and the machine-readable source/human review fields
+remain pending. The maintainer subsequently supplied an S17 JSON download
+and latest-v13 Record History screenshot, then authorized ten AI-assisted
+candidate values **for source review**, without attesting to personally
+inspecting their individual supporting source paths. Those typed values and
+corrected locators are preserved **outside the authoritative ledger** at
+[`reviews/S17/maintainer-authorized-candidates-2026-10-27.json`](reviews/S17/maintainer-authorized-candidates-2026-10-27.json).
+See the associated
 [`reviews/S17/partial-adjudication-2026-10-27.md`](reviews/S17/partial-adjudication-2026-10-27.md)
-for exact source scope, approval provenance, current-API versus historical-v13
-limitations, and unreviewed material. S17 content review is partial, no
-independent reviewer has signed off, and G2-B acceptance is still pending.
-The restricted S23 review remains unperformed.
+for the provenance, authorization scope, and human-review handoff.
+The candidate JSON is a current-API download supported by a latest-v13
+screenshot, not a separately hashed historical-v13 archive. Neither a
+primary human clinical-source review nor independent review is complete.
+S23's assigned human review was not performed by this automation.
 
 ## Files and schema
 
