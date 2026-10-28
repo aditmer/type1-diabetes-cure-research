@@ -1,5 +1,13 @@
 # S17 proposed field decisions
 
+> **Historical snapshot:** This table records the unapproved PR #45 proposal
+> before the source JSON and latest-v13 history evidence were supplied.
+> **As of 2026-10-27, ten S17 fields have partial maintainer approval and are
+> recorded in the authoritative ledger.** For the current decisions, verified
+> scope, and outstanding 111 fields, see
+> [`partial-adjudication-2026-10-27.md`](partial-adjudication-2026-10-27.md).
+> The original 121-row table below is retained as a pre-review audit snapshot.
+
 **All decisions are unapproved.** Current status below is taken from the S17
 record in `experiments/q3/extraction/reports.json`. All 121 fields are
 currently `not_yet_extracted`, with null values and no accepted source
