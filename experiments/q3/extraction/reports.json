@@ -6269,12 +6269,12 @@
         "version_locator": "https://doi.org/10.1016/j.stem.2021.10.003",
         "evidence_class": "human_access_attestation",
         "manifest_sha256": "0c7bf5e8f66a3b44992522b7911a7bd39b473a6b55d47cb8e6a2f81eed45e3f2",
-        "source_material_reviewed": false,
+        "source_material_reviewed": true,
         "rights_notes": "Only the sole assigned human reviewer may inspect the approved publisher article and supplement. No PDF, credentials, session token, private download URL, or shared archive."
       },
       "human_review": {
-        "reviewer_identity": null,
-        "decision_date": null,
+        "reviewer_identity": "@aditmer",
+        "decision_date": "2026-10-28",
         "independent_review_pending": true,
         "independent_reviewer_identity": null,
         "independent_review_date": null,
@@ -6284,70 +6284,76 @@
       "fields": [
         {
           "field_id": "burden.co_interventions",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Per supplement Methods S3, methylprednisolone was administered around implantation (days -2 to +2); etanercept was given at implantation and postoperatively. Oral prednisone was assigned to patients 09 and 11, not 08 and 10; mycophenolate sodium was used by patients 09, 10 and 15 to address gastrointestinal side effects.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S3, page 5."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Steroid or alternate mycophenolate exposure in a subgroup must not be generalized to all 15. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "burden.exposure",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "The treatment required general anesthesia and surgically created subcutaneous pockets (forearm and/or abdominal wall) for cell-containing VC-02 devices; their vascularizing portals permit host vessel ingrowth but not immune isolation. Surgical sentinel-device explantation and monitoring were part of the protocol.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section STAR Methods, implantation procedure.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S4, page 6.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S5, page 7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Implantation and planned explantation are treatment burdens, not automatically adverse events. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "burden.immunosuppression",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Non-immunoprotective VC-02 required systemic immunosuppression: ATG induction (total approximately 6 mg/kg), tacrolimus and mycophenolate maintenance; additional methylprednisolone and etanercept around implantation. Immunosuppression may suppress infection defenses and affect treatment risk; observed SAE attribution was only 'possibly' related.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section STAR Methods, induction and maintenance regimen.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S3, page 5.",
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, safety paragraph."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Preserve planned versus administered doses and subgroup exceptions without implying all SAEs are proven drug-caused. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "burden.repeat_procedures",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Methods S5 specifies serial planned device explantation at weeks 4, 12, 26 and 39, with patient-specific removals and restrictions. Histology assessed 14 explanted devices from patients 01\u201310 at 35\u201357 weeks; this device count is not a count of full graft removals or unique participants.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S5, page 7.",
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, histology paragraph.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Table S2, page 11."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Some procedures were delayed by COVID-19; planned explants are not adverse event counts. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -6403,19 +6409,20 @@
         },
         {
           "field_id": "cgm.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1E.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Figure S1, page 12."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Reported target-level CGM model results; graft causality uncertain. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -6556,19 +6563,19 @@
         },
         {
           "field_id": "cgm.observation",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "observed",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1E."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Longitudinal observed CGM, endpoint Ns unresolved. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -6590,19 +6597,20 @@
         },
         {
           "field_id": "cgm.range",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "CGM: time below range <3.9 mmol/L, target range 3.9\u201310.0 mmol/L, time above range >10 mmol/L.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1E.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Figure S1, page 12."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "These ranges are not the clinical definition of severe hypoglycemia. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -6624,19 +6632,20 @@
         },
         {
           "field_id": "cgm.summary",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Mixed-effects models: time in target range increased (B = 0.666, p < 0.001); time above target decreased (B = -0.699, p < 0.001); time below 3.9 mmol/L did not significantly change (B = -0.004, p = 0.924). The discussion describes 13% more time in range; do not relabel this as 13 percentage points or graft-caused improvement. Fixed week-52 analysis denominator and baseline-vs-week52 mean not verified.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1E.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Figure S1, page 12."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Model coefficients preserved without assuming their physical units. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -6709,19 +6718,20 @@
         },
         {
           "field_id": "counts.enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 15,
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4.",
+            "publisher-pdf-human-copy-2026-10-23, main article, Table 1, pages 3-4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Fifteen allocated to trial intervention; three of eighteen screened excluded. Count is not the number screened or a fixed-visit analysis denominator. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -6743,53 +6753,55 @@
         },
         {
           "field_id": "counts.missing_data_handling",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Analyses included data available before final withdrawal; mixed-effects longitudinal analyses used available repeated measurements. Some week-26/week-52 tests or visits were missed or incomplete, and seven participants discontinued intervention; exact endpoint-specific visit denominators remain unadjudicated.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, withdrawal and statistical-analysis paragraphs.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Do not infer 15 evaluable participants at every outcome visit. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "counts.treated",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 15,
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "All 15 allocated received their assigned implant intervention. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "counts.withdrawals",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 7,
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4.",
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, withdrawals paragraph."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Seven discontinued intervention; five after risk-benefit review and two withdrew consent. No assumption that all were unobserved or lost to follow-up. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -6845,19 +6857,19 @@
         },
         {
           "field_id": "hba1c.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1C."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Source target only; treatment-caused change not established. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -6998,19 +7010,19 @@
         },
         {
           "field_id": "hba1c.observation",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "observed",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1C."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Longitudinal aggregate measure, not a fixed-horizon row. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7049,19 +7061,19 @@
         },
         {
           "field_id": "hba1c.summary",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Mean HbA1c remained below 7% across visits and was stable; mixed-effects longitudinal slope B = -0.0055, p = 0.193, without statistically significant improvement. A separately verified numeric baseline-to-week-52 mean is not available from the reviewed text.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1C."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Do not impute figure-derived fixed-visit values. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7100,19 +7112,19 @@
         },
         {
           "field_id": "identity.baseline_context",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Table 1 lists 15 participants aged 36\u201358 years, 7 male and 8 female, T1D duration 10\u201354 years; 11 used insulin pumps and 4 multiple daily injections.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Table 1, pages 3-4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Only reported baseline population facts; individual medical-history rows are not copied. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7134,138 +7146,145 @@
         },
         {
           "field_id": "identity.design",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Vancouver single-site phase 1/2 clinical trial report of NCT03163511, following implanted participants with serial biological and clinical assessments through scheduled visits including weeks 26 and 52, with incomplete visits and withdrawals.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section STAR Methods, study design.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S5, page 7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Site report is not an independent whole-registry cohort; no additional control arm inferred. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.disease_stage",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Type 1 diabetes established for 10\u201354 years in the 15 treated participants; supplemental inclusion criterion required at least five years since T1D diagnosis.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Table 1, pages 3-4.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S1, page 2."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "No untreated new-onset cohort. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.dose",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Approved manuscript describes approximately 250\u2013500 million PEC-01 cells per implanted participant. Device counts in supplement Methods S4: patients 01\u201314 received 2\u20134 larger VC-02-300 devices and six VC-02-20 sentinel devices; patient 15 received five larger and five sentinel devices. Volume and cell-content values are approximate, not independently counted surviving mature endocrine cells.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section STAR Methods, device dose and preparation.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S4, page 6."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Correct patient 15 exception; do not assert a uniform 2\u20134/6 dose for every participant. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.eligibility",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Inclusion required established T1D, optimized insulin therapy, and documented hypoglycemia unawareness or substantial glycemic lability. Relevant prior-year glucose/hypoglycemia criterion is disjunctive: a severe hypoglycemic event, documented CGM glucose below 54 mg/dL, or severe glycemic variability. Not every participant is proven to have had prior severe hypoglycemia.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S1, page 2."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Correct prior overstatement that every participant had 1\u20135 severe episodes before enrollment. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.intervention",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "ViaCyte PEC-01 human pluripotent stem-cell-derived pancreatic endoderm progenitors implanted in vascularizing, non-immunoprotective VC-02 (PEC-Direct) polytetrafluoroethylene macroencapsulation devices, intended to develop endocrine insulin secretion after implantation.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section STAR Methods, device and implantation description.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S4, page 6."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Progenitors at implantation are not mature insulin-producing beta cells; device is not immune-protective. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.linkage",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "uncertain",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Table 1, pages 3-4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Keep all six PEC-Direct links uncertain pending a separate two-sided human cohort adjudication. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.mapping",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "The relevant target is all 15 Vancouver implanted participants. Table 1 has six Shapiro et al. E-series ID cross-references; these are candidate linkage clues only and do not prove matching participant identities, direction of subset, or overlap with the frozen S18/S19/S20 targets.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Table 1, pages 3-4.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Other program reports must not contribute outcomes or denominators to this target. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Single Vancouver site cohort of 15 VC-02-implanted participants with type 1 diabetes; 18 screened and 3 ineligible, 15 allocated, treated and included in the reported overall analysis.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Table 1, pages 3-4.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "15-person source target; no pooling with S18, S19 or S20. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7355,19 +7374,19 @@
         },
         {
           "field_id": "insulin_dose.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1D."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Target means reported Vancouver cohort; cannot infer graft-caused reduction. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7508,19 +7527,19 @@
         },
         {
           "field_id": "insulin_dose.observation",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "observed",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, insulin requirement paragraph, Figure 1D."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Observed model association, not graft causal attribution. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7559,19 +7578,20 @@
         },
         {
           "field_id": "insulin_dose.summary",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Mixed-effects longitudinal analysis reported lower insulin requirements after implantation (B = -0.220, SE = 0.03, t(186.3) = -7.25, p < 0.001), remaining significant after exclusion of the post-implant steroid-related increase. One participant had >50% reduction in the first year; no patient became insulin independent. The model coefficient is not an independently interpretable percentage or fixed-week-52 mean dose.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, Figure 1D.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Figure S1, page 12."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "No source-concordant week-52 mean/unit and endpoint analysis denominator established. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7610,19 +7630,19 @@
         },
         {
           "field_id": "insulin_independence.analysis_population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "uncertain",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, withdrawal and insulin independence paragraphs."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "The study reports no independence but does not provide a harmonizable uniform fixed-52-week endpoint-analysis denominator; do not assume all 15 fully observed. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7644,19 +7664,20 @@
         },
         {
           "field_id": "insulin_independence.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, insulin dose and independence paragraph.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Target refers to 15 implanted participants; outcome is from available observation, not inferred for missing week-52 visits. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7678,19 +7699,19 @@
         },
         {
           "field_id": "insulin_independence.definition",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "The source explicitly reports that no participant became independent of exogenous insulin in the observed study follow-up; one participant had a >50% insulin-dose reduction within year one, which is not insulin independence. No uniform fixed-time evaluable denominator is verified.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, insulin dose and independence paragraph."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Observed-any-time statement, not a 52-week point-in-time count. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7797,19 +7818,19 @@
         },
         {
           "field_id": "insulin_independence.observation",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "observed",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, insulin requirements and independence paragraph."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "The paper reported observed non-achievement of independence during study follow-up; not a fixed-complete-week52 endpoint. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7848,19 +7869,19 @@
         },
         {
           "field_id": "insulin_independence.value",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 0,
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, insulin requirements and independence paragraph."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Zero participants reported to have achieved independence during observed follow-up; no claim all 15 completed 52 weeks. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -7899,104 +7920,114 @@
         },
         {
           "field_id": "population_identified",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Table 1, pages 3-4.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Entire Vancouver 15-person implantation population, not a subset selected by detectable C-peptide. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "safety.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Investigators described the three serious adverse reactions in two participants as possibly associated with immunosuppression; attribution is not proof of causality. The reviewed Results and supplement identify no deaths and report no teratoma or severe graft-related event. Protocol-planned sentinel explantations are not classified as adverse events on that basis alone.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, safety and explantation paragraphs.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Table S1, page 10.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S5, page 7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Keep investigator attribution conditional and reviewed-scope limits explicit. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "safety.discontinuations",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Seven of the 15 discontinued intervention: five after sponsor risk-benefit assessment and two who withdrew consent in the supplement CONSORT. The Results relate two serious-event-associated withdrawals (patients 02 and 04), but correspondence with the CONSORT consent category is not separately adjudicated. Available data before withdrawal were included in analyses.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4.",
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, withdrawals paragraph."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Do not double-count 7+2 or claim all seven had severe adverse events. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "safety.harms",
-          "status": "not_yet_extracted",
+          "status": "conflicting",
           "value": null,
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, first-year adverse-reactions paragraph (175 stated total).",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Table S1, page 10, parenthesized grade 1\u20134 totals (175+24+4+2 = 205)."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [
+            "SOURCE_CONFLICT"
+          ],
+          "adjudication_note": "Main article reports 175 first-year adverse reactions; supplement Table S1 instead shows full grade counts 175 grade 1, 24 grade 2, 4 grade 3 and 2 grade 4 (205 total). The table's 135/14/2/0 unparenthesized display totals are only events in categories reported by >1 participant. Both source records are preserved; reconciliation is pending. Independently, the main narrative reports three serious adverse reactions in two participants (two grade 4 and one grade 3 SAE); grade>=3 does not equal regulatory SAE. No corrected value inferred. Human approval: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "safety.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "The entire 15-person implantation cohort was included in the safety narrative; all participants reported at least one adverse reaction during first-year reporting. Three serious adverse reactions were reported in two people, distinct from the number of severity-grade events.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, adverse-reactions paragraph.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Table S1, page 10."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "One participant can experience multiple adverse events; distinct event and person denominators. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "safety.window",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "First-year post-implantation adverse-reaction reporting window in the main Results and Supplement Table S1. Seven participants discontinued intervention; individual endpoint follow-up was incomplete or varied. This is not a claim of complete 52-week observation for everyone.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section Results, first-year adverse-reactions paragraph.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Table S1, page 10.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "No uniform week-52 exposure denominator verified. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -8273,36 +8304,38 @@
         },
         {
           "field_id": "target_enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S2 CONSORT, page 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Target 15 allocated and implanted; 18 screened is not the target enrollment denominator. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
           "field_id": "treatment.first_administration",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Implantation of VC-02 devices under general anesthesia at study Day 0, with baseline measurements prior to implantation.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, main article, Section STAR Methods, implantation procedure.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S3, page 5.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S5, page 7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "First cell implantation is the anchor; do not switch to sentinel explantation or later visit. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         },
         {
@@ -8324,19 +8357,20 @@
         },
         {
           "field_id": "treatment.source_anchors",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Day 0 is first cell-containing VC-02 implantation. Supplemental Methods S5 specifies baseline week -3 (\u00b11 week), MMTT week 26 (\u00b11 week) and week 52 (\u00b11 week), plus serial fasting C-peptide and simple meal challenges at other weeks; actual available samples differ by endpoint.",
           "source_version_id": "publisher-pdf-human-copy-2026-10-23",
           "target_population_id": "pec-s23-target",
           "subcohort_id": "pec-s23-site-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S3, page 5.",
+            "publisher-pdf-human-copy-2026-10-23, supplement, Methods S5, page 7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Limited primary human source review reported by @aditmer on 2026-10-28: main article identity, Table 1, Results/Figures 1\u20133 and STAR Methods, plus supplement Methods S1\u2013S7, CONSORT, Table S1 and Figures S1\u2013S5; field-scoped approval only. Full main-article page-by-page review and independent review not attested.",
+          "reason_codes": [],
+          "adjudication_note": "Scheduled timepoints do not establish all 15 assessed or a common week-52 denominator. Human decision: https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840.",
+          "review_complete": true,
+          "access_log": "Maintainer reports personal publisher access to main paper and supplementary mmc1.pdf, limited human review approved in Issue #52. A user-uploaded chat copy was checked by an assistant outside the stipulated human-only Path B workflow; that check is neither authorized human nor independent reviewer inspection. No PDF or private link committed.",
           "structural_basis": ""
         }
       ]

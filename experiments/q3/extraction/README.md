@@ -1,6 +1,6 @@
 # Q3 G2-B source extraction and adjudication ledger
 
-**Status: partial human-approved S17 and S13 field decisions recorded; full G2-B
+**Status: partial human-approved S17, S13 and S23 field decisions recorded; full G2-B
 source review and independent acceptance remain pending.** This package is authorized by the authenticated G1 GO on Issue #32
 and G2 readiness acceptance on Issue #33 for Issue #34's eight approved
 source versions only. It implements source extraction and conservative
@@ -33,7 +33,7 @@ The 25 participants ever insulin-independent are not a fixed-horizon result;
 Table 3 and duration discrepancies remain exactly as reported. The ledger has
 24 reviewed `reported` fields in total; 107 S13 fields, 111 S17 fields, and
 726 fields across the other six reports remain `not_yet_extracted` (944 total).
-Both source-content reviews are partial, with independent review pending.
+Both reviews were partial. **Subsequent 2026-10-28 S23 update:** `@aditmer` approved 40 specific S23 fields and one `conflicting` safety field after personally inspecting publisher main sections and supplement. See [S23 review record](reviews/S23/human-source-review-approved-2026-10-28.md) and [Issue #52](https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840). Main Results' first-year 175 adverse reactions remain inconsistent with Table S1's 205 four-grade total; no correction is made. Source-rights/human-only Path B chat-upload exception is documented. The authoritative ledger now has **64 `reported`, 1 `conflicting`, 903 `not_yet_extracted`** across 968; S23 has 80 still unextracted. All three source reviews remain partial, with independent review pending.
 
 The maintainer's own statement—not the AI assistant's inspection—is the
 primary human-review attestation. It describes a partial ten-field review,
@@ -42,8 +42,7 @@ remains `version_specific_locator`: its current-API JSON hash is **not**
 historical-v13 byte identity. Source-content review is **partial**,
 adjudication/access attempts remain incomplete, **independent review is
 still pending**, and Issue #35 (G2-C) remains **BLOCKED** until full
-eight-source G2-B acceptance. S23's assigned human source review
-continues to be pending.
+eight-source G2-B acceptance. S23's assigned human has now completed a **partial** source review only; separate lawful independent-reviewer access remains unconfirmed.
 
 ## Files and schema
 
@@ -231,8 +230,5 @@ version-evidence classes are rejected. It does not verify the truth of source
 facts or substitute for human rights/access review. The existing classifier
 remains synthetic-only; this package adds no real-source classification path.
 
-At this stage, **S13 and S17 have partial primary human source review only**;
-the other six reports remain pending source-content review. There are 24
-reviewed `reported` fields and 944 `not_yet_extracted` fields out of 968; all six PEC-Direct links remain
-`uncertain`, and the correction ledger has no entries. Nothing here is a
+As of 2026-10-28, **S13, S17 and S23 have partial primary human source review only**; five other reports remain pending. There are **64 `reported`, 1 `conflicting`, 903 `not_yet_extracted`** out of 968; all six PEC-Direct links remain `uncertain` and the tracker-correction ledger remains separate and empty. Nothing here is a
 report-level classification, a complete human adjudication, or an acceptance decision.

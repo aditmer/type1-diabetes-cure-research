@@ -5,6 +5,9 @@ an independent review, formal acceptance, or authorization to run G2-C.
 
 ## Current evidence state
 
+**Latest update 2026-10-28 after S23 approval:** [Issue #52](https://github.com/aditmer/type1-diabetes-cure-research/issues/52#issuecomment-6481495840) records the maintainer's additional limited personally reviewed S23 facts. **40 S23 fields are `reported`, one `safety.harms` field is `conflicting`, and 80 S23 fields remain `not_yet_extracted`**. S13 remains 14 reported/107 pending; S17 remains 10 reported/111 pending. Eight reports total **64 reported, 1 conflicting, 903 unextracted** (968 fields). Five reports have no human primary source review. No S23 independent reviewer has verified lawful access; uploaded-in-chat supplementary material was checked by AI outside the prescribed Path B human-only workflow and **cannot** count as independent/source-review evidence. See [dated S23 decision record](S23/human-source-review-approved-2026-10-28.md) for scope, data inconsistencies and rights caveat. **G2-B acceptance deferred and G2-C #35 blocked.** Earlier bullets below describe the stage before S23 promotion and are retained for historical context.
+
+
 - Eight frozen reports remain in scope: S13, S18, S19, S23, S20, S17, S4
   and S9. **Update 2026-10-28:** [merged PR #49](https://github.com/aditmer/type1-diabetes-cure-research/pull/49)
   recorded the maintainer's primary manual S17 checklist review and ten
@@ -69,8 +72,8 @@ for each report and cohort link.
 
 | Required record | Status |
 |---|---|
-| Authorized primary source review for all eight reports | **Partial:** S13 14-field and S17 ten-field primary reviews recorded; six other sources and 107 S13 plus 111 S17 fields remain pending |
-| Field-level human decisions and source-review logs | **Partial:** 24 S13/S17 source facts recorded in ledger; 944 other fields unresolved |
+| Authorized primary source review for all eight reports | **Partial:** S13 14 fields, S17 ten, S23 40 reported plus one conflict; five other sources with no primary review; 903 unextracted |
+| Field-level human decisions and source-review logs | **Partial:** 64 reported, one unresolved conflicting safety field, 903 not yet extracted |
 | Independent reviewer identity, date, scope and decision | Pending |
 | Independent review of all six cohort links | Pending |
 | Explicit G2-B acceptance by authorized maintainer | Pending |
