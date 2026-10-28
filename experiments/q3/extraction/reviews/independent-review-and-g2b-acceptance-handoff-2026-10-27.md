@@ -8,10 +8,17 @@ an independent review, formal acceptance, or authorization to run G2-C.
 - Eight frozen reports remain in scope: S13, S18, S19, S23, S20, S17, S4
   and S9. **Update 2026-10-28:** [merged PR #49](https://github.com/aditmer/type1-diabetes-cure-research/pull/49)
   recorded the maintainer's primary manual S17 checklist review and ten
-  specifically approved `reported` fields. All **111 remaining S17 fields**,
-  and **958 of 968 total fields**, stay `not_yet_extracted`.
-  S17 source-completion/adjudication and all independent-review flags remain
-  pending. No report classification or paired analysis has been run.
+  specifically approved `reported` fields. Separately, the maintainer's
+  partial S13 review is recorded in [Issue #50](https://github.com/aditmer/type1-diabetes-cure-research/issues/50)
+  and [the S13 review record](S13/human-source-review-approved-2026-10-28.md):
+  14 specified fields from Sections 5.1, 6.1, and 14, including Table 3.
+  The duration, medication-table, and malignancy-category discrepancies
+  remain unrepaired, and the 25 ever insulin-independent participants are not
+  treated as a fixed-horizon result. In total, 24 of 968 fields are `reported`;
+  944 remain `not_yet_extracted` (107 S13, 111 S17, and all 726 fields for
+  the other six reports). Both primary reviews are partial; source completion,
+  adjudication, and all independent-review flags remain pending. No report
+  classification or paired analysis has been run.
 - AI-assisted evidence checks are prepared for S13 and S17; partial main-text
   checks and rights limits are recorded for S18 and S19. S20, S4 and S9 retain
   their existing source-specific human-review packets, with the retrieval
@@ -41,8 +48,10 @@ for each report and cohort link.
    The human primary review was completed for those ten fields only;
    retain the other 111 fields as unresolved. Separate planned Cohort 2
    from Cohort 1 results and scrutinize the revised planned dose.
-4. Verify the entire S13 all-treated pool and reconcile source-displayed
-   duration/Table 3 values without correcting the source.
+4. **Independently** verify the 14 primary-human-reviewed S13 fields against
+   approved SPL v3 material and [the S13 review record](S13/human-source-review-approved-2026-10-28.md).
+   Retain the other 107 S13 fields as unresolved and ensure the duration,
+   Table 3, and malignancy discrepancies remain unrepaired.
 5. Review S18 without accessing or inferring from `mmc2.xlsx`; review S19
    without accessing or inferring from `MOESM4`, and preserve third-party
    reuse exceptions.
@@ -60,8 +69,8 @@ for each report and cohort link.
 
 | Required record | Status |
 |---|---|
-| Authorized primary source review for all eight reports | **Partial:** S17 ten-field primary review recorded; seven other sources and 111 S17 fields remain pending |
-| Field-level human decisions and source-review logs | **Partial:** ten S17 source facts accepted in ledger; 958 other fields unresolved |
+| Authorized primary source review for all eight reports | **Partial:** S13 14-field and S17 ten-field primary reviews recorded; six other sources and 107 S13 plus 111 S17 fields remain pending |
+| Field-level human decisions and source-review logs | **Partial:** 24 S13/S17 source facts recorded in ledger; 944 other fields unresolved |
 | Independent reviewer identity, date, scope and decision | Pending |
 | Independent review of all six cohort links | Pending |
 | Explicit G2-B acceptance by authorized maintainer | Pending |
