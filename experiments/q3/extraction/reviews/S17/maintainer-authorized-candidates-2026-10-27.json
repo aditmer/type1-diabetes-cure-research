@@ -146,7 +146,7 @@
     },
     {
       "field_id": "identity.dose",
-      "candidate_value": "Cohort 2 was planned for 4 or 6 VC-01 combination-product implants; no dose was administered to the never-enrolled Cohort 2.",
+      "candidate_value": "Cohort 2 was planned for up to 4 or 6 VC-01 combination-product implants and up to 3 VC-01-20 sentinel units; neither was administered because Cohort 2 never enrolled.",
       "proposed_status": "reported",
       "review_status": "human_source_review_pending",
       "locator": [
@@ -154,7 +154,7 @@
         "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription"
       ],
       "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
-      "evidence_note": "Planned implant number only; not observed dose, treated count, or patient outcome."
+      "evidence_note": "The arm description lists up to 4 or 6 combination-product implants and up to 3 sentinel units. Both are planned only, not observed dose, treated count, or patient outcome."
     }
   ]
 }
