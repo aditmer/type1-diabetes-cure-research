@@ -88,7 +88,7 @@
       "field_id": "identity.intervention",
       "candidate_value": "VC-01 combination product described as biologic and device.",
       "units": null,
-      "locator": "NCT02239354-history-v13, ClinicalTrials.gov history v13, protocolSection.armsInterventionsModule.interventions[name=VC-01 Combination Product].",
+      "locator": "NCT02239354-history-v13, ClinicalTrials.gov history v13, protocolSection.armsInterventionsModule.interventions[name=VC-01™ Combination Product].",
       "population_scope": "Intervention listed for Cohort 1 and Cohort 2.",
       "denominator_scope": "Not a treated count.",
       "endpoint_timing": null,
