@@ -1,13 +1,15 @@
 # Q3 G2-B human adjudication queue
 
-**Partial progress (2026-10-27):** S17 has ten maintainer-authorized,
-AI-assisted `reported` fields and 111 unresolved fields; full source review and
-independent review remain pending. The seven other reports have not had any
-field values promoted. See
-[`reviews/S17/partial-adjudication-2026-10-27.md`](reviews/S17/partial-adjudication-2026-10-27.md).
-This queue was originally created before content review began. Do not treat
-unreviewed source directions or manifest metadata as reviewed findings. Keep
-the queue open for remaining material, actual decisions, and independent review.
+**All eight reports remain pending human source adjudication.** On
+2026-10-27, the maintainer supplied an S17 study JSON and official history
+screenshot and authorized preparation of ten AI-assisted candidate values.
+Because a personal field-by-field source inspection was not attested, these
+ten values remain **review candidates**, not `reported` ledger fields.
+All **121 S17 fields** and **968 total fields** remain `not_yet_extracted`.
+Read [`reviews/S17/maintainer-authorized-candidates-2026-10-27.json`](reviews/S17/maintainer-authorized-candidates-2026-10-27.json)
+and the [source-review handoff](reviews/S17/partial-adjudication-2026-10-27.md)
+before entering the first actual reviewed field. No independent review or
+eight-report ledger acceptance is claimed; Issue #35 remains blocked.
 
 ## Checklist required for each report
 
