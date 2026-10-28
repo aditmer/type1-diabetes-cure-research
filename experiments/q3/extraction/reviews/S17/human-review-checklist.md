@@ -1,5 +1,17 @@
 # S17 human source adjudication checklist
 
+> **Update 2026-10-28 — limited primary human review approved.**
+> The maintainer `@aditmer` expressly reports manually completing this
+> checklist to review and approve **ten identified S17 field decisions**;
+> see the [dated human source-review record](human-source-review-approved-2026-10-28.md)
+> and [direct-approval audit relay](https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6471095071).
+> `identity.dose` was revised before recording approval to include up to
+> 3 VC-01-20 sentinel units as well as the planned 4-or-6 implants.
+> **The other 111 S17 fields remain pending.** Below is the original
+> comprehensive checklist retained for completing the *remaining* source
+> review; blank boxes are **not** a denial of the ten reviewed field decisions.
+> Independent review and full G2-B acceptance remain pending.
+
 > **Candidate-preparation progress (2026-10-27):** The maintainer supplied
 > a current-API JSON download and latest-v13 history screenshot and authorized
 > ten AI-assisted candidate proposals, but did **not** attest to personally
@@ -9,8 +21,8 @@
 > checklist based only on source material the human reviewer actually
 > inspects. See [the review handoff](partial-adjudication-2026-10-27.md).
 
-**Human review is pending.** Complete this checklist only after personally
-inspecting the approved source. Do not copy candidate claims into the
+**Further/full source review is pending.** Continue the checklist for unreviewed
+material only after personally inspecting the approved source. Do not copy candidate claims into the
 authoritative ledger without a field-level decision and exact source locator.
 
 ## Source identity and access
@@ -75,4 +87,6 @@ ________________________________________________________________________
 
 ________________________________________________________________________
 
-No identity, date, approval, or completed-review claim has been prefilled.
+This blank attestation template remains available for additional S17 scope.
+The already-approved ten-field human review and actual identity/date are
+recorded separately in `human-source-review-approved-2026-10-28.md`.
