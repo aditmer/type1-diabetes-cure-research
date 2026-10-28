@@ -1,10 +1,13 @@
 # S17 human source adjudication checklist
 
-> **Progress (2026-10-27):** Ten specific S17 fields received explicit
-> maintainer approval following AI-assisted review of user-supplied source
-> material. This checklist remains for **remaining/full human source review**
-> and is not a claim of complete or independent adjudication. See
-> [`partial-adjudication-2026-10-27.md`](partial-adjudication-2026-10-27.md).
+> **Candidate-preparation progress (2026-10-27):** The maintainer supplied
+> a current-API JSON download and latest-v13 history screenshot and authorized
+> ten AI-assisted candidate proposals, but did **not** attest to personally
+> inspecting or approving each source field. The proposed values are preserved
+> in [`maintainer-authorized-candidates-2026-10-27.json`](maintainer-authorized-candidates-2026-10-27.json).
+> All **121 S17 authoritative fields remain unreviewed**; complete this
+> checklist based only on source material the human reviewer actually
+> inspects. See [the review handoff](partial-adjudication-2026-10-27.md).
 
 **Human review is pending.** Complete this checklist only after personally
 inspecting the approved source. Do not copy candidate claims into the
