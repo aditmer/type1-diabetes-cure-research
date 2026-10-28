@@ -1,5 +1,14 @@
 # S17 maintainer-authorized evidence candidates — 2026-10-27
 
+> **Historical preparation snapshot — superseded 2026-10-28 for ten fields.**
+> This note accurately describes the candidate-only status *before* the
+> maintainer's subsequent explicit personal S17 checklist review and approval.
+> For the currently accepted ten source-backed field decisions and the
+> remaining 111 unresolved fields, see
+> [`human-source-review-approved-2026-10-28.md`](human-source-review-approved-2026-10-28.md).
+> The old statements below remain preserved to document provenance and
+> explain why the source-review flags were previously left pending.
+
 **Status: AWAITING PERSONAL HUMAN SOURCE REVIEW. Not clinical adjudication.**
 The filename is retained from PR #47's first draft for a clear audit trail;
 its earlier "partial adjudication" terminology must not be interpreted as a
