@@ -1,10 +1,14 @@
 # S17 AI-assisted evidence verification — 2026-10-27
 
-**Disposition: candidate verification only; no authoritative ledger values changed.**
-This is not an authorized human source-review attestation, a clinical adjudication,
-independent review, or G2-B acceptance. All 121 S17 fields remain
-`not_yet_extracted` in `reports.json`; source-review and independent-review
-flags remain pending.
+**Historical disposition (2026-10-27): AI-assisted candidate verification only.**
+This automated evidence check itself is **not** a human source-review
+attestation or independent scientific review. **Subsequent status (2026-10-28):**
+the maintainer completed the S17 human-review checklist and approved ten
+specific field values, including a revised planned dose. Those ten fields were
+recorded in [merged PR #49](https://github.com/aditmer/type1-diabetes-cure-research/pull/49)
+and in the [dated primary human-review record](human-source-review-approved-2026-10-28.md).
+**111 S17 fields remain `not_yet_extracted`**, source-content completion and
+independent review remain pending, and there is no G2-B acceptance.
 
 ## Source identity and version boundary
 
@@ -55,8 +59,10 @@ inspection and decision.
 
 ## Required human action
 
-An authorized human reviewer must inspect the permitted v13 record and each
-listed field, record their actual identity/date and exact review scope, and
-approve, revise, reject, or defer each proposal. Keep the other 111 S17 fields
-untouched. A separate independent reviewer must later review the full eight-
-report ledger. Do not apply G2-C or unblock Issue #35 in this packet.
+The maintainer's manual v13 checklist review and **ten** field decisions
+have now been recorded in the dated review record and merged PR #49.
+The additional **111 S17 fields** and any permitted unreviewed source
+components still need explicit source decisions. A distinct independent
+reviewer must later examine the complete eight-report ledger and cohort links.
+This historical AI evidence note is not that independent review. Do not
+apply G2-C or unblock Issue #35 on the basis of this packet.
