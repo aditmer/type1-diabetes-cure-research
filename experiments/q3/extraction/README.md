@@ -1,7 +1,7 @@
 # Q3 G2-B source extraction and adjudication ledger
 
-**Status: pending human source review; not scientifically adjudicated or
-accepted.** This package is authorized by the authenticated G1 GO on Issue #32
+**Status: partial S17 source review in progress; the full G2-B ledger is not
+scientifically adjudicated or accepted.** This package is authorized by the authenticated G1 GO on Issue #32
 and G2 readiness acceptance on Issue #33 for Issue #34's eight approved
 source versions only. It implements source extraction and conservative
 cohort-link recording. It does **not** classify reports, produce paired
@@ -9,11 +9,17 @@ provisional/harmonized labels, estimate support loss, run sensitivities, or
 make scientific conclusions. Issue #35 remains unauthorized until this
 ledger is independently reviewed and accepted.
 
-No clinical article, supplement, or historical registry content was retrieved
-or inspected while preparing this scaffold. The manifest metadata and frozen
-identifiers were reconciled; all 968 field records therefore remain
-`not_yet_extracted`. No human reviewer or decision date is claimed. In
-particular, the assigned S23 human review was not performed by this automation.
+At scaffold creation, no clinical article, supplement, or historical registry
+content was retrieved or inspected, and all 968 field records were
+`not_yet_extracted`. **Update 2026-10-27:** ten source-backed S17 fields have
+since been recorded as `reported` following the maintainer's explicit approval
+of AI-assisted field extraction; **958 fields remain unextracted overall**,
+including **111 in S17**. See
+[`reviews/S17/partial-adjudication-2026-10-27.md`](reviews/S17/partial-adjudication-2026-10-27.md)
+for exact source scope, approval provenance, current-API versus historical-v13
+limitations, and unreviewed material. S17 content review is partial, no
+independent reviewer has signed off, and G2-B acceptance is still pending.
+The restricted S23 review remains unperformed.
 
 ## Files and schema
 
