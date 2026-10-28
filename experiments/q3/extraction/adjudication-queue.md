@@ -1,14 +1,25 @@
 # Q3 G2-B human adjudication queue
 
-**Status (2026-10-28): partial S17 primary human review recorded.**
+**Status (2026-10-28): partial S17 and S13 primary human reviews recorded.**
 In [merged PR #49](https://github.com/aditmer/type1-diabetes-cure-research/pull/49),
 the maintainer `@aditmer` reported manual S17 checklist review and approved
 **10 of its 121 source fields**, including revised planned dose with VC-01-20
 sentinel units. Those ten fields are `reported` and the remaining **111 S17
-fields**, and **958 total of 968 fields**, remain `not_yet_extracted`.
+fields** remain `not_yet_extracted`.
 See the [dated human primary review](reviews/S17/human-source-review-approved-2026-10-28.md).
 Neither S17 full-source completion nor independent review or G2-B acceptance
 has occurred.
+
+The maintainer also approved 14 specific S13 fields after personally
+reviewing DailyMed SPL v3 Sections 5.1, 6.1, and 14, including Table 3. See
+the [dated S13 human source-review record](reviews/S13/human-source-review-approved-2026-10-28.md)
+and [Issue #50](https://github.com/aditmer/type1-diabetes-cure-research/issues/50).
+The S13 record preserves the source's duration, medication-table, and
+malignancy-category discrepancies, plus the variable safety follow-up and
+non-causal attribution limits. The S13 any-time 25/30 insulin-independence
+finding is not promoted as a fixed-horizon result. Overall, 24 of 968 fields
+are `reported`; 944 remain `not_yet_extracted`. Both source reviews are
+partial, and both independent reviews remain pending.
 
 The original preparatory evidence artifacts remain available:
 [S17 AI-assisted source check](reviews/S17/ai-assisted-evidence-verification-2026-10-27.md),
@@ -18,9 +29,9 @@ The original preparatory evidence artifacts remain available:
 [S23 Path B packet](reviews/S23/path-b-human-review-packet.md),
 [S20/S4/S9 access-limited status](reviews/remaining-source-check-status-2026-10-27.md),
 and [G2-B independent-review handoff](reviews/independent-review-and-g2b-acceptance-handoff-2026-10-27.md).
-The source evidence checks remain AI-assisted preparation, not independent
-human signoff. The other seven report reviews and all six PEC-Direct cohort
-link decisions remain pending; Issue #35 stays blocked.
+The earlier AI source evidence checks remain preparation, not independent
+human signoff. The other six report reviews and all six PEC-Direct cohort-link
+decisions remain pending; Issue #35 stays blocked.
 
 ## Checklist required for each report
 
@@ -65,6 +76,9 @@ link decisions remain pending; Issue #35 stays blocked.
 - Approved version: `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc`.
 - Start from the DailyMed version locator in `source-review-log.csv`; record
   the exact label sections reviewed.
+- A partial primary human review for 14 specific fields is recorded in
+  `reviews/S13/human-source-review-approved-2026-10-28.md` and Issue #50.
+  Keep the other 107 fields pending and obtain separate independent review.
 - Preserve the full pooled treated population across both label studies,
   including repeat infusions. Do not extract only responders or those ever
   insulin-independent.

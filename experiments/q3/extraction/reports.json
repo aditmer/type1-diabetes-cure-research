@@ -14,12 +14,12 @@
         "version_locator": "https://dailymed.nlm.nih.gov/dailymed/getArchivalFile.cfm?archive_id=940595",
         "evidence_class": "verified_byte_identity_record",
         "manifest_sha256": "696ebb05a528236ea6077c912785e94cf103aa4d29fa61bacab3282e65307fd4",
-        "source_material_reviewed": false,
+        "source_material_reviewed": true,
         "rights_notes": "NLM terms are recorded; no blanket redistribution right is asserted."
       },
       "human_review": {
-        "reviewer_identity": null,
-        "decision_date": null,
+        "reviewer_identity": "@aditmer",
+        "decision_date": "2026-10-28",
         "independent_review_pending": true,
         "independent_reviewer_identity": null,
         "independent_review_date": null,
@@ -63,36 +63,38 @@
         },
         {
           "field_id": "burden.immunosuppression",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Section 5.1 states concomitant immunosuppression is required to maintain islet viability and describes risks including bacterial, viral, fungal, and parasitic infections; lymphomas and other malignancies, particularly skin cancer; and severe anemia, sometimes requiring transfusion. It also describes vaccination, prophylaxis, monitoring, and potential discontinuation circumstances. Section 14 Table 3 source-reported medication counts and percentages (Study 1 N=10; Study 2 N=20): anakinra 1 (10%) / 0 (0%); daclizumab 10 (100%) / 5 (24%); basiliximab 5 (10%) / 19 (95%); mycophenolate mofetil 6 (60%) / 5 (24%); etanercept 6 (60%) / 20 (100%); everolimus 1 (10%) / 2 (10%); sirolimus 10 (100%) / 20 (100%); tacrolimus 10 (100%) / 20 (100%); cyclosporine 1 (10%) / 3 (15%); anti-thymocyte immunoglobulin 1 (10%) / 4 (20%).",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 3."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Table 3 values are preserved exactly as printed. Flag basiliximab Study 1 5 (10%), daclizumab Study 2 5 (24%), and mycophenolate mofetil Study 2 5 (24%) as count/percentage discrepancies relative to the displayed study Ns; do not silently repair. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
           "field_id": "burden.repeat_procedures",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "The source reports 56 infusion procedures across the 30 treated subjects.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, paragraph 2.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraph 3."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Preserves the source-reported number of procedures. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
@@ -505,19 +507,19 @@
         },
         {
           "field_id": "counts.treated",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 30,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraph 1."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Source-reported treated count; not an enrolled count. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
@@ -998,36 +1000,36 @@
         },
         {
           "field_id": "identity.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Two label studies pooled; 30 treated subjects.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraphs 1 and 3."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Preserves the pooled all-treated population across both label studies. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
           "field_id": "independence.duration",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Among the 25 subjects who achieved insulin independence, the source reports 4 for less than 1 year (13.3%), 12 for 1 to 5 years (36.7%), and 9 for greater than 5 years (33.3%). Preserve each source-reported count and percentage; they do not reconcile consistently.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraph 7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Duration counts sum to 25. The printed percentages are retained without recalculation or repair. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
@@ -1355,19 +1357,19 @@
         },
         {
           "field_id": "insulin_independence.analysis_population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraphs 1 and 6-7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "The reviewed 25/30 any-time context refers to the full pooled treated target, not a responder-only target; it is not a fixed-horizon denominator. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
@@ -1389,19 +1391,19 @@
         },
         {
           "field_id": "insulin_independence.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraphs 1 and 6-7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "The any-time observation is reported for the pooled treated target population. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
@@ -1542,19 +1544,19 @@
         },
         {
           "field_id": "insulin_independence.observation",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "observed",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraphs 6-7."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "25 subjects achieved insulin independence at some point; 5 had no days of insulin independence. This is a variable-follow-up, any-time observation. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
@@ -1644,36 +1646,36 @@
         },
         {
           "field_id": "population_identified",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraph 1."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Section 14 identifies the pooled Study 1 and Study 2 treated population. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
           "field_id": "safety.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "The label reports that both participants who died were receiving immunosuppression at the time; the reviewed counts do not establish that Lantidra caused either death or establish causal attribution for the other reported reactions.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, paragraph 3."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Association with immunosuppression use is preserved without causal inference. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
@@ -1695,53 +1697,53 @@
         },
         {
           "field_id": "safety.harms",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Source-reported Section 6.1 findings: serious adverse reactions in 27/30 participants; severe reactions in 26/30; life-threatening reactions in 8/30; deaths in 2/30; 211 infection events among 26 participants; 16 malignancy reactions among 11 participants, although listed malignancy categories total 15; anemia in 24/30 participants with 90 anemia reactions; transfusions in 5/30 participants; and 56 infusion procedures.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, paragraphs 2-3."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Preserves both the source total of 16 malignancy reactions and the listed category sum of 15. 211 infections are events, not participants. The counts do not establish treatment causality. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
           "field_id": "safety.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Pooled treated population from Study 1 and Study 2; participant-level findings are reported against the source denominators shown, including 30 overall, 26 for infection events, and 11 for malignancy reactions.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, paragraphs 2-3."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Retains participant denominators separately from event counts. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
           "field_id": "safety.window",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Subjects were followed 0.3 to 14.5 years after first infusion; mean follow-up 3 \u00b1 3.7 years. The reported safety counts reflect variable subject follow-up.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, paragraph 2."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Variable follow-up does not establish a fixed 12-month/day-365 safety endpoint. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {
@@ -2052,19 +2054,20 @@
         },
         {
           "field_id": "treatment.repeat_administrations",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "11 subjects received one infusion, 12 received two, and 7 received three.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, paragraph 2.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraph 3."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Partial primary human source review personally performed by @aditmer; decision dated 2026-10-28; Sections 5.1, 6.1, and 14, including Table 3. This field alone is approved; no exhaustive S13 review is claimed.",
+          "reason_codes": [],
+          "adjudication_note": "Preserves all repeat infusions in the 30-person treated population. Human decision recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/50.",
+          "review_complete": true,
+          "access_log": "User-reported personal review of the approved version-specific DailyMed source; decision relayed from the user and recorded in GitHub Issue #50.",
           "structural_basis": ""
         },
         {

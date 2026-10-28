@@ -414,11 +414,11 @@ class Q3ExtractionTests(unittest.TestCase):
 
     def test_confirmed_omission_requires_complete_human_review(self):
         document = copy.deepcopy(self.reports)
-        report = document["reports"][0]
-        field = self.field(report, "population_identified")
+        report = next(r for r in document["reports"] if r["source_id"] == "S18")
+        field = self.field(report, "identity.population")
         field.update(
             status="unreported_in_reviewed_material",
-            locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14"],
+            locator=[f"{field['source_version_id']}, article Results section"],
             review_complete=True,
         )
         self.write_reports(document)
@@ -427,7 +427,7 @@ class Q3ExtractionTests(unittest.TestCase):
 
     def test_conflicts_require_two_locators(self):
         document = copy.deepcopy(self.reports)
-        field = self.field(document["reports"][0], "population_identified")
+        field = self.field(document["reports"][0], "burden.exposure")
         field.update(
             status="conflicting",
             locator=[

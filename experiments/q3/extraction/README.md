@@ -1,6 +1,6 @@
 # Q3 G2-B source extraction and adjudication ledger
 
-**Status: partial human-approved S17 field adjudication recorded; full G2-B
+**Status: partial human-approved S17 and S13 field decisions recorded; full G2-B
 source review and independent acceptance remain pending.** This package is authorized by the authenticated G1 GO on Issue #32
 and G2 readiness acceptance on Issue #33 for Issue #34's eight approved
 source versions only. It implements source extraction and conservative
@@ -18,9 +18,22 @@ combination-product implants and up to 3 VC-01-20 sentinel units. The
 source-review audit, exact locators, and limits are recorded in
 [`reviews/S17/human-source-review-approved-2026-10-28.md`](reviews/S17/human-source-review-approved-2026-10-28.md)
 and [Issue #34's human-approval relay](https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6471095071).
-`reports.json` therefore contains **10 reviewed `reported` fields**;
-**111 S17 fields** and **958 total fields** remain `not_yet_extracted`.
-The other seven reports and all six PEC-Direct cohort links are unchanged.
+At that point, `reports.json` contained **10 reviewed `reported` fields**;
+**111 S17 fields** and **958 total fields** remained `not_yet_extracted`.
+The later S13 update below records the additional approved fields.
+
+**Update 2026-10-28:** the maintainer `@aditmer` also explicitly approved a
+partial primary human source review for **14 specified S13 fields** from
+DailyMed SPL v3 Sections 5.1, 6.1, and 14, including Table 3. The exact source
+version, fields, counts, printed percentages, discrepancies, and limitations
+are recorded in
+[`reviews/S13/human-source-review-approved-2026-10-28.md`](reviews/S13/human-source-review-approved-2026-10-28.md)
+and [Issue #50](https://github.com/aditmer/type1-diabetes-cure-research/issues/50).
+The 25 participants ever insulin-independent are not a fixed-horizon result;
+Table 3 and duration discrepancies remain exactly as reported. The ledger has
+24 reviewed `reported` fields in total; 107 S13 fields, 111 S17 fields, and
+726 fields across the other six reports remain `not_yet_extracted` (944 total).
+Both source-content reviews are partial, with independent review pending.
 
 The maintainer's own statement—not the AI assistant's inspection—is the
 primary human-review attestation. It describes a partial ten-field review,
@@ -218,7 +231,8 @@ version-evidence classes are rejected. It does not verify the truth of source
 facts or substitute for human rights/access review. The existing classifier
 remains synthetic-only; this package adds no real-source classification path.
 
-At this stage, **all eight reports are pending source-content review**, all
-968 fields are `not_yet_extracted`, all six PEC-Direct links remain
+At this stage, **S13 and S17 have partial primary human source review only**;
+the other six reports remain pending source-content review. There are 24
+reviewed `reported` fields and 944 `not_yet_extracted` fields out of 968; all six PEC-Direct links remain
 `uncertain`, and the correction ledger has no entries. Nothing here is a
-scientific result, a completed human adjudication, or an acceptance decision.
+report-level classification, a complete human adjudication, or an acceptance decision.
