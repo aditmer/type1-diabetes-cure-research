@@ -1,24 +1,26 @@
 # Q3 G2-B human adjudication queue
 
-**All eight reports remain pending human source adjudication.** On
-2026-10-27, the maintainer supplied an S17 study JSON and official history
-screenshot and authorized preparation of ten AI-assisted candidate values.
-Because a personal field-by-field source inspection was not attested, these
-ten values remain **review candidates**, not `reported` ledger fields.
-All **121 S17 fields** and **968 total fields** remain `not_yet_extracted`.
-Read [`reviews/S17/maintainer-authorized-candidates-2026-10-27.json`](reviews/S17/maintainer-authorized-candidates-2026-10-27.json)
-and the [source-review handoff](reviews/S17/partial-adjudication-2026-10-27.md)
-before entering the first actual reviewed field. The fresh
-[S17 AI-assisted source check](reviews/S17/ai-assisted-evidence-verification-2026-10-27.md)
-and [S13 archival-label verification](reviews/S13/ai-assisted-label-verification-2026-10-27.md)
-are candidate-only. The [S18](reviews/S18/human-review-packet.md) and
-[S19](reviews/S19/human-review-packet.md) packets preserve the source-specific
-supplement restrictions; the [S23 Path B packet](reviews/S23/path-b-human-review-packet.md)
-is for the assigned human reviewer only. See the
-[S20/S4/S9 access-limited status](reviews/remaining-source-check-status-2026-10-27.md)
-and [independent-review/G2-B handoff](reviews/independent-review-and-g2b-acceptance-handoff-2026-10-27.md).
-No independent review or eight-report ledger acceptance is claimed; Issue #35
-remains blocked.
+**Status (2026-10-28): partial S17 primary human review recorded.**
+In [merged PR #49](https://github.com/aditmer/type1-diabetes-cure-research/pull/49),
+the maintainer `@aditmer` reported manual S17 checklist review and approved
+**10 of its 121 source fields**, including revised planned dose with VC-01-20
+sentinel units. Those ten fields are `reported` and the remaining **111 S17
+fields**, and **958 total of 968 fields**, remain `not_yet_extracted`.
+See the [dated human primary review](reviews/S17/human-source-review-approved-2026-10-28.md).
+Neither S17 full-source completion nor independent review or G2-B acceptance
+has occurred.
+
+The original preparatory evidence artifacts remain available:
+[S17 AI-assisted source check](reviews/S17/ai-assisted-evidence-verification-2026-10-27.md),
+[S13 archival-label verification](reviews/S13/ai-assisted-label-verification-2026-10-27.md),
+[S18](reviews/S18/human-review-packet.md) and
+[S19](reviews/S19/human-review-packet.md) human-review packets,
+[S23 Path B packet](reviews/S23/path-b-human-review-packet.md),
+[S20/S4/S9 access-limited status](reviews/remaining-source-check-status-2026-10-27.md),
+and [G2-B independent-review handoff](reviews/independent-review-and-g2b-acceptance-handoff-2026-10-27.md).
+The source evidence checks remain AI-assisted preparation, not independent
+human signoff. The other seven report reviews and all six PEC-Direct cohort
+link decisions remain pending; Issue #35 stays blocked.
 
 ## Checklist required for each report
 
