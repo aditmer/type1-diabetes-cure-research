@@ -78,7 +78,7 @@ unreviewed). **Do not silently promote these values or run the classifier.**
 | `identity.intervention` | Planned VC-01 combination product (biologic/device) | An arm listing is not proof of Cohort 2 treatment |
 | `identity.design` | Open-label, nonrandomized sequential Phase 1/2; terminated overall | Study-level design and status, not Cohort 2 outcome |
 | `identity.mapping` | Cohort 2 planned C-peptide; Cohort 1 safety context only | Separate analysis sets; no efficacy measurements collected for Cohort 2 |
-| `identity.dose` | Planned 4 or 6 implants for Cohort 2, **not administered** | Planned arm description; no enrollment or exposure |
+| `identity.dose` | Planned up to 4 or 6 VC-01 combination-product implants and up to 3 VC-01-20 sentinel units for Cohort 2, **neither administered** | Planned arm description; no enrollment or exposure |
 
 **Exact-selector corrections:** The intervention is literally named
 `VC-01™ Combination Product` (trademark symbol retained), and the

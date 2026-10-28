@@ -30,7 +30,8 @@ the frozen historical records. Candidate values remain unadjudicated.
 
 ## S9 / Q3-S9 — VX-264
 
-- Frozen source: `NCT05791201-history-v26`, target `vx264-all-parts`.
+- Frozen source: `NCT05791201-history-v26`, target `vx264-all`, subcohort
+  `vx264-all-parts`.
 - Existing packet: [`S9 human-review packet`](../candidates/S9-reviewer-packet.md).
 - Candidate distinctions that must survive review: overall enrollment 7 does
   not establish treated or endpoint counts; Part B C-peptide is planned through
