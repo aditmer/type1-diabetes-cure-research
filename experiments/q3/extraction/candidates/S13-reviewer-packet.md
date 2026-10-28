@@ -7,6 +7,10 @@
 
 ## Candidate evidence to inspect
 
+The fresh archival integrity and candidate cross-check are summarized in the
+[2026-10-27 AI-assisted v3 verification](../reviews/S13/ai-assisted-label-verification-2026-10-27.md).
+This does not replace human field review.
+
 The field-level values, exact section/paragraph/table locators, population scopes, denominators, timing, and limitations are in [`S13-candidates.json`](S13-candidates.json). Reviewable candidate fields: `population_identified`, `identity.population`, `identity.disease_stage`, `identity.intervention`, `identity.dose`, `identity.design`, `identity.mapping`, `counts.treated`, `treatment.first_administration`, `treatment.repeat_administrations`, `insulin_independence.observation`, `insulin_independence.attribution`, `insulin_independence.analysis_population`, `insulin_independence.definition`, `independence.duration`, `burden.immunosuppression`, `burden.co_interventions`, `safety.population`, `safety.window`, `safety.harms`.
 
 Key review points:

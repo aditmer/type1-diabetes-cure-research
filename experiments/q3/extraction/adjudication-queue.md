@@ -8,8 +8,17 @@ ten values remain **review candidates**, not `reported` ledger fields.
 All **121 S17 fields** and **968 total fields** remain `not_yet_extracted`.
 Read [`reviews/S17/maintainer-authorized-candidates-2026-10-27.json`](reviews/S17/maintainer-authorized-candidates-2026-10-27.json)
 and the [source-review handoff](reviews/S17/partial-adjudication-2026-10-27.md)
-before entering the first actual reviewed field. No independent review or
-eight-report ledger acceptance is claimed; Issue #35 remains blocked.
+before entering the first actual reviewed field. The fresh
+[S17 AI-assisted source check](reviews/S17/ai-assisted-evidence-verification-2026-10-27.md)
+and [S13 archival-label verification](reviews/S13/ai-assisted-label-verification-2026-10-27.md)
+are candidate-only. The [S18](reviews/S18/human-review-packet.md) and
+[S19](reviews/S19/human-review-packet.md) packets preserve the source-specific
+supplement restrictions; the [S23 Path B packet](reviews/S23/path-b-human-review-packet.md)
+is for the assigned human reviewer only. See the
+[S20/S4/S9 access-limited status](reviews/remaining-source-check-status-2026-10-27.md)
+and [independent-review/G2-B handoff](reviews/independent-review-and-g2b-acceptance-handoff-2026-10-27.md).
+No independent review or eight-report ledger acceptance is claimed; Issue #35
+remains blocked.
 
 ## Checklist required for each report
 

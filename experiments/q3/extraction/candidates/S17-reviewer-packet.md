@@ -7,6 +7,11 @@
 
 ## Candidate evidence to inspect
 
+The fresh current-API hash reconciliation and exact-field candidate checks are
+in the [2026-10-27 AI-assisted verification](../reviews/S17/ai-assisted-evidence-verification-2026-10-27.md).
+It does not establish byte identity to an archived history-v13 JSON and does
+not replace human field review.
+
 The field-level values, precise historical record locators, population scopes, denominators, endpoint timings, and limitations are in [`S17-candidates.json`](S17-candidates.json). Reviewable candidate fields: `counts.enrolled`, `identity.design`, `identity.disease_stage`, `identity.eligibility`, `identity.intervention`, `identity.mapping`, `identity.population`, `population_identified`, `target_enrolled`.
 
 Key review points:
