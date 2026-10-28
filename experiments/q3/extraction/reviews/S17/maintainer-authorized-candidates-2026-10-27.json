@@ -1,0 +1,160 @@
+{
+  "schema_version": "q3-s17-maintainer-authorized-proposal-v1",
+  "artifact_status": "ai_assisted_evidence_proposal_pending_personal_source_review",
+  "authoritative_ledger_data": false,
+  "human_adjudication_complete": false,
+  "human_source_inspection_attested": false,
+  "independent_review_complete": false,
+  "reviewer_identity": null,
+  "decision_date": null,
+  "source": {
+    "source_id": "S17",
+    "report_id": "Q3-S17",
+    "source_version_id": "NCT02239354-history-v13",
+    "target_population_id": "vc01-cohort2",
+    "subcohort_id": "vc01-cohort2-planned",
+    "version_locator": "https://clinicaltrials.gov/study/NCT02239354?tab=history&a=13#version-content-panel",
+    "historical_byte_identity_verified": false,
+    "content_basis": "User-downloaded ClinicalTrials.gov current study JSON, not separately identified v13 historical JSON; Record History screenshot shows v13 as latest; normalization against the manifest current-API snapshot corroborated substantive correspondence.",
+    "download_sha256": "cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f"
+  },
+  "maintainer_instruction": {
+    "actor": "@aditmer",
+    "date": "2026-10-27",
+    "scope": "Authorized preparation/implementation of the ten AI-assisted recommended values; not a personal attestation of direct inspection of each source field.",
+    "issue_comment": "https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6458199649"
+  },
+  "outstanding_actions": [
+    "Authorized reviewer personally inspects exact approved history-v13 material and the ten cited paths, recording actual review scope and individual decisions.",
+    "Verify each exact selector and source-version mapping, and document any unresolved access or data distinctions.",
+    "Only then prepare authoritative field updates and source-review-log attestation in a separate scoped PR.",
+    "Complete separate independent review and acceptance of all eight reports before unblocking G2-C."
+  ],
+  "candidate_facts": [
+    {
+      "field_id": "target_enrolled",
+      "candidate_value": false,
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription (Cohort 2 enrollment never initiated)",
+        "NCT02239354-history-v13, resultsSection.outcomeMeasuresModule.outcomeMeasures[title=Change in C-peptide].populationDescription (no subjects enrolled in Cohort 2)"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Direct no-enrollment source statements, not inference from participant flow Started=0."
+    },
+    {
+      "field_id": "counts.enrolled",
+      "candidate_value": 0,
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.denoms.counts[groupId=BG001] (Cohort 2=0)",
+        "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription (enrollment never initiated)"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Target-specific enrolled count zero; whole-study and Cohort 1 actual enrollment 19 are not the target denominator."
+    },
+    {
+      "field_id": "population_identified",
+      "candidate_value": true,
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, protocolSection.armsInterventionsModule.armGroups[label=Cohort 2]",
+        "NCT02239354-history-v13, resultsSection.participantFlowModule.groups[id=FG001]"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Frozen planned efficacy Cohort 2 separately identified."
+    },
+    {
+      "field_id": "identity.population",
+      "candidate_value": "Planned Cohort 2 efficacy population of the VC-01 study; no Cohort 2 subjects enrolled. The 19 enrolled participants were in Cohort 1.",
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, protocolSection.armsInterventionsModule.armGroups[label=Cohort 2]",
+        "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription",
+        "NCT02239354-history-v13, resultsSection.participantFlowModule.periods[title=Overall Study].milestones[type=STARTED]"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Keep Cohort 1 and Cohort 2 populations distinct; no participant pooling or outcome borrowing."
+    },
+    {
+      "field_id": "identity.disease_stage",
+      "candidate_value": "Type 1 diabetes mellitus; study eligibility required diagnosis for at least 3 years.",
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, protocolSection.conditionsModule.conditions",
+        "NCT02239354-history-v13, protocolSection.eligibilityModule.eligibilityCriteria"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Registry population description and eligibility are study-level; no claim about actual Cohort 2 patients."
+    },
+    {
+      "field_id": "identity.eligibility",
+      "candidate_value": "Ages 18-55; men and women (specified as non-pregnant and of non-childbearing potential); type 1 diabetes for at least 3 years; stable diabetic treatment; willing to use a continuous glucose meter; acceptable implant candidate. Exclusions: advanced complications of diabetes and immunosuppressive therapy. No Cohort 2 subjects enrolled.",
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, protocolSection.eligibilityModule.eligibilityCriteria",
+        "NCT02239354-history-v13, protocolSection.eligibilityModule.minimumAge",
+        "NCT02239354-history-v13, protocolSection.eligibilityModule.maximumAge"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Retain inclusion and exclusion criteria as written; eligibility is not participant enrollment or CGM outcome."
+    },
+    {
+      "field_id": "identity.intervention",
+      "candidate_value": "VC-01 combination product (biologic and device) was planned for implantation in both cohorts; no Cohort 2 treatment exposure is established.",
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, protocolSection.armsInterventionsModule.interventions[name=VC-01™ Combination Product]",
+        "NCT02239354-history-v13, protocolSection.descriptionModule.briefSummary"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Planned intervention only; do not infer delivered implants or exposure for Cohort 2."
+    },
+    {
+      "field_id": "identity.design",
+      "candidate_value": "Prospective multicenter open-label first-in-human Phase 1/2 interventional study, non-randomized sequential two-cohort design, no masking; overall study status terminated.",
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, protocolSection.identificationModule.officialTitle",
+        "NCT02239354-history-v13, protocolSection.designModule.designInfo",
+        "NCT02239354-history-v13, protocolSection.designModule.phases",
+        "NCT02239354-history-v13, protocolSection.statusModule.overallStatus"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Overall termination and engraftment information do not establish a Cohort 2 treatment outcome."
+    },
+    {
+      "field_id": "identity.mapping",
+      "candidate_value": "Cohort 2 was the planned C-peptide efficacy analysis population (baseline to Month 6) but enrolled zero subjects and collected no endpoint data. Cohort 1 is the source of the reported 19-person adverse-event outcome and is contextual only.",
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, protocolSection.outcomesModule.primaryOutcomes[measure=Change in C-peptide]",
+        "NCT02239354-history-v13, resultsSection.outcomeMeasuresModule.outcomeMeasures[title=Change in C-peptide]",
+        "NCT02239354-history-v13, resultsSection.outcomeMeasuresModule.outcomeMeasures[title=Number of Adverse Events Reported During the Study.]"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Preserve target/non-target outcome mapping; zero analytical denominator is not zero clinical response."
+    },
+    {
+      "field_id": "identity.dose",
+      "candidate_value": "Cohort 2 was planned for 4 or 6 VC-01 combination-product implants; no dose was administered to the never-enrolled Cohort 2.",
+      "proposed_status": "reported",
+      "review_status": "human_source_review_pending",
+      "locator": [
+        "NCT02239354-history-v13, protocolSection.armsInterventionsModule.armGroups[label=Cohort 2].description",
+        "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription"
+      ],
+      "population_scope": "vc01-cohort2 / vc01-cohort2-planned; planned Cohort 2 only, no Cohort 1 outcomes credited",
+      "evidence_note": "Planned implant number only; not observed dose, treated count, or patient outcome."
+    }
+  ]
+}
