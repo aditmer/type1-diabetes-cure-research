@@ -10434,12 +10434,12 @@
         "version_locator": "https://clinicaltrials.gov/study/NCT02239354?tab=history&a=13#version-content-panel",
         "evidence_class": "version_specific_locator",
         "manifest_sha256": "27fd9f36f0d42f2fc0495a03913c74beba0d6c29ef5e1a487f6e8dd2b43b2b15",
-        "source_material_reviewed": false,
+        "source_material_reviewed": true,
         "rights_notes": "Use the approved NCT02239354 history v13 panel; keep planned efficacy Cohort 2 separate from Cohort 1 safety."
       },
       "human_review": {
-        "reviewer_identity": null,
-        "decision_date": null,
+        "reviewer_identity": "@aditmer",
+        "decision_date": "2026-10-27",
         "independent_review_pending": true,
         "independent_reviewer_identity": null,
         "independent_review_date": null,
@@ -10874,19 +10874,20 @@
         },
         {
           "field_id": "counts.enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 0,
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.denoms.counts[groupId=BG001] (Cohort 2=0)",
+            "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription (enrollment never initiated)"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Target-specific enrolled count zero; whole-study and Cohort 1 actual enrollment 19 are not the target denominator. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
@@ -11299,87 +11300,95 @@
         },
         {
           "field_id": "identity.design",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Prospective multicenter open-label first-in-human Phase 1/2 interventional study, non-randomized sequential two-cohort design, no masking; overall study status terminated.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, protocolSection.identificationModule.officialTitle",
+            "NCT02239354-history-v13, protocolSection.designModule.designInfo",
+            "NCT02239354-history-v13, protocolSection.designModule.phases",
+            "NCT02239354-history-v13, protocolSection.statusModule.overallStatus"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Overall termination and engraftment information do not establish a Cohort 2 treatment outcome. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.disease_stage",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Type 1 diabetes mellitus; study eligibility required diagnosis for at least 3 years.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, protocolSection.conditionsModule.conditions",
+            "NCT02239354-history-v13, protocolSection.eligibilityModule.eligibilityCriteria"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Registry population description and eligibility are study-level; no claim about actual Cohort 2 patients. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.dose",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Cohort 2 was planned for 4 or 6 VC-01 combination-product implants; no dose was administered to the never-enrolled Cohort 2.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, protocolSection.armsInterventionsModule.armGroups[label=Cohort 2].description",
+            "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Planned implant number only; not observed dose, treated count, or patient outcome. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.eligibility",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Ages 18-55; men and women (specified as non-pregnant and of non-childbearing potential); type 1 diabetes for at least 3 years; stable diabetic treatment; willing to use a continuous glucose meter; acceptable implant candidate. Exclusions: advanced complications of diabetes and immunosuppressive therapy. No Cohort 2 subjects enrolled.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, protocolSection.eligibilityModule.eligibilityCriteria",
+            "NCT02239354-history-v13, protocolSection.eligibilityModule.minimumAge",
+            "NCT02239354-history-v13, protocolSection.eligibilityModule.maximumAge"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Retain inclusion and exclusion criteria as written; eligibility is not participant enrollment or CGM outcome. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.intervention",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "VC-01 combination product (biologic and device) was planned for implantation in both cohorts; no Cohort 2 treatment exposure is established.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, protocolSection.armsInterventionsModule.interventions[name=VC-01 Combination Product]",
+            "NCT02239354-history-v13, protocolSection.descriptionModule.briefSummary"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Planned intervention only; do not infer delivered implants or exposure for Cohort 2. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
@@ -11401,36 +11410,40 @@
         },
         {
           "field_id": "identity.mapping",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Cohort 2 was the planned C-peptide efficacy analysis population (baseline to Month 6) but enrolled zero subjects and collected no endpoint data. Cohort 1 is the source of the reported 19-person adverse-event outcome and is contextual only.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, protocolSection.outcomesModule.primaryOutcomes[measure=Change in C-peptide]",
+            "NCT02239354-history-v13, resultsSection.outcomeMeasuresModule.outcomeMeasures[title=Change in C-peptide]",
+            "NCT02239354-history-v13, resultsSection.outcomeMeasuresModule.outcomeMeasures[title=Number of Adverse Events Reported During the Study]"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Preserve target/non-target outcome mapping; zero analytical denominator is not zero clinical response. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Planned Cohort 2 efficacy population of the VC-01 study; no Cohort 2 subjects enrolled. The 19 enrolled participants were in Cohort 1.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, protocolSection.armsInterventionsModule.armGroups[label=Cohort 2]",
+            "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription",
+            "NCT02239354-history-v13, resultsSection.participantFlowModule.periods[title=Overall Study].milestones[type=STARTED]"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Keep Cohort 1 and Cohort 2 populations distinct; no participant pooling or outcome borrowing. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
@@ -12064,19 +12077,20 @@
         },
         {
           "field_id": "population_identified",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, protocolSection.armsInterventionsModule.armGroups[label=Cohort 2]",
+            "NCT02239354-history-v13, resultsSection.participantFlowModule.groups[id=FG001]"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Frozen planned efficacy Cohort 2 separately identified. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
@@ -12438,19 +12452,20 @@
         },
         {
           "field_id": "target_enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": false,
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, resultsSection.baselineCharacteristicsModule.populationDescription (Cohort 2 enrollment never initiated)",
+            "NCT02239354-history-v13, resultsSection.outcomeMeasuresModule.outcomeMeasures[title=Change in C-peptide].populationDescription (no subjects enrolled in Cohort 2)"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Maintainer-approved AI-assisted field-level check of the uploaded NCT02239354.json (ClinicalTrials.gov current-API JSON matching latest v13 substantive record) and the official Record History screenshot showing v13 as the latest version; see precise JSON paths. Partial material only; linked Protocol/SAP PDF and other unresolved fields not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "2026-10-27: @aditmer explicitly authorized ten field-level values in conversation after supplying JSON and a latest-v13 screenshot; source material analyzed with AI assistance. Direct no-enrollment source statements, not inference from participant flow Started=0. Not a claim that the maintainer personally read every source field; independent review remains pending.",
+          "review_complete": true,
+          "access_log": "ClinicalTrials.gov official history v13 panel latest-version screenshot supplied by maintainer; downloaded study JSON supplied in conversation (SHA-256 cb65442bed77ec9d366bb72869dc1f64e45aefa35b6b8375780ac354e578c24f). Current API JSON, not byte-identical archived v13; prior historical-data endpoint returned HTTP 403.",
           "structural_basis": ""
         },
         {
