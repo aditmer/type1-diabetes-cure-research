@@ -1,9 +1,13 @@
 # Q3 G2-B human adjudication queue
 
-**All eight reports are pending.** No source-content review was performed by
-the automation that prepared this queue. Do not interpret the listed locators
-or manifest metadata as reviewed findings. Keep the queue open until the
-assigned human reviewer records actual materials, decisions, and dates.
+**Partial progress (2026-10-27):** S17 has ten maintainer-authorized,
+AI-assisted `reported` fields and 111 unresolved fields; full source review and
+independent review remain pending. The seven other reports have not had any
+field values promoted. See
+[`reviews/S17/partial-adjudication-2026-10-27.md`](reviews/S17/partial-adjudication-2026-10-27.md).
+This queue was originally created before content review began. Do not treat
+unreviewed source directions or manifest metadata as reviewed findings. Keep
+the queue open for remaining material, actual decisions, and independent review.
 
 ## Checklist required for each report
 
