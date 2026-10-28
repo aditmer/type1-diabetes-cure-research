@@ -1,5 +1,11 @@
 # S17 human source adjudication checklist
 
+> **Progress (2026-10-27):** Ten specific S17 fields received explicit
+> maintainer approval following AI-assisted review of user-supplied source
+> material. This checklist remains for **remaining/full human source review**
+> and is not a claim of complete or independent adjudication. See
+> [`partial-adjudication-2026-10-27.md`](partial-adjudication-2026-10-27.md).
+
 **Human review is pending.** Complete this checklist only after personally
 inspecting the approved source. Do not copy candidate claims into the
 authoritative ledger without a field-level decision and exact source locator.
