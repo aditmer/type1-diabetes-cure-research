@@ -5,9 +5,12 @@ an independent review, formal acceptance, or authorization to run G2-C.
 
 ## Current evidence state
 
-- Eight frozen reports remain in scope: S13, S18, S19, S23, S20, S17, S4 and
-  S9. The authoritative `reports.json` still has 968/968 fields
-  `not_yet_extracted`; all source-review and independent-review flags remain
+- Eight frozen reports remain in scope: S13, S18, S19, S23, S20, S17, S4
+  and S9. **Update 2026-10-28:** [merged PR #49](https://github.com/aditmer/type1-diabetes-cure-research/pull/49)
+  recorded the maintainer's primary manual S17 checklist review and ten
+  specifically approved `reported` fields. All **111 remaining S17 fields**,
+  and **958 of 968 total fields**, stay `not_yet_extracted`.
+  S17 source-completion/adjudication and all independent-review flags remain
   pending. No report classification or paired analysis has been run.
 - AI-assisted evidence checks are prepared for S13 and S17; partial main-text
   checks and rights limits are recorded for S18 and S19. S20, S4 and S9 retain
@@ -33,9 +36,11 @@ for each report and cohort link.
    version identity, exact selectors, population boundaries, endpoint
    definitions, source denominators, visit windows, first-treatment anchors,
    safety attribution and rights restrictions.
-3. Verify S17's ten candidate facts against approved v13 material; keep all
-   121 ledger fields pending until the authorized source reviewer records
-   actual field decisions. Separate planned Cohort 2 from Cohort 1 results.
+3. **Independently** verify the ten primary-human-reviewed S17 fields
+   against approved v13 material and [the actual review record](S17/human-source-review-approved-2026-10-28.md).
+   The human primary review was completed for those ten fields only;
+   retain the other 111 fields as unresolved. Separate planned Cohort 2
+   from Cohort 1 results and scrutinize the revised planned dose.
 4. Verify the entire S13 all-treated pool and reconcile source-displayed
    duration/Table 3 values without correcting the source.
 5. Review S18 without accessing or inferring from `mmc2.xlsx`; review S19
@@ -55,8 +60,8 @@ for each report and cohort link.
 
 | Required record | Status |
 |---|---|
-| Authorized primary source review for all eight reports | Pending |
-| Field-level human decisions and source-review logs | Pending |
+| Authorized primary source review for all eight reports | **Partial:** S17 ten-field primary review recorded; seven other sources and 111 S17 fields remain pending |
+| Field-level human decisions and source-review logs | **Partial:** ten S17 source facts accepted in ledger; 958 other fields unresolved |
 | Independent reviewer identity, date, scope and decision | Pending |
 | Independent review of all six cohort links | Pending |
 | Explicit G2-B acceptance by authorized maintainer | Pending |
