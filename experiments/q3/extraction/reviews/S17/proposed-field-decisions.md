@@ -1,5 +1,15 @@
 # S17 proposed field decisions
 
+> **Historical PR #45 unapproved proposal, retained for audit.** This is the
+> original 121-row table, created before the uploaded JSON/latest-v13 history
+> screenshot were supplied. Ten AI-assisted values have since been authorized
+> for **candidate preparation only** and are available in
+> [`maintainer-authorized-candidates-2026-10-27.json`](maintainer-authorized-candidates-2026-10-27.json).
+> See [the current S17 handoff](partial-adjudication-2026-10-27.md).
+> **No personal field-level human source inspection has been attested, and no
+> values have been promoted to the authoritative ledger.** The 121-row table
+> below remains a historical, unapproved review prompt.
+
 **All decisions are unapproved.** Current status below is taken from the S17
 record in `experiments/q3/extraction/reports.json`. All 121 fields are
 currently `not_yet_extracted`, with null values and no accepted source
