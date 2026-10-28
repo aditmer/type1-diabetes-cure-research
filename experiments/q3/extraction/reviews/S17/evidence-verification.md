@@ -1,5 +1,12 @@
 # S17 automated evidence cross-check
 
+> **Historical PR #45 access-blocker snapshot.** This note predates the
+> maintainer's subsequent JSON download, v13 latest-version screenshot, and
+> explicit approval of ten source-backed field decisions. For the current
+> partial source-review state and provenance limits, see
+> [`partial-adjudication-2026-10-27.md`](partial-adjudication-2026-10-27.md).
+> The original findings are retained for audit, not as the latest ledger state.
+
 **Status: source verification blocked; human adjudication pending.** This is an
 automated preparation note, not a human attestation or an accepted extraction.
 The authoritative `reports.json` and `source-review-log.csv` remain unchanged.
