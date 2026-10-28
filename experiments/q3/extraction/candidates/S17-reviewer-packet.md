@@ -1,6 +1,6 @@
 # S17 human-review packet
 
-- **Review status:** pending; candidate evidence is not adjudicated.
+- **Review status (2026-10-28):** primary human checklist review and approval of ten specific S17 fields recorded in [merged PR #49](https://github.com/aditmer/type1-diabetes-cure-research/pull/49); **111 fields still pending**. This original nine-field candidate packet is a historical pre-review artifact, not the updated authoritative ledger.
 - **Report/target:** Q3-S17; planned efficacy Cohort 2 only, not Cohort 1.
 - **Approved source:** ClinicalTrials.gov history v13, submitted 2022-02-25; `NCT02239354-history-v13`.
 - **Version locator:** [ClinicalTrials.gov history v13](https://clinicaltrials.gov/study/NCT02239354?tab=history&a=13#version-content-panel). The panel's internal request index is `/history/12`; it is not the version label. No byte-identical historical JSON archive is claimed.
@@ -19,7 +19,7 @@ Key review points:
 - The approved history's participant-flow record shows Cohort 2 Started=0; Cohort 1 Started=19, matching the whole-study actual enrollment. The zero is candidate source evidence only, not a human-adjudicated no-enrollment conclusion.
 - The Cohort 2 C-peptide result row has denominator 0 and no numerical outcome. This is not a zero clinical response.
 - Cohort 1 adverse-event results (19 participants) are safety context only and must not be assigned to Cohort 2.
-- Do not enter `not_applicable` or promote `target_enrolled=false` until authorized human review verifies the exact cohort and frozen field meaning.
+- `target_enrolled=false` and `counts.enrolled=0` were primary-human-approved on 2026-10-28 with explicit no-enrollment wording, not merely `STARTED=0`. This does **not** approve a report-level classification or any observed efficacy outcome; independent review and G2-B acceptance remain pending.
 
 ## Human decisions required
 
@@ -31,4 +31,4 @@ Key review points:
 
 ## Unresolved fields and limits
 
-`unresolved_field_count` is **112**. The unresolved set is exactly the 121 `SPECS` field IDs in `scripts/q3_classifier.py` minus this packet's reviewable `candidate_field_ids` listed above. No zero-enrollment or zero-denominator candidate is a human decision, clinical failure, or accepted `not_applicable` disposition. The official ledger and review gates remain pending; Issue #35 remains blocked.
+`unresolved_field_count` is **112**. The unresolved set is exactly the 121 `SPECS` field IDs in `scripts/q3_classifier.py` minus this packet's reviewable `candidate_field_ids` listed above. This is the original 2026-10-27 candidate inventory, so its **112** unresolved count represents the pre-review nine-candidate coverage, **not** today's authoritative ledger. As of 2026-10-28 the ledger contains ten primary-human-reviewed fields and **111 still unextracted**, including the revised `identity.dose` with planned sentinel units. The old candidate inventory remains an audit snapshot. No report-level `not_applicable` classification has been executed; independent review and Issue #35 authorization remain blocked.
