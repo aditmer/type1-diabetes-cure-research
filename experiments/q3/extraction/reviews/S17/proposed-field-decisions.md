@@ -1,5 +1,13 @@
 # S17 proposed field decisions
 
+> **2026-10-28 update:** This is the original pre-human-review proposal
+> table, not the current authoritative status. The maintainer reports
+> personal checklist inspection and accepted nine proposed fields plus a
+> revised `identity.dose`. See
+> [the human approval record](human-source-review-approved-2026-10-28.md).
+> The remaining **111 fields** still require source review. This file's
+> pre-review columns are intentionally retained as historical evidence.
+
 > **Historical PR #45 unapproved proposal, retained for audit.** This is the
 > original 121-row table, created before the uploaded JSON/latest-v13 history
 > screenshot were supplied. Ten AI-assisted values have since been authorized

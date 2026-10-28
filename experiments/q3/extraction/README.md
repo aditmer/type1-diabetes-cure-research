@@ -1,7 +1,7 @@
 # Q3 G2-B source extraction and adjudication ledger
 
-**Status: human source adjudication pending; no S17 fields have been promoted
-to the authoritative ledger.** This package is authorized by the authenticated G1 GO on Issue #32
+**Status: partial human-approved S17 field adjudication recorded; full G2-B
+source review and independent acceptance remain pending.** This package is authorized by the authenticated G1 GO on Issue #32
 and G2 readiness acceptance on Issue #33 for Issue #34's eight approved
 source versions only. It implements source extraction and conservative
 cohort-link recording. It does **not** classify reports, produce paired
@@ -9,23 +9,28 @@ provisional/harmonized labels, estimate support loss, run sensitivities, or
 make scientific conclusions. Issue #35 remains unauthorized until this
 ledger is independently reviewed and accepted.
 
-No clinical article, supplement, or historical registry content was retrieved
-or inspected when this authoritative ledger scaffold was created. As of
-2026-10-27, all **968 fields**, including all **121 S17 fields**, remain
-`not_yet_extracted` and the machine-readable source/human review fields
-remain pending. The maintainer subsequently supplied an S17 JSON download
-and latest-v13 Record History screenshot, then authorized ten AI-assisted
-candidate values **for source review**, without attesting to personally
-inspecting their individual supporting source paths. Those typed values and
-corrected locators are preserved **outside the authoritative ledger** at
-[`reviews/S17/maintainer-authorized-candidates-2026-10-27.json`](reviews/S17/maintainer-authorized-candidates-2026-10-27.json).
-See the associated
-[`reviews/S17/partial-adjudication-2026-10-27.md`](reviews/S17/partial-adjudication-2026-10-27.md)
-for the provenance, authorization scope, and human-review handoff.
-The candidate JSON is a current-API download supported by a latest-v13
-screenshot, not a separately hashed historical-v13 archive. Neither a
-primary human clinical-source review nor independent review is complete.
-S23's assigned human review was not performed by this automation.
+At initial scaffold creation, none of the 968 fields had clinical source
+review, and no real-source analysis was authorized. **Update 2026-10-28:**
+the maintainer `@aditmer` explicitly reports having personally completed
+the S17 source-review checklist and approved **ten specified source fields**,
+including a revised planned `identity.dose` value with both 4-or-6 VC-01
+combination-product implants and up to 3 VC-01-20 sentinel units. The
+source-review audit, exact locators, and limits are recorded in
+[`reviews/S17/human-source-review-approved-2026-10-28.md`](reviews/S17/human-source-review-approved-2026-10-28.md)
+and [Issue #34's human-approval relay](https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6471095071).
+`reports.json` therefore contains **10 reviewed `reported` fields**;
+**111 S17 fields** and **958 total fields** remain `not_yet_extracted`.
+The other seven reports and all six PEC-Direct cohort links are unchanged.
+
+The maintainer's own statement—not the AI assistant's inspection—is the
+primary human-review attestation. It describes a partial ten-field review,
+not all 121 S17 fields or the linked protocol/SAP. The S17 evidence class
+remains `version_specific_locator`: its current-API JSON hash is **not**
+historical-v13 byte identity. Source-content review is **partial**,
+adjudication/access attempts remain incomplete, **independent review is
+still pending**, and Issue #35 (G2-C) remains **BLOCKED** until full
+eight-source G2-B acceptance. S23's assigned human source review
+continues to be pending.
 
 ## Files and schema
 
