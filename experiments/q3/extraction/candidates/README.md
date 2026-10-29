@@ -4,6 +4,12 @@
 These files are review aids only. They are not authoritative ledger records,
 accepted field values, or report classifications.
 
+The [S13 closeout candidate review](S13-closeout-review.md) reconciles exactly
+the 47 fields pending after PR #61 against `main` at `56c44e0`. It is a separate
+AI-prepared proposal awaiting human verification, not an update to the accepted
+ledger or a new human-review attestation. Its proposed omissions and deferred
+decisions are not accepted field statuses.
+
 Each source has one JSON evidence file and one reviewer packet. The JSON
 `candidate_facts` record the exact approved source version, report, frozen
 field ID, concise candidate value, precise source locator, population and
