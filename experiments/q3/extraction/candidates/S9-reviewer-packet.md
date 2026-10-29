@@ -28,3 +28,31 @@ Key review points:
 ## Unresolved fields and limits
 
 `unresolved_field_count` is **111**. The unresolved set is exactly the 121 `SPECS` field IDs in `scripts/q3_classifier.py` minus this packet's reviewable `candidate_field_ids` listed above. Enrollment and planned outcomes do not establish treated counts or observed endpoints. The official ledger and review gates remain unchanged; Issue #35 remains blocked.
+
+## Candidate provenance update — 2026-10-29
+
+This update records the source/access boundary for Issue #57; candidate facts
+remain unverified in [`S9-candidates.json`](S9-candidates.json). The approved
+source is `NCT05791201-history-v26`, selected through
+https://clinicaltrials.gov/study/NCT05791201?tab=history&a=26#version-content-panel.
+The prior status note reports HTTP 403 from the historical JSON endpoint. No
+v26 record was reopened in this preparation, and the current API snapshot/hash
+is not a byte-authenticated v26 source.
+
+The candidate JSON's exact field locators identify overall enrollment at
+`protocolSection.designModule.enrollmentInfo` and planned endpoints at
+`protocolSection.outcomesModule.primaryOutcomes`. The reported overall
+enrollment of 7 does not establish a treated count, part-specific count, or
+endpoint denominator. Part B C-peptide through Day 90 and Parts A/B safety
+through 24 months remain plans; this version has no posted results module.
+
+Repository materials reviewed: Issue #57, the manifest, the existing S9
+candidate JSON and reviewer packet, and the remaining-source status note. No
+new primary-source sections were reviewed, no candidate field or reviewer
+state was changed, and the existing 111-field unresolved complement remains.
+
+**Still unresolved:** exact v26 verification of target and part mapping;
+actual treated and endpoint denominators; any observed efficacy or safety
+results; follow-up and attrition; and any permitted evidence for the
+immunosuppression regimen. Do not infer no harms from the absent results
+module or use S10 as a substitute source.
