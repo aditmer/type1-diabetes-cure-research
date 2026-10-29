@@ -1,0 +1,365 @@
+{
+  "artifact_status": "source_verified_candidate_proposal",
+  "authoritative_ledger_data": false,
+  "prepared_date": "2026-10-29",
+  "baseline_sha": "7432cd3cb3bc1075706b12c50ab7156bc71ddb8c",
+  "source_id": "S19",
+  "report_id": "Q3-S19",
+  "source_version_id": "PMC11471599.1",
+  "target_population_id": "pec-s19-target",
+  "subcohort_id": "pec-s19-optimized-all",
+  "target_size": 10,
+  "field_candidate_count": 20,
+  "aggregate_surrogate_observation_count": 3,
+  "planned_protocol_endpoint_count": 4,
+  "remaining_authoritative_fields": 121,
+  "retrieval": {
+    "date_utc": "2026-10-29T21:18:10Z",
+    "method": "GET",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11471599/fullTextXML",
+    "http_status": 200,
+    "bytes": 122548,
+    "sha256": "3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839",
+    "manifest_hash_match": true,
+    "hash_verified_before_narrative_inspection": true,
+    "doi_in_xml": "10.1038/s41587-023-02055-5",
+    "pmcid_in_xml": "PMC11471599",
+    "pmcid_ver_in_xml": false,
+    "identity_limit": "Exact approved XML representation reproduced. PMC11471599.1 binding is the manifest's accepted hash/archive mapping, not a newly embedded pmcid-ver or publisher editorial-version number.",
+    "restore_limit": "Fresh public XML is not recovery of the original private OneDrive restore bytes or verifier output; both remain unavailable for independent reinspection. The accepted historical restore attestation is retained without upgrading its evidence class.",
+    "storage": "Parsed in memory; no raw XML, participant table, figure, supplement, private path or credential is included in this proposal."
+  },
+  "inspection_scope": {
+    "newly_inspected": [
+      "PMC11471599.1, Results Sec3/Par8-9: aggregate baseline, endpoint and safety prose",
+      "PMC11471599.1, Results Sec4/Par10: aggregate C-peptide visits and counts",
+      "PMC11471599.1, Discussion Sec7/Par29: author-reported mean initial cell dose only",
+      "PMC11471599.1, Methods Sec9/Par31-33 and Par34-37: trial mapping, eligibility and planned endpoints",
+      "PMC11471599.1, Methods Sec10/Par38-41: regimen, testing and clinical protocol",
+      "PMC11471599.1, Methods Sec11/Par42: product and per-device cell quantities",
+      "PMC11471599.1, reference metadata CR17 and CR18: identification of earlier publications"
+    ],
+    "not_used": [
+      "Participant-specific examples, case identifiers and individual outcome trajectories are not candidate evidence here.",
+      "No figure or table content, third-party rights-pending item, or external reference's scientific contents inspected.",
+      "MOESM1, MOESM2 and MOESM3 not retrieved or inspected.",
+      "MOESM4 excluded; not retrieved, inspected, reconstructed or inferred."
+    ],
+    "coverage_limit": "Partial author-narrative inspection only, not complete source/supplement review. Narrative cross-references do not establish inspection or rights clearance for the referenced item."
+  },
+  "prior_packet_leads_reverified": [
+    {
+      "lead": "Full optimized group of 10",
+      "locator": "PMC11471599.1, Methods Sec9/Par31 and Par33",
+      "result": "Reverified as the full interim cadre, not a responder-only group."
+    },
+    {
+      "lead": "Month-6 detectable C-peptide in 4/10",
+      "locator": "PMC11471599.1, Results Sec4/Par10",
+      "result": "Reverified with LOD 0.03 nmol/L and 90-minute MMTT method; kept outside insulin-independence fields."
+    },
+    {
+      "lead": "Month-12 secondary threshold in 3/10",
+      "locator": "PMC11471599.1, Results Sec4/Par10; Discussion Sec7/Par23 aggregate summary",
+      "result": "Reverified aggregate threshold above 0.07 nmol/L sustained until month 12; not the number completing all month-12 measurements."
+    },
+    {
+      "lead": "Two people with treatment-emergent serious adverse events",
+      "locator": "PMC11471599.1, Results Sec3/Par9",
+      "result": "Reverified affected-person count and stated surgical/immunosuppression attributions; do not assume an independently enumerated event total."
+    }
+  ],
+  "field_candidates": [
+    {
+      "field_id": "target_enrolled",
+      "proposed_status": "reported",
+      "proposed_value": true,
+      "locators": ["PMC11471599.1, Methods Sec9/Par31 and Par33"],
+      "scope": "Full optimized cadre; author narrative.",
+      "limitation": "Proposed field only; no human source approval or registry-population identity decision."
+    },
+    {
+      "field_id": "population_identified",
+      "proposed_status": "reported",
+      "proposed_value": true,
+      "locators": ["PMC11471599.1, Methods Sec9/Par31 and Par33"],
+      "scope": "Ten-person interim publication target.",
+      "limitation": "Identified report population is not resolved cross-report participant identity."
+    },
+    {
+      "field_id": "identity.population",
+      "proposed_status": "reported",
+      "proposed_value": "All 10 recipients in the most recent optimized Cohort 2 cadre, enrolled August 2020 through October 2021; not a response-defined subset.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par31 and Par33"],
+      "scope": "Full frozen target pec-s19-optimized-all.",
+      "limitation": "Cadre chronology does not establish disjoint participants from earlier reports."
+    },
+    {
+      "field_id": "identity.design",
+      "proposed_status": "reported",
+      "proposed_value": "First-in-human, open-label phase 1/2 safety, tolerability and efficacy trial; interim publication of one 10-person cadre in a larger study.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par31"],
+      "scope": "Publication cadre within the multicenter trial.",
+      "limitation": "Not a randomized efficacy comparison or the entire registry population."
+    },
+    {
+      "field_id": "identity.disease_stage",
+      "proposed_status": "reported",
+      "proposed_value": "Established type 1 diabetes for at least 5 years, with hypoglycemia unawareness or significant glycemic lability.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par31-32"],
+      "scope": "Trial inclusion criteria.",
+      "limitation": "Eligibility is not evidence that every participant had every listed clinical characteristic."
+    },
+    {
+      "field_id": "identity.eligibility",
+      "proposed_status": "reported",
+      "proposed_value": "Entry criteria included MMTT C-peptide below 0.07 nmol/L and HbA1c at most 10%; hypoglycemia-unawareness qualification used Clarke score at least 4. Prior islet, kidney or pancreas transplantation and specified severe diabetic complications were exclusion criteria.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par32; Sec10/Par38"],
+      "scope": "Main-narrative eligibility summary, not an exhaustive protocol transcription.",
+      "limitation": "Do not replace the observed baseline LOD threshold with the eligibility cutoff."
+    },
+    {
+      "field_id": "identity.baseline_context",
+      "proposed_status": "reported",
+      "proposed_value": "At screening, all 10 had basal and 90-minute MMTT plasma C-peptide below the assay detection limit of 0.03 nmol/L.",
+      "locators": ["PMC11471599.1, Results Sec3/Par8"],
+      "scope": "Observed full-cadre baseline, not a reported numeric zero.",
+      "limitation": "Below detection is distinct from absence of all endogenous secretion and from the 0.07 nmol/L entry threshold."
+    },
+    {
+      "field_id": "identity.intervention",
+      "proposed_status": "reported",
+      "proposed_value": "PEC-Direct/VC-02: PEC-01 cells derived from the CyT49 pluripotent stem cell line in perforated delivery devices implanted subcutaneously.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par31; Sec10/Par38; Sec11/Par42"],
+      "scope": "Author description of the implanted combination product.",
+      "limitation": "Not encapsulation without systemic immunosuppression."
+    },
+    {
+      "field_id": "identity.dose",
+      "proposed_status": "reported",
+      "proposed_value": "Author-estimated contents: approximately 75 million PEC-01 cells per dose-finding unit and 7 million per sentinel; author-reported mean initial implanted cell dose 14 million cells/kg.",
+      "locators": ["PMC11471599.1, Methods Sec11/Par42; Discussion Sec7/Par29"],
+      "scope": "Per-device estimates and author-reported cohort mean; no participant device counts used.",
+      "limitation": "Do not calculate a common total dose, individual dose, or exposure duration from these quantities."
+    },
+    {
+      "field_id": "identity.mapping",
+      "proposed_status": "reported",
+      "proposed_value": "Publication is one 10-person optimized cadre within Cohort 2 of NCT03163511; references CR17 and CR18 describe earlier Cohort 2 groups.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par31 and Par33; references CR17 and CR18"],
+      "scope": "Program and cadre mapping only.",
+      "limitation": "No shared participant count, same/subset/distinct relationship, or publication-to-registry outcome transfer established."
+    },
+    {
+      "field_id": "counts.enrolled",
+      "proposed_status": "reported",
+      "proposed_value": 10,
+      "locators": ["PMC11471599.1, Methods Sec9/Par31 and Par33"],
+      "scope": "Enrollment of this publication cadre only.",
+      "limitation": "Not all-study enrollment or a universal endpoint-analysis denominator."
+    },
+    {
+      "field_id": "counts.treated",
+      "proposed_status": "reported",
+      "proposed_value": 10,
+      "locators": ["PMC11471599.1, Methods Sec9/Par31 and Par33; Results Sec4/Par10"],
+      "scope": "Full 10-person implanted publication target.",
+      "limitation": "Not the number with evaluable data at every visit."
+    },
+    {
+      "field_id": "burden.immunosuppression",
+      "proposed_status": "reported",
+      "proposed_value": "Anti-thymocyte globulin induction adjusted to lymphocyte counts; tacrolimus plus mycophenolate mofetil maintenance.",
+      "locators": ["PMC11471599.1, Results Sec3/Par8; Methods Sec10/Par38"],
+      "scope": "Protocol regimen for implanted recipients.",
+      "limitation": "No exact maintenance duration, cumulative dose, or full regimen adherence established by this partial inspection."
+    },
+    {
+      "field_id": "burden.co_interventions",
+      "proposed_status": "reported",
+      "proposed_value": "Diabetes educator independent of the study team and unaware of C-peptide results guided glycemic control and insulin administration; protocol used Dexcom G6 CGM and regular medical/laboratory follow-up with immunosuppression adjustment when needed.",
+      "locators": ["PMC11471599.1, Methods Sec10/Par39"],
+      "scope": "Protocol co-interventions.",
+      "limitation": "Does not isolate an implant causal effect from concomitant care."
+    },
+    {
+      "field_id": "treatment.first_administration",
+      "proposed_status": "reported",
+      "proposed_value": "Cell-containing devices placed subcutaneously in abdominal wall and flanks under general anesthesia two days after ATG initiation.",
+      "locators": ["PMC11471599.1, Methods Sec10/Par38"],
+      "scope": "Initial implantation procedure and relation to induction, not participant dates.",
+      "limitation": "Exact calendar dates, any repeat cell administrations and their durations remain unestablished."
+    },
+    {
+      "field_id": "treatment.source_anchors",
+      "proposed_status": "reported",
+      "proposed_value": "MMTT baseline four weeks before transplant; post-transplant testing every three months. Results label observations by post-implant month; protocol primary endpoint is baseline to week 26, with narrative reporting month 6.",
+      "locators": ["PMC11471599.1, Methods Sec10/Par40; Sec9/Par33; Results Sec4/Par10"],
+      "scope": "Source timing conventions only.",
+      "limitation": "Preserve week 26 and month 6 wording; do not assert identical visit dates, reset to a subsequent infusion, or make maximum planned follow-up actual follow-up."
+    },
+    {
+      "field_id": "safety.harms",
+      "proposed_status": "reported",
+      "proposed_value": "Two patients reported treatment-emergent serious adverse events. Procedural pain was the most common TEAE; no TEAEs met the protocol-defined adverse-events-of-special-interest category.",
+      "locators": ["PMC11471599.1, Results Sec3/Par9"],
+      "scope": "Aggregate narrative safety statements.",
+      "limitation": "Two is an affected-person count, not a separately enumerated total of all serious events or all TEAEs."
+    },
+    {
+      "field_id": "safety.population",
+      "proposed_status": "reported",
+      "proposed_value": "The Results safety narrative accompanies the full 10-person implanted optimized cadre.",
+      "locators": ["PMC11471599.1, Results Sec3/Par8-9; Methods Sec9/Par31"],
+      "scope": "Publication target for narrative safety reporting.",
+      "limitation": "No common observation duration or person-time denominator established."
+    },
+    {
+      "field_id": "safety.attribution",
+      "proposed_status": "reported",
+      "proposed_value": "Source attributes one affected patient's treatment-emergent serious adverse event to the surgical procedure and the other's to protocol-specified immunosuppression.",
+      "locators": ["PMC11471599.1, Results Sec3/Par9"],
+      "scope": "Source-reported attribution, not an independent causal adjudication.",
+      "limitation": "Methods Sec10/Par38 also says no adverse events during/after interventions; reconcile scope and timing before final safety adjudication, without deleting either statement."
+    },
+    {
+      "field_id": "safety.discontinuations",
+      "proposed_status": "reported",
+      "proposed_value": "The source states that no treatment-emergent adverse event led to study withdrawal.",
+      "locators": ["PMC11471599.1, Results Sec3/Par9"],
+      "scope": "TEAE-attributed withdrawal statement only.",
+      "limitation": "Not zero total withdrawals, zero treatment discontinuations, complete follow-up or absence of missing visits."
+    }
+  ],
+  "aggregate_surrogate_observations": [
+    {
+      "observation_id": "S19-cpeptide-month3",
+      "proposed_status": "reported",
+      "outcome_type": "graft_function_surrogate",
+      "definition": "MMTT-induced C-peptide above LOD 0.03 nmol/L; study protocol selects the 90-minute MMTT sample.",
+      "numerator": 5,
+      "denominator": 10,
+      "denominator_basis": "Explicit source aggregate count of recipients, not number with complete later visits.",
+      "nominal_timing": "Post-implant month 3",
+      "locators": ["PMC11471599.1, Results Sec4/Par10; Results Sec3/Par8; Methods Sec10/Par40"],
+      "limitation": "Reported C-peptide range 0.05-0.07 nmol/L is for detectable recipients, not a full-cohort clinical outcome. No ledger insulin-independence value proposed."
+    },
+    {
+      "observation_id": "S19-cpeptide-month6",
+      "proposed_status": "reported",
+      "outcome_type": "graft_function_surrogate",
+      "definition": "Primary implant-function endpoint: MMTT-induced C-peptide above LOD 0.03 nmol/L; 90-minute assessment.",
+      "numerator": 4,
+      "denominator": 10,
+      "denominator_basis": "Explicit 4 of 10 recipients in aggregate Results prose.",
+      "nominal_timing": "Post-implant month 6; protocol says baseline to week 26",
+      "locators": ["PMC11471599.1, Results Sec3/Par8; Sec4/Par10; Methods Sec9/Par33; Sec10/Par40"],
+      "limitation": "Not a fixed month-12 result, clinical benefit numerator, insulin-independence numerator, or proof of complete visit data in all 10."
+    },
+    {
+      "observation_id": "S19-cpeptide-through-month12",
+      "proposed_status": "reported",
+      "outcome_type": "graft_function_surrogate",
+      "definition": "Secondary implant-function threshold: MMTT-induced C-peptide above 0.07 nmol/L sustained until month 12.",
+      "numerator": 3,
+      "denominator": 10,
+      "denominator_basis": "Aggregate full-cadre target of 10; three of the four primary responders reached the secondary threshold. Not an evaluable-visit count.",
+      "nominal_timing": "Until post-implant month 12",
+      "locators": ["PMC11471599.1, Results Sec4/Par10; Discussion Sec7/Par23 aggregate summary"],
+      "limitation": "Reported 0.10-0.23 nmol/L range describes threshold achievers; do not impute values to others or convert the result to insulin independence or all-patient complete follow-up."
+    }
+  ],
+  "planned_protocol_endpoints": [
+    {
+      "domain": "insulin_dose",
+      "definition": "Change from baseline in average insulin dose and proportion with 50% reduction.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par35"],
+      "observation": "planned",
+      "numerator": null,
+      "denominator": null
+    },
+    {
+      "domain": "insulin_independence",
+      "definition": "Proportion with insulin independence is listed as a secondary protocol endpoint; a cessation/duration definition is not established by that listing.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par35"],
+      "observation": "planned",
+      "numerator": null,
+      "denominator": null
+    },
+    {
+      "domain": "cgm",
+      "definition": "Proportion of time in glucose bands below 54, 54 to below 70, 70 to at most 180, and above 180 mg/dL; baseline changes in hypo-, eu- and hyperglycemic time.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par36"],
+      "observation": "planned",
+      "numerator": null,
+      "denominator": null
+    },
+    {
+      "domain": "hypoglycemic_events",
+      "definition": "Frequency of hypoglycemic events and proportion free of events; do not automatically equate this with the frozen severe-hypoglycemia domain.",
+      "locators": ["PMC11471599.1, Methods Sec9/Par37"],
+      "observation": "planned",
+      "numerator": null,
+      "denominator": null
+    }
+  ],
+  "timing_and_method_annotations": {
+    "locators": ["PMC11471599.1, Methods Sec9/Par33; Sec10/Par39-40"],
+    "mmtt": "Boost Hi-Protein 360 mL consumed within 15 minutes; no pre-meal insulin bolus; blood every 30 minutes, with 90-minute sample selected for endpoint assessment.",
+    "protocol_maximum": "Up to 104 weeks for secondary protocol follow-up.",
+    "actual_report_scope": "Aggregate surrogate observations at months 3 and 6 and sustained secondary threshold until month 12; this is not evidence that all 10 completed 104 weeks or every 12-month measure.",
+    "anchor": "Post-implant/transplant terminology refers to cell-containing device implantation. Exact first-cell calendar dates and repeat-administration history not established here."
+  },
+  "blocker_decisions": [
+    {
+      "blocker_id": "S19-public-byte-identity",
+      "state": "resolved_for_public_xml",
+      "decision": "New GET matches the approved byte length and SHA-256 before extraction; do not substitute a different representation.",
+      "lawful_next_step": "Human checks candidate facts against the same approved representation and records actual review."
+    },
+    {
+      "blocker_id": "S19-historical-restore",
+      "state": "retained_provenance_limit",
+      "decision": "Original private restore artifacts/verifier remain unavailable; fresh public bytes do not repair that historical gap.",
+      "lawful_next_step": "Archive custodian may recover original verification evidence if lawfully available; otherwise independent reviewer must explicitly acknowledge the accepted limitation."
+    },
+    {
+      "blocker_id": "S19-third-party-items",
+      "state": "not_inspected_rights_pending",
+      "decision": "Limit this proposal to author narrative factual annotations and reference identities; no rights-pending third-party table/figure inspection or reproduction.",
+      "lawful_next_step": "Authorized item-level rights review before any further item-specific use. Do not treat an article-level CC license as blanket third-party clearance."
+    },
+    {
+      "blocker_id": "S19-supplements",
+      "state": "unreviewed_or_excluded_not_missing",
+      "decision": "MOESM1-3 unreviewed; MOESM4 excluded. No omission inferred from either state.",
+      "lawful_next_step": "Source custodian establishes exact component identity, rights and permitted aggregate scope for MOESM1-3. MOESM4 is never a proposed remedy."
+    },
+    {
+      "blocker_id": "S19-attrition-and-visit-coverage",
+      "state": "not_established_in_reviewed_aggregate_scope",
+      "decision": "Keep counts.followed, counts.at_horizon, counts.censored, counts.withdrawals and counts.missing_data_handling pending/null. No TEAE-related withdrawals is not all-cause zero attrition.",
+      "lawful_next_step": "Human verifies permitted aggregate participant-flow and visit coverage evidence without deriving missing values from individual trajectories."
+    },
+    {
+      "blocker_id": "S19-patient-important-outcomes",
+      "state": "not_established_in_reviewed_aggregate_scope",
+      "decision": "Keep insulin independence, HbA1c, insulin dose, CGM and severe-hypoglycemia results/denominators pending. No primary C-peptide or responder-only measure is mapped into them.",
+      "lawful_next_step": "Human checks permitted aggregate clinical evidence with endpoint-specific population, measurement window and denominator; if unavailable retain an access gap, not source omission."
+    },
+    {
+      "blocker_id": "S19-safety-scope",
+      "state": "requires_human_reconciliation",
+      "decision": "Preserve Results Sec3/Par9 surgical serious-event attribution alongside Methods Sec10/Par38 no-event statement during/after interventions. Ascertain timing/scope before deciding whether there is a source conflict. Keep safety.window pending; do not infer a 12-month common exposure window.",
+      "lawful_next_step": "Human records both exact locators and their scope, checks permitted aggregate context, and adjudicates without silently deleting or correcting either statement."
+    },
+    {
+      "blocker_id": "S19-cohort-overlap",
+      "state": "uncertain",
+      "decision": "Sec9/Par31 and Par33 plus references CR17/18 support cadre chronology and program relation, not participant identity or absence of re-enrollment.",
+      "lawful_next_step": "Separate two-sided human cohort adjudication; no unique cross-report total or endpoint borrowing."
+    }
+  ],
+  "review_boundary": "Twenty proposed field values and three aggregate surrogate observations are AI-checked candidates, not primary human decisions. All 121 authoritative fields remain not_yet_extracted; six PEC-Direct links uncertain; no completion flags, independent approval, classifier execution or G2-B acceptance.",
+  "attribution": "Keymeulen, De Groot, Jacobs-Tulleneers-Thevissen et al., Encapsulated stem cell-derived beta cells exert glucose control in patients with type 1 diabetes, Nature Biotechnology (2023), DOI 10.1038/s41587-023-02055-5. The Authors 2023, CC BY 4.0 with third-party exceptions. Factual paraphrases only; no protected figure/table reproduction."
+}
