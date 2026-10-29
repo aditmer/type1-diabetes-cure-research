@@ -399,8 +399,8 @@
         },
         {
           "field_id": "cgm.observation",
-          "status": "reported",
-          "value": "none",
+          "status": "unreported_in_reviewed_material",
+          "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
@@ -414,8 +414,10 @@
             "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, counseling passages searched."
           ],
           "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger records that reported human review and does not claim assistant source inspection or independent review. Scope: full frozen XML search and relevant passages in Sections 1, 2.3, 5.1, 6.1, 12.1\u201312.2, 14, 17, and Patient Information. No observed time-in-range, time-below-range, other quantitative CGM result, endpoint definition, or analyzed N was identified; Section 2.3 describes monitoring procedures.",
-          "reason_codes": [],
-          "adjudication_note": "No quantitative CGM outcome is reported in the searched/reviewed frozen SPL v3 material. Monitoring procedures are not observed CGM outcomes. This is not a zero or null effect and does not complete the S13 review.",
+          "reason_codes": [
+            "QUANTITATIVE_CLINICAL_OUTCOME_MISSING"
+          ],
+          "adjudication_note": "No quantitative CGM outcome was identified in the searched/reviewed frozen SPL v3 material. This is a scoped documentation omission, not evidence that no outcome was measured or observed.",
           "review_complete": true,
           "access_log": "",
           "structural_basis": ""
@@ -988,8 +990,8 @@
         },
         {
           "field_id": "hba1c.observation",
-          "status": "reported",
-          "value": "none",
+          "status": "unreported_in_reviewed_material",
+          "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
@@ -1002,8 +1004,10 @@
             "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, counseling."
           ],
           "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger records that reported human review and does not claim assistant source inspection or independent review. Scope: full frozen XML search and relevant passages in Sections 1, 5.1, 6.1, 12.1\u201312.2, 14, 17, and Patient Information. No quantitative post-treatment HbA1c, baseline-to-follow-up change, analyzed N, or follow-up timepoint was identified; HbA1c mentions concern treatment targets or interpretation after anemia/transfusion.",
-          "reason_codes": [],
-          "adjudication_note": "No quantitative HbA1c outcome is reported in the searched/reviewed frozen SPL v3 material. This is not a zero change or null measured effect. The status is limited to reviewed material and does not complete the S13 review.",
+          "reason_codes": [
+            "QUANTITATIVE_CLINICAL_OUTCOME_MISSING"
+          ],
+          "adjudication_note": "No quantitative HbA1c outcome was identified in the searched/reviewed frozen SPL v3 material. This is a scoped documentation omission, not evidence that no outcome was measured or observed.",
           "review_complete": true,
           "access_log": "",
           "structural_basis": ""
@@ -1200,7 +1204,7 @@
         {
           "field_id": "identity.dose",
           "status": "reported",
-          "value": "Section 2.1 recommends an initial Lantidra dose of 5,000 EIN/kg and a subsequent-infusion dose of 4,500 EIN/kg. Section 14 reports observed medians per infusion of 399,178 EIN and 6,570 EIN/kg per infusion. Recommended doses are distinct from observed medians; this field does not represent insulin dosing.",
+          "value": "Section 2.1 recommends a minimum initial Lantidra dose of 5,000 EIN/kg and a minimum subsequent-infusion dose of 4,500 EIN/kg. Section 14 reports observed medians per infusion of 399,178 EIN and 6,570 EIN/kg per infusion. Recommended minimum doses are distinct from observed medians; this field does not represent insulin dosing.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
@@ -1217,35 +1221,39 @@
         },
         {
           "field_id": "identity.eligibility",
-          "status": "reported",
-          "value": "Section 1 indicates treatment for adults with type 1 diabetes unable to approach target HbA1c because of current repeated severe hypoglycemia despite intensive diabetes management and education, with concomitant immunosuppression required. This indication is distinct from proof that every treated study participant met every indication criterion.",
+          "status": "not_yet_extracted",
+          "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
             "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, Indications and Usage."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger records that reported human review and does not claim assistant source inspection or independent review. Scope: Section 1 indication only, compared with the separate Section 14 subject characteristic.",
-          "reason_codes": [],
-          "adjudication_note": "Do not infer individual baseline HbA1c, individual severe-event counts, or complete trial inclusion criteria from the indication.",
-          "review_complete": true,
+          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen SPL v3 on 2026-10-29. Section 1 indication language was human-reviewed; Study 1/2 participant inclusion criteria were not verified in this scoped review.",
+          "reason_codes": [
+            "EXTRACTION_INCOMPLETE"
+          ],
+          "adjudication_note": "Section 1 indicates treatment for adults with type 1 diabetes unable to approach target HbA1c because of current repeated severe hypoglycemia despite intensive diabetes management and education, with concomitant immunosuppression required. This is the product indication, not verified participant eligibility for Studies 1 and 2; keep the full identity.eligibility field unresolved. Field-level review remains incomplete.",
+          "review_complete": false,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.intervention",
-          "status": "reported",
-          "value": "Administration route: infusion into the hepatic portal vein. This is a route-only annotation; it does not adjudicate every intervention detail.",
+          "status": "not_yet_extracted",
+          "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
             "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 2.1, route and administration."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger records that reported human review and does not claim assistant source inspection or independent review. Scope: reported portal-vein route fact only.",
-          "reason_codes": [],
-          "adjudication_note": "Do not infer newly reviewed intervention components or outcomes from this route annotation.",
-          "review_complete": true,
+          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen SPL v3 on 2026-10-29. The portal-vein route was human-reviewed; full intervention identity and composition were not verified in this scoped review.",
+          "reason_codes": [
+            "EXTRACTION_INCOMPLETE"
+          ],
+          "adjudication_note": "The human-reported finding supports only the administration route: infusion into the hepatic portal vein. It does not establish the complete cellular intervention identity/composition required by this field; keep identity.intervention unresolved. Field-level review remains incomplete.",
+          "review_complete": false,
           "access_log": "",
           "structural_basis": ""
         },
@@ -1639,8 +1647,8 @@
         },
         {
           "field_id": "insulin_dose.observation",
-          "status": "reported",
-          "value": "none",
+          "status": "unreported_in_reviewed_material",
+          "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
@@ -1655,8 +1663,10 @@
             "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, counseling passages searched."
           ],
           "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger records that reported human review and does not claim assistant source inspection or independent review. Scope: full frozen XML search and relevant passages in Sections 1, 2.1, 2.3, 5.1, 6.1, 12.1\u201312.2, 14, 17, and Patient Information. No quantified administered exogenous-insulin requirement or dose reduction was identified; mentions concern insulin dependence/independence, management instructions, or endogenous secretion.",
-          "reason_codes": [],
-          "adjudication_note": "No quantitative exogenous insulin-dose outcome is reported in the searched/reviewed frozen SPL v3 material. Do not confuse Lantidra product dose or insulin dependence/independence with administered insulin dose. This does not complete the S13 review.",
+          "reason_codes": [
+            "QUANTITATIVE_CLINICAL_OUTCOME_MISSING"
+          ],
+          "adjudication_note": "No quantitative exogenous insulin-dose outcome was identified in the searched/reviewed frozen SPL v3 material. This is a scoped documentation omission, not evidence that no outcome was measured or observed.",
           "review_complete": true,
           "access_log": "",
           "structural_basis": ""
@@ -2079,18 +2089,20 @@
         },
         {
           "field_id": "overall_followup",
-          "status": "reported",
-          "value": "maximum_only",
+          "status": "not_yet_extracted",
+          "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
             "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger records that reported human review and does not claim assistant source inspection or independent review. Scope: Section 6.1 reported overall follow-up range and mean.",
-          "reason_codes": [],
-          "adjudication_note": "Section 6.1 reports follow-up of 0.3\u201314.5 years after first infusion (mean 3 \u00b1 3.7 years). This is variable overall follow-up, not a common fixed day-365 endpoint or complete retention denominator.",
-          "review_complete": true,
+          "review_scope": "Maintainer @aditmer reports personally reviewing Section 6.1 of frozen SPL v3 on 2026-10-29. The source states follow-up of 0.3\u201314.5 years after first infusion (mean 3 \u00b1 3.7 years); the frozen overall_followup enum has no category for a variable range and mean.",
+          "reason_codes": [
+            "EXTRACTION_INCOMPLETE"
+          ],
+          "adjudication_note": "Preserve the source-reported variable follow-up range of 0.3\u201314.5 years after first infusion (mean 3 \u00b1 3.7 years). Do not encode this as maximum_only or infer a common month-12 endpoint. The available enum does not faithfully represent this summary, so this field remains unresolved.",
+          "review_complete": false,
           "access_log": "",
           "structural_basis": ""
         },
