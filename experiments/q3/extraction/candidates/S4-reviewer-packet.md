@@ -28,3 +28,33 @@ Key review points:
 ## Unresolved fields and limits
 
 `unresolved_field_count` is **105**. The unresolved set is exactly the 121 `SPECS` field IDs in `scripts/q3_classifier.py` minus this packet's reviewable `candidate_field_ids` listed above. Planned outcomes and absent registry results do not resolve observed outcomes. The official ledger and human-review gates remain unchanged; Issue #35 remains blocked.
+
+## Candidate provenance update — 2026-10-29
+
+This update records the source/access boundary for Issue #57; candidate facts
+remain unverified in [`S4-candidates.json`](S4-candidates.json). The approved
+source is `NCT04786262-history-v32`, selected through
+https://clinicaltrials.gov/study/NCT04786262?tab=history&a=32#version-content-panel.
+The prior status note reports HTTP 403 from the historical JSON endpoint. No
+v32 record was reopened in this preparation, and the current API snapshot/hash
+is not a byte-authenticated v32 source.
+
+The field-level candidate locators in the JSON file distinguish the frozen
+VX-880 Parts A/B/C target from the excluded VX-017 Part D, including
+`protocolSection.outcomesModule.primaryOutcomes`,
+`protocolSection.outcomesModule.secondaryOutcomes`, and
+`protocolSection.designModule.enrollmentInfo`. The estimated enrollment of
+57 is combined-protocol context only. Planned endpoints and the absence of a
+results module are not observed outcomes.
+
+Repository materials reviewed: Issue #57, the manifest, the existing S4
+candidate JSON and reviewer packet, and the remaining-source status note. No
+new primary-source sections were reviewed, no candidate field or reviewer
+state was changed, and the existing 105-field unresolved complement remains.
+
+**Still unresolved:** exact v32 verification of each endpoint's part mapping;
+the title/structured-phase discrepancy; the separate endpoint time anchors;
+whether any target-specific enrollment or outcome denominator is reported;
+and whether any observed result exists in the approved version. Do not include
+Part D, convert planned measures to observations, or borrow S3 publication
+results.
