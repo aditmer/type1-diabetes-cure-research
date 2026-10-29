@@ -1,0 +1,23 @@
+{
+  "proposal_version": "q3-ancillary-scope-proposal-2026-10-29-02",
+  "synthetic_only": true,
+  "classification_authorized": false,
+  "source_version_id": "SYN-ancillary-proposal-01",
+  "other_evidence": "surrogate_only",
+  "scope": "ancillary_non_P1",
+  "ancillary": {
+    "measurement": "mixed_meal_glucose",
+    "analyzed_n": 7,
+    "selection": "insulin_independent_subset",
+    "timing": {
+      "nominal": "one_year",
+      "anchor": "final_infusion"
+    }
+  },
+  "clinical": {
+    "domain": "insulin_independence",
+    "count": 8,
+    "treated_n": 10,
+    "window": "any_time_during_variable_followup"
+  }
+}
