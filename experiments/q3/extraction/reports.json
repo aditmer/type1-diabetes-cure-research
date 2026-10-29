@@ -46,19 +46,20 @@
         },
         {
           "field_id": "burden.exposure",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Section 2.1 states recommended minimum doses of 5,000 EIN/kg initially and 4,500 EIN/kg subsequently. Section 14 reports observed per-infusion medians of 399,178 EIN (range 253,924\u2013858,856) and 6,570 EIN/kg (range 4,186\u201313,633); 30 subjects received one to three infusions (11/12/7 distribution).",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 2.1, Recommended Dose.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening and pooled-participant paragraphs."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "Keep recommended dose separate from observed medians; these are per-infusion summaries, not individual patient-level cumulative exposure or lot-specific dose records.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -574,101 +575,101 @@
         },
         {
           "field_id": "counts.at_horizon",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 12.2, Table 2.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4 and Figure 1."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, Table 4; Section 14, Figure 1 and caption.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "ATTRITION_CONTEXT_MISSING"
           ],
-          "adjudication_note": "No common day-365/month-12 assessment count or evaluable denominator was reported in the reviewed Table 4/Figure 1. Keep unresolved. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No global number assessed at a common 12-month/day-365 time after first infusion is reported. Table 2 N=19 is an insulin-independent subgroup tested one year after final infusion, not the target-wide first-infusion horizon denominator.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "counts.censored",
-          "status": "not_yet_extracted",
-          "value": null,
-          "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
-          "target_population_id": "lantidra-treated",
-          "subcohort_id": "lantidra-pooled-all",
-          "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph."
-          ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, Figure 1 and caption; Section 6.1, follow-up paragraph.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
-          ],
-          "adjudication_note": "No separate censored count was reported in the reviewed passages. Figure 1 shows individual histories without a summarized attrition count; review remains partial. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
-          "structural_basis": ""
-        },
-        {
-          "field_id": "counts.enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
-          "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
-          "target_population_id": "lantidra-treated",
-          "subcohort_id": "lantidra-pooled-all",
-          "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, pooled study description and demographics."
-          ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, pooled study description and demographics.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
-          ],
-          "adjudication_note": "Section 14 did not separately report screened or enrolled N. The 30 treated participants are not an enrolled denominator. Keep unresolved pending full relevant-source adjudication. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
-          "structural_basis": ""
-        },
-        {
-          "field_id": "counts.followed",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
             "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4 and Figure 1."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 6.1, follow-up paragraph; Section 14, Figure 1 and caption.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "ATTRITION_CONTEXT_MISSING"
           ],
-          "adjudication_note": "The follow-up range/mean and Figure 1 do not provide a full-cohort timepoint-specific retention/evaluable denominator. Keep unresolved. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No number censored or censoring method is stated in the reviewed label.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
-          "field_id": "counts.missing_data_handling",
-          "status": "not_yet_extracted",
+          "field_id": "counts.enrolled",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening and pooled-participant paragraphs."
+          ],
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [
+            "DENOMINATOR_MISSING"
+          ],
+          "adjudication_note": "The label gives 30 treated participants, but does not separately report screened or total enrolled N. Do not substitute the treated count.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
+          "structural_basis": ""
+        },
+        {
+          "field_id": "counts.followed",
+          "status": "unreported_in_reviewed_material",
+          "value": null,
+          "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
+          "target_population_id": "lantidra-treated",
+          "subcohort_id": "lantidra-pooled-all",
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
+          ],
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [
+            "DENOMINATOR_MISSING"
+          ],
+          "adjudication_note": "Follow-up duration is described, but no separate number followed is stated. Do not derive it from 30 treated participants or Figure 1.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
+          "structural_basis": ""
+        },
+        {
+          "field_id": "counts.missing_data_handling",
+          "status": "unreported_in_reviewed_material",
+          "value": null,
+          "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
+          "target_population_id": "lantidra-treated",
+          "subcohort_id": "lantidra-pooled-all",
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Tables 2 and 4 and Figure 1.",
             "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, Figure 1 and caption; Section 6.1, follow-up paragraph.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "ATTRITION_CONTEXT_MISSING"
           ],
-          "adjudication_note": "Reviewed passages do not provide complete cohort-level missing-data handling. Do not infer zero missing participants. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "The label does not state a missing-data or censoring-handling method for the clinical outcomes.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -690,21 +691,21 @@
         },
         {
           "field_id": "counts.withdrawals",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, reasons among 11 participants not receiving a second infusion."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, pooled-participant and repeat-infusion paragraph."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, reasons among 11 participants not receiving a second infusion.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "ATTRITION_CONTEXT_MISSING"
           ],
-          "adjudication_note": "Four participants were grouped as intolerant to immunosuppression or withdrew within six months; the source does not separate the two reasons. Do not record four as withdrawals. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "Section 14 groups 4 participants as intolerant to immunosuppression or withdrawn within 6 months, without separating intolerance from withdrawal. It does not provide an exact withdrawal count.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -1221,74 +1222,78 @@
         },
         {
           "field_id": "identity.eligibility",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, Indications and Usage."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, opening paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 4, Contraindications.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.4 (Pediatric Use) and Section 8.5 (Geriatric Use)."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen SPL v3 on 2026-10-29. Section 1 indication language was human-reviewed; Study 1/2 participant inclusion criteria were not verified in this scoped review.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "IDENTITY_DESIGN_MISSING"
           ],
-          "adjudication_note": "Section 1 indicates treatment for adults with type 1 diabetes unable to approach target HbA1c because of current repeated severe hypoglycemia despite intensive diabetes management and education, with concomitant immunosuppression required. This is the product indication, not verified participant eligibility for Studies 1 and 2; keep the full identity.eligibility field unresolved. Field-level review remains incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "Section 14 describes the study population but the reviewed label does not state formal Study 1/2 inclusion or exclusion criteria. Do not satisfy the trial eligibility requirement with the indication or participant characteristics.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.intervention",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "LANTIDRA is a suspension/cellular product of allogeneic pancreatic islets (islets of Langerhans) derived from a donor pancreas. Each infusion lot uses islets manufactured from one deceased donor. Islets contain endocrine beta, alpha, PP, delta, and epsilon cells. The product is supplied in buffered transplant medium with HEPES and human serum albumin; a separate rinse bag contains transplant medium.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 2.1, route and administration."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 3, Dosage Forms and Strengths.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 11, Description.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 16, How Supplied/Storage and Handling."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen SPL v3 on 2026-10-29. The portal-vein route was human-reviewed; full intervention identity and composition were not verified in this scoped review.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
-          ],
-          "adjudication_note": "The human-reported finding supports only the administration route: infusion into the hepatic portal vein. It does not establish the complete cellular intervention identity/composition required by this field; keep identity.intervention unresolved. Field-level review remains incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "Product identity, allogeneic source, composition, and presentation are stated. The exact administered batch strength requires the lot-specific container label/Final Islet Product Certificate of Analysis; no individual-lot certificate is part of this source.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.linkage",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "verified",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening and pooled-participant paragraphs."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "The source-stated pooled treated population maps to the frozen lantidra-treated / lantidra-pooled-all target. This verifies report-to-target linkage only, not participant-level linkage across studies.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.mapping",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Q3-S13 reports the combined Study 1 and Study 2 LANTIDRA-treated population; Section 14 states 30 subjects participated and all received at least one islet infusion. Retain the complete pooled target, including repeat infusions.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening and pooled-participant paragraphs.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "Source explicitly pools the two label studies. No participant-level cross-study identities or unique-person linkage beyond the source-stated pooled count is inferred.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -1327,19 +1332,21 @@
         },
         {
           "field_id": "independence.none_through_horizon",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4 and Figure 1."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [
+            "ENDPOINT_DEFINITION_MISSING"
+          ],
+          "adjudication_note": "Five participants had no days of insulin independence during their observed follow-up, while 25 achieved it at some point. No common fixed horizon is reported, so the five cannot establish a zero-through-horizon result.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -1349,12 +1356,15 @@
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, Patient Information."
+          ],
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
             "EXTRACTION_INCOMPLETE"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
+          "adjudication_note": "Human-verified disposition remains pending: requires a documented participant-level visual extraction/interpretation of Figure 1; Patient Information counseling that independence can take weeks is not an observed trial onset value.",
           "review_complete": false,
           "access_log": "",
           "structural_basis": ""
@@ -1820,21 +1830,19 @@
         },
         {
           "field_id": "insulin_independence.anchor",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "first_cell_administration",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, Figure 1 and caption.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
-          ],
-          "adjudication_note": "Figure 1 uses first infusion as time zero and marks repeat infusions, but this does not establish a fixed-horizon outcome assessment, numerator, or denominator. Keep the endpoint mapping unresolved. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "Figure 1 sets time zero at the first infusion. This is the figure timeline origin only; it does not establish a common fixed-horizon assessment for the pooled outcome.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -1856,147 +1864,153 @@
         },
         {
           "field_id": "insulin_independence.baseline",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4 and Figure 1.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 12.2, Table 2."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [
+            "ENDPOINT_DEFINITION_MISSING"
+          ],
+          "adjudication_note": "The label provides no numeric baseline insulin-independence measure for the pooled target. Table 2 baseline glucose values belong to the selected N=19 MMT subgroup and are not baseline insulin-independence values.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "insulin_independence.definition",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Insulin independence is defined as not requiring exogenous insulin to achieve adequate glycemic control.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, paragraph introducing Table 4."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "No HbA1c threshold, glucose target, minimum duration, or sustained-independence requirement is added to this definition.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "insulin_independence.denominator",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening and Table 4 paragraphs."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, Table 4; Section 14, Figure 1 and caption.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "DENOMINATOR_MISSING"
           ],
-          "adjudication_note": "No number assessed or analysis denominator at a common 12-month/day-365 visit after first infusion was reported in the reviewed materials. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No fixed first-infusion 12-month/day-365 result or analyzed denominator is stated. The 25/30 any-time result remains in the distinct observation/screen context and is not mapped to this fixed-horizon field.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "insulin_independence.denominator_basis",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, pooled-participant and Table 4 paragraphs."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, Table 4; Section 14, Figure 1 and caption.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "DENOMINATOR_MISSING"
           ],
-          "adjudication_note": "No endpoint-specific fixed-horizon denominator basis was stated; 25 ever insulin-independent and N=19 one year after final infusion are not substitutes. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No fixed first-infusion 12-month/day-365 result or analyzed denominator is stated. The 25/30 any-time result remains in the distinct observation/screen context and is not mapped to this fixed-horizon field.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "insulin_independence.hierarchy",
-          "status": "not_yet_extracted",
-          "value": null,
-          "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
-          "target_population_id": "lantidra-treated",
-          "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
-          ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
-          "structural_basis": ""
-        },
-        {
-          "field_id": "insulin_independence.horizon",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4 and Figure 1."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, Table 4; Section 14, Figure 1 and caption.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "ENDPOINT_DEFINITION_MISSING"
           ],
-          "adjudication_note": "No common fixed 12-month/day-365 assessment after first infusion was reported in the reviewed Table 4/Figure 1. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "The label does not classify insulin independence as a prespecified primary, secondary, post-hoc, or composite endpoint.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
+          "structural_basis": ""
+        },
+        {
+          "field_id": "insulin_independence.horizon",
+          "status": "unreported_in_reviewed_material",
+          "value": null,
+          "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
+          "target_population_id": "lantidra-treated",
+          "subcohort_id": "lantidra-pooled-all",
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4 and Figure 1."
+          ],
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [
+            "TIMING_UNREPORTED"
+          ],
+          "adjudication_note": "The 25/30 result is at any time over variable follow-up. Neither a common 12-month/day-365 assessment nor another enumerated fixed horizon is supplied.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "insulin_independence.interval_end",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4 and Figure 1."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [
+            "TIMING_UNREPORTED"
+          ],
+          "adjudication_note": "No common endpoint interval end is given for the any-time insulin-independence outcome; individual total follow-up varies.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "insulin_independence.interval_start",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Figure 1 uses the first infusion as time zero for individual insulin-use/independence histories.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "This records the figure time origin; it does not supply a common interval end or fixed-horizon outcome.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -2018,56 +2032,60 @@
         },
         {
           "field_id": "insulin_independence.population_link",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "The any-time insulin-independence result is reported for the pooled Study 1/Study 2 treated target; 25 of 30 achieved independence at some point and five had no days of independence.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening and Table 4 paragraphs."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "Retain the complete pooled target and variable-follow-up qualification; do not treat this as a fixed-horizon success rate.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "insulin_independence.screen_quantity",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": {
+            "value": 25,
+            "units": "subjects",
+            "measure": "participants ever achieving insulin independence",
+            "window": "any time during variable follow-up"
+          },
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, pooled-participant and Table 4 paragraphs."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "This is the source-stated count of 25 subjects, not a calculated percentage. The 25/30 result remains any-time only.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "insulin_independence.value",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 and caption."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, pooled-participant and Table 4 paragraphs."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped examination: Section 14, Table 4; Section 14, Figure 1 and caption.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "NUMERATOR_MISSING"
           ],
-          "adjudication_note": "These materials report duration among those ever insulin-independent and individual histories, not an insulin-independent numerator at a common 12-month/day-365 visit after first infusion. The 25/30 any-time result is not a fixed-horizon value. This field remains not_yet_extracted because source review/adjudication is incomplete.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No fixed first-infusion 12-month/day-365 result or analyzed denominator is stated. The 25/30 any-time result remains in the distinct observation/screen context and is not mapped to this fixed-horizon field.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -2077,12 +2095,14 @@
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 12.2, Pharmacodynamics, Table 2."
+          ],
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
             "EXTRACTION_INCOMPLETE"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
+          "adjudication_note": "Human-verified disposition remains pending pending clarification of how the frozen other_evidence enum applies to ancillary mixed-meal glucose when the report also contains a clinical any-time insulin-independence observation.",
           "review_complete": false,
           "access_log": "",
           "structural_basis": ""
@@ -2095,13 +2115,14 @@
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing Section 6.1 of frozen SPL v3 on 2026-10-29. The source states follow-up of 0.3\u201314.5 years after first infusion (mean 3 \u00b1 3.7 years); the frozen overall_followup enum has no category for a variable range and mean.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
             "EXTRACTION_INCOMPLETE"
           ],
-          "adjudication_note": "Preserve the source-reported variable follow-up range of 0.3\u201314.5 years after first infusion (mean 3 \u00b1 3.7 years). Do not encode this as maximum_only or infer a common month-12 endpoint. The available enum does not faithfully represent this summary, so this field remains unresolved.",
+          "adjudication_note": "Schema blocker retained after human verification: source reports 0.3\u201314.5 years after first infusion (mean 3 \u00b1 3.7 years), which the frozen single-value enum cannot faithfully represent. Do not coerce to an inaccurate category.",
           "review_complete": false,
           "access_log": "",
           "structural_basis": ""
@@ -2142,19 +2163,22 @@
         },
         {
           "field_id": "safety.discontinuations",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, immunosuppression-related adverse reactions.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, pooled-participant and exenatide co-intervention paragraphs."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [
+            "SAFETY_CONTEXT_MISSING"
+          ],
+          "adjudication_note": "Do not equate immunosuppression discontinuation, grouped intolerance/withdrawal, exenatide early cessation, or inability to receive a later infusion with a count of LANTIDRA treatment discontinuation.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -2210,452 +2234,356 @@
         },
         {
           "field_id": "severe_hypoglycemia.analysis_population",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening paragraph and clinical-study results."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "TIMING_UNREPORTED"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.anchor",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "TIMING_UNREPORTED"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.attribution",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "TARGET_POPULATION_MISMATCH"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.baseline",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, Indications and Usage.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening paragraph."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "ENDPOINT_DEFINITION_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.definition",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, Limitations of Use.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "ENDPOINT_DEFINITION_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.denominator",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "DENOMINATOR_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.denominator_basis",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "DENOMINATOR_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.hierarchy",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "ENDPOINT_DEFINITION_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.horizon",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Table 4 and Figure 1."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "TIMING_UNREPORTED"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.interval_end",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "TIMING_UNREPORTED"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.interval_start",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "TIMING_UNREPORTED"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.observation",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, Indications and Usage.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "CLINICAL_DOMAIN_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.participants_affected",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "CLINICAL_DOMAIN_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.population_link",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening paragraph and clinical-study results."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "TIMING_UNREPORTED"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.screen_quantity",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "QUANTITATIVE_CLINICAL_OUTCOME_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "severe_hypoglycemia.value",
-          "status": "not_yet_extracted",
+          "status": "unreported_in_reviewed_material",
           "value": null,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
           "locator": [
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 1, indication and limitations language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 5.1, warnings and precautions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, adverse reactions.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 8.5, population/background language.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, study population and outcomes.",
-            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 17, patient counseling."
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, Clinical Trials Experience.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Clinical Studies."
           ],
-          "review_scope": "Maintainer @aditmer reports personally reviewing the frozen DailyMed SPL v3 on 2026-10-29; this ledger relays that report and does not claim assistant source inspection or independent review. Scoped sections and search reported in Issue #53; this is not a complete-source adjudication.",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
           "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+            "CLINICAL_DOMAIN_MISSING"
           ],
-          "adjudication_note": "The reported human review found no specifically severe post-first-infusion hypoglycemia outcome with event counts, affected-participant count, severity-specific denominator, or severity-specific observation window in the reviewed sections/phrase searches. Generic hypoglycemia in Section 6.1 is not severity-specific. This does not mean zero events or establish source-wide absence. Keep unresolved.",
-          "review_complete": false,
-          "access_log": "",
+          "adjudication_note": "No post-treatment severity-specific severe-hypoglycemia endpoint result, event count, affected-participant count/denominator, endpoint definition, or event follow-up window is reported. Section 1 describes indication/limitation context; Section 6.1 lists generic hypoglycemia as an adverse reaction without a severe-event designation or exact count. Omission is not zero events.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "target_enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening paragraph."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "Section 14 identifies subjects participating in the two clinical studies and states that all 30 received at least one infusion. This Boolean confirmation of a study population is not an enrolled/screened count.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
           "field_id": "treatment.first_administration",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "All 30 participants received at least one islet infusion. Figure 1 defines time zero as the first infusion; the label does not provide calendar dates for individual first administrations.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, opening paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "The first cell infusion is the source-stated time origin. No individual administration date is supplied.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         },
         {
@@ -2678,19 +2606,21 @@
         },
         {
           "field_id": "treatment.source_anchors",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Section 2.1 says a second infusion may be performed if independence from exogenous insulin is not achieved within one year of infusion, or within one year after loss of independence following a prior infusion; a third may use the same criteria. Section 6.1 reports intervals between first and second transplants of 1 month\u20132.8 years and between second and third doses of 3 months\u20137.8 years. Figure 1 sets time zero at the first infusion.",
           "source_version_id": "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc",
           "target_population_id": "lantidra-treated",
           "subcohort_id": "lantidra-pooled-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 2.1, Recommended Dose.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 6.1, opening follow-up paragraph.",
+            "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, DailyMed SPL v3, Section 14, Figure 1 description."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Human verification of the S13 closeout field dispositions was confirmed by @aditmer on 2026-10-29. Field facts remain scoped to exact frozen-v3 locators; independent scientific review is pending.",
+          "reason_codes": [],
+          "adjudication_note": "The one-year wording is repeat-treatment guidance, not a measured one-year clinical outcome. Reported interval ranges have no stated participant distribution; do not reset a fixed efficacy horizon to a repeat infusion.",
+          "review_complete": true,
+          "access_log": "Maintainer confirmed human verification on 2026-10-29. Copilot recorded the field-level disposition; source identity and rights limitations are as documented in the review log.",
           "structural_basis": ""
         }
       ]

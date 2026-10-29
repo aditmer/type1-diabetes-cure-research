@@ -1,8 +1,8 @@
-# S13 Frozen-v3 Closeout — AI-prepared candidates awaiting human verification
+# S13 Frozen-v3 Closeout — Human-verified field dispositions
 
-**Prepared by:** Copilot, 2026-10-29
+**Human reviewer:** @aditmer
 
-**Human verifier/approval:** PENDING; no new human attestation
+**Human verification confirmed:** 2026-10-29
 
 **Source:** `SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc`, [DailyMed archive 940595](https://dailymed.nlm.nih.gov/dailymed/getArchivalFile.cfm?archive_id=940595)
 
@@ -12,23 +12,23 @@
 
 ## A. Reconciliation, provenance, and source coverage
 
-This supersedes the earlier AI closeout proposal based on the older 14-reported/107-pending checkout. The correct merged baseline has **21 reported, 53 unreported in reviewed material, and 47 pending fields**. This PR changes neither `reports.json` nor `source-review-log.csv`: all 74 approved field records, the original 14 approvals, reviewer/date metadata, and completion flags are preserved exactly.
+This supersedes the earlier AI closeout proposal based on the older 14-reported/107-pending checkout. The correct merged baseline has **21 reported, 53 unreported in reviewed material, and 47 pending fields**. The maintainer explicitly confirmed human verification of the 47-field closeout candidate set on 2026-10-29. The 44 determinate dispositions below are recorded in the ledger; three fields remain pending. The 74 previously adjudicated field records, including the original 14 approvals, are preserved exactly.
 
 The table below contains exactly the 47 fields pending at that baseline, once each. It excludes the already-reported `insulin_independence.analysis_population`, `.attribution`, `.observation`, and `followup_attribution`. It includes the previously omitted `burden.exposure`, `independence.none_through_horizon`, `independence.onset`, and `insulin_independence.anchor`.
 
-**Every row is an unverified AI-assisted candidate, not an accepted ledger disposition.** The proposed status column describes a possible decision after human source verification. No importer, classifier input, approval, or complete primary-human-review claim is created. All 47 authoritative fields remain `not_yet_extracted`.
+**Human verification is complete for the 47 candidate dispositions.** Forty-four field-level decisions are approved and entered in `reports.json`; `overall_followup`, `independence.onset`, and `other_evidence` remain `not_yet_extracted` for the specific blockers in the table. The user confirmation does not resolve those blockers, authorize a schema change, or complete source-content review or field adjudication.
 
 Prior source inspections and the October 28/29 human-review records linked from [Issue #53](https://github.com/aditmer/type1-diabetes-cure-research/issues/53) are reused, not relabeled as a new human review. The previous AI inspection record describes Sections 1, 2.1–2.3, 3–6.1, 8.1–8.5, 11, 12.2, 14, 16, 17/Patient Information, and product panels. This reconciliation did not repeat those clinical inspections or independently establish exhaustive figure coverage. Any proposed omission below is limited to that reviewed frozen-label material and still requires human confirmation of sufficient coverage. Figure 1 onset interpretation remains explicitly open.
 
 Every section/table locator below refers to the exact source version above, XML member `a3163e14-0404-4e27-884b-f6f9f7f695bc.xml`, not the live label. The source manifest records XML SHA-256 `696ebb05a528236ea6077c912785e94cf103aa4d29fa61bacab3282e65307fd4`. Protocols, SAPs, individual lot certificates, and participant-level records outside this label were not inspected. No access-attempt exhaustion or blanket redistribution rights are claimed; NLM terms remain as recorded. No source archive or figure is committed.
 
-## B. Exact 47-field candidate dispositions
+## B. Exact 47-field verified dispositions
 
-There are **12 proposed reported, 32 proposed unreported-in-reviewed-material, and 3 deferred** decisions. These are candidate counts only; authoritative ledger counts remain **21 / 53 / 47**.
+There are **12 newly reported, 32 newly unreported-in-reviewed-material, and 3 pending** dispositions. Combined with the unchanged 21 reported and 53 unreported baseline records, current S13 counts are **33 reported, 85 unreported in reviewed material, and 3 pending**.
 
-`null` means no classifier value is proposed. It never means zero events, zero response, treatment failure, or an approved omission.
+For unreported rows, `null` means the source does not provide the required field value in reviewed material. It never means zero events, zero response, or treatment failure.
 
-| Field ID | Proposed status after human verification | Candidate value or reason | Frozen-v3 locator | Limitation / required verification |
+| Field ID | Human-verified status | Value or reason | Frozen-v3 locator | Limitation |
 |---|---|---|---|---|
 | `identity.intervention` | `reported` | Allogeneic pancreatic islet cellular product from deceased-donor pancreas; endocrine beta, alpha, PP, delta, and epsilon cells; lot-specific strength on container label/Certificate of Analysis. | Sections 3, 11, 16 | Individual administered lot strength is not supplied by this label. |
 | `identity.eligibility` | `unreported_in_reviewed_material` | `null`; formal Study 1/2 inclusion/exclusion criteria are not established in the reviewed label. | Section 14 opening; Section 6.1 opening; Section 4; Sections 8.4–8.5 | T1D/hypoglycemic-unawareness population wording, product indication, contraindications, and observed ages are context only. Do not satisfy H1 eligibility using them; preserve the PR #61 correction. |
@@ -82,21 +82,21 @@ There are **12 proposed reported, 32 proposed unreported-in-reviewed-material, a
 
 The frozen rules require eligibility under H1, numerator/analysis denominator under H2/H3, and a matched first-administration nominal 12-month interval under H4 (`rules-v1.1.json`, harmonized requirements). `scripts/q3_classifier.py` defines `.value` as a count and `.denominator_basis=endpoint_analysis` as satisfying that denominator predicate. A caution in free text alone is therefore insufficient.
 
-The revised candidate keeps the fixed-horizon `.value`, `.denominator`, and `.denominator_basis` **null** rather than 25, 30, and `endpoint_analysis`. The valid any-time observation stays in its already-approved record; a proposed `.screen_quantity` may preserve 25 subjects with an explicit variable-follow-up window. The Figure 1 first-infusion origin remains a distinct candidate fact; it supplies neither a common assessment time nor an assessed N. No real-source classifier is run.
+The verified mapping keeps the fixed-horizon `.value`, `.denominator`, and `.denominator_basis` **null** rather than 25, 30, and `endpoint_analysis`. The valid any-time observation stays in its already-approved record; `.screen_quantity` preserves 25 subjects with an explicit variable-follow-up window. The Figure 1 first-infusion origin remains a distinct fact; it supplies neither a common assessment time nor an assessed N. No real-source classifier is run.
 
-`identity.eligibility` is proposed as an omission, not reported. Population wording remains available in the approved disease-stage/baseline context; there is no proposed modification to the 21 previously reported fields or 53 approved omissions.
+`identity.eligibility` is recorded as unreported in reviewed label material, not established from population wording. No existing reported or unreported field was modified.
 
-The `safety.discontinuations` candidate is likewise narrowed to the exact requirement: associated immunosuppression or exenatide cessation is not counted as discontinuation of Lantidra study treatment.
+The `safety.discontinuations` disposition is likewise limited to the exact requirement: associated immunosuppression or exenatide cessation is not counted as discontinuation of Lantidra study treatment.
 
 ## D. Protected findings and remaining work
 
 All accepted records remain unchanged, including duration counts 4/12/9 with the incompatible printed percentages, Table 3 medication count/percentage discrepancies, 16 malignancy reactions versus 15 accounted for in listed categories, and infection events versus affected participants. No source-printed discrepancy is repaired.
 
-Human verification is required for **all 47 rows**, including any proposed omission and exact locator. Three decisions are additionally deferred: `overall_followup` needs approved schema/adjudication clarification; `independence.onset` needs visual Figure 1 review; `other_evidence` needs clarification of the frozen enum's scope. Neither a schema extension nor new source access is authorized by this document.
+Human verification is recorded for **all 47 rows**, including proposed omissions and locators. Three decisions remain pending: `overall_followup` needs approved schema/adjudication clarification; `independence.onset` needs a separately documented visual Figure 1 extraction; `other_evidence` needs clarification of the frozen enum's scope. Neither a schema extension nor new source access is authorized by this record.
 
 ## E. Decision / approval boundary
 
-**New primary human-review approval:** PENDING
+**Human verification of 47 dispositions:** COMPLETE
 
 **Source-content review complete:** NO
 
@@ -104,4 +104,4 @@ Human verification is required for **all 47 rows**, including any proposed omiss
 
 **Independent scientific review:** PENDING
 
-Submit these candidates for human source verification; do not promote them to completed primary human review, merge them as accepted scientific values, close Issue #53, or authorize G2-B/G2-C gates. This document contains no first-person human inspection attestation.
+The 44 determinate dispositions are recorded as human verified. Do not mark the entire source-content review or field adjudication complete while the three fields above remain pending. Independent scientific review, Issue #53 closeout, and G2-B/G2-C authorization remain pending.
