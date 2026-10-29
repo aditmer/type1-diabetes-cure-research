@@ -1,0 +1,15 @@
+{
+  "proposal_version": "q3-followup-summary-proposal-2026-10-29-01",
+  "synthetic_only": true,
+  "classification_authorized": false,
+  "source_version_id": "SYN-followup-proposal-01",
+  "value": {
+    "kind": "variable_duration_summary",
+    "unit": "years",
+    "minimum": 0.2,
+    "maximum": 11.4,
+    "mean": 2.6,
+    "mean_plus_minus": 3.1,
+    "anchor": "first_cell_administration"
+  }
+}
