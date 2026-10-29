@@ -28,3 +28,35 @@ Key review points:
 ## Unresolved fields and limits
 
 `unresolved_field_count` is **108**. The unresolved set is exactly the 121 `SPECS` field IDs in `scripts/q3_classifier.py` minus this packet's reviewable `candidate_field_ids` listed above. The Week-26 C-peptide endpoint is surrogate/contextual evidence and does not resolve a P1 endpoint. Absence from the candidate set is not an accepted disposition. Human and independent review remain pending; the official ledger, cohort links, and Issue #35 gate remain unchanged.
+
+## Candidate provenance update — 2026-10-29
+
+This update records the current evidence boundary; it is not a new source
+review. The candidate facts and their frozen-version-prefixed field locators
+remain in [`S20-candidates.json`](S20-candidates.json). The key paths for
+human verification are:
+
+- Cohort 2 flow: `resultsSection.participantFlowModule.periods[Overall Study].milestones[STARTED].achievements[group=Cohort 2]`.
+- Cohort 2 C-peptide result: `resultsSection.outcomeMeasuresModule.outcomeMeasures[Change in C-peptide for Cohort 2 Subjects]`.
+- Cohort 2 adverse events: `resultsSection.adverseEventsModule.eventGroups[title=Cohort 2]`, including its `timeFrame`, `seriousEvents`, and `frequencyThreshold`.
+
+The approved source remains `NCT03163511-history-v20`, at
+https://clinicaltrials.gov/study/NCT03163511?tab=history&a=20#version-content-panel.
+The prior source-status note records HTTP 403 for the historical JSON endpoint.
+No historical page was reopened in this preparation, and the current API
+snapshot/hash is not a substitute for the frozen history. The 47 Cohort 2
+Started count, 49 whole-study enrollment, Week-26 C-peptide result, and
+Week-104 safety facts therefore remain candidate-only.
+
+Repository materials reviewed for this update: Issue #57, the frozen source
+manifest, this candidate file, and this packet. No new primary-source sections
+were reviewed; no field status, reviewer identity/date, cohort link, or
+independent-review state was changed. The 108-field unresolved complement
+remains exactly as stated above.
+
+**Still unresolved:** human verification of Cohort 2 enrollment versus actual
+treatment exposure; endpoint-specific denominators and timing; whether any
+registry event wording meets the frozen severe-hypoglycemia definition; and
+any exact evidence for a publication-cohort relationship. Do not equate
+“Hypoglycemia” with severe hypoglycemia or infer participant identity from
+the registry identifier.
