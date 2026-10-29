@@ -32,3 +32,34 @@ Key review points:
 ## Unresolved fields and limits
 
 `unresolved_field_count` is **112**. The unresolved set is exactly the 121 `SPECS` field IDs in `scripts/q3_classifier.py` minus this packet's reviewable `candidate_field_ids` listed above. This is the original 2026-10-27 candidate inventory, so its **112** unresolved count represents the pre-review nine-candidate coverage, **not** today's authoritative ledger. As of 2026-10-28 the ledger contains ten primary-human-reviewed fields and **111 still unextracted**, including the revised `identity.dose` with planned sentinel units. The old candidate inventory remains an audit snapshot. No report-level `not_applicable` classification has been executed; independent review and Issue #35 authorization remain blocked.
+
+## Candidate provenance update — 2026-10-29
+
+This update documents the evidence boundary for Issue #54; it adds no source
+fact and does not alter any of the ten previously approved field objects.
+The approved source remains `NCT02239354-history-v13`, identified by the
+version-specific locator:
+https://clinicaltrials.gov/study/NCT02239354?tab=history&a=13#version-content-panel.
+The candidate JSON's recorded download is current-API data, not a byte-
+authenticated historical-v13 export. This preparation reviewed Issue #54, the
+manifest, candidate JSON, reviewer packet, checklist, and the dated ten-field
+human-review record; it did not reopen v13 or inspect `Prot_SAP_000.pdf`.
+
+The existing candidate inventory is a historical nine-field extraction
+snapshot; it is not the source of the ten maintainer-approved decisions.
+Remaining candidates and their exact version-prefixed locators stay
+unverified. In particular, keep the Cohort 2 participant-flow location
+(`resultsSection.participantFlowModule.periods[Overall Study].milestones[STARTED].achievements[group=Cohort 2]`)
+distinct from Cohort 1 and from the C-peptide result row
+(`resultsSection.outcomeMeasuresModule.outcomeMeasures[Change in C-peptide]`).
+The approved ten-field record is the sole source of the existing limited
+human approval; it does not authorize promotion of any of the 111 remaining
+fields.
+
+**Still unresolved:** exact historical-v13 review of remaining permitted
+sections; whether the linked protocol/SAP is within approved version/access
+scope before any use; target-linked baseline, endpoint, denominator,
+follow-up, attrition, harms and treatment-exposure facts; and all independent
+review. Cohort 2 never being enrolled is not zero responders, and Cohort 1's
+19 participants or safety outcomes are not Cohort 2 efficacy evidence. Keep
+the 111-field pending count, independent-review gate, and Issue #35 block.
