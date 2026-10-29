@@ -4,6 +4,13 @@
 These files are review aids only. They are not authoritative ledger records,
 accepted field values, or report classifications.
 
+The S13 closeout review is now recorded in
+`../reviews/S13/human-source-review-approved-2026-10-29.md`. It reconciles
+exactly the 47 fields pending after PR #61 against `main` at `56c44e0`; 44
+dispositions were human verified and recorded in the ledger. Three fields
+remain pending, so complete source-content review and adjudication are not
+claimed.
+
 Each source has one JSON evidence file and one reviewer packet. The JSON
 `candidate_facts` record the exact approved source version, report, frozen
 field ID, concise candidate value, precise source locator, population and

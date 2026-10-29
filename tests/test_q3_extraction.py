@@ -430,9 +430,9 @@ class Q3ExtractionTests(unittest.TestCase):
         field = self.field(document["reports"][0], "burden.exposure")
         field.update(
             status="conflicting",
+            value=None,
             locator=[
                 "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 2",
-                "SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14",
             ],
             reason_codes=["SOURCE_CONFLICT"],
         )
@@ -445,6 +445,7 @@ class Q3ExtractionTests(unittest.TestCase):
         field = self.field(document["reports"][0], "target_enrolled")
         field.update(
             status="not_applicable",
+            value=None,
             locator=["SPL-v3-a3163e14-0404-4e27-884b-f6f9f7f695bc, section 14"],
             review_complete=True,
         )
