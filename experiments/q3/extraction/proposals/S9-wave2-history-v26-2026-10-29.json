@@ -1,0 +1,55 @@
+{
+  "artifact_status": "source_checked_proposal_not_human_adjudication",
+  "baseline_sha": "7432cd3cb3bc1075706b12c50ab7156bc71ddb8c",
+  "source_id": "S9",
+  "report_id": "Q3-S9",
+  "source_version_id": "NCT05791201-history-v26",
+  "target_population_id": "vx264-all",
+  "subcohort_id": "vx264-all-parts",
+  "authoritative_ledger_data": false,
+  "human_adjudication_complete": false,
+  "source_content_review_complete": false,
+  "independent_review_pending": true,
+  "retrieval": {
+    "attempt_date": "2026-10-29",
+    "method": "Ordinary browser navigation to approved history URL; read rendered #version-content-panel text.",
+    "url": "https://clinicaltrials.gov/study/NCT05791201?tab=history&a=26#version-content-panel",
+    "result": "success_rendered_exact_version",
+    "observed_title": "Record History | ver. 26: 2026-10-06 | NCT05791201 | ClinicalTrials.gov",
+    "observed_panel_heading": "Viewing V26 (2026-10-06)",
+    "scope": "Rendered Study Details: identity/status, design/enrollment, intervention, all planned outcome labels/time frames and eligibility. No Study Results section rendered; no additional documents or participant-level data accessed.",
+    "limitations": "Version-specific panel evidence only, not byte-identical historical JSON. No raw hasResults=false re-test or new HTTP status claimed. Earlier internal-endpoint 403 remains historical context, not failure of this browser attempt. No current-API substitution or access bypass.",
+    "remaining_blocker": "Primary human adjudication, independent review and complete permitted coverage; actual treated/part-specific counts, observed efficacy/safety and actual follow-up not established.",
+    "lawful_remedy": "Authorized reviewer should reopen exact v26, verify enrollment/part mapping/plans together, and establish version binding and approved scope before using any additional official component. Do not use current API or S10 sponsor material as substitute evidence."
+  },
+  "field_proposals": [
+    {"field_id": "target_enrolled", "proposed_status": "reported", "proposed_value": true, "locator": "NCT05791201-history-v26, Study Design > Enrollment > 7 [Actual]; Arms and Interventions > VX-264.", "limitations": "Actual study enrollment supports enrollment of the full VX-264 target, not proof all seven received treatment or any outcome denominator.", "human_verification": "Confirm all-study target mapping and distinguish enrollment from treatment."},
+    {"field_id": "population_identified", "proposed_status": "reported", "proposed_value": true, "locator": "NCT05791201-history-v26, Study Identification; Study Design; Arms and Interventions; Outcome Measures.", "limitations": "Target retains all planned/actual VX-264 recipients, not a Part B or responder subset.", "human_verification": "Confirm all-parts frozen target."},
+    {"field_id": "identity.population", "proposed_status": "reported", "proposed_value": "VX-264 Phase 1/2 study with one experimental arm; outcome labels distinguish Part A and Part B safety from Part B C-peptide.", "locator": "NCT05791201-history-v26, Study Design > Number of Arms; Arms and Interventions; Primary Outcome Measures.", "limitations": "No part-specific participant distribution established.", "human_verification": "Retain both parts and avoid inferred participant assignment."},
+    {"field_id": "identity.disease_stage", "proposed_status": "reported", "proposed_value": "Type 1 diabetes; key inclusion requires at least five years disease duration.", "locator": "NCT05791201-history-v26, Conditions; Eligibility > Key Inclusion Criteria.", "limitations": "No observed efficacy or participant-level disease status inferred.", "human_verification": "Verify source disease criteria without importing severe-hypoglycemia criteria from S4."},
+    {"field_id": "identity.eligibility", "proposed_status": "reported", "proposed_value": "Ages 18-65; T1D for at least five years; stable diabetic treatment; consistent CGM use for at least four weeks before screening and willingness to continue. Prior islet/organ transplant or cell therapy excluded.", "locator": "NCT05791201-history-v26, Eligibility > Minimum Age, Maximum Age and Criteria.", "limitations": "Eligibility does not establish administered dose or observed glycemic endpoints.", "human_verification": "Verify exact v26 criteria; no substitution of S4 eligibility."},
+    {"field_id": "identity.intervention", "proposed_status": "reported", "proposed_value": "VX-264, described as allogeneic human stem cell-derived islets.", "locator": "NCT05791201-history-v26, Arms and Interventions > Experimental: VX-264 > Drug: VX-264.", "limitations": "Cell dose, delivery detail, treatment exposure and immunosuppression regimen not established by this description.", "human_verification": "Accept only supported product description; do not infer no immunosuppression."},
+    {"field_id": "identity.design", "proposed_status": "reported", "proposed_value": "Interventional Phase 1/2; single-group assignment, one arm, open-label; allocation N/A. Overall status Active, not recruiting.", "locator": "NCT05791201-history-v26, Study Design; Study Status > Overall Status.", "limitations": "Trial status does not establish efficacy, termination or successful treatment.", "human_verification": "Keep frozen status separate from later program statements."},
+    {"field_id": "identity.mapping", "proposed_status": "reported", "proposed_value": "Primary planned safety endpoint covers Parts A/B from Day 1 up to 24 months; primary planned peak C-peptide change during MMTT is Part B only, baseline and Day 90.", "locator": "NCT05791201-history-v26, Primary Outcome Measures > Parts A/B safety and Part B Change in Peak C-peptide > Time Frames.", "limitations": "No observed Part B endpoint or shared numeric analysis population established.", "human_verification": "Verify part-specific scope and windows; do not pool A/B efficacy."},
+    {"field_id": "identity.comparator", "proposed_status": "reported", "proposed_value": "Single experimental VX-264 group, open-label, allocation N/A; no concurrent comparator described.", "locator": "NCT05791201-history-v26, Study Design > Interventional Study Model, Masking, Allocation; Arms and Interventions.", "limitations": "No causal or comparative efficacy conclusion.", "human_verification": "Verify single-arm design only."},
+    {"field_id": "counts.enrolled", "proposed_status": "reported", "proposed_value": 7, "locator": "NCT05791201-history-v26, Study Design > Enrollment > 7 [Actual].", "limitations": "Whole VX-264 study actual enrollment; not treated count, part count or endpoint denominator.", "human_verification": "Confirm target includes whole record; leave actual treatment and endpoint populations pending."},
+    {"field_id": "safety.harms", "proposed_status": "reported", "proposed_value": "Planned number of participants with AEs and SAEs for Parts A/B. No Study Results section rendered; observed AE/SAE counts not established.", "locator": "NCT05791201-history-v26, Primary Outcome Measures > Part A and Part B Safety and Tolerability; rendered historical panel coverage.", "limitations": "A plan and absent posted results do not mean zero harms, no severe events or complete omission review.", "human_verification": "Accept only planned measure context, not absence of harm."},
+    {"field_id": "safety.population", "proposed_status": "reported", "proposed_value": "Planned safety measure covers Part A and Part B; no actual safety-analysis denominator is provided by the rendered outcome definition.", "locator": "NCT05791201-history-v26, Primary Outcome Measures > Part A and Part B Safety and Tolerability.", "limitations": "Do not replace missing safety at-risk count with enrollment seven.", "human_verification": "Verify part scope; defer actual denominator until supported."},
+    {"field_id": "safety.window", "proposed_status": "reported", "proposed_value": "Planned Parts A/B AE/SAE assessment from Day 1 up to 24 months.", "locator": "NCT05791201-history-v26, Primary Outcome Measures > Part A and Part B Safety and Tolerability > Time Frame.", "limitations": "Planned window only; Day 1 is not independently established as first cell administration, and this is not observed follow-up.", "human_verification": "Retain literal anchor/window without resetting timing or deriving 12-month data."}
+  ],
+  "candidate_reconciliation": [
+    {"topic": "Part B surrogate", "value": "Planned change in peak C-peptide during MMTT, from baseline and at Day 90.", "locator": "NCT05791201-history-v26, Primary Outcome Measures > Part B Change in Peak C-peptide > Time Frame.", "disposition": "No numerical observed surrogate or P1 result established. Do not put the old narrative candidate into other_evidence enum or call a planned result observed."},
+    {"topic": "Absent posted results", "value": "No Study Results section rendered in selected historical panel.", "locator": "NCT05791201-history-v26, rendered panel from Study Details through Document Section.", "disposition": "Prior candidate hasResults=false is not a newly tested raw API property; no clinical zero or completed omission inferred."}
+  ],
+  "remaining_fields": {
+    "definition": "Exactly SPECS minus field_proposals.field_id.",
+    "count": 108,
+    "proposed_status": "not_yet_extracted",
+    "proposed_value": null,
+    "locator": "NCT05791201-history-v26, Study Design > Enrollment; Primary Outcome Measures; Arms and Interventions; rendered panel coverage.",
+    "limitations": "Actual treated count, part-specific denominators, actual endpoint observations, actual follow-up/attrition, dose, first/repeat administration and immunosuppression remain unresolved. No complete source-omission or structural-inapplicability adjudication.",
+    "human_verification": "Review permitted coverage and enum applicability before finalizing other_evidence or unlisted domain observation states. Do not infer zero response/harms, no immunosuppression, all-seven-treated or a first-administration anchor; do not borrow S10."
+  },
+  "proposed_counts": {"reported": 13, "not_yet_extracted": 108},
+  "authoritative_baseline_counts": {"reported": 83, "unreported_in_reviewed_material": 85, "conflicting": 1, "not_yet_extracted": 799}
+}
