@@ -4721,12 +4721,12 @@
         "version_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11471599.1/",
         "evidence_class": "historical_restore_attestation",
         "manifest_sha256": "3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839",
-        "source_material_reviewed": false,
+        "source_material_reviewed": true,
         "rights_notes": "CC BY 4.0 attribution and third-party exceptions apply; item-level third-party reuse review remains pending. MOESM4 was not reviewed."
       },
       "human_review": {
-        "reviewer_identity": null,
-        "decision_date": null,
+        "reviewer_identity": "@aditmer",
+        "decision_date": "2026-10-30",
         "independent_review_pending": true,
         "independent_reviewer_identity": null,
         "independent_review_date": null,
@@ -4736,18 +4736,18 @@
       "fields": [
         {
           "field_id": "burden.co_interventions",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Diabetes educator independent of the study team and unaware of C-peptide results guided glycemic control and insulin administration; protocol used Dexcom G6 CGM and regular medical/laboratory follow-up with immunosuppression adjustment when needed.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 10, paragraph 39"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Protocol co-interventions.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Does not isolate an implant causal effect from concomitant care. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending. Medical and laboratory follow-up visits were scheduled; do not infer that every scheduled visit was completed.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -4770,18 +4770,18 @@
         },
         {
           "field_id": "burden.immunosuppression",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Anti-thymocyte globulin induction adjusted to lymphocyte counts; tacrolimus plus mycophenolate mofetil maintenance.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Results Section 3, paragraph 8; Methods Section 10, paragraph 38"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Protocol regimen for implanted recipients.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: No exact maintenance duration, cumulative dose, or full regimen adherence established by this partial inspection. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -5161,18 +5161,18 @@
         },
         {
           "field_id": "counts.enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 10,
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31 and Par33"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Enrollment of this publication cadre only.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Not all-study enrollment or a universal endpoint-analysis denominator. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -5212,18 +5212,18 @@
         },
         {
           "field_id": "counts.treated",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 10,
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31 and Par33; Results Section 4, paragraph 10"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Full 10-person implanted publication target.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Not the number with evaluable data at every visit. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -5552,18 +5552,18 @@
         },
         {
           "field_id": "identity.baseline_context",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "At screening, all 10 had basal and 90-minute MMTT plasma C-peptide below the assay detection limit of 0.03 nmol/L.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Results Section 3, paragraph 8"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Observed full-cadre baseline, not a reported numeric zero.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Below detection is distinct from absence of all endogenous secretion and from the 0.07 nmol/L entry threshold. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -5586,35 +5586,35 @@
         },
         {
           "field_id": "identity.design",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "First-in-human, open-label phase 1/2 safety, tolerability and efficacy trial; interim publication of one 10-person cadre in a larger study.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Publication cadre within the multicenter trial.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Not a randomized efficacy comparison or the entire registry population. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.disease_stage",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Established type 1 diabetes for at least 5 years, with hypoglycemia unawareness or significant glycemic lability.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31-32"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Trial inclusion criteria.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Eligibility is not evidence that every participant had every listed clinical characteristic. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending. Clarke score >=4 confirms the hypoglycemia-unawareness qualifying pathway; it was not a universal requirement for all qualifying participants.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -5637,35 +5637,35 @@
         },
         {
           "field_id": "identity.eligibility",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Entry criteria included MMTT C-peptide below 0.07 nmol/L and HbA1c at most 10%; hypoglycemia-unawareness qualification used Clarke score at least 4. Prior islet, kidney or pancreas transplantation and specified severe diabetic complications were exclusion criteria.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 32; Section 10, paragraph 38"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Main-narrative eligibility summary, not an exhaustive protocol transcription.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Do not replace the observed baseline LOD threshold with the eligibility cutoff. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending. This is a selected, non-exhaustive criteria summary; Clarke score >=4 applies to the hypoglycemia-unawareness pathway and is not stated as a universal requirement for every participant.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.intervention",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "PEC-Direct/VC-02: PEC-01 cells derived from the CyT49 pluripotent stem cell line in perforated delivery devices implanted subcutaneously.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31; Section 10, paragraph 38; Section 11, paragraph 42"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Author description of the implanted combination product.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Not encapsulation without systemic immunosuppression. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -5688,35 +5688,35 @@
         },
         {
           "field_id": "identity.mapping",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Publication is one 10-person optimized cadre within Cohort 2 of NCT03163511; references CR17 and CR18 describe earlier Cohort 2 groups.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31 and Par33; references CR17 and CR18"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Program and cadre mapping only.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: No shared participant count, same/subset/distinct relationship, or publication-to-registry outcome transfer established. References to earlier Cohort 2 reports do not establish participant overlap, direction of subset, or outcome transfer. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "All 10 recipients in the most recent optimized Cohort 2 cadre, enrolled August 2020 through October 2021; not a response-defined subset.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31 and Par33"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Full frozen target pec-s19-optimized-all.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Cadre chronology does not establish disjoint participants from earlier reports. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending. \u201cOptimized\u201d is the frozen target label; the inspected Methods narrative describes device and implantation changes and does not necessarily use that adjective as the group name.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -6351,18 +6351,18 @@
         },
         {
           "field_id": "population_identified",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31 and Par33"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Ten-person interim publication target.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Identified report population is not resolved cross-report participant identity. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -6402,18 +6402,18 @@
         },
         {
           "field_id": "safety.harms",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Two patients reported treatment-emergent serious adverse events. Procedural pain was the most common TEAE; no TEAEs met the protocol-defined adverse-events-of-special-interest category.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Results Section 3, paragraph 9"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Aggregate narrative safety statements.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Two is an affected-person count, not a separately enumerated total of all serious events or all TEAEs. The two serious adverse events refer to two affected patients, not a separately enumerated total of events; no 2/10 safety rate is inferred. Results Sec3/Par9 and Methods Sec10/Par38 remain unreconciled, preserving both source statements. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -6725,18 +6725,18 @@
         },
         {
           "field_id": "target_enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 9, paragraph 31 and Par33"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Full optimized cadre; author narrative.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Proposed field only; no human source approval or registry-population identity decision. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -6776,18 +6776,18 @@
         },
         {
           "field_id": "treatment.source_anchors",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "MMTT baseline four weeks before transplant; post-transplant testing every three months. Results label observations by post-implant month; protocol primary endpoint is baseline to week 26, with narrative reporting month 6.",
           "source_version_id": "PMC11471599.1",
           "target_population_id": "pec-s19-target",
           "subcohort_id": "pec-s19-optimized-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "PMC11471599.1, Methods Section 10, paragraph 40; Section 9, paragraph 33; Results Section 4, paragraph 10"
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary human reviewer @aditmer signed off on this supported field-level mapping on 2026-10-30 in authenticated GitHub Issue #34 comment https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. The source-specific decision and reviewed scope are recorded in Issue #56 and the Wave 2 field matrix. This field-level decision does not claim exhaustive source review, independent review, or G2-B acceptance. Scope: Source timing conventions only.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: SUPPORTED for this field in the Wave 2 adjudication matrix; original proposal value retained with its stated limitation. Authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Source-specific limitation: Preserve week 26 and month 6 wording; do not assert identical visit dates, reset to a subsequent infusion, or make maximum planned follow-up actual follow-up. Preserve protocol Week 26 and narrative Month 6 labels without assuming identical dates; do not reset the anchor to a later infusion. The historical private restore/verifier remains unavailable; MOESM4 was excluded and other supplementary/third-party material remains unreviewed or rights-pending.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         }

@@ -166,7 +166,7 @@ class S19Wave2AggregateEvidenceTests(unittest.TestCase):
         self.assertIn("MOESM4 excluded", supplements["decision"])
         self.assertIn("never a proposed remedy", supplements["lawful_next_step"])
 
-    def test_no_authoritative_changes_or_human_approval_records(self):
+    def test_authoritative_promotion_is_limited_to_human_supported_fields(self):
         self.assertFalse(self.proposal["authoritative_ledger_data"])
         reports = json.loads(
             (ROOT / "experiments/q3/extraction/reports.json").read_text(
@@ -176,11 +176,35 @@ class S19Wave2AggregateEvidenceTests(unittest.TestCase):
         report = next(row for row in reports if row["source_id"] == "S19")
         self.assertEqual(len(report["fields"]), 121)
         self.assertEqual(self.proposal["remaining_authoritative_fields"], 121)
+        approved = {
+            "target_enrolled", "population_identified", "identity.population",
+            "identity.design", "identity.disease_stage", "identity.eligibility",
+            "identity.baseline_context", "identity.intervention", "counts.enrolled",
+            "identity.mapping", "counts.treated", "burden.immunosuppression",
+            "burden.co_interventions", "treatment.source_anchors", "safety.harms",
+        }
+        by_id = {field["field_id"]: field for field in report["fields"]}
+        self.assertEqual(
+            {field_id for field_id, field in by_id.items()
+             if field["status"] == "reported"},
+            approved,
+        )
+        self.assertTrue(all(
+            by_id[field_id]["value"] is not None
+            and by_id[field_id]["review_complete"]
+            and by_id[field_id]["locator"]
+            for field_id in approved
+        ))
         self.assertTrue(all(
             field["status"] == "not_yet_extracted"
             and field["value"] is None
-            for field in report["fields"]
+            and not field["review_complete"]
+            for field_id, field in by_id.items()
+            if field_id not in approved
         ))
+        self.assertEqual(report["human_review"]["reviewer_identity"], "@aditmer")
+        self.assertEqual(report["human_review"]["decision_date"], "2026-10-30")
+        self.assertTrue(report["human_review"]["independent_review_pending"])
         forbidden = {
             "reviewer_identity", "decision_date", "human_review",
             "review_complete", "adjudication_complete",
