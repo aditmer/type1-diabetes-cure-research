@@ -8923,12 +8923,12 @@
         "version_locator": "https://clinicaltrials.gov/study/NCT03163511?tab=history&a=20#version-content-panel",
         "evidence_class": "version_specific_locator",
         "manifest_sha256": "73bba445b275995b655e8cc69c5fdf7a7b09353cce01ac5a767e9564f2d40a50",
-        "source_material_reviewed": false,
+        "source_material_reviewed": true,
         "rights_notes": "Use the approved NCT03163511 history v20 panel; registry-to-publication participant identity is not established by this record."
       },
       "human_review": {
-        "reviewer_identity": null,
-        "decision_date": null,
+        "reviewer_identity": "@aditmer",
+        "decision_date": "2026-10-30",
         "independent_review_pending": true,
         "independent_reviewer_identity": null,
         "independent_review_date": null,
@@ -9363,18 +9363,18 @@
         },
         {
           "field_id": "counts.enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": 47,
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Results > Participant Flow > Overall Study > Started, Cohort 2; Baseline Characteristics > Overall Number of Baseline Participants, Cohort 2. Enrollment interpretation reconciles Cohort 2 Started/baseline/region totals of 47 with overall enrollment 49 and Cohort 1 Started=2; no direct Cohort 2 enrollment row is labeled."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. 47 is a source-reconciled Cohort 2 enrollment interpretation, not a separately labeled Cohort 2 enrollment row: 47 Cohort 2 Started/baseline/region totals reconcile with overall enrollment 49 and Cohort 1 Started=2; pre-assignment details are [Not Specified]. It is not treated count or a fixed-horizon denominator. The separate C-peptide analysis N=42 is not substituted. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -9754,86 +9754,86 @@
         },
         {
           "field_id": "identity.baseline_context",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Cohort 2 baseline N=47; age mean 47.9 years (SD 9.19); T1D duration mean 33.2 years (SD 13.65). Duration is onset to informed consent rounded to nearest integer year.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Results > Baseline Characteristics > Age, Continuous and Duration of Type 1 Diabetes, Cohort 2 and duration footnote [1]."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Demographic/disease baseline, not endpoint-specific baseline HbA1c, insulin dose, CGM or severe-hypoglycemia measure. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.comparator",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Two sequential experimental cohorts, non-randomized and open-label; no concurrent randomized comparator is described.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Design > Allocation, Masking, Interventional Study Model; Arms and Interventions."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Cohort 1 is not a Cohort 2 efficacy control or poolable target group; no treatment effect comparison is implied. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.design",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Open-label, non-randomized Phase 1/2 sequential assignment; planned Cohort 1 up to 15 and Cohort 2 up to an additional 60. Registry status Completed.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Design; Study Status > Overall Status."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Planned capacities are not actual counts; V20 status does not establish when design plans were adopted. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.disease_stage",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Type 1 diabetes with hypoglycemia unawareness or significant glycemic lability; inclusion requires diagnosis for at least five years.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Eligibility > Criteria > Inclusion Criteria."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Eligibility criteria, not observed clinical severity in every participant. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.dose",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Planned Cohort 2 maximum of twelve implanted units: up to ten VC-02-300 units and remaining units VC-02-20.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Arms and Interventions > Experimental: Cohort 2; Study Results > Participant Flow > Arm/Group Description."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Planned Cohort 2 maximum only: up to 12 units (up to 10 VC-02-300, remainder VC-02-20); not actual implanted units, delivered cell dose, treated count, or H5 exposure completeness. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -9856,18 +9856,18 @@
         },
         {
           "field_id": "identity.intervention",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "VC-02 combination product: PEC-01 cells in a delivery device; other name PEC-Direct.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Arms and Interventions > VC-02 Combination Product."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Product identity only; does not establish participant exposure or treated count. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -9890,35 +9890,35 @@
         },
         {
           "field_id": "identity.mapping",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Cohort 2 has primary C-peptide change baseline to Week 26; Cohort 1 has the primary AE endpoint through Month 4. Cohort-specific AE tables use separate windows.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Outcome Measures > Primary Outcome Measures; Study Results > Outcome Measures > items 1 and 2; Adverse Events > Time Frame."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. C-peptide is a graft-function surrogate, not an observed patient-important efficacy endpoint; Cohort 1 adverse-event endpoint/window does not transfer to Cohort 2. Publication membership and first-cell-administration timing remain unestablished. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "identity.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Sequential Cohort 2 efficacy population of VC02-101; Cohort 1 is separate. Results flow reports 47 Cohort 2 starters versus 2 Cohort 1 starters.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Design > Interventional Model Description; Study Results > Participant Flow > Overall Study."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Full Cohort 2 target, not the 42-person C-peptide analysis subset; no publication-level membership or pooled total established. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -10553,18 +10553,18 @@
         },
         {
           "field_id": "population_identified",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Design > Interventional Model Description; Arms and Interventions > Cohort 2."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Registry target identified, not identity to any publication cohort. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -10604,52 +10604,52 @@
         },
         {
           "field_id": "safety.harms",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Cohort 2: mortality 0/47; serious AEs affected 19/47; other AEs affected 47/47, with 2% reporting threshold for other AEs. Serious Hypoglycemia: 5 events in 2/47. Separate non-serious Hypoglycaemia: 1 event in 1/47, footnote [1] describes it as severe and possibly product-related.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Results > Adverse Events > totals; Serious AEs > Metabolism and nutrition disorders > Hypoglycemia; Other (Not Including Serious) AEs > Hypoglycaemia and footnote [1]."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Preserve source categories and denominators: serious AEs affect people while hypoglycemia entries separately count events/people. Serious and severe are not synonyms; do not combine rows, infer disjoint participants, or map to a frozen severe-hypoglycemia endpoint. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "safety.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Cohort 2 AE table at-risk population is 47, separately from Cohort 1 N=2; C-peptide analysis N=42 is not the safety denominator.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Results > Adverse Events > All-Cause Mortality, Serious Adverse Events and Other Adverse Events > Cohort 2 columns."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. AE at-risk population is not proof of actual implanted-treatment count or efficacy analysis population. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
         {
           "field_id": "safety.window",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Cohort 2 AE reporting from enrollment through Week 104; Cohort 1 through Week 26. Reporting description also states CRF collection at visit 2 (Week -4) and subsequent visits through study end.",
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Results > Adverse Events > Time Frame and Adverse Event Reporting Description."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Cohort-specific registry summary/reporting windows and CRF collection timing are distinct; not individual follow-up or a first-cell-administration clock and not a fixed 12-month efficacy horizon. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -10927,18 +10927,18 @@
         },
         {
           "field_id": "target_enrolled",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "NCT03163511-history-v20",
           "target_population_id": "pec-registry-cohort2",
           "subcohort_id": "pec-registry-cohort2-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT03163511-history-v20, source section(s): NCT03163511-history-v20, Study Results > Participant Flow > Overall Study > Started, Cohort 2; Baseline Characteristics > Overall Number of Baseline Participants."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
+          "review_scope": "Primary reviewer @aditmer personally reviewed the exact ClinicalTrials.gov Record History v20 (Viewing V20, 2024-11-07) and on 2026-10-30 approved this field mapping under the source-specific decisions recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6526989846 and authenticated sign-off https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Scope is the individually approved S20 fields listed in the Wave 2 matrix; this is partial field review, not source-wide completeness or independent review.",
+          "reason_codes": [],
+          "adjudication_note": "Human-approved field mapping. Enrollment mapping only; Started is not an independently documented treated count. Source-specific scope: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092.",
+          "review_complete": true,
           "access_log": "",
           "structural_basis": ""
         },
@@ -11012,7 +11012,7 @@
       },
       "human_review": {
         "reviewer_identity": "@aditmer",
-        "decision_date": "2026-10-28",
+        "decision_date": "2026-10-30",
         "independent_review_pending": true,
         "independent_reviewer_identity": null,
         "independent_review_date": null,
@@ -11839,36 +11839,36 @@
         },
         {
           "field_id": "identity.baseline_context",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Cohort 2 enrollment was never initiated; baseline population is zero. Cohort 1 has 19 baseline participants and is contextual only.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, Study Results > Baseline Characteristics section > Overall Number of Baseline Participants and Baseline Analysis Population Description."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Wave 2 primary reviewer @aditmer reported personally checking the official ClinicalTrials.gov history V13 (2022-02-25) panel and the cited field locations; source-specific review record: https://github.com/aditmer/type1-diabetes-cure-research/issues/54#issuecomment-6525233047. The reviewer directly authenticated the Wave 2 sign-off at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. This scope covers only this approved field decision, not complete S17 source review or independent scientific review. Linked Prot_SAP_000.pdf was not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: approve the proposed contextual value; authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Cohort 2 enrollment was never initiated, so its baseline population is zero; this is not an observed zero clinical response or outcome. Cohort 1 N=19 is contextual only. No Cohort 2 clinical baseline measurements are reported. Independent review remains pending.",
+          "review_complete": true,
+          "access_log": "Official ClinicalTrials.gov Record History panel displayed Viewing V13 (2022-02-25); the reviewer checked the field-specific panels at the official version locator. Source-specific review record: https://github.com/aditmer/type1-diabetes-cure-research/issues/54#issuecomment-6525233047. No linked protocol/SAP was opened. No byte-identical historical JSON or hash is claimed.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.comparator",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Non-randomized sequential assignment with two experimental cohorts and no masking; Cohort 1 is not a concurrent randomized efficacy comparator for the un-enrolled Cohort 2.",
           "source_version_id": "NCT02239354-history-v13",
           "target_population_id": "vc01-cohort2",
           "subcohort_id": "vc01-cohort2-planned",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT02239354-history-v13, Study Details > Study Design section and Arms and Interventions section."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Wave 2 primary reviewer @aditmer reported personally checking the official ClinicalTrials.gov history V13 (2022-02-25) panel and the cited field locations; source-specific review record: https://github.com/aditmer/type1-diabetes-cure-research/issues/54#issuecomment-6525233047. The reviewer directly authenticated the Wave 2 sign-off at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. This scope covers only this approved field decision, not complete S17 source review or independent scientific review. Linked Prot_SAP_000.pdf was not reviewed.",
+          "reason_codes": [],
+          "adjudication_note": "Primary human decision: approve the proposed design/comparator description; authenticated sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. Sequential assignment, two experimental cohorts, non-randomized allocation, and no masking support the description that Cohort 1 is not a concurrent randomized efficacy comparator for never-enrolled Cohort 2. No treatment-effect comparison or target treatment exposure is inferred. Independent review remains pending.",
+          "review_complete": true,
+          "access_log": "Official ClinicalTrials.gov Record History panel displayed Viewing V13 (2022-02-25); the reviewer checked the field-specific panels at the official version locator. Source-specific review record: https://github.com/aditmer/type1-diabetes-cure-research/issues/54#issuecomment-6525233047. No linked protocol/SAP was opened. No byte-identical historical JSON or hash is claimed.",
           "structural_basis": ""
         },
         {
@@ -13106,12 +13106,12 @@
         "version_locator": "https://clinicaltrials.gov/study/NCT04786262?tab=history&a=32#version-content-panel",
         "evidence_class": "version_specific_locator",
         "manifest_sha256": "6c1c5781b17fbefe961cf6345af86f1d6ac6aa0acb4d496df1d720213c3c5df2",
-        "source_material_reviewed": false,
+        "source_material_reviewed": true,
         "rights_notes": "Use the approved NCT04786262 history v32 panel; do not treat planned outcomes or unposted results as observed data, and exclude VX-017 Part D."
       },
       "human_review": {
-        "reviewer_identity": null,
-        "decision_date": null,
+        "reviewer_identity": "@aditmer",
+        "decision_date": "2026-10-30",
         "independent_review_pending": true,
         "independent_reviewer_identity": null,
         "independent_review_date": null,
@@ -13682,19 +13682,19 @@
         },
         {
           "field_id": "hba1c.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Secondary Outcome Measures > Parts B and C HbA1c labels."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Parts B/C only, not Part A or D. Human qualification: Preserve stratum attribution. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -13716,19 +13716,19 @@
         },
         {
           "field_id": "hba1c.definition",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "B/C secondary plans include HbA1c less than 7.0% at one year after VX-880 infusion in a SHE-free composite, and a separate change-from-baseline HbA1c measure at one year after infusion.",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Secondary Outcome Measures > Parts B and C > Free from SHEs with HbA1c <7.0%; Change From Baseline in HbA1c."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Threshold and change are distinct; no observed baseline/change or conversion of one year to an unstated numeric horizon. Human qualification: Verify separate threshold/composite and change measures. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -13835,19 +13835,19 @@
         },
         {
           "field_id": "hba1c.observation",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "planned",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Secondary Outcome Measures > Parts B and C HbA1c/SHE composite and Change From Baseline in HbA1c."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: No observed HbA1c value or denominator. Human qualification: Confirm planned outcome status. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -13954,53 +13954,53 @@
         },
         {
           "field_id": "identity.comparator",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Non-randomized, unmasked parallel experimental VX-880 and VX-017 arms; no randomized concurrent comparator for the frozen target described.",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Study Design > Allocation, Masking, Interventional Study Model; Arms and Interventions."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Excluded VX-017 is not an authorized efficacy comparator or source of target outcomes. Human qualification: Verify design without inferring comparative effects. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.design",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Structured phase Phase 3; non-randomized parallel assignment, open-label, two arms. Official title describes Phase 1/2/3 VX-880 and Phase 1/2 VX-017. Status Recruiting.",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Study Design; Official Title; Study Status > Overall Status."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Preserve structured phase versus title descriptions; do not silently reconcile master-protocol framing. Human qualification: Decide presentation of both statements, not an inferred corrected phase. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.disease_stage",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Type 1 diabetes with impaired hypoglycemic awareness and severe hypoglycemia.",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Official Title; Study Description > Brief Summary; Conditions."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Population description, not observed change in hypoglycemia. Human qualification: Keep eligibility disease context separate from endpoint results. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -14039,19 +14039,19 @@
         },
         {
           "field_id": "identity.intervention",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "VX-880, also named zimislecel and formerly STx-02, infused into hepatic portal vein. VX-017 is a separate excluded intervention.",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Arms and Interventions > Experimental: VX-880 > Biological and Other Names; separate VX-017 arm."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: No actual cell dose, treatment count or repeat-administration history established. Human qualification: Confirm target intervention and exclude VX-017. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -14073,36 +14073,36 @@
         },
         {
           "field_id": "identity.mapping",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "Part A VX-880 primary safety endpoint; Parts B/C VX-880 primary composite insulin independence without SHEs plus secondary efficacy and safety; Part D VX-017 endpoints excluded.",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Outcome Measures > all primary and secondary outcome labels and time frames."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Endpoint-specific plans, not a pooled A/B/C observed efficacy population. Human qualification: Retain Part A versus Parts B/C scope and separate composite versus standalone independence. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
           "field_id": "identity.population",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "VX-880 Parts A/B/C within a master protocol also containing excluded VX-017 Part D; retain A versus B/C distinctions.",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Official Title; Arms and Interventions; Outcome Measures > Primary and Secondary."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: No actual A/B/C participant counts or denominator allocation shown. Human qualification: Exclude all Part D participants and outcomes, including its Day-90 C-peptide measure. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -14481,19 +14481,19 @@
         },
         {
           "field_id": "insulin_independence.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Outcome Measures > Parts B and C insulin-independence outcome labels."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Attribution to the B/C stratum of the target only; do not extend efficacy definition to Part A. Human qualification: Confirm target-stratum scope for each planned independence measure. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -14634,19 +14634,19 @@
         },
         {
           "field_id": "insulin_independence.observation",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "planned",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Outcome Measures > Parts B and C primary composite and secondary insulin-independence measures."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: No observed independence count, rate or duration in rendered results. Human qualification: Verify this field describes plans only, not treatment success. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -14736,19 +14736,19 @@
         },
         {
           "field_id": "population_identified",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": true,
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Study Identification > Official Title; Outcome Measures > Parts A, B and C versus Part D."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Frozen target is VX-880 Parts A/B/C only, not the whole mixed master protocol. Human qualification: Confirm every endpoint part label before accepting target mapping. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -14872,19 +14872,19 @@
         },
         {
           "field_id": "severe_hypoglycemia.attribution",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "target",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Outcome Measures > Parts B and C SHE labels."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Planned B/C stratum only; not all A/B/C or Part D. Human qualification: Verify target-stratum labels. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
@@ -15025,19 +15025,19 @@
         },
         {
           "field_id": "severe_hypoglycemia.observation",
-          "status": "not_yet_extracted",
-          "value": null,
+          "status": "reported",
+          "value": "planned",
           "source_version_id": "NCT04786262-history-v32",
           "target_population_id": "vx880-parts-abc",
           "subcohort_id": "vx880-parts-abc-all",
-          "locator": [],
-          "review_scope": "Only the approved source-manifest metadata was checked; this field\u2019s clinical source material was not reviewed.",
-          "reason_codes": [
-            "EXTRACTION_INCOMPLETE"
+          "locator": [
+            "NCT04786262-history-v32, ClinicalTrials.gov history panel > Primary and Secondary Outcome Measures > Parts B and C SHE-related measures."
           ],
-          "adjudication_note": "No source-content assertion is made. Human source extraction and adjudication are pending.",
-          "review_complete": false,
-          "access_log": "",
+          "review_scope": "Primary human field-level review signed off by @aditmer on 2026-10-30 for this supported S4 mapping in NCT04786262-history-v32, target vx880-parts-abc. This records the approved field disposition only; remaining fields and full source-content review are incomplete, and independent scientific review remains pending.",
+          "reason_codes": [],
+          "adjudication_note": "Approved field value from the source-specific proposal. Limitation: Not evidence of zero SHEs. Human qualification: Confirm plans are not observations. Human sign-off: https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092. No efficacy result, participant exposure, or omitted-source conclusion is implied beyond the value stated.",
+          "review_complete": true,
+          "access_log": "Primary human sign-off on the S4 field disposition recorded at https://github.com/aditmer/type1-diabetes-cure-research/issues/34#issuecomment-6527013092; source-specific review context: https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526070515 and https://github.com/aditmer/type1-diabetes-cure-research/issues/57#issuecomment-6526141104.",
           "structural_basis": ""
         },
         {
