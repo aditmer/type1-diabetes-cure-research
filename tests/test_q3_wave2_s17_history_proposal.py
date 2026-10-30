@@ -1,3 +1,4 @@
+import csv
 import json
 import unittest
 from pathlib import Path
@@ -49,17 +50,43 @@ class S17Wave2HistoryProposalTests(unittest.TestCase):
                 self.assertTrue(r["limitations"])
                 self.assertTrue(r["human_verification"])
 
-    def test_existing_human_approved_objects_are_not_reproposed(self):
+    def test_existing_and_wave2_human_approved_objects_match(self):
         reports = json.loads((ROOT / "experiments/q3/extraction/reports.json").read_text())
         report = next(r for r in reports["reports"] if r["source_id"] == "S17")
         approved = {f["field_id"] for f in report["fields"] if f["status"] == "reported"}
-        self.assertEqual(approved, set(self.data["preserve_existing_reported_field_ids"]))
+        wave2_approved = {"identity.baseline_context", "identity.comparator"}
+        self.assertEqual(approved, set(self.data["preserve_existing_reported_field_ids"]) | wave2_approved)
         values = {f["field_id"]: f["value"] for f in report["fields"]}
+        proposals = {f["field_id"]: f["proposed_value"] for f in self.data["field_proposals"]}
+        for field_id in wave2_approved:
+            self.assertEqual(values[field_id], proposals[field_id])
         self.assertIs(values["target_enrolled"], False)
         self.assertEqual(values["counts.enrolled"], 0)
         self.assertIn("sentinel", values["identity.dose"])
         self.assertFalse(any(r["field_id"].endswith(".value")
                              for r in self.data["field_proposals"]))
+
+    def test_source_review_log_tracks_wave2_signoff(self):
+        reports = json.loads((ROOT / "experiments/q3/extraction/reports.json").read_text())
+        report = next(r for r in reports["reports"] if r["source_id"] == "S17")
+        with (ROOT / "experiments/q3/extraction/source-review-log.csv").open(newline="") as stream:
+            log = next(row for row in csv.DictReader(stream) if row["source_id"] == "S17")
+
+        pending = sum(field["status"] == "not_yet_extracted" for field in report["fields"])
+        self.assertIn(f"Other {pending} S17 ledger fields remain not_yet_extracted",
+                      log["excluded_or_unreviewed_material"])
+        self.assertIn("12 S17 field values", log["scope_restrictions"])
+        for field_id in ("identity.baseline_context", "identity.comparator"):
+            self.assertIn(field_id, log["approved_review_directions"])
+        self.assertEqual(log["reviewer_identity"], report["human_review"]["reviewer_identity"])
+        self.assertEqual(log["decision_date"], "2026-10-30")
+        self.assertEqual(log["decision_date"], report["human_review"]["decision_date"])
+        self.assertEqual(log["clinical_content_reviewed"], "true")
+        for key in ("source_content_review_complete", "access_attempts_complete",
+                    "adjudication_complete"):
+            self.assertEqual(log[key], "false")
+        self.assertEqual(log["review_status"], "source_review_in_progress")
+        self.assertTrue(report["human_review"]["independent_review_pending"])
 
     def test_zero_and_attrition_guards(self):
         p = self.data
