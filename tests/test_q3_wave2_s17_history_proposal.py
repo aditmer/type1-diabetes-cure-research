@@ -49,12 +49,16 @@ class S17Wave2HistoryProposalTests(unittest.TestCase):
                 self.assertTrue(r["limitations"])
                 self.assertTrue(r["human_verification"])
 
-    def test_existing_human_approved_objects_are_not_reproposed(self):
+    def test_existing_and_wave2_human_approved_objects_match(self):
         reports = json.loads((ROOT / "experiments/q3/extraction/reports.json").read_text())
         report = next(r for r in reports["reports"] if r["source_id"] == "S17")
         approved = {f["field_id"] for f in report["fields"] if f["status"] == "reported"}
-        self.assertEqual(approved, set(self.data["preserve_existing_reported_field_ids"]))
+        wave2_approved = {"identity.baseline_context", "identity.comparator"}
+        self.assertEqual(approved, set(self.data["preserve_existing_reported_field_ids"]) | wave2_approved)
         values = {f["field_id"]: f["value"] for f in report["fields"]}
+        proposals = {f["field_id"]: f["proposed_value"] for f in self.data["field_proposals"]}
+        for field_id in wave2_approved:
+            self.assertEqual(values[field_id], proposals[field_id])
         self.assertIs(values["target_enrolled"], False)
         self.assertEqual(values["counts.enrolled"], 0)
         self.assertIn("sentinel", values["identity.dose"])
