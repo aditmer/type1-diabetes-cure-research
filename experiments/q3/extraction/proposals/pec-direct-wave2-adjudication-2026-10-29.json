@@ -1,0 +1,266 @@
+{
+  "artifact_status": "human_adjudication_proposal",
+  "prepared_date": "2026-10-29",
+  "baseline_sha": "7432cd3cb3bc1075706b12c50ab7156bc71ddb8c",
+  "authoritative_ledger_data": false,
+  "prior_proposal": "experiments/q3/extraction/proposals/pec-direct-six-links-2026-10-29.json",
+  "evidence_scope": {
+    "primary_source_retrieval_performed": false,
+    "new_primary_evidence_established": false,
+    "new_work": "Pair-specific recommendation, counterevidence assessment, alternative-decision thresholds and one six-link human decision batch; not new source verification.",
+    "inherited_evidence": "PR66 aggregate population locators and provenance; frozen manifest, preregistration, ledger and existing human/candidate review records only.",
+    "later_source_stream_updates": [
+      {
+        "source_ids": ["S18", "S19"],
+        "reported_date": "2026-10-29",
+        "reporting_session_id": "801aae73-970d-4ed3-9f27-1db700a9795c",
+        "evidence_class": "source_stream_relay_not_independently_reperformed",
+        "access_result": "S18 Europe PMC XML HEAD-only HTTP 200; no body, new hash or identity inspection. Prior extraction stop retained. S19 Europe PMC XML HTTP 200, 122548 bytes, SHA-256 3e14ef3dcb7fd0c13a9326976c01511356426b8004dc7a9b78b3ffb2e2c68839 matches manifest.",
+        "newly_inspected_aggregate_locators": [
+          "PMC11471599.1, Methods Sec9/Par31: interim report on one ten-person cadre in NCT03163511",
+          "PMC11471599.1, Methods Sec9/Par33: most recent cadre enrolled August 2020 through October 2021; changed device strategy versus earlier groups",
+          "PMC11471599.1, CR17 and CR18: identify S18 and S23 respectively; reference metadata only, no S23 content inspection"
+        ],
+        "limitations": "No overlap established. S19 XML lacks pmcid-ver; binding remains hash plus accepted archive mapping, not editorial-version verification or recovery of private restore artifacts. No source-body inspection performed by this cohort workstream.",
+        "recommendation_impact": "None; no membership evidence established. S18 access stop and S19 provenance/review restrictions remain."
+      },
+      {
+        "source_ids": ["S20"],
+        "reported_date": "2026-10-29",
+        "reporting_session_id": "5343856a-8a34-4b72-b135-831247a45dd4",
+        "evidence_class": "source_stream_relay_not_independently_reperformed",
+        "access_result": "Registry stream reports official browser panel a=20 accessible, title ver.20:2024-11-07 and Viewing V20 verified. Study Design and Results Participant Flow Overall Study Cohort 2 inspected as aggregate material.",
+        "source_locator": "https://clinicaltrials.gov/study/NCT03163511?tab=history&a=20#version-content-panel",
+        "limitations": "No publication-cohort participant identity established. Browser accessibility does not establish historical JSON byte identity, human verification or independent scientific approval.",
+        "recommendation_impact": "Historical browser-access obstacle relieved according to source stream; two-sided membership and human review blockers remain. No relationship promotion."
+      }
+    ],
+    "independent_scientific_approval": false
+  },
+  "sources": {
+    "S18": {
+      "report_id": "Q3-S18",
+      "program_id": "pec-direct",
+      "target_population_id": "pec-s18-target",
+      "subcohort_id": "pec-s18-all",
+      "source_version_id": "PMC8714853.1",
+      "population_scope": "Full 17-person publication target, not a C-peptide-positive or other response-defined subset.",
+      "evidence_ids": ["E18"],
+      "blocker_ids": ["B18"]
+    },
+    "S19": {
+      "report_id": "Q3-S19",
+      "program_id": "pec-direct",
+      "target_population_id": "pec-s19-target",
+      "subcohort_id": "pec-s19-optimized-all",
+      "source_version_id": "PMC11471599.1",
+      "population_scope": "All 10 optimized-group recipients, not responders.",
+      "evidence_ids": ["E19"],
+      "blocker_ids": ["B19"]
+    },
+    "S23": {
+      "report_id": "Q3-S23",
+      "program_id": "pec-direct",
+      "target_population_id": "pec-s23-target",
+      "subcohort_id": "pec-s23-site-all",
+      "source_version_id": "publisher-pdf-human-copy-2026-10-23",
+      "population_scope": "All 15 implanted Vancouver site participants, not graft-activity or visit-complete subsets.",
+      "evidence_ids": ["E23", "EOVERLAP"],
+      "blocker_ids": ["B23"]
+    },
+    "S20": {
+      "report_id": "Q3-S20",
+      "program_id": "pec-direct",
+      "target_population_id": "pec-registry-cohort2",
+      "subcohort_id": "pec-registry-cohort2-all",
+      "source_version_id": "NCT03163511-history-v20",
+      "population_scope": "Registry planned efficacy Cohort 2; not Cohort 1 safety or overall-study enrollment.",
+      "evidence_ids": ["E20"],
+      "blocker_ids": ["B20"]
+    }
+  },
+  "evidence": {
+    "E18": {
+      "source_ids": ["S18"],
+      "record": "experiments/q3/extraction/proposals/pec-direct-six-links-2026-10-29.json",
+      "record_pointer": "sources.S18",
+      "review_basis": "Inherited PR66 AI aggregate annotations, not human cohort review or new retrieval.",
+      "source_locators": [
+        "PMC8714853.1, Results sec2/p0120",
+        "PMC8714853.1, STAR Methods sec6.2.2.1/p0045"
+      ],
+      "fact": "PR66 identifies 17 consecutive Cohort 2 participants selected at the manuscript data cut, not the whole registry cohort."
+    },
+    "E19": {
+      "source_ids": ["S19"],
+      "record": "experiments/q3/extraction/proposals/pec-direct-six-links-2026-10-29.json",
+      "record_pointer": "sources.S19",
+      "review_basis": "Inherited PR66 AI aggregate annotations; chronology is not participant identity evidence.",
+      "source_locators": [
+        "PMC11471599.1, Main Sec1/Par7",
+        "PMC11471599.1, Methods Sec9/Par31,Par33; references CR17 (S18), CR18 (S23)"
+      ],
+      "fact": "Ten-recipient optimized cadre; August 2020 through October 2021 enrollment; earlier reports and changed device strategy are described, not an accepted exclusion of repeat participation."
+    },
+    "E23": {
+      "source_ids": ["S23"],
+      "record": "experiments/q3/extraction/reviews/S23/human-source-review-approved-2026-10-28.md",
+      "record_pointer": "Approved identity.population, identity.mapping and identity.linkage; cohort relationships paragraph",
+      "review_basis": "Inherited limited primary human field approval; not two-sided cohort adjudication. No publisher material inspected here.",
+      "source_locators": [
+        "publisher-pdf-human-copy-2026-10-23, main Table 1, pp. 3-4",
+        "publisher-pdf-human-copy-2026-10-23, supplement Methods S2 CONSORT, p. 4"
+      ],
+      "fact": "All 15 implanted Vancouver participants; existing cross-reference clues are not confirmed matched identities, a matched count or a subset direction."
+    },
+    "E20": {
+      "source_ids": ["S20"],
+      "record": "experiments/q3/extraction/candidates/S20-reviewer-packet.md",
+      "record_pointer": "Candidate evidence to inspect; Candidate provenance update",
+      "review_basis": "Inherited unverified history-v20 candidates; no new history access or current-API substitution.",
+      "source_locators": [
+        "NCT03163511-history-v20, a=20, protocolSection.designModule.designInfo.interventionModelDescription; armsInterventionsModule.armGroups[label=Cohort 2]",
+        "NCT03163511-history-v20, a=20, resultsSection.participantFlowModule.periods[Overall Study].milestones[STARTED].achievements[group=Cohort 2]"
+      ],
+      "fact": "Cohort 2 design and STARTED accounting are candidate population locators, not a verified publication-specific membership crosswalk."
+    },
+    "EOVERLAP": {
+      "source_ids": ["S18", "S23"],
+      "record": "experiments/q3/extraction/proposals/pec-direct-six-links-2026-10-29.json",
+      "record_pointer": "relations[S18,S23].supported_relationship; sources.S23.review_basis",
+      "review_basis": "Inherited known partial-overlap context; frozen subset question remains unverified.",
+      "source_locators": [
+        "PMC8714853.1, Results sec2/p0120 and STAR Methods sec6.2.2.1/p0045 (population leads)",
+        "publisher-pdf-human-copy-2026-10-23, main Table 1, pp. 3-4 (existing annotation only)"
+      ],
+      "fact": "Preserve known S18/S23 partial overlap; no exact matched count or accepted subset direction. The frozen vocabulary has no partial-overlap value."
+    }
+  },
+  "blockers": {
+    "B18": {
+      "record": "experiments/q3/extraction/reviews/S18/human-review-packet.md",
+      "limitation": "Wave1 packet records a broad-page request exposing a participant-level table and stopped extraction. PR66 aggregate annotations do not remove that access stop or establish human review.",
+      "required_action": "Source-owning stream must establish safely version-bound aggregate-only access; human verifies permitted population prose at p0120/p0045. Do not retrieve, inspect, reconstruct or infer from mmc2.xlsx or participant-level data."
+    },
+    "B19": {
+      "record": "experiments/q3/extraction/reviews/S19/human-review-packet.md",
+      "limitation": "Main-prose annotations do not prove re-enrollment exclusion or membership. Source stream relays fresh approved-hash match, not recovered original historical-restore bytes/verifier output. Item-level third-party rights review pending; MOESM4 excluded.",
+      "required_action": "Verify permitted aggregate prose against the approved XML identity; retain historical-restore limitation. No MOESM4, rights-pending third-party material or participant-level reconstruction. Request aggregate cadre inclusion/exclusion clarification only if lawful prose is insufficient."
+    },
+    "B23": {
+      "record": "experiments/q3/extraction/reviews/S23/human-source-review-approved-2026-10-28.md",
+      "limitation": "Limited field approval is not full source or two-sided cohort review. Path B human-only inspection; no sharing/storage permission; editorial-version sequence unknown; prior upload/assistant-inspection governance exception unresolved.",
+      "required_action": "Assigned human @aditmer checks approved Table 1/CONSORT population evidence through own lawful access and records aggregate-only conclusions. Independent reviewer needs own lawful access. No agent publisher retrieval, inspection, upload or archive. Keep existing safety.harms conflict and incomplete review visible; cohort decisions cannot resolve them."
+    },
+    "B20": {
+      "record": "experiments/q3/extraction/candidates/S20-reviewer-packet.md",
+      "limitation": "Historical JSON access previously returned HTTP 403; registry stream now relays successful version-specific browser inspection, not historical JSON recovery. Manifest current-API hash is not historical-v20 byte identity; internal history/19 is only the selected panel index. Publication membership still unestablished.",
+      "required_action": "Human verifies approved a=20 panel, submitted 2024-11-07, and exact Cohort 2 inclusion/accounting, using registry stream's independent source packet when available. Do not bypass restrictions or substitute current API; preserve official version-locator reproducibility rather than inventing a byte archive."
+    },
+    "BREVIEW": {
+      "record": "experiments/q3/extraction/source-review-log.csv",
+      "limitation": "No complete two-sided human cohort adjudication for any pair; all independent scientific decisions remain pending.",
+      "required_action": "One human batch records each actual decision, both exact versions/targets/locators, inspected components, rationale, reviewer and date. Authorized later ledger edit only; AI preparation and mechanical tests are not scientific approval."
+    }
+  },
+  "relations": [
+    {
+      "from_source_id": "S18",
+      "to_source_id": "S19",
+      "recommended_relationship": "uncertain",
+      "direction_if_subset": "",
+      "supporting_evidence_ids": ["E18", "E19"],
+      "counterevidence_ids": ["E18", "E19"],
+      "supporting_evidence": "Both population annotations refer to PEC-Direct Cohort 2; S19 explicitly cites S18 as an earlier group.",
+      "contradictory_or_limiting_evidence": "Earlier versus optimized cadre and different enrollment/device strategy counter an automatic same-cohort inference, but do not prove mutually exclusive people. No affirmative source contradiction establishing disjointness is available.",
+      "decision_rationale": "Neither same, directional subset nor distinct_within_program is established; retain S19 participant overlap uncertain, not presumed distinct.",
+      "blocker_ids": ["B18", "B19", "BREVIEW"],
+      "human_decision": "Decide whether approved aggregate cadre wording explicitly excludes repeat participation across these two full targets. If not, adopt uncertain with no direction; do not infer distinctness from chronology.",
+      "change_threshold": "distinct_within_program requires explicit aggregate non-overlap/re-enrollment exclusion covering both complete targets. A subset requires complete inclusion and direction; same requires full membership equivalence, not common trial registration."
+    },
+    {
+      "from_source_id": "S18",
+      "to_source_id": "S23",
+      "recommended_relationship": "uncertain",
+      "direction_if_subset": "",
+      "supporting_evidence_ids": ["E18", "E23", "EOVERLAP"],
+      "counterevidence_ids": ["E18", "E23", "EOVERLAP"],
+      "supporting_evidence": "Known partial overlap and inherited S23 cross-reference annotations support shared membership context, not a counted match or complete inclusion.",
+      "contradictory_or_limiting_evidence": "Known overlap rules out distinct_within_program. Full targets of 17 and 15 counter same-target equivalence; the smaller site target does not by itself prove it is wholly within the publication data-cut target.",
+      "decision_rationale": "No partial-overlap enum exists. Preserve known partial overlap in the note while recommending uncertain with no accepted subset direction or exact matched count.",
+      "blocker_ids": ["B18", "B23", "BREVIEW"],
+      "human_decision": "Accept uncertain while preserving known partial overlap, unless @aditmer can verify aggregate evidence that every S23 target member belongs to the exact S18 target. Cross-reference clues alone are insufficient.",
+      "change_threshold": "Only if complete S23-in-S18 inclusion is verified on both frozen sides propose subset/to_is_subset_of_from in this S18-to-S23 row. Never invent a matched count; do not amend vocabulary to force an overlap value."
+    },
+    {
+      "from_source_id": "S18",
+      "to_source_id": "S20",
+      "recommended_relationship": "uncertain",
+      "direction_if_subset": "",
+      "supporting_evidence_ids": ["E18", "E20"],
+      "counterevidence_ids": ["E18", "E20"],
+      "supporting_evidence": "S18's aggregate population is described as a Cohort 2 publication selection; S20 is the related Cohort 2 registry report.",
+      "contradictory_or_limiting_evidence": "Publication data-cut selection is not the registry STARTED accounting definition. Shared NCT03163511 and Cohort 2 labels do not establish inclusion in the exact history-v20 target or endpoint compatibility.",
+      "decision_rationale": "An S18-to-S20 subset is plausible but not verified under the frozen registry version; uncertainty is a membership decision, not a missing-outcome inference.",
+      "blocker_ids": ["B18", "B20", "BREVIEW"],
+      "human_decision": "Decide whether every member of S18's full publication selection is included in v20's Cohort 2 target under compatible enrollment/implantation accounting; otherwise adopt uncertain.",
+      "change_threshold": "subset/from_is_subset_of_to requires an explicit aggregate inclusion statement plus verified v20 cohort definition/data-cut mapping. Registry totals, planned labels or a publication citation alone cannot satisfy it."
+    },
+    {
+      "from_source_id": "S19",
+      "to_source_id": "S23",
+      "recommended_relationship": "uncertain",
+      "direction_if_subset": "",
+      "supporting_evidence_ids": ["E19", "E23"],
+      "counterevidence_ids": ["E19", "E23"],
+      "supporting_evidence": "S19 cites S23 as an earlier study group within the shared program; S23 is the full Vancouver site population.",
+      "contradictory_or_limiting_evidence": "A later optimized cadre is not automatically the earlier site group, but chronology/device differences do not exclude repeat participation. S18/S23 overlap is not transitive proof of S19 membership.",
+      "decision_rationale": "S19 overlap remains uncertain; neither a site association nor earlier-report citation proves overlap, disjointness or subset direction.",
+      "blocker_ids": ["B19", "B23", "BREVIEW"],
+      "human_decision": "Decide whether aggregate source prose excludes all S23-target participation in the optimized S19 cadre. If it does not, adopt uncertain rather than infer distinctness from enrollment timing.",
+      "change_threshold": "distinct_within_program requires two-sided aggregate exclusion of repeat membership across the complete targets; same/subset requires explicit equivalence/inclusion. @aditmer must verify the S23 side under Path B."
+    },
+    {
+      "from_source_id": "S19",
+      "to_source_id": "S20",
+      "recommended_relationship": "uncertain",
+      "direction_if_subset": "",
+      "supporting_evidence_ids": ["E19", "E20"],
+      "counterevidence_ids": ["E19", "E20"],
+      "supporting_evidence": "Inherited S19 prose places the ten-recipient optimized cadre in Cohort 2; S20 is the related registry report.",
+      "contradictory_or_limiting_evidence": "Changed device/cadre strategy and enrollment interval need mapping to v20 cohort categories. Neither common registration nor a registry flow count proves the optimized ten are included in that frozen registry target.",
+      "decision_rationale": "Candidate cadre-to-registry inclusion is not established by the available two-sided evidence; preserve S19 overlap uncertain.",
+      "blocker_ids": ["B19", "B20", "BREVIEW"],
+      "human_decision": "Decide whether the v20 Cohort 2 definition includes all ten optimized recipients despite relevant cadre/device amendments; without aggregate membership verification adopt uncertain.",
+      "change_threshold": "subset/from_is_subset_of_to requires verified v20 categories and explicit inclusion of the entire optimized cadre. Do not use response subsets, endpoint denominators or current-API data as membership proof."
+    },
+    {
+      "from_source_id": "S23",
+      "to_source_id": "S20",
+      "recommended_relationship": "uncertain",
+      "direction_if_subset": "",
+      "supporting_evidence_ids": ["E23", "E20"],
+      "counterevidence_ids": ["E23", "E20"],
+      "supporting_evidence": "The Vancouver site target shares NCT03163511 with the related Cohort 2 registry report.",
+      "contradictory_or_limiting_evidence": "S23 allocated/implanted/overall-analysis membership is not automatically v20 STARTED membership. The single-site target cannot stand for all registry participants; S18 overlap does not independently prove site-to-registry inclusion.",
+      "decision_rationale": "Plausible site-to-Cohort-2 subset remains unverified against both frozen targets, with no authorized new Path B inspection.",
+      "blocker_ids": ["B23", "B20", "BREVIEW"],
+      "human_decision": "Have @aditmer decide whether all 15 site-target participants map to history-v20 Cohort 2 with compatible allocation/implantation/STARTED definitions; otherwise adopt uncertain.",
+      "change_threshold": "subset/from_is_subset_of_to requires verified aggregate site inclusion and exact v20 accounting on both sides. A shared registry ID, site label or numerical comparison alone is insufficient."
+    }
+  ],
+  "human_batch": {
+    "status": "not_submitted_for_approval",
+    "decision_count": 6,
+    "instructions": "Review all six rows together. For each, explicitly retain uncertain or supply supported frozen-vocabulary alternative and direction; record the actual reviewer/date, both approved versions and aggregate locators, components inspected and unresolved restrictions. This artifact contains no completed decision.",
+    "recording_boundary": "Only separately authorized human adjudication may update cohort-links.csv. Do not fill source-wide completion or independent approval flags from these six decisions.",
+    "gate_impact": "G2-B remains unaccepted; independent eight-source scientific review and explicit dated maintainer acceptance under Issue59 remain mandatory. Issue35 stays blocked."
+  },
+  "prohibitions": [
+    "No pooled participant totals or unique cross-report participant estimate.",
+    "No borrowed endpoints, denominator substitution or response-defined retargeting.",
+    "Shared registry is not participant identity; no transitive membership inference.",
+    "No real-source paired classification or G2-C output.",
+    "No invented human approval, source completion or independent scientific signoff."
+  ]
+}

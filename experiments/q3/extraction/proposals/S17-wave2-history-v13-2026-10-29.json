@@ -1,0 +1,91 @@
+{
+  "artifact_status": "source_checked_proposal_not_human_adjudication",
+  "baseline_sha": "7432cd3cb3bc1075706b12c50ab7156bc71ddb8c",
+  "source_id": "S17",
+  "report_id": "Q3-S17",
+  "source_version_id": "NCT02239354-history-v13",
+  "target_population_id": "vc01-cohort2",
+  "subcohort_id": "vc01-cohort2-planned",
+  "authoritative_ledger_data": false,
+  "human_adjudication_complete": false,
+  "source_content_review_complete": false,
+  "independent_review_pending": true,
+  "retrieval": {
+    "attempt_date": "2026-10-29",
+    "method": "Ordinary browser navigation to the approved history locator; read rendered #version-content-panel text.",
+    "url": "https://clinicaltrials.gov/study/NCT02239354?tab=history&a=13#version-content-panel",
+    "result": "success_rendered_exact_version",
+    "observed_title": "Record History | ver. 13: 2022-02-25 | NCT02239354 | ClinicalTrials.gov",
+    "observed_panel_heading": "Viewing V13 (2022-02-25)",
+    "scope": "Rendered Study Details and Study Results, including flow, baseline analysis description, outcome analysis populations, adverse events and limitations. No linked protocol/SAP opened.",
+    "limitations": "Version-specific locator evidence, not byte-identical historical JSON. Prior internal-endpoint 403 is historical context, not a new HTTP attempt. Browser route worked without bypass or current-API substitution. No HTTP status or new raw-byte hash claimed.",
+    "remaining_blocker": "Prot_SAP_000.pdf version/component authorization and relevant coverage remain unconfirmed; human field adjudication and independent review remain outstanding.",
+    "lawful_remedy": "Authorized reviewer should reopen this exact panel, confirm linked-document scope/version before any use, and obtain any permitted missing material through ordinary official access; if denied, log that attempt without bypass."
+  },
+  "preserve_existing_reported_field_ids": [
+    "counts.enrolled", "identity.design", "identity.disease_stage", "identity.dose",
+    "identity.eligibility", "identity.intervention", "identity.mapping", "identity.population",
+    "population_identified", "target_enrolled"
+  ],
+  "field_proposals": [
+    {
+      "field_id": "identity.baseline_context",
+      "proposed_status": "reported",
+      "proposed_value": "Cohort 2 enrollment was never initiated; baseline population is zero. Cohort 1 has 19 baseline participants and is contextual only.",
+      "locator": "NCT02239354-history-v13, Study Results > Baseline Characteristics > Overall Number of Baseline Participants and Baseline Analysis Population Description.",
+      "limitations": "No Cohort 2 clinical baseline measurements; do not transfer Cohort 1 characteristics.",
+      "human_verification": "Confirm the explicit non-initiation statement, not only the zero table entry."
+    },
+    {
+      "field_id": "identity.comparator",
+      "proposed_status": "reported",
+      "proposed_value": "Non-randomized sequential assignment with two experimental cohorts and no masking; Cohort 1 is not a concurrent randomized efficacy comparator for the un-enrolled Cohort 2.",
+      "locator": "NCT02239354-history-v13, Study Details > Study Design and Arms and Interventions.",
+      "limitations": "Design description only; no effect comparison or target treatment exposure.",
+      "human_verification": "Confirm both experimental arm labels and sequential, non-randomized design."
+    },
+    {
+      "field_id": "safety.population",
+      "proposed_status": "reported",
+      "proposed_value": "Planned safety analysis set includes enrolled subjects with attempted implant surgery in either cohort, regardless of successful implantation. Posted AE outcome analyzes Cohort 1 N=19; Cohort 2 never enrolled.",
+      "locator": "NCT02239354-history-v13, Study Results > Outcome Measures > Number of Adverse Events Reported During the Study > Analysis Population Description and Overall Number of Participants Analyzed.",
+      "limitations": "The planned two-cohort safety set is not evidence that Cohort 2 contributed participants.",
+      "human_verification": "Keep planned analysis-set definition separate from actual Cohort 1-only result."
+    },
+    {
+      "field_id": "safety.harms",
+      "proposed_status": "reported",
+      "proposed_value": "Context only: Cohort 1 AE outcome reports 114 events in 19 analyzed participants; AE table reports serious AEs in 2/19 and other AEs in 18/19, with 5% other-AE reporting threshold. Cohort 2 table cells are 0/0, not observed absence of harm.",
+      "locator": "NCT02239354-history-v13, Study Results > Outcome Measures > Number of Adverse Events Reported During the Study; Adverse Events > Serious Adverse Events and Other (Not Including Serious) Adverse Events totals and threshold.",
+      "limitations": "No Cohort 2 safety outcome; no aggregation of event counts and participants or reinterpretation of 0/0 as a risk.",
+      "human_verification": "Verify all Cohort 1 denominators and retain explicit contextual attribution."
+    },
+    {
+      "field_id": "safety.window",
+      "proposed_status": "reported",
+      "proposed_value": "Planned AE endpoint through Month 24. AE reporting description covers Visit 2 (Week -3) to last visit out to two years, with ongoing AEs followed for 28 days after explantation at trial conclusion; no observed Cohort 2 follow-up.",
+      "locator": "NCT02239354-history-v13, Study Results > Outcome Measures > Number of Adverse Events Reported During the Study > Time Frame; Adverse Events > Time Frame.",
+      "limitations": "Different source windows retained; neither is actual target follow-up or a fixed 12-month efficacy assessment.",
+      "human_verification": "Verify endpoint and AE reporting windows separately."
+    },
+    {
+      "field_id": "safety.attribution",
+      "proposed_status": "reported",
+      "proposed_value": "AE reporting includes observed or volunteered events regardless of suspected product relationship; investigator assessed outcome, seriousness, causality and severity. Posted numerical safety results are Cohort 1 context only.",
+      "locator": "NCT02239354-history-v13, Study Results > Adverse Events > Adverse Event Reporting Description and cohort columns.",
+      "limitations": "All-cause collection does not establish product causation or target-cohort harms.",
+      "human_verification": "Confirm reporting description and keep causality distinct from event occurrence."
+    }
+  ],
+  "remaining_fields": {
+    "definition": "Exactly SPECS minus preserve_existing_reported_field_ids minus field_proposals.field_id.",
+    "count": 105,
+    "proposed_status": "not_yet_extracted",
+    "proposed_value": null,
+    "locator": "NCT02239354-history-v13, Study Results > Participant Flow > Overall Study; Outcome Measures > Change in C-peptide > Analysis Population Description; Limitations and Caveats.",
+    "limitations": "Source explicitly says no Cohort 2 subjects enrolled, no efficacy data collected and study did not proceed to Cohort 2. This does not justify bulk structural inapplicability, zero responders, zero harms or omission of unreviewed permitted material. No final field decision proposed for this complement.",
+    "human_verification": "Adjudicate endpoint-specific structural applicability under frozen rules before any final disposition. Keep endpoint denominators, treatment exposure, immunosuppression and attrition pending; do not use overall flow completion as counts.at_horizon."
+  },
+  "proposed_counts": {"preserved_reported": 10, "new_reported": 6, "not_yet_extracted": 105},
+  "authoritative_baseline_counts": {"reported": 83, "unreported_in_reviewed_material": 85, "conflicting": 1, "not_yet_extracted": 799}
+}
