@@ -9,10 +9,15 @@ original creation date, not the current evidence date.
 
 ## Baseline and authority
 
-Dispatch main SHA and actual fetched `origin/main` baseline both equal
-`119ab961c6021a34b544b8688a256b4ec65c422f` (S13 PR #62 merged).
-The isolated branch was clean and fast-forward checked against that baseline
-on 2026-10-29. Counts below were derived from baseline
+Wave 2 dispatch SHA, clean branch HEAD and fetched `origin/main` baseline
+all equal `7432cd3cb3bc1075706b12c50ab7156bc71ddb8c` on 2026-10-29.
+PRs #63-#73 are merged; the baseline
+[CI run](https://github.com/aditmer/type1-diabetes-cure-research/actions/runs/40955988649)
+passed. Local tracker/extraction/candidate validators, all 286 tests and
+seven synthetic controls also passed before edits. Comparing the pre-Wave-1
+commit `119ab961c6021a34b544b8688a256b4ec65c422f` with this baseline
+showed no changes to `data/`, frozen rules, source manifest/retrieval log,
+extraction ledger, source-review log or cohort links. Counts below were derived from baseline
 [`reports.json`](../reports.json), not copied from Issue #59's older totals.
 Reconcile against a newly pinned commit before the human review starts and
 again before any gate decision; preparation on other branches is not an
@@ -146,7 +151,11 @@ not be silently accepted or used for pooling.
 
 ## Independent reviewer onboarding and access requirements
 
-**Nomination only:** Issue #59 records `@joe-ucp` as invited by the maintainer.
+**INVITED; acceptance unverified:** The live Issue #59 discussion was checked
+on 2026-10-29 after fetching the Wave 2 baseline. Its sole comment is the
+[assistant-authored onboarding relay](https://github.com/aditmer/type1-diabetes-cure-research/issues/59#issuecomment-6497871495)
+(created 2026-10-29T13:23:11Z), reporting the maintainer's invitation to
+`@joe-ucp`; it contains no reviewer-authored acceptance or findings.
 Affirmative acceptance, consent to the public review/signoff scope,
 qualifications, conflicts/independence disclosure and S23 individual lawful
 access are all **PENDING**. Repository read access proves none of these.
@@ -157,12 +166,42 @@ nominee, contacts or assigns nobody, and does not attest on anyone's behalf.
 |---|---|---|
 | Acceptance / nominee | Reviewer personally agrees, with date, to eight sources, 968 fields and six link challenges; states any limits and consent to public attribution. | PENDING |
 | Qualifications / reviewer, assessed by maintainer | Reviewer supplies relevant source-extraction, clinical-trial endpoint/denominator, safety, provenance and overlapping-cohort expertise and limitations. Maintainer documents suitability or obtains additional qualified coverage. Do not publish unnecessary personal details or unverified credentials. | PENDING |
-| Independence / reviewer, assessed by maintainer | Own dated disclosure of relevant preparation/adjudication roles, prior repository contributions and financial/intellectual/professional conflicts; reviewer must be distinct from each relevant primary human reviewer and preparatory AI. Maintainer assesses scope and any need for replacement/additional review. No inferred independence from a nomination. | PENDING |
+| Independence / reviewer, assessed by maintainer | Own dated disclosure of relevant preparation/adjudication roles, prior repository contributions and financial/intellectual/professional conflicts; explicitly address the five external research contribution issues and the maintainer-reported independently developed Andrew1-Andrew5 projects in #59. Those statements establish context, not independent qualification or absence of conflict. Reviewer must be distinct from each relevant primary human reviewer and preparatory AI. Maintainer assesses scope and any need for replacement/additional review. | PENDING |
 | Repository onboarding / reviewer | Pin review commit; read CONTRIBUTING, charter, evidence framework, frozen rules, manifest, ledger/log, source packets and gate notes. Independently reproduce deterministic checks if able, stating exact replication scope and limits. Read permission does not grant source rights. | PENDING |
 | Individual source access / reviewer | Own dated component-by-component access record for all eight sources, version match, terms and permitted scope; failed attempts/rights limits stay explicit. No credentials, private paths, tokens, private URLs or restricted files in public artifacts. | PENDING |
 | S23 restricted onboarding / reviewer and maintainer | Reviewer obtains own subscription, purchase, institutional entitlement or explicit publisher permission; records route/date and components personally opened without exposing account details. Maintainer documents separate authorized human review scope before inspection; nomination alone does not extend the existing sole-reviewer Path B authorization. | PENDING |
 | Human primary adjudications / authorized primary reviewers | Complete lawful source review and field dispositions in existing workflow, with precise scope and unresolved discrepancies. Other agents' source/cohort/S13 proposals require human disposition and cannot substitute. | PARTIAL |
 | Independent findings / reviewer | Own dated, human-authored findings per source/field and per link, exact locators, disagreements, access/rights limits, replication scope and scientific decision. AI technical review and green CI are not this review. | PENDING |
+
+### Wave 2: one consolidated administrative response, not another invitation
+
+Use the [single response batch and DRAFT UNSENT follow-up](independent-review-wave2-response-batch-2026-10-29.md).
+It supplies fill-in access/coverage rows for all eight reports and named
+maintainer decisions. Do not send it, tag the nominee in posted comments or
+assign scientific review from this preparation. The invitation is already
+reported; sending another invitation would not resolve the missing evidence.
+
+The immediate missing actions are the reviewer's own acceptance, relevant
+qualifications, conflicts and ability/scope statement; the maintainer's
+documented suitability/independence assessment and separate S23 human
+assignment under Path B; and the reviewer's own component-level lawful
+access record. These may be returned as one batch, but restricted S23
+inspection must wait for that individual's lawful access and authorized
+human scope. Never request account credentials as proof of qualifications
+or access.
+
+Separately, the maintainer must dispose of the prior chat-upload process
+exception with rights/provenance consequences and any remediation, and the
+independent reviewer must personally recheck affected facts. Neither an
+administrative authorization nor a rights assessment replaces publisher
+entitlement, complete primary review or scientific adjudication. Source,
+cohort and S13 tracks retain ownership of their scientific proposals.
+
+**No administrative blocker is represented as resolved by this update.**
+The gap resolved here is operational: a single usable response record,
+responsible human roles, evidence destinations and stop conditions now
+replace open-ended requests. Independent inspection of all 968 final
+dispositions and six links remains downstream of actual primary review.
 
 ### S23 governance exception remains a separate blocker
 
