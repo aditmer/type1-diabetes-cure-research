@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:,">
+  <title>Moonshot Evidence Atlas — synthetic prototype</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #17212b;
+      background: #f3f6f8;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header {
+      padding: 1.5rem max(1rem, calc((100% - 1100px) / 2));
+      color: #fff;
+      background: #18344b;
+    }
+    header h1 { margin: 0 0 .4rem; font-size: 1.8rem; }
+    header p { max-width: 75ch; margin: .4rem 0; }
+    .warning {
+      margin: 1rem 0 0;
+      padding: .8rem 1rem;
+      color: #492d00;
+      background: #fff0c2;
+      border: 1px solid #d48700;
+      font-weight: 700;
+    }
+    main { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    section { margin: 1.5rem 0; }
+    h2 { margin-bottom: .65rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .8rem; }
+    .card, .study-panel {
+      padding: 1rem;
+      background: #fff;
+      border: 1px solid #d7e0e7;
+      border-radius: .5rem;
+      box-shadow: 0 1px 2px #17212b12;
+    }
+    .card h3 { margin: 0 0 .35rem; font-size: 1.05rem; }
+    .muted { color: #526170; }
+    .label {
+      display: inline-block;
+      margin: .15rem .25rem .15rem 0;
+      padding: .1rem .5rem;
+      border-radius: 99px;
+      background: #e8eef2;
+      font-size: .82rem;
+      font-weight: 650;
+    }
+    .study-select { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
+    select { max-width: 100%; padding: .55rem; font: inherit; }
+    .outcomes { display: grid; gap: .7rem; margin-top: .8rem; }
+    .outcome[data-status="reported"] { background: #f5faf7; }
+    .outcome[data-status="conflicting"] { background: #fff9ef; }
+    .outcome[data-status="not_yet_extracted"],
+    .outcome[data-status="inaccessible"] { background: #f5f7fb; }
+    .comparison-controls { display: flex; flex-wrap: wrap; gap: .8rem; margin: .8rem 0; }
+    .comparison-controls label { display: grid; gap: .25rem; }
+    .endpoint-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+    .outcome p { margin: .35rem 0; }
+    .source-ref { overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; }
+    .cohort-warning { background: #fff7e8; border-color: #e5c27b; }
+    footer { max-width: 1100px; margin: 0 auto; padding: 0 1rem 2rem; color: #526170; }
+    @media (max-width: 520px) {
+      header { padding: 1rem; }
+      main { padding: .75rem; }
+      header h1 { font-size: 1.45rem; }
+      .endpoint-pair { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Moonshot Evidence Atlas</h1>
+    <p>Read-only synthetic proof of concept for source-traceable research evidence.</p>
+    <p class="warning" id="synthetic-notice"></p>
+  </header>
+  <main>
+    <section aria-labelledby="landscape-title">
+      <h2 id="landscape-title">Therapeutic landscape</h2>
+      <p class="muted">Categories and sample programs below are invented interface fixtures, not a complete landscape.</p>
+      <div id="landscape" class="grid"></div>
+    </section>
+    <section aria-labelledby="explorer-title">
+      <h2 id="explorer-title">Clinical evidence explorer</h2>
+      <div class="study-select">
+        <label for="study-picker">Synthetic study record</label>
+        <select id="study-picker"></select>
+      </div>
+      <div id="study-details"></div>
+      <div id="outcomes" class="outcomes"></div>
+    </section>
+    <section aria-labelledby="compare-title">
+      <h2 id="compare-title">Compare study records</h2>
+      <p class="muted">Side-by-side source records only. Definitions, units, denominators, and timing are not harmonized or pooled.</p>
+      <div class="comparison-controls">
+        <label for="compare-left">Study A<select id="compare-left"></select></label>
+        <label for="compare-right">Study B<select id="compare-right"></select></label>
+      </div>
+      <div id="comparison" class="outcomes"></div>
+    </section>
+    <section aria-labelledby="cohort-title">
+      <h2 id="cohort-title">Cohort relationships</h2>
+      <p class="muted">No participant totals or cross-study estimates are calculated. Uncertain links remain unresolved.</p>
+      <div id="cohort-links" class="grid"></div>
+    </section>
+  </main>
+  <footer>
+    Synthetic data only. No clinical evidence is approved or presented here; no rankings, cure scores, pooling, or medical advice.
+  </footer>
+  <script>
+    "use strict";
+    const atlas = {"approaches":[{"approach_id":"SYN-APPROACH-DONOR","category":"deceased_donor_islet_transplantation","cell_origin":"allogeneic","development_status":"Synthetic category demonstration; not a real program status.","immunosuppression":"required","mechanism":"Synthetic example: replace beta-cell function using transplanted donor islets.","name":"Deceased-donor islet transplantation"},{"approach_id":"SYN-APPROACH-STEM","category":"stem_cell_derived_islet_replacement","cell_origin":"allogeneic","development_status":"Synthetic category demonstration; not a real program status.","immunosuppression":"varies","mechanism":"Synthetic example: differentiate stem cells into insulin-producing islet-like cells.","name":"Stem-cell-derived islet replacement"},{"approach_id":"SYN-APPROACH-GENE","category":"gene_edited_cell_therapy","cell_origin":"allogeneic","development_status":"Synthetic category demonstration; not a real program status.","immunosuppression":"unknown","mechanism":"Synthetic example: modify transplanted cells to alter immune recognition.","name":"Gene-edited cell therapy"},{"approach_id":"SYN-APPROACH-IMMUNE","category":"immune_modulating_therapy","cell_origin":"not_applicable","development_status":"Synthetic category demonstration; not a real program status.","immunosuppression":"not_applicable","mechanism":"Synthetic example: modify an immune pathway while preserving other measures of disease control.","name":"Immune-modulating therapy"},{"approach_id":"SYN-APPROACH-REGEN","category":"beta_cell_regeneration","cell_origin":"not_applicable","development_status":"Synthetic category demonstration; not a real program status.","immunosuppression":"not_applicable","mechanism":"Synthetic example: investigate a pathway proposed to affect beta-cell mass.","name":"Beta-cell regeneration"}],"cohort_relationships":[{"from_study_id":"SYN-STUDY-STEM-2","note":"Synthetic example of possible participant overlap; cannot be treated as independent or pooled.","relationship":"uncertain","source_refs":[],"to_study_id":"SYN-STUDY-GENE"}],"data_scope":"synthetic_only","notice":"SYNTHETIC DEMONSTRATION ONLY. Every program, study, participant count, outcome, and source reference in this file is invented. Nothing here is clinical evidence or a treatment claim.","outcomes":[{"assessment_timepoint":"Invented month 12 assessment.","definition":"Synthetic definition: no exogenous insulin during the assessment period.","field_status":"reported","limitations":["Invented value; not an observed clinical outcome."],"observation_status":"observed","outcome_id":"SYN-OUTCOME-INSULIN","result":{"denominator":10,"numerator":0,"unit":"synthetic participants","value":0},"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/table-1/insulin-independence","source_id":"SYN-SOURCE-DONOR","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-DONOR","timing_anchor":"Invented first treatment date.","type":"insulin_independence"},{"assessment_timepoint":"Invented month 12 assessment.","definition":"Synthetic definition: mean stimulated C-peptide at month 12.","field_status":"reported","limitations":["Invented value and assay description; not an observed clinical outcome."],"observation_status":"observed","outcome_id":"SYN-OUTCOME-CPEPTIDE","result":{"denominator":10,"unit":"synthetic nmol/L","value":0.24},"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/table-1/c-peptide","source_id":"SYN-SOURCE-DONOR","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-DONOR","timing_anchor":"Invented first treatment date.","type":"c_peptide"},{"assessment_timepoint":"Invented month 12 assessment.","definition":"Synthetic endpoint: participants with HbA1c \u003c 7.0% at month 12.","field_status":"reported","limitations":["Invented endpoint and value; the threshold is not harmonized with other definitions."],"observation_status":"observed","outcome_id":"SYN-OUTCOME-HBA1C-7","result":{"denominator":10,"numerator":5,"unit":"synthetic participants","value":5},"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/table-1/hba1c-under-7","source_id":"SYN-SOURCE-DONOR","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-DONOR","timing_anchor":"Invented first treatment date.","type":"hba1c"},{"assessment_timepoint":"Invented month 12 assessment.","definition":"Synthetic endpoint: participants with at least one source-defined severe hypoglycemia event.","field_status":"reported","limitations":["Invented event count; no real safety or efficacy inference is possible."],"observation_status":"observed","outcome_id":"SYN-OUTCOME-HYPOGLYCEMIA","result":{"denominator":10,"numerator":1,"unit":"synthetic participants","value":1},"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/table-1/severe-hypoglycemia","source_id":"SYN-SOURCE-DONOR","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-DONOR","timing_anchor":"Invented first treatment date.","type":"severe_hypoglycemia"},{"assessment_timepoint":"Invented month 12 assessment.","definition":"Synthetic endpoint: participants with an invented graft-function measure at month 12.","field_status":"reported","limitations":["Invented duration and value; no durability conclusion is supported."],"observation_status":"observed","outcome_id":"SYN-OUTCOME-DURABILITY","result":{"denominator":10,"numerator":8,"unit":"synthetic participants","value":8},"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/table-1/graft-function","source_id":"SYN-SOURCE-DONOR","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-DONOR","timing_anchor":"Invented first treatment date.","type":"graft_durability"},{"assessment_timepoint":"Invented study period.","definition":"Synthetic description of an invented protocol requirement.","field_status":"reported","limitations":["Invented requirement; not treatment guidance."],"observation_status":"observed","outcome_id":"SYN-OUTCOME-IMMUNOSUPPRESSION","result":{"unit":"synthetic text","value":"Fictional regimen description only."},"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/methods/immunosuppression","source_id":"SYN-SOURCE-DONOR","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-DONOR","timing_anchor":"Invented first treatment date.","type":"immunosuppression"},{"assessment_timepoint":"Invented month 12 assessment.","definition":"Synthetic endpoint: participants with one or more serious adverse events.","field_status":"reported","limitations":["Invented event data; no real safety inference is possible."],"observation_status":"observed","outcome_id":"SYN-OUTCOME-SAE","result":{"denominator":10,"numerator":2,"unit":"synthetic participants","value":2},"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/table-1/serious-adverse-events","source_id":"SYN-SOURCE-DONOR","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-DONOR","timing_anchor":"Invented first treatment date.","type":"serious_adverse_events"},{"assessment_timepoint":null,"definition":"Synthetic planned endpoint: HbA1c threshold outcome planned for a future assessment.","field_status":"reported","limitations":["Invented endpoint plan only; no participants or result are represented."],"observation_status":"planned","outcome_id":"SYN-OUTCOME-PLANNED","result":null,"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/protocol/planned-hba1c","source_id":"SYN-SOURCE-STEM-PLAN","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-STEM-1","timing_anchor":null,"type":"hba1c"},{"assessment_timepoint":null,"definition":"Synthetic example of an endpoint not present in the fictional reviewed material.","field_status":"unreported_in_reviewed_material","limitations":["Invented omission state; it is not evidence that a real outcome was absent."],"observation_status":"not_reported","outcome_id":"SYN-OUTCOME-UNREPORTED","result":null,"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/results/c-peptide","source_id":"SYN-SOURCE-STEM-REPORT","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-STEM-2","timing_anchor":null,"type":"c_peptide"},{"assessment_timepoint":null,"definition":"Synthetic example of two inconsistent fictional source statements.","field_status":"conflicting","limitations":["Invented disagreement; neither value is selected or promoted."],"observation_status":"unknown","outcome_id":"SYN-OUTCOME-CONFLICT","result":null,"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/table-2/serious-events","source_id":"SYN-SOURCE-STEM-REPORT","source_version":"synthetic-v1"},{"location":"synthetic://synthetic-v1/appendix/serious-events","source_id":"SYN-SOURCE-STEM-ERRATUM","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-STEM-2","timing_anchor":null,"type":"serious_adverse_events"},{"assessment_timepoint":null,"definition":"Synthetic example of an endpoint whose fictional source has not yet been extracted.","field_status":"not_yet_extracted","limitations":["Pending extraction is not an unreported or negative result."],"observation_status":"unknown","outcome_id":"SYN-OUTCOME-PENDING","result":null,"review_status":"pending","source_refs":[{"location":"synthetic://synthetic-v1/pending/insulin-independence","source_id":"SYN-SOURCE-GENE","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-GENE","timing_anchor":null,"type":"insulin_independence"},{"assessment_timepoint":"Invented month 12 assessment.","definition":"Synthetic endpoint: participants with HbA1c \u003c 6.5% at month 12.","field_status":"reported","limitations":["Invented endpoint; the 6.5% threshold remains distinct from the separate 7.0% threshold."],"observation_status":"observed","outcome_id":"SYN-OUTCOME-HBA1C-65","result":{"denominator":8,"numerator":4,"unit":"synthetic participants","value":4},"review_status":"not_clinically_reviewed","source_refs":[{"location":"synthetic://synthetic-v1/results/hba1c-under-6.5","source_id":"SYN-SOURCE-IMMUNE","source_version":"synthetic-v1"}],"study_id":"SYN-STUDY-IMMUNE","timing_anchor":"Invented first treatment date.","type":"hba1c"}],"programs":[{"approach_id":"SYN-APPROACH-DONOR","developer":"Synthetic organization A","milestones":[{"date":null,"description":"Invented milestone for interface demonstration only."}],"name":"Fictional donor-islet demonstration program","program_id":"SYN-PROGRAM-DONOR","study_ids":["SYN-STUDY-DONOR"]},{"approach_id":"SYN-APPROACH-STEM","developer":"Synthetic organization B","milestones":[],"name":"Fictional stem-cell demonstration program","program_id":"SYN-PROGRAM-STEM","study_ids":["SYN-STUDY-STEM-1","SYN-STUDY-STEM-2"]},{"approach_id":"SYN-APPROACH-GENE","developer":"Synthetic organization C","milestones":[],"name":"Fictional gene-editing demonstration program","program_id":"SYN-PROGRAM-GENE","study_ids":["SYN-STUDY-GENE"]},{"approach_id":"SYN-APPROACH-IMMUNE","developer":"Synthetic organization D","milestones":[],"name":"Fictional immune-modulation demonstration program","program_id":"SYN-PROGRAM-IMMUNE","study_ids":["SYN-STUDY-IMMUNE"]},{"approach_id":"SYN-APPROACH-REGEN","developer":"Synthetic organization E","milestones":[],"name":"Fictional regeneration demonstration program","program_id":"SYN-PROGRAM-REGEN","study_ids":[]}],"schema_version":"evidence-atlas-v1","sources":[{"adjudication_history":[],"approval_status":"not_approved_clinical_evidence","discrepancies":[],"extraction_status":"reported","human_review_status":"not_reviewed","locations":["synthetic://synthetic-v1/table-1","synthetic://synthetic-v1/methods"],"reference":"Invented synthetic source A; no external publication or registry.","source_id":"SYN-SOURCE-DONOR","source_version":"synthetic-v1"},{"adjudication_history":[],"approval_status":"not_approved_clinical_evidence","discrepancies":[],"extraction_status":"reported","human_review_status":"not_reviewed","locations":["synthetic://synthetic-v1/protocol"],"reference":"Invented synthetic protocol B; no external publication or registry.","source_id":"SYN-SOURCE-STEM-PLAN","source_version":"synthetic-v1"},{"adjudication_history":[],"approval_status":"not_approved_clinical_evidence","discrepancies":["Invented conflicting serious-event statements."],"extraction_status":"conflicting","human_review_status":"not_reviewed","locations":["synthetic://synthetic-v1/results","synthetic://synthetic-v1/table-2"],"reference":"Invented synthetic report C; no external publication or registry.","source_id":"SYN-SOURCE-STEM-REPORT","source_version":"synthetic-v1"},{"adjudication_history":[],"approval_status":"not_approved_clinical_evidence","discrepancies":["Invented conflicting serious-event statements."],"extraction_status":"conflicting","human_review_status":"not_reviewed","locations":["synthetic://synthetic-v1/appendix"],"reference":"Invented synthetic addendum D; no external publication or registry.","source_id":"SYN-SOURCE-STEM-ERRATUM","source_version":"synthetic-v1"},{"adjudication_history":[],"approval_status":"not_approved_clinical_evidence","discrepancies":[],"extraction_status":"not_yet_extracted","human_review_status":"pending","locations":["synthetic://synthetic-v1/pending"],"reference":"Invented synthetic source E; no external publication or registry.","source_id":"SYN-SOURCE-GENE","source_version":"synthetic-v1"},{"adjudication_history":[],"approval_status":"not_approved_clinical_evidence","discrepancies":[],"extraction_status":"reported","human_review_status":"not_reviewed","locations":["synthetic://synthetic-v1/results"],"reference":"Invented synthetic source F; no external publication or registry.","source_id":"SYN-SOURCE-IMMUNE","source_version":"synthetic-v1"}],"studies":[{"cohort_id":"SYN-COHORT-DONOR","design":"Invented, uncontrolled demonstration record.","eligibility":"Invented demonstration criteria; not derived from real participants.","enrolled":10,"follow_up":{"anchor":"Invented first treatment date.","unit":"months","value":12},"outcome_ids":["SYN-OUTCOME-INSULIN","SYN-OUTCOME-CPEPTIDE","SYN-OUTCOME-HBA1C-7","SYN-OUTCOME-HYPOGLYCEMIA","SYN-OUTCOME-DURABILITY","SYN-OUTCOME-IMMUNOSUPPRESSION","SYN-OUTCOME-SAE"],"population":"Invented group of ten synthetic participants.","program_id":"SYN-PROGRAM-DONOR","registry_id":null,"source_ids":["SYN-SOURCE-DONOR"],"study_id":"SYN-STUDY-DONOR"},{"cohort_id":"SYN-COHORT-STEM-1","design":"Invented planned-only demonstration record.","eligibility":"Invented eligibility description.","enrolled":null,"follow_up":null,"outcome_ids":["SYN-OUTCOME-PLANNED"],"population":"Synthetic population not enrolled.","program_id":"SYN-PROGRAM-STEM","registry_id":null,"source_ids":["SYN-SOURCE-STEM-PLAN"],"study_id":"SYN-STUDY-STEM-1"},{"cohort_id":"SYN-COHORT-STEM-2","design":"Invented second report used to demonstrate uncertain cohort linkage.","eligibility":"Invented eligibility description.","enrolled":8,"follow_up":{"anchor":"Invented first treatment date.","unit":"months","value":6},"outcome_ids":["SYN-OUTCOME-UNREPORTED","SYN-OUTCOME-CONFLICT"],"population":"Synthetic population; possible overlap is unresolved.","program_id":"SYN-PROGRAM-STEM","registry_id":null,"source_ids":["SYN-SOURCE-STEM-REPORT","SYN-SOURCE-STEM-ERRATUM"],"study_id":"SYN-STUDY-STEM-2"},{"cohort_id":"SYN-COHORT-GENE","design":"Invented synthetic report pair with uncertain cohort relation.","eligibility":"Invented eligibility description.","enrolled":8,"follow_up":{"anchor":"Invented first treatment date.","unit":"months","value":6},"outcome_ids":["SYN-OUTCOME-PENDING"],"population":"Synthetic population; overlap with SYN-STUDY-STEM-2 is unresolved.","program_id":"SYN-PROGRAM-GENE","registry_id":null,"source_ids":["SYN-SOURCE-GENE"],"study_id":"SYN-STUDY-GENE"},{"cohort_id":"SYN-COHORT-IMMUNE","design":"Invented synthetic endpoint-definition demonstration.","eligibility":"Invented eligibility description.","enrolled":8,"follow_up":{"anchor":"Invented first treatment date.","unit":"months","value":12},"outcome_ids":["SYN-OUTCOME-HBA1C-65"],"population":"Invented group of eight synthetic participants.","program_id":"SYN-PROGRAM-IMMUNE","registry_id":null,"source_ids":["SYN-SOURCE-IMMUNE"],"study_id":"SYN-STUDY-IMMUNE"}]};
+    const byId = (records, field) => Object.fromEntries(records.map(record => [record[field], record]));
+    const approaches = byId(atlas.approaches, "approach_id");
+    const programs = byId(atlas.programs, "program_id");
+    const studies = byId(atlas.studies, "study_id");
+    const outcomes = byId(atlas.outcomes, "outcome_id");
+    const sources = byId(atlas.sources, "source_id");
+    const label = value => String(value).replaceAll("_", " ");
+    const node = (tag, text, className = "") => {
+      const element = document.createElement(tag);
+      element.textContent = text;
+      if (className) element.className = className;
+      return element;
+    };
+
+    document.getElementById("synthetic-notice").textContent = atlas.notice;
+
+    const landscape = document.getElementById("landscape");
+    for (const approach of atlas.approaches) {
+      const card = node("article", "", "card");
+      card.append(node("h3", approach.name));
+      card.append(node("span", label(approach.category), "label"));
+      card.append(node("p", approach.mechanism));
+      card.append(node("p", `Origin: ${label(approach.cell_origin)} · Immunosuppression: ${label(approach.immunosuppression)}`, "muted"));
+      for (const programId of atlas.programs.filter(p => p.approach_id === approach.approach_id).map(p => p.program_id)) {
+        const program = programs[programId];
+        card.append(node("p", `${program.name} — ${program.developer}`));
+      }
+      landscape.append(card);
+    }
+
+    const picker = document.getElementById("study-picker");
+    const compareLeft = document.getElementById("compare-left");
+    const compareRight = document.getElementById("compare-right");
+    for (const study of atlas.studies) {
+      const option = node("option", `${programs[study.program_id].name} — ${study.study_id}`);
+      option.value = study.study_id;
+      picker.append(option.cloneNode(true));
+      compareLeft.append(option.cloneNode(true));
+      compareRight.append(option);
+    }
+
+    function renderOutcome(outcomeId) {
+      const outcome = outcomes[outcomeId];
+      const card = node("article", "", "card outcome");
+      card.dataset.status = outcome.field_status;
+      card.append(node("h3", label(outcome.type)));
+      card.append(node("span", label(outcome.field_status), "label"));
+      card.append(node("span", label(outcome.observation_status), "label"));
+      card.append(node("p", `Definition: ${outcome.definition}`));
+      if (outcome.field_status === "reported" && outcome.observation_status === "observed" && outcome.result) {
+        const ratio = outcome.result.numerator === undefined ? "" : ` (${outcome.result.numerator}/${outcome.result.denominator})`;
+        card.append(node("p", `Synthetic result: ${outcome.result.value} ${outcome.result.unit}${ratio}`));
+        card.append(node("p", `Assessment: ${outcome.assessment_timepoint}; anchor: ${outcome.timing_anchor}`));
+      } else {
+        card.append(node("p", "No observed result is shown for this record."));
+      }
+      card.append(node("p", `Review: ${label(outcome.review_status)}; source approval: not approved for clinical use.`));
+      for (const limitation of outcome.limitations) card.append(node("p", `Limitation: ${limitation}`, "muted"));
+      for (const ref of outcome.source_refs) {
+        const source = sources[ref.source_id];
+        card.append(node("p", `Source: ${source.reference}; version: ${ref.source_version}`, "source-ref"));
+        card.append(node("p", `Location: ${ref.location}`, "source-ref"));
+      }
+      return card;
+    }
+
+    function renderStudy(studyId) {
+      const study = studies[studyId];
+      const details = document.getElementById("study-details");
+      const outcomeList = document.getElementById("outcomes");
+      details.replaceChildren();
+      outcomeList.replaceChildren();
+      const panel = node("article", "", "study-panel");
+      panel.append(node("h3", `${study.study_id}: ${programs[study.program_id].name}`));
+      panel.append(node("p", `Design: ${study.design}`));
+      panel.append(node("p", `Population: ${study.population}`));
+      panel.append(node("p", `Eligibility: ${study.eligibility}`));
+      panel.append(node("p", `Follow-up: ${study.follow_up ? `${study.follow_up.value} ${study.follow_up.unit}; ${study.follow_up.anchor}` : "Not established"}`));
+      panel.append(node("p", `Enrolled: ${study.enrolled === null ? "Not reported" : study.enrolled} (synthetic only)`, "muted"));
+      details.append(panel);
+
+      for (const outcomeId of study.outcome_ids) outcomeList.append(renderOutcome(outcomeId));
+    }
+
+    function renderComparison() {
+      const container = document.getElementById("comparison");
+      container.replaceChildren();
+      const left = studies[compareLeft.value];
+      const right = studies[compareRight.value];
+      const leftOutcomes = left.outcome_ids.map(id => outcomes[id]);
+      const rightOutcomes = right.outcome_ids.map(id => outcomes[id]);
+      const types = [...new Set([...leftOutcomes, ...rightOutcomes].map(outcome => outcome.type))];
+      for (const type of types) {
+        const group = node("section", "", "card");
+        group.append(node("h3", label(type)));
+        const pair = node("div", "", "endpoint-pair");
+        for (const [study, records, column] of [
+          [left, leftOutcomes, "Study A"],
+          [right, rightOutcomes, "Study B"]
+        ]) {
+          const side = node("div", "");
+          side.append(node("h4", `${column}: ${study.study_id}`));
+          const record = records.find(outcome => outcome.type === type);
+          side.append(record ? renderOutcome(record.outcome_id) :
+            node("p", "No record for this endpoint in this study."));
+          pair.append(side);
+        }
+        group.append(pair);
+        container.append(group);
+      }
+      if (!types.length) container.append(node("p", "No outcome records are available in these studies."));
+    }
+    picker.addEventListener("change", event => renderStudy(event.target.value));
+    compareLeft.addEventListener("change", renderComparison);
+    compareRight.addEventListener("change", renderComparison);
+    if (atlas.studies.length) renderStudy(atlas.studies[0].study_id);
+    if (atlas.studies.length) {
+      compareLeft.value = atlas.studies[0].study_id;
+      compareRight.value = atlas.studies[1]?.study_id ?? atlas.studies[0].study_id;
+      renderComparison();
+    }
+
+    const links = document.getElementById("cohort-links");
+    for (const relation of atlas.cohort_relationships) {
+      const card = node("article", "", "card cohort-warning");
+      card.append(node("h3", `${relation.from_study_id} ↔ ${relation.to_study_id}`));
+      card.append(node("span", label(relation.relationship), "label"));
+      card.append(node("p", relation.note));
+      links.append(card);
+    }
+    if (!atlas.cohort_relationships.length) links.append(node("p", "No cohort links are recorded."));
+  </script>
+</body>
+</html>
