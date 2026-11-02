@@ -30,7 +30,22 @@ class EvidenceAtlasTests(unittest.TestCase):
         data = fixture()
         outcome = next(o for o in data["outcomes"] if o["outcome_id"] == "SYN-OUTCOME-INSULIN")
         del outcome["result"]["denominator"]
-        with self.assertRaisesRegex(AtlasInputError, "positive denominator"):
+        with self.assertRaisesRegex(AtlasInputError, "positive integer denominator"):
+            validate_dataset(data)
+
+    def test_participant_counts_must_be_integers(self):
+        for field, value in (("numerator", 0.5), ("denominator", 10.0)):
+            with self.subTest(field=field):
+                data = fixture()
+                outcome = next(o for o in data["outcomes"] if o["outcome_id"] == "SYN-OUTCOME-INSULIN")
+                outcome["result"][field] = value
+                with self.assertRaisesRegex(AtlasInputError, "integer"):
+                    validate_dataset(data)
+
+    def test_program_requires_viewer_labels(self):
+        data = fixture()
+        del data["programs"][0]["name"]
+        with self.assertRaisesRegex(AtlasInputError, "name is required"):
             validate_dataset(data)
 
     def test_observed_result_requires_follow_up(self):
@@ -78,6 +93,17 @@ class EvidenceAtlasTests(unittest.TestCase):
         html = render_atlas(data, template())
         self.assertIn("HbA1c \\u003c 7.0%", html)
         self.assertIn("HbA1c \\u003c 6.5%", html)
+
+    def test_comparison_renders_all_records_for_an_endpoint_type(self):
+        template_text = template()
+        self.assertIn("records.filter(outcome => outcome.type === type)", template_text)
+        self.assertIn("for (const record of matchingRecords)", template_text)
+        data = fixture()
+        study = next(s for s in data["studies"] if s["study_id"] == "SYN-STUDY-IMMUNE")
+        repeated = [o for o in data["outcomes"]
+                    if o["study_id"] == study["study_id"] and o["type"] == "hba1c"]
+        self.assertEqual(len(repeated), 2)
+        self.assertNotEqual(repeated[0]["definition"], repeated[1]["definition"])
 
     def test_planned_only_endpoint_has_no_result(self):
         data = fixture()

@@ -121,11 +121,21 @@ def validate_dataset(dataset):
                  f"{approach['approach_id']}: invalid immunosuppression status")
 
     for program in programs.values():
+        for key in ("name", "developer"):
+            _require(isinstance(program.get(key), str) and program[key],
+                     f"{program['program_id']}: {key} is required")
         _require(program.get("approach_id") in approaches,
                  f"{program['program_id']}: unresolved approach")
         study_ids = program.get("study_ids")
         _require(isinstance(study_ids, list) and len(study_ids) == len(set(study_ids)),
                  f"{program['program_id']}: study_ids must be a unique list")
+        milestones = program.get("milestones")
+        _require(isinstance(milestones, list), f"{program['program_id']}: milestones must be a list")
+        for milestone in milestones:
+            _require(isinstance(milestone, dict) and
+                     isinstance(milestone.get("description"), str) and milestone["description"] and
+                     (milestone.get("date") is None or isinstance(milestone["date"], str)),
+                     f"{program['program_id']}: milestone description and date are required")
         for study_id in study_ids:
             _require(study_id in studies, f"{program['program_id']}: unresolved study {study_id}")
             _require(studies[study_id].get("program_id") == program["program_id"],
@@ -209,8 +219,8 @@ def validate_dataset(dataset):
                      f"{outcome_id}: observed result has no study follow-up")
             if outcome.get("type") in MEASURED_OUTCOMES:
                 denominator = result.get("denominator")
-                _require(type(denominator) in (int, float) and denominator > 0,
-                         f"{outcome_id}: quantitative result needs a positive denominator")
+                _require(type(denominator) is int and denominator > 0,
+                         f"{outcome_id}: quantitative result needs a positive integer denominator")
                 _require(studies[study_id].get("enrolled") is not None and
                          denominator <= studies[study_id]["enrolled"],
                          f"{outcome_id}: denominator exceeds known enrollment")
@@ -218,10 +228,9 @@ def validate_dataset(dataset):
                 _require(numerator is not None or outcome.get("type") not in COUNT_OUTCOMES,
                          f"{outcome_id}: participant-count outcome needs a numerator")
                 if numerator is not None:
-                    _require(type(numerator) in (int, float) and
-                             math.isfinite(numerator) and
+                    _require(type(numerator) is int and
                              0 <= numerator <= denominator,
-                             f"{outcome_id}: numerator must be between zero and denominator")
+                             f"{outcome_id}: numerator must be an integer between zero and denominator")
         elif field_status == "reported" and observation_status == "planned":
             _require(result is None, f"{outcome_id}: planned endpoint cannot have an observed result")
         else:

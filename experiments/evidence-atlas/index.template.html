@@ -218,9 +218,12 @@
         ]) {
           const side = node("div", "");
           side.append(node("h4", `${column}: ${study.study_id}`));
-          const record = records.find(outcome => outcome.type === type);
-          side.append(record ? renderOutcome(record.outcome_id) :
-            node("p", "No record for this endpoint in this study."));
+          const matchingRecords = records.filter(outcome => outcome.type === type);
+          if (matchingRecords.length) {
+            for (const record of matchingRecords) side.append(renderOutcome(record.outcome_id));
+          } else {
+            side.append(node("p", "No record for this endpoint in this study."));
+          }
           pair.append(side);
         }
         group.append(pair);

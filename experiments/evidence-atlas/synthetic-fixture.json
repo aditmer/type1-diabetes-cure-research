@@ -212,7 +212,8 @@
         "SYN-SOURCE-IMMUNE"
       ],
       "outcome_ids": [
-        "SYN-OUTCOME-HBA1C-65"
+        "SYN-OUTCOME-HBA1C-65",
+        "SYN-OUTCOME-HBA1C-CHANGE"
       ]
     }
   ],
@@ -520,6 +521,32 @@
           "source_id": "SYN-SOURCE-IMMUNE",
           "source_version": "synthetic-v1",
           "location": "synthetic://synthetic-v1/results/hba1c-under-6.5"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-HBA1C-CHANGE",
+      "study_id": "SYN-STUDY-IMMUNE",
+      "type": "hba1c",
+      "definition": "Synthetic continuous outcome: mean HbA1c change from baseline at month 6.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "denominator": 8,
+        "value": -0.5,
+        "unit": "synthetic percentage points"
+      },
+      "assessment_timepoint": "Invented month 6 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented continuous outcome; not harmonized with a threshold endpoint."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-IMMUNE",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/results/hba1c-change"
         }
       ]
     }
