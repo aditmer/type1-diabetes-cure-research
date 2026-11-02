@@ -157,6 +157,14 @@
       compareRight.append(option);
     }
 
+    function appendSourceReferences(card, references) {
+      for (const ref of references) {
+        const source = sources[ref.source_id];
+        card.append(node("p", `Source: ${ref.source_id}; ${source.reference}; version: ${ref.source_version}`, "source-ref"));
+        card.append(node("p", `Location: ${ref.location}`, "source-ref"));
+      }
+    }
+
     function renderOutcome(outcomeId) {
       const outcome = outcomes[outcomeId];
       const card = node("article", "", "card outcome");
@@ -177,11 +185,7 @@
       }
       card.append(node("p", `Review: ${label(outcome.review_status)}; source approval: not approved for clinical use.`));
       for (const limitation of outcome.limitations) card.append(node("p", `Limitation: ${limitation}`, "muted"));
-      for (const ref of outcome.source_refs) {
-        const source = sources[ref.source_id];
-        card.append(node("p", `Source: ${source.reference}; version: ${ref.source_version}`, "source-ref"));
-        card.append(node("p", `Location: ${ref.location}`, "source-ref"));
-      }
+      appendSourceReferences(card, outcome.source_refs);
       return card;
     }
 
@@ -250,6 +254,11 @@
       card.append(node("h3", `${relation.from_study_id} ↔ ${relation.to_study_id}`));
       card.append(node("span", label(relation.relationship), "label"));
       card.append(node("p", relation.note));
+      if (relation.source_refs.length) {
+        appendSourceReferences(card, relation.source_refs);
+      } else {
+        card.append(node("p", "No source references recorded.", "muted"));
+      }
       links.append(card);
     }
     if (!atlas.cohort_relationships.length) links.append(node("p", "No cohort links are recorded."));

@@ -642,7 +642,18 @@
       "from_study_id": "SYN-STUDY-STEM-2",
       "to_study_id": "SYN-STUDY-GENE",
       "relationship": "uncertain",
-      "source_refs": [],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-STEM-REPORT",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/results/cohort-link"
+        },
+        {
+          "source_id": "SYN-SOURCE-GENE",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/pending/cohort-link"
+        }
+      ],
       "note": "Synthetic example of possible participant overlap; cannot be treated as independent or pooled."
     }
   ]

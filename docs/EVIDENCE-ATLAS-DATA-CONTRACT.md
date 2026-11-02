@@ -24,6 +24,6 @@ Human review and clinical approval are distinct from extraction status. The prot
 
 ## Comparison and aggregation constraints
 
-The contract stores source-defined outcome definitions, thresholds, units, population, denominator, timepoint, and anchor. It does not provide harmonization, scoring, ranking, pooled estimates, or a cure label. Different endpoint definitions remain separate. Cohort edges are displayed as recorded; an `uncertain` relationship is never converted to disjointness or used to aggregate counts.
+The contract stores source-defined outcome definitions, thresholds, units, population, denominator, timepoint, and anchor. It does not provide harmonization, scoring, ranking, pooled estimates, or a cure label. Different endpoint definitions remain separate. Cohort edges display their source versions and locations when recorded, or explicitly state that no references are recorded. An `uncertain` relationship is never converted to disjointness or used to aggregate counts.
 
 The JSON Schema describes record shape. The Python validator additionally checks unique IDs, references, conditional result requirements, denominator bounds, timing, conflict evidence, synthetic source binding, and relationship integrity. Tests cover each mandatory edge case.

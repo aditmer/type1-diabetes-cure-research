@@ -48,6 +48,10 @@ def _location_matches_source(source, location):
             any(location.startswith(base.rstrip("/") + "/") for base in source["locations"]))
 
 
+def _nonempty_text(value):
+    return isinstance(value, str) and bool(value.strip())
+
+
 class AtlasInputError(ValueError):
     """Invalid or unsafe Atlas input; never render a success-shaped fallback."""
 
@@ -167,10 +171,14 @@ def validate_dataset(dataset):
             _require(source_id in sources, f"{study_id}: unresolved source {source_id}")
         follow_up = study.get("follow_up")
         if follow_up is not None:
-            _require(isinstance(follow_up, dict) and
-                     isinstance(follow_up.get("value"), (int, float)) and
-                     follow_up["value"] > 0 and follow_up.get("unit") and follow_up.get("anchor"),
-                     f"{study_id}: follow_up requires a positive value, unit, and anchor")
+            _require(isinstance(follow_up, dict), f"{study_id}: follow_up must be an object or null")
+            duration = follow_up.get("value")
+            _require((type(duration) is int or
+                      (type(duration) is float and math.isfinite(duration))) and duration > 0 and
+                     isinstance(follow_up.get("unit"), str) and
+                     follow_up["unit"] in {"days", "weeks", "months", "years"} and
+                     _nonempty_text(follow_up.get("anchor")),
+                     f"{study_id}: follow_up requires a finite positive value, valid unit, and text anchor")
 
     for outcome in outcomes.values():
         outcome_id = outcome["outcome_id"]
@@ -184,7 +192,7 @@ def validate_dataset(dataset):
                  {"observed", "planned", "not_reported", "unknown"},
                  f"{outcome_id}: invalid observation_status")
         _require(outcome.get("type") in OUTCOME_TYPES, f"{outcome_id}: invalid outcome type")
-        _require(isinstance(outcome.get("definition"), str) and outcome["definition"].strip(),
+        _require(_nonempty_text(outcome.get("definition")),
                  f"{outcome_id}: definition must be a nonempty string")
         _require(outcome.get("review_status") in {"not_clinically_reviewed", "pending"},
                  f"{outcome_id}: synthetic outcome cannot claim completed clinical review")
@@ -192,6 +200,9 @@ def validate_dataset(dataset):
                  f"{outcome_id}: limitations must be stated")
         for key in ("result", "assessment_timepoint", "timing_anchor"):
             _require(key in outcome, f"{outcome_id}: {key} must be present (use null if unavailable)")
+        for key in ("assessment_timepoint", "timing_anchor"):
+            _require(outcome[key] is None or _nonempty_text(outcome[key]),
+                     f"{outcome_id}: {key} must be a nonempty string or null")
         source_refs = outcome.get("source_refs")
         _require(isinstance(source_refs, list) and source_refs,
                  f"{outcome_id}: at least one source reference is required")
@@ -282,7 +293,8 @@ def validate_dataset(dataset):
                  f"{left}/{right}: invalid cohort relationship")
         _require(isinstance(relation.get("note"), str) and relation["note"],
                  f"{left}/{right}: cohort relationship needs a note")
-        references = relation.get("source_refs", [])
+        _require("source_refs" in relation, f"{left}/{right}: source_refs must be present")
+        references = relation["source_refs"]
         _require(isinstance(references, list), f"{left}/{right}: source_refs must be a list")
         _require(relation["relationship"] == "uncertain" or references,
                  f"{left}/{right}: resolved relationship needs source references")

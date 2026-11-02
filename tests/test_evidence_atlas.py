@@ -82,6 +82,35 @@ class EvidenceAtlasTests(unittest.TestCase):
         with self.assertRaisesRegex(AtlasInputError, "no study follow-up"):
             validate_dataset(data)
 
+    def test_follow_up_requires_finite_numeric_duration_and_valid_metadata(self):
+        cases = (
+            ("value", True),
+            ("value", float("inf")),
+            ("value", "12"),
+            ("unit", "decades"),
+            ("unit", ["months"]),
+            ("anchor", {"text": "first treatment"}),
+            ("anchor", "  "),
+        )
+        for field, value in cases:
+            with self.subTest(field=field, value=value):
+                data = fixture()
+                study = next(s for s in data["studies"] if s["study_id"] == "SYN-STUDY-DONOR")
+                study["follow_up"][field] = value
+                with self.assertRaisesRegex(AtlasInputError, "follow_up"):
+                    validate_dataset(data)
+
+    def test_outcome_timing_must_be_text_or_explicitly_unavailable(self):
+        for outcome_id in ("SYN-OUTCOME-INSULIN", "SYN-OUTCOME-PLANNED"):
+            for field in ("assessment_timepoint", "timing_anchor"):
+                for value in ({"text": "synthetic timing"}, True, 12, "", "  "):
+                    with self.subTest(outcome=outcome_id, field=field, value=value):
+                        data = fixture()
+                        outcome = next(o for o in data["outcomes"] if o["outcome_id"] == outcome_id)
+                        outcome[field] = value
+                        with self.assertRaisesRegex(AtlasInputError, field):
+                            validate_dataset(data)
+
     def test_study_nullable_fields_must_be_present(self):
         validate_dataset(fixture())
         for field in ("enrolled", "registry_id", "follow_up"):
@@ -140,6 +169,24 @@ class EvidenceAtlasTests(unittest.TestCase):
         self.assertIn("Side-by-side source records only.", html)
         self.assertNotIn("pooled total", html.lower())
         self.assertNotIn("overall cure score", html.lower())
+
+    def test_cohort_provenance_is_in_the_rendering_template(self):
+        data = fixture()
+        relationship = data["cohort_relationships"][0]
+        self.assertTrue(relationship["source_refs"])
+        self.assertTrue(all(ref["location"].startswith("synthetic://") for ref in relationship["source_refs"]))
+        validate_dataset(data)
+        relationship["relationship"] = "same"
+        validate_dataset(data)
+        self.assertIn("appendSourceReferences(card, relation.source_refs)", template())
+        relationship["source_refs"] = []
+        with self.assertRaisesRegex(AtlasInputError, "resolved relationship needs source references"):
+            validate_dataset(data)
+        relationship["relationship"] = "uncertain"
+        validate_dataset(data)
+        del relationship["source_refs"]
+        with self.assertRaisesRegex(AtlasInputError, "source_refs must be present"):
+            validate_dataset(data)
 
     def test_incompatible_hba1c_thresholds_remain_separate(self):
         data = fixture()
