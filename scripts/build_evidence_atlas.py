@@ -183,8 +183,9 @@ def validate_dataset(dataset):
         _require(outcome.get("observation_status") in
                  {"observed", "planned", "not_reported", "unknown"},
                  f"{outcome_id}: invalid observation_status")
-        _require(outcome.get("type") in OUTCOME_TYPES and outcome.get("definition"),
-                 f"{outcome_id}: outcome type and definition are required")
+        _require(outcome.get("type") in OUTCOME_TYPES, f"{outcome_id}: invalid outcome type")
+        _require(isinstance(outcome.get("definition"), str) and outcome["definition"].strip(),
+                 f"{outcome_id}: definition must be a nonempty string")
         _require(outcome.get("review_status") in {"not_clinically_reviewed", "pending"},
                  f"{outcome_id}: synthetic outcome cannot claim completed clinical review")
         _require(isinstance(outcome.get("limitations"), list) and outcome["limitations"],

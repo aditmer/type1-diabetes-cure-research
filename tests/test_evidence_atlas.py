@@ -1,11 +1,16 @@
 import copy
+import contextlib
+import io
 import json
+import tempfile
 import unittest
+from pathlib import Path
 
 from scripts.build_evidence_atlas import (
     ATLAS_DIR,
     AtlasInputError,
     TEMPLATE,
+    main,
     validate_dataset,
     render_atlas,
 )
@@ -47,6 +52,28 @@ class EvidenceAtlasTests(unittest.TestCase):
         del data["programs"][0]["name"]
         with self.assertRaisesRegex(AtlasInputError, "name is required"):
             validate_dataset(data)
+
+    def test_outcome_definition_must_be_a_nonempty_string(self):
+        for value in ({"text": "synthetic definition"}, ["synthetic definition"], 1, None, "", "  "):
+            with self.subTest(value=value):
+                data = fixture()
+                data["outcomes"][0]["definition"] = value
+                with self.assertRaisesRegex(AtlasInputError, "definition must be a nonempty string"):
+                    validate_dataset(data)
+
+    def test_cli_rejects_an_object_valued_definition_without_writing_output(self):
+        data = fixture()
+        data["outcomes"][0]["definition"] = {"text": "synthetic definition"}
+        with tempfile.TemporaryDirectory() as directory:
+            input_path = Path(directory) / "fixture.json"
+            output_path = Path(directory) / "atlas.html"
+            input_path.write_text(json.dumps(data), encoding="utf-8")
+            errors = io.StringIO()
+            with contextlib.redirect_stderr(errors):
+                exit_code = main(["--input", str(input_path), "--output", str(output_path)])
+            self.assertEqual(exit_code, 1)
+            self.assertIn("definition must be a nonempty string", errors.getvalue())
+            self.assertFalse(output_path.exists())
 
     def test_observed_result_requires_follow_up(self):
         data = fixture()
