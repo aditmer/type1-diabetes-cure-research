@@ -55,14 +55,47 @@ class EvidenceAtlasTests(unittest.TestCase):
         with self.assertRaisesRegex(AtlasInputError, "no study follow-up"):
             validate_dataset(data)
 
-    def test_conflicting_results_require_multiple_sources_and_no_selected_value(self):
+    def test_study_nullable_fields_must_be_present(self):
+        validate_dataset(fixture())
+        for field in ("enrolled", "registry_id", "follow_up"):
+            with self.subTest(field=field):
+                data = fixture()
+                study = next(s for s in data["studies"] if s["study_id"] == "SYN-STUDY-STEM-1")
+                self.assertIsNone(study[field])
+                del study[field]
+                with self.assertRaisesRegex(AtlasInputError, f"{field} must be present"):
+                    validate_dataset(data)
+
+    def test_unavailable_outcome_nullable_fields_must_be_present(self):
+        for field in ("result", "assessment_timepoint", "timing_anchor"):
+            with self.subTest(field=field):
+                data = fixture()
+                outcome = next(o for o in data["outcomes"] if o["field_status"] == "not_yet_extracted")
+                self.assertIsNone(outcome[field])
+                del outcome[field]
+                with self.assertRaisesRegex(AtlasInputError, f"{field} must be present"):
+                    validate_dataset(data)
+
+    def test_conflicting_results_require_distinct_references_and_no_selected_value(self):
         data = fixture()
         conflict = next(o for o in data["outcomes"] if o["field_status"] == "conflicting")
         self.assertIsNone(conflict["result"])
         self.assertGreaterEqual(len(conflict["source_refs"]), 2)
         validate_dataset(data)
         conflict["source_refs"].pop()
-        with self.assertRaisesRegex(AtlasInputError, "at least two source references"):
+        with self.assertRaisesRegex(AtlasInputError, "at least two distinct source references"):
+            validate_dataset(data)
+
+    def test_conflicting_results_can_cite_two_locations_in_one_source(self):
+        data = fixture()
+        conflict = next(o for o in data["outcomes"] if o["field_status"] == "conflicting")
+        conflict["source_refs"][1] = {
+            **conflict["source_refs"][0],
+            "location": "synthetic://synthetic-v1/results/serious-events",
+        }
+        validate_dataset(data)
+        conflict["source_refs"][1] = conflict["source_refs"][0].copy()
+        with self.assertRaisesRegex(AtlasInputError, "at least two distinct source references"):
             validate_dataset(data)
 
     def test_synthetic_evidence_cannot_be_approved_or_claim_clinical_review(self):
@@ -104,6 +137,13 @@ class EvidenceAtlasTests(unittest.TestCase):
                     if o["study_id"] == study["study_id"] and o["type"] == "hba1c"]
         self.assertEqual(len(repeated), 2)
         self.assertNotEqual(repeated[0]["definition"], repeated[1]["definition"])
+
+    def test_continuous_outcome_denominator_is_in_the_rendering_template(self):
+        data = fixture()
+        outcome = next(o for o in data["outcomes"] if o["outcome_id"] == "SYN-OUTCOME-CPEPTIDE")
+        self.assertEqual(outcome["result"]["denominator"], 10)
+        self.assertNotIn("numerator", outcome["result"])
+        self.assertIn("Analysis denominator: ${outcome.result.denominator}", template())
 
     def test_planned_only_endpoint_has_no_result(self):
         data = fixture()

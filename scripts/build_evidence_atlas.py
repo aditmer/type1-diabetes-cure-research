@@ -148,6 +148,8 @@ def validate_dataset(dataset):
                  f"{study_id}: study is not listed by its program")
         for key in ("design", "population", "eligibility", "cohort_id"):
             _require(isinstance(study.get(key), str) and study[key], f"{study_id}: {key} is required")
+        for key in ("enrolled", "registry_id", "follow_up"):
+            _require(key in study, f"{study_id}: {key} must be present (use null if unavailable)")
         _require(study.get("enrolled") is None or
                  (type(study["enrolled"]) is int and study["enrolled"] >= 0),
                  f"{study_id}: enrolled must be a nonnegative integer or null")
@@ -187,6 +189,8 @@ def validate_dataset(dataset):
                  f"{outcome_id}: synthetic outcome cannot claim completed clinical review")
         _require(isinstance(outcome.get("limitations"), list) and outcome["limitations"],
                  f"{outcome_id}: limitations must be stated")
+        for key in ("result", "assessment_timepoint", "timing_anchor"):
+            _require(key in outcome, f"{outcome_id}: {key} must be present (use null if unavailable)")
         source_refs = outcome.get("source_refs")
         _require(isinstance(source_refs, list) and source_refs,
                  f"{outcome_id}: at least one source reference is required")
@@ -248,8 +252,9 @@ def validate_dataset(dataset):
             _require(observation_status == "unknown",
                      f"{outcome_id}: unavailable field must use unknown observation status")
         if field_status == "conflicting":
-            _require(len({ref["source_id"] for ref in source_refs}) >= 2,
-                     f"{outcome_id}: conflict needs at least two source references")
+            _require(len({(ref["source_id"], ref["source_version"], ref["location"])
+                          for ref in source_refs}) >= 2,
+                     f"{outcome_id}: conflict needs at least two distinct source references")
             _require(any(sources[ref["source_id"]].get("discrepancies") for ref in source_refs),
                      f"{outcome_id}: conflict requires a recorded discrepancy")
 

@@ -168,6 +168,9 @@
       if (outcome.field_status === "reported" && outcome.observation_status === "observed" && outcome.result) {
         const ratio = outcome.result.numerator === undefined ? "" : ` (${outcome.result.numerator}/${outcome.result.denominator})`;
         card.append(node("p", `Synthetic result: ${outcome.result.value} ${outcome.result.unit}${ratio}`));
+        if (outcome.result.denominator !== undefined) {
+          card.append(node("p", `Analysis denominator: ${outcome.result.denominator}`));
+        }
         card.append(node("p", `Assessment: ${outcome.assessment_timepoint}; anchor: ${outcome.timing_anchor}`));
       } else {
         card.append(node("p", "No observed result is shown for this record."));
