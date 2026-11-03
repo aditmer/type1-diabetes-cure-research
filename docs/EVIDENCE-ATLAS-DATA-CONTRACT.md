@@ -27,3 +27,15 @@ Human review and clinical approval are distinct from extraction status. The prot
 The contract stores source-defined outcome definitions, thresholds, units, population, denominator, timepoint, and anchor. It does not provide harmonization, scoring, ranking, pooled estimates, or a cure label. Different endpoint definitions remain separate. Cohort edges display their source versions and locations when recorded, or explicitly state that no references are recorded. An `uncertain` relationship is never converted to disjointness or used to aggregate counts.
 
 The JSON Schema describes record shape. The Python validator additionally checks unique IDs, references, conditional result requirements, denominator bounds, timing, conflict evidence, synthetic source binding, and relationship integrity. It rejects subset cycles and distinct cohorts that share a known subset, after accounting for transitive `same` links; `uncertain` links assert neither overlap nor disjointness. Tests cover each mandatory edge case.
+
+## Cohort identity and evidence scope
+
+`cohort_id` is a global population identity within one Atlas dataset, not a source-local label. Reusing an ID asserts that the studies concern the same population, even across programs. Namespace source-local identifiers before assigning them. Shared identities enter graph validation as `same` edges, so they cannot also be declared distinct or proper subsets, directly or transitively. Different IDs alone do not prove disjointness.
+
+Every cohort reference must be attached to at least one linked study through its `source_ids`, or explicitly scoped to it through the source's optional `study_scope`. Resolved relationships require the cited evidence collectively to cover both studies. `study_scope` contains known, unique `study_ids` and a nonempty `note` documenting why the source covers those populations; it permits cross-study mapping sources without attaching unrelated outcome evidence. Scope declarations remain synthetic metadata, not human clinical approval. Uncertain links may have incomplete or absent evidence, but unrelated citations are rejected.
+
+## Build boundary and provenance display
+
+The standard-library builder enforces required fields and field allowlists for every record, including nested results, milestones, source references, review history, and study scopes. The allowlists are read from the committed schema to avoid drift; this is record-shape enforcement, not a general JSON Schema engine. Explicit runtime checks enforce the scientific and scalar-value constraints. Unknown properties are rejected rather than silently removed or embedded. CI rebuilds the viewer and compares it byte-for-byte with the committed HTML.
+
+Source references retain their visible version and location. Expand **Source review and discrepancies** for extraction, human-review and approval states, adjudication entries, discrepancies, and documented cross-study scope. Empty history and discrepancy lists are identified explicitly. The same provenance display is used in the explorer, comparison cards, and cohort links.

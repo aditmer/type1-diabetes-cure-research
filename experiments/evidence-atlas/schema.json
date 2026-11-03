@@ -246,6 +246,7 @@
           "$ref": "#/$defs/nonempty"
         },
         "cohort_id": {
+          "description": "Global population identity within this dataset. Reused IDs assert the same cohort, including across programs; source-local IDs must be namespaced before use.",
           "$ref": "#/$defs/nonempty"
         },
         "enrolled": {
@@ -506,6 +507,24 @@
         },
         "source_version": {
           "$ref": "#/$defs/nonempty"
+        },
+        "study_scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["study_ids", "note"],
+          "properties": {
+            "study_ids": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/nonempty"
+              }
+            },
+            "note": {
+              "$ref": "#/$defs/nonempty"
+            }
+          }
         },
         "locations": {
           "type": "array",

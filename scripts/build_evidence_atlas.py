@@ -87,6 +87,28 @@ def _unique_records(records, id_field, label):
     return result
 
 
+def _validate_record_shapes(value, shape, definitions, path="dataset"):
+    """Enforce schema field allowlists recursively; scientific checks remain explicit."""
+    if "$ref" in shape:
+        shape = definitions[shape["$ref"].removeprefix("#/$defs/")]
+    if "oneOf" in shape:
+        shape = next(option for option in shape["oneOf"]
+                     if (option.get("type") == "null") == (value is None))
+        return _validate_record_shapes(value, shape, definitions, path)
+    if shape.get("type") == "object":
+        _require(isinstance(value, dict), f"{path}: record must be an object")
+        allowed = shape["properties"]
+        _require(not (value.keys() - allowed.keys()), f"{path}: unexpected properties")
+        _require(not (set(shape.get("required", ())) - value.keys()),
+                 f"{path}: required properties are missing")
+        for key, child in value.items():
+            _validate_record_shapes(child, allowed[key], definitions, f"{path}.{key}")
+    elif shape.get("type") == "array":
+        _require(isinstance(value, list), f"{path}: collection must be a list")
+        for index, child in enumerate(value):
+            _validate_record_shapes(child, shape["items"], definitions, f"{path}[{index}]")
+
+
 def validate_dataset(dataset):
     """Enforce cross-record and non-promotion rules not expressible in JSON Schema."""
     _require(isinstance(dataset, dict), "dataset must be an object")
@@ -133,6 +155,12 @@ def validate_dataset(dataset):
         _require(isinstance(discrepancies, list) and
                  all(_nonempty_text(entry) for entry in discrepancies),
                  f"{source['source_id']}: discrepancies must contain nonempty text")
+        if "study_scope" in source:
+            scope = source["study_scope"]
+            _require(isinstance(scope, dict) and _unique_text_list(scope.get("study_ids")) and
+                     scope["study_ids"] and all(identifier in studies for identifier in scope["study_ids"]) and
+                     _nonempty_text(scope.get("note")),
+                     f"{source['source_id']}: study_scope requires known study_ids and a documented note")
 
     for approach in approaches.values():
         for key in ("name", "category", "mechanism", "cell_origin",
@@ -321,6 +349,13 @@ def validate_dataset(dataset):
             listed_outcomes.add(outcome_id)
     _require(listed_outcomes == set(outcomes), "every outcome must belong to exactly one study")
 
+    source_studies = {source_id: set() for source_id in sources}
+    for study_id, study in studies.items():
+        for source_id in study["source_ids"]:
+            source_studies[source_id].add(study_id)
+    for source_id, source in sources.items():
+        source_studies[source_id].update(source.get("study_scope", {}).get("study_ids", []))
+
     seen_relationships = set()
     for relation in dataset["cohort_relationships"]:
         _require(isinstance(relation, dict), "cohort relationship must be an object")
@@ -344,20 +379,37 @@ def validate_dataset(dataset):
         _require(isinstance(references, list), f"{left}/{right}: source_refs must be a list")
         _require(relation["relationship"] == "uncertain" or references,
                  f"{left}/{right}: resolved relationship needs source references")
+        covered_studies = set()
         for ref in references:
             _require(isinstance(ref, dict) and isinstance(ref.get("source_id"), str) and
                      ref["source_id"] in sources and
                      ref.get("source_version") == sources[ref["source_id"]].get("source_version") and
                      _location_matches_source(sources[ref["source_id"]], ref.get("location")),
                      f"{left}/{right}: unresolved cohort source reference")
+            scope = source_studies[ref["source_id"]] & {left, right}
+            _require(scope, f"{left}/{right}: cohort source is unrelated to the linked studies")
+            covered_studies.update(scope)
+        _require(relation["relationship"] == "uncertain" or covered_studies == {left, right},
+                 f"{left}/{right}: resolved cohort evidence must cover both linked studies")
 
+    identity_edges = []
+    cohort_representatives = {}
+    for study_id, study in studies.items():
+        representative = cohort_representatives.setdefault(study["cohort_id"], study_id)
+        if representative != study_id:
+            identity_edges.append((representative, study_id, "same"))
     try:
         validate_cohort_graph(
-            (relation["from_study_id"], relation["to_study_id"], relation["relationship"])
-            for relation in dataset["cohort_relationships"]
+            identity_edges + [
+                (relation["from_study_id"], relation["to_study_id"], relation["relationship"])
+                for relation in dataset["cohort_relationships"]
+            ]
         )
     except CohortGraphError as exc:
         raise AtlasInputError(str(exc)) from exc
+
+    schema = json.loads((ATLAS_DIR / "schema.json").read_text(encoding="utf-8"))
+    _validate_record_shapes(dataset, schema, schema["$defs"])
 
 
 def _script_safe_json(dataset):

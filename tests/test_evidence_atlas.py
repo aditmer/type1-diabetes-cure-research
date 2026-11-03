@@ -27,7 +27,133 @@ def template():
     return TEMPLATE.read_text(encoding="utf-8")
 
 
+def cohort_fixture(edges):
+    data = fixture()
+    source = data["sources"][0]
+    source["study_scope"] = {
+        "study_ids": sorted({study for left, right, _ in edges for study in (left, right)}),
+        "note": "Invented cross-study population mapping for graph regression tests.",
+    }
+    data["cohort_relationships"] = [
+        {"from_study_id": left, "to_study_id": right, "relationship": relationship,
+         "note": "Invented cohort relationship.",
+         "source_refs": [{"source_id": source["source_id"], "source_version": source["source_version"],
+                          "location": source["locations"][0] + "/cohort-map"}]}
+        for left, right, relationship in edges
+    ]
+    return data
+
+
 class EvidenceAtlasTests(unittest.TestCase):
+    def test_unrelated_cohort_evidence_is_rejected(self):
+        data = fixture()
+        relationship = data["cohort_relationships"][0]
+        relationship["relationship"] = "same"
+        relationship["source_refs"] = copy.deepcopy(data["outcomes"][0]["source_refs"])
+        with self.assertRaisesRegex(AtlasInputError, "unrelated"):
+            validate_dataset(data)
+
+    def test_resolved_cohort_evidence_must_cover_both_studies(self):
+        data = fixture()
+        relationship = data["cohort_relationships"][0]
+        relationship["relationship"] = "same"
+        relationship["source_refs"] = relationship["source_refs"][:1]
+        with self.assertRaisesRegex(AtlasInputError, "both linked studies"):
+            validate_dataset(data)
+        relationship["relationship"] = "uncertain"
+        validate_dataset(data)
+
+    def test_documented_cross_study_source_is_allowed(self):
+        data = cohort_fixture([("SYN-STUDY-STEM-1", "SYN-STUDY-STEM-2", "same")])
+        validate_dataset(data)
+        source = data["sources"][0]
+        for scope in (None, {}, {"study_ids": ["SYN-MISSING"], "note": "Invented"},
+                      {"study_ids": ["SYN-STUDY-STEM-1"], "note": " "},
+                      {"study_ids": ["SYN-STUDY-STEM-1"] * 2, "note": "Invented"}):
+            with self.subTest(scope=scope):
+                source["study_scope"] = scope
+                with self.assertRaisesRegex(AtlasInputError, "study_scope"):
+                    validate_dataset(data)
+
+    def test_global_cohort_identity_rejects_distinct_and_subset_assertions(self):
+        a, b = "SYN-STUDY-STEM-1", "SYN-STUDY-STEM-2"
+        for relationship in ("distinct_within_program", "subset"):
+            with self.subTest(relationship=relationship):
+                data = cohort_fixture([(a, b, relationship)])
+                studies = {study["study_id"]: study for study in data["studies"]}
+                studies[b]["cohort_id"] = studies[a]["cohort_id"]
+                with self.assertRaisesRegex(AtlasInputError, "contradictory"):
+                    validate_dataset(data)
+        data["cohort_relationships"][0]["relationship"] = "same"
+        validate_dataset(data)
+        data["cohort_relationships"][0]["relationship"] = "uncertain"
+        validate_dataset(data)
+
+    def test_global_cohort_identity_participates_in_transitive_graph_checks(self):
+        a, b, c = "SYN-STUDY-STEM-1", "SYN-STUDY-STEM-2", "SYN-STUDY-GENE"
+        data = cohort_fixture([(a, c, "same"), (a, b, "distinct_within_program")])
+        studies = {study["study_id"]: study for study in data["studies"]}
+        studies[c]["cohort_id"] = studies[b]["cohort_id"]
+        with self.assertRaisesRegex(AtlasInputError, "contradictory"):
+            validate_dataset(data)
+
+    def test_unexpected_properties_rejected_at_every_record_level(self):
+        data = cohort_fixture([("SYN-STUDY-STEM-1", "SYN-STUDY-STEM-2", "same")])
+        data["sources"][0]["adjudication_history"] = [
+            {"date": "2026-01-01", "reviewer": "Synthetic reviewer",
+             "decision": "Synthetic decision", "note": "Synthetic note"}
+        ]
+        paths = []
+
+        def walk(value, path=()):
+            if isinstance(value, dict):
+                paths.append(path)
+                for key, child in value.items():
+                    walk(child, path + (key,))
+            elif isinstance(value, list):
+                for index, child in enumerate(value):
+                    walk(child, path + (index,))
+
+        walk(data)
+        for path in paths:
+            with self.subTest(path=path):
+                altered = copy.deepcopy(data)
+                record = altered
+                for part in path:
+                    record = record[part]
+                record["unexpected_payload"] = {"unapproved": "must not be embedded"}
+                with self.assertRaisesRegex(AtlasInputError, "unexpected properties"):
+                    render_atlas(altered, template())
+
+    def test_cli_rejects_extra_fields_without_overwriting_output(self):
+        data = fixture()
+        data["outcomes"][0]["result"]["unexpected_payload"] = "not allowed"
+        with tempfile.TemporaryDirectory() as directory:
+            input_path = Path(directory) / "fixture.json"
+            output_path = Path(directory) / "atlas.html"
+            input_path.write_text(json.dumps(data), encoding="utf-8")
+            output_path.write_text("Existing output", encoding="utf-8")
+            with contextlib.redirect_stderr(io.StringIO()) as errors:
+                exit_code = main(["--input", str(input_path), "--output", str(output_path)])
+            self.assertEqual(exit_code, 1)
+            self.assertIn("unexpected properties", errors.getvalue())
+            self.assertEqual(output_path.read_text(encoding="utf-8"), "Existing output")
+
+    def test_committed_viewer_matches_generated_sources(self):
+        self.assertEqual((ATLAS_DIR / "index.html").read_bytes(),
+                         render_atlas(fixture(), template()).encode("utf-8"))
+
+    def test_expandable_provenance_includes_source_review_metadata(self):
+        text = template()
+        for expected in ('node("details", "", "source-review")',
+                         "source.extraction_status", "source.human_review_status",
+                         "source.approval_status", "source.adjudication_history",
+                         "source.discrepancies", "source.study_scope",
+                         "entry.date", "entry.reviewer", "entry.decision", "entry.note",
+                         "No adjudication history recorded.", "No discrepancies recorded."):
+            with self.subTest(expected=expected):
+                self.assertIn(expected, text)
+
     def test_complete_synthetic_evidence_record_is_valid(self):
         validate_dataset(fixture())
 
@@ -400,6 +526,10 @@ class EvidenceAtlasTests(unittest.TestCase):
             validate_dataset(data)
         relationship["to_study_id"] = "SYN-STUDY-STEM-1"
         relationship["source_refs"] = [relationship["source_refs"][0]]
+        relationship["source_refs"].append({
+            "source_id": "SYN-SOURCE-STEM-PLAN", "source_version": "synthetic-v1",
+            "location": "synthetic://synthetic-v1/protocol/cohort-map",
+        })
         validate_dataset(data)
 
     def test_cohort_graph_rejects_transitive_contradictions(self):
@@ -413,13 +543,7 @@ class EvidenceAtlasTests(unittest.TestCase):
         )
         for edges in cases:
             with self.subTest(edges=edges):
-                data = fixture()
-                original = data["cohort_relationships"][0]
-                data["cohort_relationships"] = [
-                    {**original, "from_study_id": left, "to_study_id": right,
-                     "relationship": relationship}
-                    for left, right, relationship in edges
-                ]
+                data = cohort_fixture(edges)
                 with self.assertRaisesRegex(AtlasInputError, "contradictory"):
                     validate_dataset(data)
 
@@ -431,13 +555,7 @@ class EvidenceAtlasTests(unittest.TestCase):
         )
         for edges in cases:
             with self.subTest(edges=edges):
-                data = fixture()
-                original = data["cohort_relationships"][0]
-                data["cohort_relationships"] = [
-                    {**original, "from_study_id": left, "to_study_id": right,
-                     "relationship": relationship}
-                    for left, right, relationship in edges
-                ]
+                data = cohort_fixture(edges)
                 validate_dataset(data)
 
     def test_subset_direction_is_defined_and_rendered(self):

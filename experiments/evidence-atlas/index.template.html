@@ -162,6 +162,29 @@
         const source = sources[ref.source_id];
         card.append(node("p", `Source: ${ref.source_id}; ${source.reference}; version: ${ref.source_version}`, "source-ref"));
         card.append(node("p", `Location: ${ref.location}`, "source-ref"));
+        const provenance = node("details", "", "source-review");
+        provenance.append(node("summary", `Source review and discrepancies: ${ref.source_id}`));
+        provenance.append(node("p", `Extraction status: ${label(source.extraction_status)}`));
+        provenance.append(node("p", `Human-review status: ${label(source.human_review_status)}`));
+        provenance.append(node("p", `Approval status: ${label(source.approval_status)}`));
+        if (source.study_scope) {
+          provenance.append(node("p", `Documented study scope: ${source.study_scope.study_ids.join(", ")}; ${source.study_scope.note}`));
+        }
+        provenance.append(node("h4", "Adjudication history"));
+        if (!source.adjudication_history.length) {
+          provenance.append(node("p", "No adjudication history recorded."));
+        }
+        for (const entry of source.adjudication_history) {
+          provenance.append(node("p", `${entry.date}; ${entry.reviewer}; ${entry.decision}; ${entry.note}`));
+        }
+        provenance.append(node("h4", "Recorded discrepancies"));
+        if (!source.discrepancies.length) {
+          provenance.append(node("p", "No discrepancies recorded."));
+        }
+        for (const discrepancy of source.discrepancies) {
+          provenance.append(node("p", discrepancy));
+        }
+        card.append(provenance);
       }
     }
 

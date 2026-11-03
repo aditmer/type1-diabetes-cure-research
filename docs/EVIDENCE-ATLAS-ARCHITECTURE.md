@@ -23,6 +23,8 @@ The repository has no general normalized model connecting therapeutic approaches
 
 The builder validates foreign keys, synthetic-only identifiers and source locations, typed outcome values, required denominators/timing, conflicting-source references, review/approval state, and cohort links before rendering. Cohort-graph consistency uses a pure helper shared with the Q3 extraction validator; this does not import clinical source records into the Atlas. The viewer shows per-study evidence and provenance; it has no participant aggregation, ranking, or score calculation.
 
+Record field allowlists and required fields come from the committed schema, while explicit Python checks enforce scientific invariants. Cohort evidence is scoped to the linked studies, and global cohort identities participate in graph consistency. The viewer exposes source-review history and discrepancies in expandable provenance sections. CI rejects a committed viewer that differs from a fresh build.
+
 ## Governance blockers and dependencies
 
 No Phase 1 dependency on real source material exists. Real evidence integration is blocked until each source and outcome has lawful version-specific provenance, completed authorized human review, required adjudication, explicit approval, and any applicable G2 authorization. Unresolved cohort links cannot be treated as independent, and differing endpoint definitions cannot be harmonized by this prototype. The external clinical/statistical review schedule is deferred to a publication-ready milestone; the required independent review and formal acceptance are not waived.
