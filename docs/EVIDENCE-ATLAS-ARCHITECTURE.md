@@ -21,7 +21,7 @@ The project has 34 source records, 41 evidence records, 12 trial records, 337 pa
 
 The repository has no general normalized model connecting therapeutic approaches, programs, studies, outcomes, and source-level review history, and no read-only explorer for those records. Phase 1 adds a JSON data contract and one invented fixture, a standard-library Python validator/builder, and a standalone HTML viewer. The output is deterministic and requires no network service, database, external dependency, or package installation.
 
-The builder validates foreign keys, synthetic-only identifiers and source locations, typed outcome values, required denominators/timing, conflicting-source references, review/approval state, and cohort links before rendering. The viewer shows per-study evidence and provenance; it has no participant aggregation, ranking, or score calculation.
+The builder validates foreign keys, synthetic-only identifiers and source locations, typed outcome values, required denominators/timing, conflicting-source references, review/approval state, and cohort links before rendering. Cohort-graph consistency uses a pure helper shared with the Q3 extraction validator; this does not import clinical source records into the Atlas. The viewer shows per-study evidence and provenance; it has no participant aggregation, ranking, or score calculation.
 
 ## Governance blockers and dependencies
 

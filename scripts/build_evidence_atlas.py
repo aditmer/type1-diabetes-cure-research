@@ -8,6 +8,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if __package__ in (None, ""):
+    sys.path.insert(0, str(ROOT))
+
+from scripts.cohort_graph import CohortGraphError, validate_cohort_graph
+
+
 ATLAS_DIR = ROOT / "experiments" / "evidence-atlas"
 FIXTURE = ATLAS_DIR / "synthetic-fixture.json"
 TEMPLATE = ATLAS_DIR / "index.template.html"
@@ -335,6 +341,14 @@ def validate_dataset(dataset):
                      ref.get("source_version") == sources[ref["source_id"]].get("source_version") and
                      _location_matches_source(sources[ref["source_id"]], ref.get("location")),
                      f"{left}/{right}: unresolved cohort source reference")
+
+    try:
+        validate_cohort_graph(
+            (relation["from_study_id"], relation["to_study_id"], relation["relationship"])
+            for relation in dataset["cohort_relationships"]
+        )
+    except CohortGraphError as exc:
+        raise AtlasInputError(str(exc)) from exc
 
 
 def _script_safe_json(dataset):

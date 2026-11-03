@@ -342,6 +342,44 @@ class EvidenceAtlasTests(unittest.TestCase):
         relationship["source_refs"] = [relationship["source_refs"][0]]
         validate_dataset(data)
 
+    def test_cohort_graph_rejects_transitive_contradictions(self):
+        a, b, c = "SYN-STUDY-STEM-1", "SYN-STUDY-STEM-2", "SYN-STUDY-GENE"
+        cases = (
+            ((a, c, "same"), (c, b, "same"), (a, b, "distinct_within_program")),
+            ((a, c, "subset"), (c, b, "subset"), (a, b, "distinct_within_program")),
+            ((c, a, "subset"), (c, b, "subset"), (a, b, "distinct_within_program")),
+            ((a, c, "same"), (c, b, "subset"), (a, b, "distinct_within_program")),
+            ((a, c, "subset"), (c, b, "subset"), (b, a, "subset")),
+        )
+        for edges in cases:
+            with self.subTest(edges=edges):
+                data = fixture()
+                original = data["cohort_relationships"][0]
+                data["cohort_relationships"] = [
+                    {**original, "from_study_id": left, "to_study_id": right,
+                     "relationship": relationship}
+                    for left, right, relationship in edges
+                ]
+                with self.assertRaisesRegex(AtlasInputError, "contradictory"):
+                    validate_dataset(data)
+
+    def test_cohort_graph_preserves_uncertainty_and_valid_subset_paths(self):
+        a, b, c = "SYN-STUDY-STEM-1", "SYN-STUDY-STEM-2", "SYN-STUDY-GENE"
+        cases = (
+            ((a, c, "same"), (c, b, "uncertain"), (a, b, "distinct_within_program")),
+            ((a, c, "subset"), (c, b, "subset")),
+        )
+        for edges in cases:
+            with self.subTest(edges=edges):
+                data = fixture()
+                original = data["cohort_relationships"][0]
+                data["cohort_relationships"] = [
+                    {**original, "from_study_id": left, "to_study_id": right,
+                     "relationship": relationship}
+                    for left, right, relationship in edges
+                ]
+                validate_dataset(data)
+
     def test_subset_direction_is_defined_and_rendered(self):
         schema = json.loads((ATLAS_DIR / "schema.json").read_text(encoding="utf-8"))
         description = schema["$defs"]["cohortRelationship"]["properties"]["relationship"]["description"]
