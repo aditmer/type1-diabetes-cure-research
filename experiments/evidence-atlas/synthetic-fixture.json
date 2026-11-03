@@ -412,8 +412,8 @@
       "field_status": "reported",
       "observation_status": "planned",
       "result": null,
-      "assessment_timepoint": null,
-      "timing_anchor": null,
+      "assessment_timepoint": "Synthetic assessment planned for month 12.",
+      "timing_anchor": "Synthetic planned first treatment date.",
       "review_status": "not_clinically_reviewed",
       "limitations": [
         "Invented endpoint plan only; no participants or result are represented."

@@ -387,6 +387,20 @@ class EvidenceAtlasTests(unittest.TestCase):
         self.assertIn("planned", html)
         self.assertIn("No observed result is shown for this record.", html)
 
+    def test_planned_timing_can_be_shown_without_an_observed_result(self):
+        data = fixture()
+        planned = next(o for o in data["outcomes"] if o["observation_status"] == "planned")
+        planned["assessment_timepoint"] = "Synthetic planned month 12 assessment."
+        planned["timing_anchor"] = "Synthetic planned first treatment."
+        validate_dataset(data)
+        planned["assessment_timepoint"] = None
+        validate_dataset(data)
+        planned["assessment_timepoint"] = "Synthetic planned month 12 assessment."
+        planned["timing_anchor"] = None
+        validate_dataset(data)
+        self.assertIn("Planned assessment: ${outcome.assessment_timepoint}", template())
+        self.assertIn("Planned timing anchor: ${outcome.timing_anchor}", template())
+
     def test_unreported_and_pending_outcomes_are_not_zeroes(self):
         data = fixture()
         unavailable = [

@@ -182,6 +182,14 @@
         card.append(node("p", `Assessment: ${outcome.assessment_timepoint}; anchor: ${outcome.timing_anchor}`));
       } else {
         card.append(node("p", "No observed result is shown for this record."));
+        if (outcome.field_status === "reported" && outcome.observation_status === "planned") {
+          if (outcome.assessment_timepoint !== null) {
+            card.append(node("p", `Planned assessment: ${outcome.assessment_timepoint}`));
+          }
+          if (outcome.timing_anchor !== null) {
+            card.append(node("p", `Planned timing anchor: ${outcome.timing_anchor}`));
+          }
+        }
       }
       card.append(node("p", `Review: ${label(outcome.review_status)}; source approval: not approved for clinical use.`));
       for (const limitation of outcome.limitations) card.append(node("p", `Limitation: ${limitation}`, "muted"));
