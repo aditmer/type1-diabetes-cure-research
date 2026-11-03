@@ -543,7 +543,7 @@
           "$ref": "#/$defs/nonempty"
         },
         "relationship": {
-          "description": "For subset, from_study_id is a subset of to_study_id; other relationship types are symmetric.",
+          "description": "For subset, from_study_id is a subset of to_study_id. Other relationship types are symmetric; distinct_within_program requires both studies to belong to the same program.",
           "enum": [
             "same",
             "subset",

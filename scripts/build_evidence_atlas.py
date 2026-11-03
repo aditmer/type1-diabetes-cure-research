@@ -45,7 +45,8 @@ FIELD_STATUSES = {
 
 def _location_matches_source(source, location):
     return (isinstance(location, str) and location.startswith("synthetic://") and
-            any(location.startswith(base.rstrip("/") + "/") for base in source["locations"]))
+            any(location == base or location.startswith(base.rstrip("/") + "/")
+                for base in source["locations"]))
 
 
 def _nonempty_text(value):
@@ -318,6 +319,9 @@ def validate_dataset(dataset):
         _require(isinstance(relation.get("relationship"), str) and relation["relationship"] in
                  {"same", "subset", "distinct_within_program", "uncertain"},
                  f"{left}/{right}: invalid cohort relationship")
+        _require(relation["relationship"] != "distinct_within_program" or
+                 studies[left]["program_id"] == studies[right]["program_id"],
+                 f"{left}/{right}: distinct_within_program requires studies in the same program")
         _require(_nonempty_text(relation.get("note")),
                  f"{left}/{right}: cohort relationship needs a note")
         _require("source_refs" in relation, f"{left}/{right}: source_refs must be present")

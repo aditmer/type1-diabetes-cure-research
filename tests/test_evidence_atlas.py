@@ -314,6 +314,34 @@ class EvidenceAtlasTests(unittest.TestCase):
         with self.assertRaisesRegex(AtlasInputError, "source_refs must be present"):
             validate_dataset(data)
 
+    def test_exact_cataloged_source_locations_and_descendants_are_valid(self):
+        data = fixture()
+        references = [ref for outcome in data["outcomes"] for ref in outcome["source_refs"]]
+        references += [ref for relation in data["cohort_relationships"] for ref in relation["source_refs"]]
+        for source in data["sources"]:
+            locations = sorted({ref["location"] for ref in references
+                                if ref["source_id"] == source["source_id"]})
+            if locations:
+                source["locations"] = locations
+        validate_dataset(data)
+
+        data = fixture()
+        data["outcomes"][0]["source_refs"][0]["location"] = (
+            "synthetic://synthetic-v1/table-1-other/not-a-descendant"
+        )
+        with self.assertRaisesRegex(AtlasInputError, "source location is not bound"):
+            validate_dataset(data)
+
+    def test_distinct_within_program_requires_matching_programs(self):
+        data = fixture()
+        relationship = data["cohort_relationships"][0]
+        relationship["relationship"] = "distinct_within_program"
+        with self.assertRaisesRegex(AtlasInputError, "same program"):
+            validate_dataset(data)
+        relationship["to_study_id"] = "SYN-STUDY-STEM-1"
+        relationship["source_refs"] = [relationship["source_refs"][0]]
+        validate_dataset(data)
+
     def test_subset_direction_is_defined_and_rendered(self):
         schema = json.loads((ATLAS_DIR / "schema.json").read_text(encoding="utf-8"))
         description = schema["$defs"]["cohortRelationship"]["properties"]["relationship"]["description"]
