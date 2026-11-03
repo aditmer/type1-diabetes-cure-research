@@ -1,0 +1,319 @@
+{
+  "format_version": "taxonomy-v1",
+  "taxonomy_id": "moonshot-evidence-atlas",
+  "version": "1.0.0",
+  "versioning": {
+    "scheme": "Semantic Versioning",
+    "patch": "Editorial clarification that does not change meaning or identifiers.",
+    "minor": "Backward-compatible addition of identifiers, descriptions, facets, questions, or endpoints.",
+    "major": "Incompatible meaning or identifier change; publish explicit supersession mappings and never silently reclassify existing records."
+  },
+  "categories": [
+    {
+      "id": "TI-DISEASE-MODIFICATION",
+      "kind": "therapeutic_intent",
+      "label": "Disease modification",
+      "description": "Parent concept for intervention intended to alter T1D onset or progression."
+    },
+    {
+      "id": "TI-FUNCTIONAL-RESTORATION",
+      "kind": "therapeutic_intent",
+      "label": "Functional restoration",
+      "description": "Parent concept for intervention intended to restore endocrine function in established T1D."
+    },
+    {
+      "id": "TI-PREVENT-DELAY",
+      "kind": "therapeutic_intent",
+      "label": "Prevent or delay disease onset",
+      "description": "Delay progression from presymptomatic Stage 1 or 2 to clinical Stage 3; not prevention of autoimmunity."
+    },
+    {
+      "id": "TI-PRESERVE-BETA-CELL",
+      "kind": "therapeutic_intent",
+      "label": "Preserve residual beta-cell function",
+      "description": "Preserve endogenous beta-cell function after Stage 3 diagnosis; not by itself restoration or cure."
+    },
+    {
+      "id": "TI-CELL-REPLACEMENT",
+      "kind": "therapeutic_intent",
+      "label": "Replace beta cells",
+      "description": "Provide endocrine function using introduced beta cells or islet-like cells."
+    },
+    {
+      "id": "TI-BETA-CELL-REGENERATE",
+      "kind": "therapeutic_intent",
+      "label": "Regenerate beta cells",
+      "description": "Increase endogenous beta-cell mass or function, as intended by the source."
+    },
+    {
+      "id": "TI-IMMUNE-MODIFY",
+      "kind": "therapeutic_intent",
+      "label": "Modify autoimmunity or induce tolerance",
+      "description": "Alter immune recognition, effector activity, or tolerance; specify the stated strategy."
+    },
+    {
+      "id": "TI-COMBINATION",
+      "kind": "therapeutic_intent",
+      "label": "Combination approach",
+      "description": "Intentionally combines two or more intervention components; retain each component classification."
+    },
+    {
+      "id": "TM-DONOR-ISLET",
+      "kind": "mechanism",
+      "label": "Donor pancreatic islets",
+      "description": "Primary pancreatic islets from a donor; record deceased, living, or unknown donor relationship separately."
+    },
+    {
+      "id": "TM-STEM-CELL-ISLET",
+      "kind": "mechanism",
+      "label": "Stem-cell-derived islet replacement",
+      "description": "Differentiated endocrine or islet-like cells derived from a stem-cell source."
+    },
+    {
+      "id": "TM-GENE-EDITED-CELL",
+      "kind": "mechanism",
+      "label": "Gene-edited cell therapy",
+      "description": "Cells with genetic modification; record target and purpose from the source."
+    },
+    {
+      "id": "TM-ENCAPSULATED-CELL",
+      "kind": "mechanism",
+      "label": "Encapsulated or immune-protected cell therapy",
+      "description": "Device, membrane, scaffold, or cell-intrinsic strategy intended to protect cells; do not infer immune isolation from the label."
+    },
+    {
+      "id": "TM-AUTOLOGOUS-CELL",
+      "kind": "mechanism",
+      "label": "Autologous cell approach",
+      "description": "Cell approach using material derived from the treated individual; origin alone does not establish immune protection."
+    },
+    {
+      "id": "TM-ALLOGENEIC-CELL",
+      "kind": "mechanism",
+      "label": "Allogeneic cell approach",
+      "description": "Cell approach using material from another individual or donor."
+    },
+    {
+      "id": "TM-IMMUNE-MODULATION",
+      "kind": "mechanism",
+      "label": "Immune-modulating therapy",
+      "description": "Pharmacologic or biologic intervention intended to alter immune activity."
+    },
+    {
+      "id": "TM-ADOPTIVE-IMMUNE-CELL",
+      "kind": "mechanism",
+      "label": "Adoptive immune-cell therapy",
+      "description": "Transfer of immune cells, such as regulatory T cells; immune-tolerance intent is separately recorded."
+    },
+    {
+      "id": "TM-BETA-REGENERATION",
+      "kind": "mechanism",
+      "label": "Regenerative approach",
+      "description": "Intervention intended to restore endogenous beta-cell mass or function."
+    },
+    {
+      "id": "TM-OTHER-EMERGING",
+      "kind": "mechanism",
+      "label": "Other or emerging mechanism",
+      "description": "Documented approach not yet represented by a more specific mechanism; preserve source wording and flag for review."
+    }
+  ],
+  "facets": [
+    {
+      "id": "F-CELL-ORIGIN",
+      "label": "Cell origin and donor relationship",
+      "description": "Distinguish source of cells from donor relationship; multiple values may apply.",
+      "multi_valued": true,
+      "values": [
+        {"id": "FO-CELL-ORIGIN-DECEASED-DONOR", "label": "Deceased donor", "description": "Cells from a deceased donor."},
+        {"id": "FO-CELL-ORIGIN-LIVING-DONOR", "label": "Living donor", "description": "Cells from a living donor."},
+        {"id": "FO-CELL-ORIGIN-STEM-CELL", "label": "Stem-cell-derived", "description": "Cells differentiated from a stated stem-cell source."},
+        {"id": "FO-CELL-ORIGIN-AUTOLOGOUS", "label": "Autologous", "description": "Derived from the treated individual."},
+        {"id": "FO-CELL-ORIGIN-ALLOGENEIC", "label": "Allogeneic", "description": "Derived from another individual."},
+        {"id": "FO-CELL-ORIGIN-MIXED", "label": "Mixed", "description": "Multiple origins are reported."},
+        {"id": "FO-CELL-ORIGIN-OTHER", "label": "Other specified source", "description": "A source is stated but does not fit another value."},
+        {"id": "FO-CELL-ORIGIN-UNKNOWN", "label": "Unknown", "description": "The catalog does not establish origin."},
+        {"id": "FO-CELL-ORIGIN-NA", "label": "Not applicable", "description": "No cell origin applies."}
+      ]
+    },
+    {
+      "id": "F-GENETIC-MODIFICATION",
+      "label": "Genetic modification",
+      "description": "Presence, purpose, and target of genetic modification as explicitly reported.",
+      "multi_valued": false,
+      "values": [
+        {"id": "FO-GENETICS-NONE-REPORTED", "label": "None reported", "description": "No modification is stated in the reviewed metadata."},
+        {"id": "FO-GENETICS-PRESENT", "label": "Present", "description": "Genetic modification is stated; target and purpose require source detail."},
+        {"id": "FO-GENETICS-MIXED", "label": "Mixed or heterogeneous", "description": "Modified and unmodified material is described."},
+        {"id": "FO-GENETICS-UNKNOWN", "label": "Unknown", "description": "Modification status cannot be established."},
+        {"id": "FO-GENETICS-NA", "label": "Not applicable", "description": "No cell product to which this facet applies."}
+      ]
+    },
+    {
+      "id": "F-IMMUNE-STRATEGY",
+      "label": "Immune strategy",
+      "description": "Protection, modulation, or tolerance strategy; multiple distinct strategies may apply.",
+      "multi_valued": true,
+      "values": [
+        {"id": "FO-IMMUNE-SYSTEMIC", "label": "Systemic immunosuppression", "description": "Systemic immune-suppressing regimen."},
+        {"id": "FO-IMMUNE-TARGETED", "label": "Targeted immune modulation", "description": "Stated targeted immune intervention."},
+        {"id": "FO-IMMUNE-TOLERANCE", "label": "Antigen-specific tolerance", "description": "Tolerance strategy described as antigen-specific."},
+        {"id": "FO-IMMUNE-CELL-INTRINSIC", "label": "Cell-intrinsic immune evasion", "description": "Genetic or cellular strategy intended to alter immune recognition."},
+        {"id": "FO-IMMUNE-DEVICE", "label": "Encapsulation or immune isolation", "description": "Device/membrane strategy; actual immune protection must be supported by design details."},
+        {"id": "FO-IMMUNE-COMBINATION", "label": "Combination", "description": "More than one strategy is intentionally used."},
+        {"id": "FO-IMMUNE-NONE", "label": "None reported", "description": "No strategy is reported; not proof that immune attack is absent."},
+        {"id": "FO-IMMUNE-UNKNOWN", "label": "Unknown", "description": "The strategy is not established by metadata."},
+        {"id": "FO-IMMUNE-NA", "label": "Not applicable", "description": "No immune strategy applies."}
+      ]
+    },
+    {
+      "id": "F-IMMUNOSUPPRESSION",
+      "label": "Systemic immunosuppression status",
+      "description": "Separate protocol requirement from observed exposure and model context.",
+      "multi_valued": false,
+      "values": [
+        {"id": "FO-IMMUNOSUPPRESSION-REQUIRED", "label": "Required", "description": "Protocol or product requires systemic immunosuppression."},
+        {"id": "FO-IMMUNOSUPPRESSION-USED", "label": "Used", "description": "Exposure is reported, without implying it was protocol-required."},
+        {"id": "FO-IMMUNOSUPPRESSION-PLANNED", "label": "Planned", "description": "Protocol plans use; observed exposure not established."},
+        {"id": "FO-IMMUNOSUPPRESSION-NOT-REQUIRED", "label": "Not required in described context", "description": "Source explicitly reports no requirement in a specified protocol or model."},
+        {"id": "FO-IMMUNOSUPPRESSION-VARIES", "label": "Varies", "description": "Requirement/exposure differs across settings or participants."},
+        {"id": "FO-IMMUNOSUPPRESSION-UNKNOWN", "label": "Unknown", "description": "Requirement/exposure is not established."},
+        {"id": "FO-IMMUNOSUPPRESSION-NA", "label": "Not applicable", "description": "No systemic immunosuppression context applies."}
+      ]
+    },
+    {
+      "id": "F-DELIVERY",
+      "label": "Delivery or implantation",
+      "description": "Source-defined route and anatomical site.",
+      "multi_valued": true,
+      "values": [
+        {"id": "FO-DELIVERY-PORTAL", "label": "Portal or intravascular", "description": "Portal-vein or other intravascular delivery."},
+        {"id": "FO-DELIVERY-INTRAMUSCULAR", "label": "Intramuscular", "description": "Intramuscular implantation."},
+        {"id": "FO-DELIVERY-SUBCUTANEOUS", "label": "Subcutaneous", "description": "Subcutaneous delivery/implantation."},
+        {"id": "FO-DELIVERY-DEVICE-SITE", "label": "Device or scaffold site", "description": "Implantation into a stated device/scaffold site."},
+        {"id": "FO-DELIVERY-INFUSION", "label": "Infusion", "description": "Infusion route when more specific site is not stated."},
+        {"id": "FO-DELIVERY-ORAL", "label": "Oral", "description": "Oral administration."},
+        {"id": "FO-DELIVERY-INJECTION", "label": "Injection", "description": "Injection route when more specific site is not stated."},
+        {"id": "FO-DELIVERY-OTHER", "label": "Other source-defined", "description": "Other route stated by source."},
+        {"id": "FO-DELIVERY-UNKNOWN", "label": "Unknown", "description": "Delivery route is not established."},
+        {"id": "FO-DELIVERY-NA", "label": "Not applicable", "description": "No delivery route applies."}
+      ]
+    },
+    {
+      "id": "F-RETREATMENT",
+      "label": "Retreatment",
+      "description": "Distinguish protocol possibility from repeat treatment actually received.",
+      "multi_valued": true,
+      "values": [
+        {"id": "FO-RETREATMENT-SINGLE", "label": "Single course or implant", "description": "A single course/implant is described."},
+        {"id": "FO-RETREATMENT-PLANNED", "label": "Repeat planned or possible", "description": "Repeat treatment is planned or permitted."},
+        {"id": "FO-RETREATMENT-PERFORMED", "label": "Repeat performed", "description": "Repeat treatment is reported as received."},
+        {"id": "FO-RETREATMENT-RESCUE", "label": "Rescue or explant", "description": "Rescue intervention or explant is reported."},
+        {"id": "FO-RETREATMENT-UNKNOWN", "label": "Unknown", "description": "Retreatment status is not established."},
+        {"id": "FO-RETREATMENT-NA", "label": "Not applicable", "description": "Retreatment does not apply."}
+      ]
+    },
+    {
+      "id": "F-DEVELOPMENT-STAGE",
+      "label": "Development stage",
+      "description": "Program stage as dated and stated by the source; not an evidence-strength grade.",
+      "multi_valued": false,
+      "values": [
+        {"id": "FO-DEVELOPMENT-DISCOVERY", "label": "Discovery", "description": "Early discovery research."},
+        {"id": "FO-DEVELOPMENT-PRECLINICAL", "label": "Preclinical", "description": "Non-human or laboratory development."},
+        {"id": "FO-DEVELOPMENT-EARLY-CLINICAL", "label": "Early clinical", "description": "First-in-human or early clinical study."},
+        {"id": "FO-DEVELOPMENT-LATER-CLINICAL", "label": "Later-phase clinical", "description": "Later clinical study phase as stated by source."},
+        {"id": "FO-DEVELOPMENT-POSTAUTHORIZATION", "label": "Post-authorization or marketed", "description": "Post-authorization or marketed context in a stated jurisdiction."},
+        {"id": "FO-DEVELOPMENT-DISCONTINUED", "label": "Discontinued", "description": "Program discontinuation is reported."},
+        {"id": "FO-DEVELOPMENT-UNKNOWN", "label": "Unknown", "description": "Development stage is not established."}
+      ]
+    },
+    {
+      "id": "F-REGULATORY-STATUS",
+      "label": "Regulatory status",
+      "description": "Jurisdiction-specific formal action and indication; not a proxy for efficacy or suitability.",
+      "multi_valued": true,
+      "values": [
+        {"id": "FO-REGULATORY-APPROVED", "label": "Approved", "description": "Formal approval is documented for a specified product, use, population, and jurisdiction."},
+        {"id": "FO-REGULATORY-CONDITIONAL", "label": "Accelerated or conditional approval", "description": "Approval pathway is explicitly qualified as such."},
+        {"id": "FO-REGULATORY-INVESTIGATIONAL", "label": "Investigational", "description": "Investigational status is stated."},
+        {"id": "FO-REGULATORY-NOT-ESTABLISHED", "label": "Not established", "description": "No regulatory status is established by the catalog metadata."},
+        {"id": "FO-REGULATORY-UNKNOWN", "label": "Unknown", "description": "Status cannot be established."}
+      ]
+    },
+    {
+      "id": "F-TARGET-POPULATION",
+      "label": "Target population",
+      "description": "Source-defined disease stage, age, duration, residual function, eligibility, and other characteristics.",
+      "multi_valued": true,
+      "values": [
+        {"id": "FO-POPULATION-STAGE-1", "label": "Stage 1 T1D", "description": "Stage 1 as defined in source."},
+        {"id": "FO-POPULATION-STAGE-2", "label": "Stage 2 T1D", "description": "Stage 2 as defined in source."},
+        {"id": "FO-POPULATION-RECENT-ONSET-STAGE-3", "label": "Recent-onset Stage 3 T1D", "description": "Recent-onset Stage 3 with source-defined duration."},
+        {"id": "FO-POPULATION-ESTABLISHED-STAGE-3", "label": "Established Stage 3 T1D", "description": "Established Stage 3 with source-defined duration."},
+        {"id": "FO-POPULATION-OTHER", "label": "Other source-defined population", "description": "Other model/population stated by source."},
+        {"id": "FO-POPULATION-UNKNOWN", "label": "Unknown", "description": "Population cannot be established from metadata."}
+      ]
+    },
+    {
+      "id": "F-MANUFACTURING",
+      "label": "Product and manufacturing attributes",
+      "description": "Cell source, differentiation, dose, device, potency, supply, and access attributes as available.",
+      "multi_valued": true,
+      "values": [
+        {"id": "FO-MANUFACTURING-CELL-SOURCE", "label": "Cell source stated", "description": "Source of cells is specified."},
+        {"id": "FO-MANUFACTURING-DIFFERENTIATION", "label": "Differentiation or maturation stated", "description": "Differentiation/maturation attributes are specified."},
+        {"id": "FO-MANUFACTURING-DOSE", "label": "Dose stated", "description": "Dose is stated in source."},
+        {"id": "FO-MANUFACTURING-DEVICE", "label": "Device configuration stated", "description": "Device configuration is stated."},
+        {"id": "FO-MANUFACTURING-POTENCY", "label": "Potency attribute stated", "description": "Potency attribute or assay is stated."},
+        {"id": "FO-MANUFACTURING-SUPPLY", "label": "Supply constraint stated", "description": "Supply or production constraint is stated."},
+        {"id": "FO-MANUFACTURING-UNKNOWN", "label": "Unknown", "description": "Attribute is not established."},
+        {"id": "FO-MANUFACTURING-NA", "label": "Not applicable", "description": "Attribute does not apply."}
+      ]
+    }
+  ],
+  "research_questions": [
+    {"id": "RQ-00", "label": "Primary question", "description": "Human clinical evidence for durable insulin independence or other patient-important disease-modifying outcomes, populations/stages, follow-up, harms, dependencies, retreatment, access, and uncertainty."},
+    {"id": "RQ-01", "label": "Insulin independence and metabolic function", "description": "Source-defined insulin independence and duration with patient-important glycemic outcomes."},
+    {"id": "RQ-02", "label": "Severe hypoglycemia", "description": "Severe-event burden and affected participants with source-defined ascertainment."},
+    {"id": "RQ-03", "label": "Endogenous insulin production", "description": "Preservation, restoration, or loss of endogenous secretion and its relation to clinical outcomes."},
+    {"id": "RQ-04", "label": "Serious harms and discontinuation", "description": "Serious adverse events, deaths, discontinuation, procedures, and treatment burden."},
+    {"id": "RQ-05", "label": "Immunosuppression dependence", "description": "Clinical benefit in relation to systemic immunosuppression exposure and complications."},
+    {"id": "RQ-06", "label": "Graft durability and retreatment", "description": "Persistence, loss of function, repeat treatment, rescue, or explant."},
+    {"id": "RQ-07", "label": "Population and stage applicability", "description": "Populations, disease stages, eligibility, and limits to generalizability."},
+    {"id": "RQ-08", "label": "Long-term evidence gaps", "description": "Missing observations that prevent assessment of durability, benefit, safety, and coverage."},
+    {"id": "RQ-09", "label": "Accessibility and implementation", "description": "Eligibility reach, manufacturing, delivery, monitoring, affordability, and access constraints."},
+    {"id": "RQ-10", "label": "Prevention or delay of Stage 3 onset", "description": "Time to clinical Stage 3 diagnosis in presymptomatic populations, with burden and safety."},
+    {"id": "RQ-11", "label": "Beta-cell preservation after diagnosis", "description": "Residual beta-cell function after Stage 3 diagnosis and patient-important outcomes."}
+  ],
+  "endpoints": [
+    {"id": "EP-01", "label": "Insulin independence", "description": "Source-defined absence of exogenous insulin, with threshold, consecutive period, confirmation, rescue/restart rules, numerator, denominator, and analysis set.", "research_question_ids": ["RQ-00", "RQ-01"], "required_fields": ["source_definition", "analysis_population", "numerator", "denominator", "assessment_timepoint", "time_origin", "rescue_and_restart_rules"], "units": ["source-defined binary status", "source-defined duration"], "denominator_rule": "Participants meeting the exact source definition divided by participants assessed at that time/window; retain randomized and treated denominators separately.", "timing_anchor": "Randomization, intervention, infusion, or first qualifying insulin-free day as explicitly stated.", "interpretation_hazards": "Dose reduction is not independence; independence during systemic immunosuppression is treatment-dependent; do not impose a universal threshold."},
+    {"id": "EP-02", "label": "Duration of insulin independence", "description": "Elapsed source-defined time during which insulin-independence criteria remain satisfied.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-06"], "required_fields": ["duration_definition", "start_and_end", "censoring", "number_at_risk", "retreatment"], "units": ["days", "weeks", "months", "years", "source-defined categories"], "denominator_rule": "Report participants at risk and achieving independence; preserve censoring and incomplete follow-up.", "timing_anchor": "First qualifying insulin-free day and last confirmed independent assessment.", "interpretation_hazards": "Follow-up duration is not insulin-free duration; maximum follow-up does not apply to the entire cohort."},
+    {"id": "EP-03", "label": "Severe hypoglycemic events", "description": "Events meeting the source's severity and ascertainment definition.", "research_question_ids": ["RQ-00", "RQ-02", "RQ-04"], "required_fields": ["event_definition", "event_count", "affected_participants", "analysis_denominator", "observation_window", "adjudication"], "units": ["events", "participants with one or more events", "person-time if reported"], "denominator_rule": "Keep total recurrent events separate from distinct affected participants and time at risk.", "timing_anchor": "Source-defined event observation period, with baseline history stated separately.", "interpretation_hazards": "Event count cannot be substituted for affected participant count; CGM time below range is not equivalent."},
+    {"id": "EP-04", "label": "HbA1c", "description": "Source-reported glycated hemoglobin value or change, with assay and summary method.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-02", "RQ-11"], "required_fields": ["assay", "unit", "baseline", "follow_up_value", "analysis_denominator", "summary_statistic", "dispersion"], "units": ["%", "mmol/mol", "source-reported unit"], "denominator_rule": "Number assessed for HbA1c at the specified timepoint; retain missingness and analysis set.", "timing_anchor": "Collection time/window relative to randomization or intervention.", "interpretation_hazards": "Not interchangeable with CGM; a composite threshold does not establish individual values or an unstated assessment window."},
+    {"id": "EP-05", "label": "CGM-derived measures", "description": "Source-defined CGM metric, including target range, valid wear, device, and aggregation window.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-02", "RQ-09", "RQ-11"], "required_fields": ["metric", "target_range_if_applicable", "device", "aggregation_window", "valid_wear_rule", "analysis_denominator"], "units": ["% time", "mg/dL", "mmol/L", "source-defined unit"], "denominator_rule": "Participants meeting the source's CGM data sufficiency rule; readings are not participants.", "timing_anchor": "CGM collection window and baseline/follow-up dates.", "interpretation_hazards": "Different ranges/windows and pooled-reading summaries are not directly comparable; CGM does not equal severe events or HbA1c."},
+    {"id": "EP-06", "label": "C-peptide and endogenous secretion", "description": "Fasting or stimulated C-peptide/secretion measure with assay, stimulation, metric, threshold, and detection limit.", "research_question_ids": ["RQ-00", "RQ-03", "RQ-11"], "required_fields": ["assay", "stimulation_protocol", "metric", "unit", "detection_limit", "baseline", "timepoint", "analysis_denominator"], "units": ["source-reported concentration/AUC unit"], "denominator_rule": "Participants with the specified assay at the specified time; dichotomous thresholds need participant numerator and denominator.", "timing_anchor": "Time from diagnosis and intervention; baseline and each assessment.", "interpretation_hazards": "A surrogate; do not infer clinical restoration, insulin independence, or cure."},
+    {"id": "EP-07", "label": "Exogenous insulin requirements", "description": "Source-defined insulin dose/regimen with body weight and calculation method where reported.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-11"], "required_fields": ["dose", "regimen", "body_weight_if_normalized", "baseline", "timepoint", "analysis_denominator", "averaging_window"], "units": ["units/day", "units/kg/day", "source-reported unit"], "denominator_rule": "Participants with dose data for the timepoint; report summary statistic and dispersion.", "timing_anchor": "Dose averaging window and relation to intervention.", "interpretation_hazards": "Dose reduction is not independence; changes may reflect co-interventions or management."},
+    {"id": "EP-08", "label": "Graft survival and function", "description": "Source-defined persistence, viability, engraftment, endocrine function, or failure; retain each concept separately.", "research_question_ids": ["RQ-00", "RQ-03", "RQ-06"], "required_fields": ["graft_or_device_unit", "survival_or_function_definition", "number_implanted", "number_evaluated", "number_functioning", "failure", "censoring"], "units": ["participants", "grafts/devices", "source-defined biomarker or imaging unit"], "denominator_rule": "State whether denominator is participant, graft, device, or tissue; do not interchange.", "timing_anchor": "Implantation/infusion and scheduled follow-up assessments.", "interpretation_hazards": "Persistence is not adequate function or clinical benefit; sentinel tissue may not represent all grafts."},
+    {"id": "EP-09", "label": "Serious adverse events and discontinuation", "description": "Seriousness/type and source-attributed status of adverse events, with treatment interruption, discontinuation, explant, hospitalization, and death recorded separately.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-05", "RQ-06"], "required_fields": ["event_definition", "event_count", "affected_participants", "exposure_denominator", "seriousness", "attribution", "observation_window", "discontinuation_reason"], "units": ["events", "participants", "person-time if reported"], "denominator_rule": "Report recurrent event counts separately from participants with one or more events and number exposed.", "timing_anchor": "Exposure period, event onset, discontinuation, and post-treatment surveillance.", "interpretation_hazards": "Temporal association is not causation; small or short studies cannot rule out rare/late harms."},
+    {"id": "EP-10", "label": "Immunosuppression exposure and complications", "description": "Systemic agents/regimens, actual exposure, changes, cessation, and separately defined complications.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-05"], "required_fields": ["agent", "regimen", "start_stop_dates", "exposure_status", "complication_definition", "event_count", "affected_participants", "denominator"], "units": ["source-reported dose/level", "events", "participants"], "denominator_rule": "Complication counts use affected participants and event counts separately with exposure window/denominator.", "timing_anchor": "Cell treatment/infusion and each immunosuppression exposure period.", "interpretation_hazards": "Required, planned, and received therapy are distinct; do not attribute harms unless source does."},
+    {"id": "EP-11", "label": "Quality of life and treatment burden", "description": "Patient-reported quality-of-life, burden, fear, function, or preference using source-identified instrument/domain.", "research_question_ids": ["RQ-00", "RQ-02", "RQ-09"], "required_fields": ["instrument_version", "domain", "scale_direction", "recall_period", "baseline", "follow_up", "analysis_denominator", "missing_questionnaires"], "units": ["source-defined scale"], "denominator_rule": "Number of eligible respondents analyzed; state missing questionnaires and respondent type.", "timing_anchor": "Baseline and stated collection window.", "interpretation_hazards": "Different instruments are not interchangeable; response bias and missingness matter."},
+    {"id": "EP-12", "label": "Long-term durability and safety", "description": "Longitudinal patient-important benefit, graft/therapy function, retreatment, and delayed harm, each preserved as its own measure.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-04", "RQ-05", "RQ-06", "RQ-08"], "required_fields": ["time_origin", "follow_up_distribution", "number_at_risk", "withdrawals", "censoring", "retreatment", "ongoing_cointerventions", "constituent_endpoint_ids"], "units": ["constituent endpoint units preserved"], "denominator_rule": "Report each constituent endpoint's own analysis denominator and participants observed at each horizon.", "timing_anchor": "Intervention or source-defined time origin, with multi-year horizon stated.", "interpretation_hazards": "Not a single endpoint; 12 months is a reporting expectation, not a durability threshold; longest follow-up does not apply to all."},
+    {"id": "EP-13", "label": "Stage 3 onset delay", "description": "Time from defined Stage 1/2 baseline to source-defined, adjudicated clinical Stage 3 diagnosis.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-07", "RQ-10"], "required_fields": ["stage_eligibility", "diagnostic_criteria", "time_origin", "event_count", "analysis_denominator", "censoring", "follow_up", "surveillance_intensity"], "units": ["time", "participants with progression", "source-defined time-to-event estimate"], "denominator_rule": "Report progression participants and time-to-event analysis set; preserve censoring and uncertainty.", "timing_anchor": "Date of qualifying Stage 1/2 baseline to diagnosis.", "interpretation_hazards": "Delay is not prevention of autoimmunity, reversal, or post-diagnosis preservation."}
+  ],
+  "relationships": [
+    {"subject_id": "TI-PREVENT-DELAY", "relation": "is_a", "object_id": "TI-DISEASE-MODIFICATION", "description": "Prevention/delay intent is a disease-modification intent."},
+    {"subject_id": "TI-PRESERVE-BETA-CELL", "relation": "is_a", "object_id": "TI-DISEASE-MODIFICATION", "description": "Post-diagnosis preservation intent is a disease-modification intent."},
+    {"subject_id": "TI-CELL-REPLACEMENT", "relation": "is_a", "object_id": "TI-FUNCTIONAL-RESTORATION", "description": "Cell replacement is a functional-restoration intent."},
+    {"subject_id": "TI-BETA-CELL-REGENERATE", "relation": "is_a", "object_id": "TI-FUNCTIONAL-RESTORATION", "description": "Beta-cell regeneration is a functional-restoration intent."},
+    {"subject_id": "TM-GENE-EDITED-CELL", "relation": "may_overlap_with", "object_id": "TM-DONOR-ISLET", "description": "Donor islets may be genetically edited."},
+    {"subject_id": "TM-GENE-EDITED-CELL", "relation": "may_overlap_with", "object_id": "TM-STEM-CELL-ISLET", "description": "Stem-cell-derived islets may be genetically edited."},
+    {"subject_id": "TM-ENCAPSULATED-CELL", "relation": "may_overlap_with", "object_id": "TM-DONOR-ISLET", "description": "Donor islets may be delivered in an encapsulation or protection strategy."},
+    {"subject_id": "TM-ENCAPSULATED-CELL", "relation": "may_overlap_with", "object_id": "TM-STEM-CELL-ISLET", "description": "Stem-cell-derived islets may be delivered in an encapsulation or protection strategy."},
+    {"subject_id": "TM-AUTOLOGOUS-CELL", "relation": "may_overlap_with", "object_id": "TM-STEM-CELL-ISLET", "description": "Stem-cell-derived cells may be autologous."},
+    {"subject_id": "TM-ALLOGENEIC-CELL", "relation": "may_overlap_with", "object_id": "TM-DONOR-ISLET", "description": "Deceased-donor islets are allogeneic."},
+    {"subject_id": "TM-ALLOGENEIC-CELL", "relation": "may_overlap_with", "object_id": "TM-STEM-CELL-ISLET", "description": "Stem-cell-derived cells may be allogeneic."},
+    {"subject_id": "TI-COMBINATION", "relation": "may_overlap_with", "object_id": "TM-IMMUNE-MODULATION", "description": "Combination intent may include immune modulation alongside another intervention."},
+    {"subject_id": "TM-ADOPTIVE-IMMUNE-CELL", "relation": "may_overlap_with", "object_id": "TM-IMMUNE-MODULATION", "description": "Adoptive immune-cell transfer may also be immune-modulating."}
+  ]
+}
