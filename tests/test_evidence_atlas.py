@@ -86,6 +86,18 @@ class EvidenceAtlasTests(unittest.TestCase):
         with self.assertRaisesRegex(AtlasInputError, "value_kind"):
             validate_dataset(data)
 
+    def test_event_total_does_not_invent_participant_numerator(self):
+        for outcome_id in ("SYN-OUTCOME-HYPOGLYCEMIA", "SYN-OUTCOME-SAE"):
+            with self.subTest(outcome=outcome_id):
+                data = fixture()
+                result = next(o["result"] for o in data["outcomes"] if o["outcome_id"] == outcome_id)
+                result.update(value=20, unit="synthetic events", value_kind="source_defined")
+                del result["numerator"]
+                validate_dataset(data)
+                result["numerator"] = None
+                with self.assertRaisesRegex(AtlasInputError, "numerator"):
+                    validate_dataset(data)
+
     def test_explicit_participant_units_cannot_be_labeled_noncount(self):
         for unit in ("participants", " Synthetic Participants "):
             with self.subTest(unit=unit):

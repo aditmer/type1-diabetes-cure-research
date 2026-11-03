@@ -25,11 +25,6 @@ MEASURED_OUTCOMES = {
     "graft_durability",
     "serious_adverse_events",
 }
-COUNT_OUTCOMES = {
-    "insulin_independence",
-    "severe_hypoglycemia",
-    "serious_adverse_events",
-}
 PARTICIPANT_COUNT_UNITS = {
     "participant",
     "participants",
@@ -285,8 +280,6 @@ def validate_dataset(dataset):
                 _require((not measured or enrolled is not None) and
                          (enrolled is None or denominator <= enrolled),
                          f"{outcome_id}: denominator exceeds known enrollment")
-            _require("numerator" in result or outcome["type"] not in COUNT_OUTCOMES,
-                     f"{outcome_id}: participant-count outcome needs a numerator")
             if "numerator" in result:
                 numerator = result["numerator"]
                 _require(type(numerator) is int and denominator is not None and
