@@ -1,13 +1,17 @@
 {
   "format_version": "taxonomy-v1",
   "taxonomy_id": "moonshot-evidence-atlas",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "versioning": {
     "scheme": "Semantic Versioning",
     "patch": "Editorial clarification that does not change meaning or identifiers.",
     "minor": "Backward-compatible addition of identifiers, descriptions, facets, questions, or endpoints.",
     "major": "Incompatible meaning or identifier change; publish explicit supersession mappings and never silently reclassify existing records."
   },
+  "change_log": [
+    {"version": "1.0.0", "description": "Initial proposed Phase 2 taxonomy; no evidence or catalog assignments were imported."},
+    {"version": "1.1.0", "description": "Add separate cell-source, donor-relationship, donor-status, immunosuppression-requirement, and exposure facets; deprecate combined facets without automatic mapping; clarify edited, regenerative, and encapsulated categories and analysis denominators. No evidence assignments were migrated."}
+  ],
   "categories": [
     {
       "id": "TI-DISEASE-MODIFICATION",
@@ -43,7 +47,7 @@
       "id": "TI-BETA-CELL-REGENERATE",
       "kind": "therapeutic_intent",
       "label": "Regenerate beta cells",
-      "description": "Increase endogenous beta-cell mass or function, as intended by the source."
+      "description": "Replenish or expand endogenous beta-cell mass, as intended by the source; improved function alone does not establish regeneration."
     },
     {
       "id": "TI-IMMUNE-MODIFY",
@@ -61,7 +65,7 @@
       "id": "TM-DONOR-ISLET",
       "kind": "mechanism",
       "label": "Donor pancreatic islets",
-      "description": "Primary pancreatic islets from a donor; record deceased, living, or unknown donor relationship separately."
+      "description": "Primary pancreatic islets from a donor; record donor status and relationship separately."
     },
     {
       "id": "TM-STEM-CELL-ISLET",
@@ -73,13 +77,13 @@
       "id": "TM-GENE-EDITED-CELL",
       "kind": "mechanism",
       "label": "Gene-edited cell therapy",
-      "description": "Cells with genetic modification; record target and purpose from the source."
+      "description": "Cells with source-reported genome edits; genetic modification alone does not necessarily establish editing."
     },
     {
       "id": "TM-ENCAPSULATED-CELL",
       "kind": "mechanism",
       "label": "Encapsulated or immune-protected cell therapy",
-      "description": "Device, membrane, scaffold, or cell-intrinsic strategy intended to protect cells; do not infer immune isolation from the label."
+      "description": "Physical encapsulation/device containment or a stated cell-protection strategy; do not infer immune isolation from the label."
     },
     {
       "id": "TM-AUTOLOGOUS-CELL",
@@ -109,7 +113,7 @@
       "id": "TM-BETA-REGENERATION",
       "kind": "mechanism",
       "label": "Regenerative approach",
-      "description": "Intervention intended to restore endogenous beta-cell mass or function."
+      "description": "Intervention intended to replenish or expand endogenous beta-cell mass; improved function alone does not establish regeneration."
     },
     {
       "id": "TM-OTHER-EMERGING",
@@ -122,8 +126,10 @@
     {
       "id": "F-CELL-ORIGIN",
       "label": "Cell origin and donor relationship",
-      "description": "Distinguish source of cells from donor relationship; multiple values may apply.",
+      "description": "Deprecated combined cell-origin facet retained for compatibility; use the separate source, relationship, and donor-status facets for new assignments.",
       "multi_valued": true,
+      "deprecated": true,
+      "superseded_by": ["F-CELL-SOURCE", "F-DONOR-RELATIONSHIP", "F-DONOR-STATUS"],
       "values": [
         {"id": "FO-CELL-ORIGIN-DECEASED-DONOR", "label": "Deceased donor", "description": "Cells from a deceased donor."},
         {"id": "FO-CELL-ORIGIN-LIVING-DONOR", "label": "Living donor", "description": "Cells from a living donor."},
@@ -137,9 +143,48 @@
       ]
     },
     {
+      "id": "F-CELL-SOURCE",
+      "label": "Cell source",
+      "description": "Source or derivation of the cells for a source-defined product/component, separate from donor relationship and status.",
+      "multi_valued": true,
+      "values": [
+        {"id": "FO-CELL-SOURCE-PRIMARY-ISLETS", "label": "Primary islets", "description": "Primary pancreatic islets are described as the cell source."},
+        {"id": "FO-CELL-SOURCE-STEM-CELL", "label": "Stem-cell-derived", "description": "Cells are differentiated from a stated stem-cell source."},
+        {"id": "FO-CELL-SOURCE-OTHER", "label": "Other specified source", "description": "A different source is explicitly described."},
+        {"id": "FO-CELL-SOURCE-UNKNOWN", "label": "Unknown", "description": "Cell source is not established."},
+        {"id": "FO-CELL-SOURCE-NA", "label": "Not applicable", "description": "No cell source applies."}
+      ]
+    },
+    {
+      "id": "F-DONOR-RELATIONSHIP",
+      "label": "Donor relationship",
+      "description": "Relationship of the cell donor to the recipient, independently of cell derivation and donor status.",
+      "multi_valued": false,
+      "values": [
+        {"id": "FO-DONOR-RELATIONSHIP-AUTOLOGOUS", "label": "Autologous", "description": "Cells are derived from the treated individual."},
+        {"id": "FO-DONOR-RELATIONSHIP-ALLOGENEIC", "label": "Allogeneic", "description": "Cells are derived from another individual."},
+        {"id": "FO-DONOR-RELATIONSHIP-MIXED", "label": "Mixed", "description": "More than one donor relationship is documented."},
+        {"id": "FO-DONOR-RELATIONSHIP-UNKNOWN", "label": "Unknown", "description": "Donor relationship is not established."},
+        {"id": "FO-DONOR-RELATIONSHIP-NA", "label": "Not applicable", "description": "No donor relationship applies."}
+      ]
+    },
+    {
+      "id": "F-DONOR-STATUS",
+      "label": "Donor status",
+      "description": "Living or deceased status of the source-defined donor; do not infer it from donor relationship.",
+      "multi_valued": false,
+      "values": [
+        {"id": "FO-DONOR-STATUS-LIVING", "label": "Living", "description": "A living donor is specified."},
+        {"id": "FO-DONOR-STATUS-DECEASED", "label": "Deceased", "description": "A deceased donor is specified."},
+        {"id": "FO-DONOR-STATUS-MIXED", "label": "Mixed", "description": "Both living and deceased donors are documented."},
+        {"id": "FO-DONOR-STATUS-UNKNOWN", "label": "Unknown", "description": "Donor status is not established."},
+        {"id": "FO-DONOR-STATUS-NA", "label": "Not applicable", "description": "No donor status applies."}
+      ]
+    },
+    {
       "id": "F-GENETIC-MODIFICATION",
       "label": "Genetic modification",
-      "description": "Presence, purpose, and target of genetic modification as explicitly reported.",
+      "description": "Presence, type, targets, extent or heterogeneity, and purpose of genetic modification as explicitly reported.",
       "multi_valued": false,
       "values": [
         {"id": "FO-GENETICS-NONE-REPORTED", "label": "None reported", "description": "No modification is stated in the reviewed metadata."},
@@ -169,8 +214,10 @@
     {
       "id": "F-IMMUNOSUPPRESSION",
       "label": "Systemic immunosuppression status",
-      "description": "Separate protocol requirement from observed exposure and model context.",
+      "description": "Deprecated combined requirement/exposure facet retained for compatibility; use the separate requirement and exposure facets for new assignments.",
       "multi_valued": false,
+      "deprecated": true,
+      "superseded_by": ["F-IMMUNOSUPPRESSION-REQUIREMENT", "F-IMMUNOSUPPRESSION-EXPOSURE"],
       "values": [
         {"id": "FO-IMMUNOSUPPRESSION-REQUIRED", "label": "Required", "description": "Protocol or product requires systemic immunosuppression."},
         {"id": "FO-IMMUNOSUPPRESSION-USED", "label": "Used", "description": "Exposure is reported, without implying it was protocol-required."},
@@ -179,6 +226,33 @@
         {"id": "FO-IMMUNOSUPPRESSION-VARIES", "label": "Varies", "description": "Requirement/exposure differs across settings or participants."},
         {"id": "FO-IMMUNOSUPPRESSION-UNKNOWN", "label": "Unknown", "description": "Requirement/exposure is not established."},
         {"id": "FO-IMMUNOSUPPRESSION-NA", "label": "Not applicable", "description": "No systemic immunosuppression context applies."}
+      ]
+    },
+    {
+      "id": "F-IMMUNOSUPPRESSION-REQUIREMENT",
+      "label": "Systemic immunosuppression requirement",
+      "description": "Protocol or product requirement in the stated population and model; distinct from observed exposure.",
+      "multi_valued": false,
+      "values": [
+        {"id": "FO-IMMUNOSUPPRESSION-REQUIREMENT-REQUIRED", "label": "Required", "description": "The protocol or product requires systemic immunosuppression."},
+        {"id": "FO-IMMUNOSUPPRESSION-REQUIREMENT-NOT-REQUIRED", "label": "Not required", "description": "The source explicitly says it is not required in the described context."},
+        {"id": "FO-IMMUNOSUPPRESSION-REQUIREMENT-PLANNED", "label": "Planned; requirement unknown", "description": "The protocol plans a regimen but whether it is required is not established."},
+        {"id": "FO-IMMUNOSUPPRESSION-REQUIREMENT-VARIES", "label": "Varies", "description": "The requirement varies across stated contexts."},
+        {"id": "FO-IMMUNOSUPPRESSION-REQUIREMENT-UNKNOWN", "label": "Unknown", "description": "The requirement is not established."},
+        {"id": "FO-IMMUNOSUPPRESSION-REQUIREMENT-NA", "label": "Not applicable", "description": "No requirement context applies."}
+      ]
+    },
+    {
+      "id": "F-IMMUNOSUPPRESSION-EXPOSURE",
+      "label": "Observed systemic immunosuppression exposure",
+      "description": "Actual reported use in the specified population, model, and time window; a plan or requirement alone is not exposure.",
+      "multi_valued": false,
+      "values": [
+        {"id": "FO-IMMUNOSUPPRESSION-EXPOSURE-USED", "label": "Used", "description": "Systemic immunosuppression was actually reported as used."},
+        {"id": "FO-IMMUNOSUPPRESSION-EXPOSURE-NOT-USED", "label": "Not used", "description": "The source explicitly reports no systemic immunosuppression use in the stated context."},
+        {"id": "FO-IMMUNOSUPPRESSION-EXPOSURE-VARIES", "label": "Varies", "description": "Observed exposure varies across stated participants or periods."},
+        {"id": "FO-IMMUNOSUPPRESSION-EXPOSURE-UNKNOWN", "label": "Unknown", "description": "Observed exposure is not established."},
+        {"id": "FO-IMMUNOSUPPRESSION-EXPOSURE-NA", "label": "Not applicable", "description": "No exposure context applies."}
       ]
     },
     {
@@ -287,17 +361,17 @@
     {"id": "RQ-11", "label": "Beta-cell preservation after diagnosis", "description": "Residual beta-cell function after Stage 3 diagnosis and patient-important outcomes."}
   ],
   "endpoints": [
-    {"id": "EP-01", "label": "Insulin independence", "description": "Source-defined absence of exogenous insulin, with threshold, consecutive period, confirmation, rescue/restart rules, numerator, denominator, and analysis set.", "research_question_ids": ["RQ-00", "RQ-01"], "required_fields": ["source_definition", "analysis_population", "numerator", "denominator", "assessment_timepoint", "time_origin", "rescue_and_restart_rules"], "units": ["source-defined binary status", "source-defined duration"], "denominator_rule": "Participants meeting the exact source definition divided by participants assessed at that time/window; retain randomized and treated denominators separately.", "timing_anchor": "Randomization, intervention, infusion, or first qualifying insulin-free day as explicitly stated.", "interpretation_hazards": "Dose reduction is not independence; independence during systemic immunosuppression is treatment-dependent; do not impose a universal threshold."},
+    {"id": "EP-01", "label": "Insulin independence", "description": "Source-defined absence of exogenous insulin, with threshold, consecutive period, confirmation, rescue/restart rules, numerator, denominator, and analysis set.", "research_question_ids": ["RQ-00", "RQ-01"], "required_fields": ["source_definition", "analysis_population", "numerator", "denominator", "observed_measurement_count", "missing_data_method", "assessment_timepoint", "time_origin", "rescue_and_restart_rules"], "units": ["source-defined binary status", "source-defined duration"], "denominator_rule": "Preserve the source-defined analysis denominator, observed count, and missing-data method separately; do not invent a numerator for a modeled estimate.", "timing_anchor": "Randomization, intervention, infusion, or first qualifying insulin-free day as explicitly stated.", "interpretation_hazards": "Dose reduction is not independence; independence during systemic immunosuppression is treatment-dependent; do not impose a universal threshold."},
     {"id": "EP-02", "label": "Duration of insulin independence", "description": "Elapsed source-defined time during which insulin-independence criteria remain satisfied.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-06"], "required_fields": ["duration_definition", "start_and_end", "censoring", "number_at_risk", "retreatment"], "units": ["days", "weeks", "months", "years", "source-defined categories"], "denominator_rule": "Report participants at risk and achieving independence; preserve censoring and incomplete follow-up.", "timing_anchor": "First qualifying insulin-free day and last confirmed independent assessment.", "interpretation_hazards": "Follow-up duration is not insulin-free duration; maximum follow-up does not apply to the entire cohort."},
     {"id": "EP-03", "label": "Severe hypoglycemic events", "description": "Events meeting the source's severity and ascertainment definition.", "research_question_ids": ["RQ-00", "RQ-02", "RQ-04"], "required_fields": ["event_definition", "event_count", "affected_participants", "analysis_denominator", "observation_window", "adjudication"], "units": ["events", "participants with one or more events", "person-time if reported"], "denominator_rule": "Keep total recurrent events separate from distinct affected participants and time at risk.", "timing_anchor": "Source-defined event observation period, with baseline history stated separately.", "interpretation_hazards": "Event count cannot be substituted for affected participant count; CGM time below range is not equivalent."},
-    {"id": "EP-04", "label": "HbA1c", "description": "Source-reported glycated hemoglobin value or change, with assay and summary method.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-02", "RQ-11"], "required_fields": ["assay", "unit", "baseline", "follow_up_value", "analysis_denominator", "summary_statistic", "dispersion"], "units": ["%", "mmol/mol", "source-reported unit"], "denominator_rule": "Number assessed for HbA1c at the specified timepoint; retain missingness and analysis set.", "timing_anchor": "Collection time/window relative to randomization or intervention.", "interpretation_hazards": "Not interchangeable with CGM; a composite threshold does not establish individual values or an unstated assessment window."},
-    {"id": "EP-05", "label": "CGM-derived measures", "description": "Source-defined CGM metric, including target range, valid wear, device, and aggregation window.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-02", "RQ-09", "RQ-11"], "required_fields": ["metric", "target_range_if_applicable", "device", "aggregation_window", "valid_wear_rule", "analysis_denominator"], "units": ["% time", "mg/dL", "mmol/L", "source-defined unit"], "denominator_rule": "Participants meeting the source's CGM data sufficiency rule; readings are not participants.", "timing_anchor": "CGM collection window and baseline/follow-up dates.", "interpretation_hazards": "Different ranges/windows and pooled-reading summaries are not directly comparable; CGM does not equal severe events or HbA1c."},
-    {"id": "EP-06", "label": "C-peptide and endogenous secretion", "description": "Fasting or stimulated C-peptide/secretion measure with assay, stimulation, metric, threshold, and detection limit.", "research_question_ids": ["RQ-00", "RQ-03", "RQ-11"], "required_fields": ["assay", "stimulation_protocol", "metric", "unit", "detection_limit", "baseline", "timepoint", "analysis_denominator"], "units": ["source-reported concentration/AUC unit"], "denominator_rule": "Participants with the specified assay at the specified time; dichotomous thresholds need participant numerator and denominator.", "timing_anchor": "Time from diagnosis and intervention; baseline and each assessment.", "interpretation_hazards": "A surrogate; do not infer clinical restoration, insulin independence, or cure."},
-    {"id": "EP-07", "label": "Exogenous insulin requirements", "description": "Source-defined insulin dose/regimen with body weight and calculation method where reported.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-11"], "required_fields": ["dose", "regimen", "body_weight_if_normalized", "baseline", "timepoint", "analysis_denominator", "averaging_window"], "units": ["units/day", "units/kg/day", "source-reported unit"], "denominator_rule": "Participants with dose data for the timepoint; report summary statistic and dispersion.", "timing_anchor": "Dose averaging window and relation to intervention.", "interpretation_hazards": "Dose reduction is not independence; changes may reflect co-interventions or management."},
+    {"id": "EP-04", "label": "HbA1c", "description": "Source-reported glycated hemoglobin value or change, with assay and summary method.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-02", "RQ-11"], "required_fields": ["assay", "unit", "baseline", "follow_up_value", "analysis_denominator", "observed_measurement_count", "missing_data_method", "summary_statistic", "dispersion"], "units": ["%", "mmol/mol", "source-reported unit"], "denominator_rule": "Preserve the source-defined analysis denominator, observed HbA1c count, and missing-data method separately.", "timing_anchor": "Collection time/window relative to randomization or intervention.", "interpretation_hazards": "Not interchangeable with CGM; a composite threshold does not establish individual values or an unstated assessment window."},
+    {"id": "EP-05", "label": "CGM-derived measures", "description": "Source-defined CGM metric, including target range, valid wear, device, and aggregation window.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-02", "RQ-09", "RQ-11"], "required_fields": ["metric", "target_range_if_applicable", "device", "aggregation_window", "valid_wear_rule", "analysis_denominator", "observed_measurement_count", "missing_data_method"], "units": ["% time", "mg/dL", "mmol/L", "source-defined unit"], "denominator_rule": "Preserve the source-defined analysis denominator, observed count meeting CGM data sufficiency, and missing-data method separately; readings are not participants.", "timing_anchor": "CGM collection window and baseline/follow-up dates.", "interpretation_hazards": "Different ranges/windows and pooled-reading summaries are not directly comparable; CGM does not equal severe events or HbA1c."},
+    {"id": "EP-06", "label": "C-peptide and endogenous secretion", "description": "Fasting or stimulated C-peptide/secretion measure with assay, stimulation, metric, threshold, and detection limit.", "research_question_ids": ["RQ-00", "RQ-03", "RQ-11"], "required_fields": ["assay", "stimulation_protocol", "metric", "unit", "detection_limit", "baseline", "timepoint", "analysis_denominator", "observed_measurement_count", "missing_data_method"], "units": ["source-reported concentration/AUC unit"], "denominator_rule": "Preserve the source-defined analysis denominator, observed-assay count, and missing-data method separately; an imputed analysis may include participants without an observed assay.", "timing_anchor": "Time from diagnosis and intervention; baseline and each assessment.", "interpretation_hazards": "A surrogate; do not infer clinical restoration, insulin independence, or cure."},
+    {"id": "EP-07", "label": "Exogenous insulin requirements", "description": "Source-defined insulin dose/regimen with body weight and calculation method where reported.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-11"], "required_fields": ["dose", "regimen", "body_weight_if_normalized", "baseline", "timepoint", "analysis_denominator", "observed_measurement_count", "missing_data_method", "averaging_window"], "units": ["units/day", "units/kg/day", "source-reported unit"], "denominator_rule": "Preserve the source-defined analysis denominator, observed dose-data count, and missing-data method separately; report summary statistic and dispersion.", "timing_anchor": "Dose averaging window and relation to intervention.", "interpretation_hazards": "Dose reduction is not independence; changes may reflect co-interventions or management."},
     {"id": "EP-08", "label": "Graft survival and function", "description": "Source-defined persistence, viability, engraftment, endocrine function, or failure; retain each concept separately.", "research_question_ids": ["RQ-00", "RQ-03", "RQ-06"], "required_fields": ["graft_or_device_unit", "survival_or_function_definition", "number_implanted", "number_evaluated", "number_functioning", "failure", "censoring"], "units": ["participants", "grafts/devices", "source-defined biomarker or imaging unit"], "denominator_rule": "State whether denominator is participant, graft, device, or tissue; do not interchange.", "timing_anchor": "Implantation/infusion and scheduled follow-up assessments.", "interpretation_hazards": "Persistence is not adequate function or clinical benefit; sentinel tissue may not represent all grafts."},
     {"id": "EP-09", "label": "Serious adverse events and discontinuation", "description": "Seriousness/type and source-attributed status of adverse events, with treatment interruption, discontinuation, explant, hospitalization, and death recorded separately.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-05", "RQ-06"], "required_fields": ["event_definition", "event_count", "affected_participants", "exposure_denominator", "seriousness", "attribution", "observation_window", "discontinuation_reason"], "units": ["events", "participants", "person-time if reported"], "denominator_rule": "Report recurrent event counts separately from participants with one or more events and number exposed.", "timing_anchor": "Exposure period, event onset, discontinuation, and post-treatment surveillance.", "interpretation_hazards": "Temporal association is not causation; small or short studies cannot rule out rare/late harms."},
     {"id": "EP-10", "label": "Immunosuppression exposure and complications", "description": "Systemic agents/regimens, actual exposure, changes, cessation, and separately defined complications.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-05"], "required_fields": ["agent", "regimen", "start_stop_dates", "exposure_status", "complication_definition", "event_count", "affected_participants", "denominator"], "units": ["source-reported dose/level", "events", "participants"], "denominator_rule": "Complication counts use affected participants and event counts separately with exposure window/denominator.", "timing_anchor": "Cell treatment/infusion and each immunosuppression exposure period.", "interpretation_hazards": "Required, planned, and received therapy are distinct; do not attribute harms unless source does."},
-    {"id": "EP-11", "label": "Quality of life and treatment burden", "description": "Patient-reported quality-of-life, burden, fear, function, or preference using source-identified instrument/domain.", "research_question_ids": ["RQ-00", "RQ-02", "RQ-09"], "required_fields": ["instrument_version", "domain", "scale_direction", "recall_period", "baseline", "follow_up", "analysis_denominator", "missing_questionnaires"], "units": ["source-defined scale"], "denominator_rule": "Number of eligible respondents analyzed; state missing questionnaires and respondent type.", "timing_anchor": "Baseline and stated collection window.", "interpretation_hazards": "Different instruments are not interchangeable; response bias and missingness matter."},
+    {"id": "EP-11", "label": "Quality of life and treatment burden", "description": "Patient-reported quality-of-life, burden, fear, function, or preference using source-identified instrument/domain.", "research_question_ids": ["RQ-00", "RQ-02", "RQ-09"], "required_fields": ["instrument_version", "domain", "scale_direction", "recall_period", "baseline", "follow_up", "analysis_denominator", "observed_measurement_count", "missing_data_method", "missing_questionnaires"], "units": ["source-defined scale"], "denominator_rule": "Preserve the source-defined analysis denominator, observed questionnaire count, and missing-data method separately; state respondent type.", "timing_anchor": "Baseline and stated collection window.", "interpretation_hazards": "Different instruments are not interchangeable; response bias and missingness matter."},
     {"id": "EP-12", "label": "Long-term durability and safety", "description": "Longitudinal patient-important benefit, graft/therapy function, retreatment, and delayed harm, each preserved as its own measure.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-04", "RQ-05", "RQ-06", "RQ-08"], "required_fields": ["time_origin", "follow_up_distribution", "number_at_risk", "withdrawals", "censoring", "retreatment", "ongoing_cointerventions", "constituent_endpoint_ids"], "units": ["constituent endpoint units preserved"], "denominator_rule": "Report each constituent endpoint's own analysis denominator and participants observed at each horizon.", "timing_anchor": "Intervention or source-defined time origin, with multi-year horizon stated.", "interpretation_hazards": "Not a single endpoint; 12 months is a reporting expectation, not a durability threshold; longest follow-up does not apply to all."},
     {"id": "EP-13", "label": "Stage 3 onset delay", "description": "Time from defined Stage 1/2 baseline to source-defined, adjudicated clinical Stage 3 diagnosis.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-07", "RQ-10"], "required_fields": ["stage_eligibility", "diagnostic_criteria", "time_origin", "event_count", "analysis_denominator", "censoring", "follow_up", "surveillance_intensity"], "units": ["time", "participants with progression", "source-defined time-to-event estimate"], "denominator_rule": "Report progression participants and time-to-event analysis set; preserve censoring and uncertainty.", "timing_anchor": "Date of qualifying Stage 1/2 baseline to diagnosis.", "interpretation_hazards": "Delay is not prevention of autoimmunity, reversal, or post-diagnosis preservation."}
   ],

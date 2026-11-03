@@ -1,10 +1,18 @@
+import contextlib
 import copy
+import io
 import json
+import re
+import tempfile
 import unittest
+from pathlib import Path
 
 from scripts.validate_evidence_atlas_taxonomy import (
+    ROOT,
     TAXONOMY_PATH,
     TaxonomyError,
+    load_taxonomy,
+    main,
     serialize_taxonomy,
     validate_taxonomy,
 )
@@ -28,6 +36,17 @@ class EvidenceAtlasTaxonomyTests(unittest.TestCase):
         data = taxonomy()
         data["relationships"][0]["object_id"] = "TI-NOT-DEFINED"
         with self.assertRaisesRegex(TaxonomyError, "references must resolve"):
+            validate_taxonomy(data)
+
+    def test_is_a_relationship_cannot_cross_dimensions(self):
+        data = taxonomy()
+        data["relationships"].append({
+            "subject_id": "TI-PREVENT-DELAY",
+            "object_id": "TM-IMMUNE-MODULATION",
+            "relation": "is_a",
+            "description": "Invalid cross-dimensional hierarchy for validation.",
+        })
+        with self.assertRaisesRegex(TaxonomyError, "cannot cross category dimensions"):
             validate_taxonomy(data)
 
     def test_duplicate_symmetric_relationship_is_rejected(self):
@@ -64,6 +83,69 @@ class EvidenceAtlasTaxonomyTests(unittest.TestCase):
         with self.assertRaisesRegex(TaxonomyError, "ancestor and descendant"):
             validate_taxonomy(data)
 
+    def test_mutually_exclusive_parents_cannot_share_a_descendant(self):
+        data = taxonomy()
+        data["relationships"].extend([
+            {
+                "subject_id": "TI-PREVENT-DELAY",
+                "object_id": "TI-FUNCTIONAL-RESTORATION",
+                "relation": "is_a",
+                "description": "Additional parent for validation.",
+            },
+            {
+                "subject_id": "TI-DISEASE-MODIFICATION",
+                "object_id": "TI-FUNCTIONAL-RESTORATION",
+                "relation": "mutually_exclusive_with",
+                "description": "Contradictory parent relation for validation.",
+            },
+        ])
+        with self.assertRaisesRegex(TaxonomyError, "share a descendant"):
+            validate_taxonomy(data)
+
+    def test_overlap_cannot_contradict_ancestor_exclusivity(self):
+        data = taxonomy()
+        data["relationships"].extend([
+            {
+                "subject_id": "TI-DISEASE-MODIFICATION",
+                "object_id": "TI-FUNCTIONAL-RESTORATION",
+                "relation": "mutually_exclusive_with",
+                "description": "Parent exclusion for validation.",
+            },
+            {
+                "subject_id": "TI-PREVENT-DELAY",
+                "object_id": "TI-CELL-REPLACEMENT",
+                "relation": "may_overlap_with",
+                "description": "Contradictory descendant overlap for validation.",
+            },
+        ])
+        with self.assertRaisesRegex(TaxonomyError, "overlap inherited"):
+            validate_taxonomy(data)
+
+    def test_overlap_cannot_contradict_transitive_ancestor_exclusivity(self):
+        data = taxonomy()
+        data["relationships"].extend([
+            {
+                "subject_id": "TI-COMBINATION",
+                "object_id": "TI-PREVENT-DELAY",
+                "relation": "is_a",
+                "description": "Additional level for validation.",
+            },
+            {
+                "subject_id": "TI-DISEASE-MODIFICATION",
+                "object_id": "TI-FUNCTIONAL-RESTORATION",
+                "relation": "mutually_exclusive_with",
+                "description": "Parent exclusion for validation.",
+            },
+            {
+                "subject_id": "TI-COMBINATION",
+                "object_id": "TI-CELL-REPLACEMENT",
+                "relation": "may_overlap_with",
+                "description": "Contradictory descendant overlap for validation.",
+            },
+        ])
+        with self.assertRaisesRegex(TaxonomyError, "overlap inherited"):
+            validate_taxonomy(data)
+
     def test_parent_cycle_is_rejected(self):
         data = taxonomy()
         data["relationships"].append({
@@ -81,6 +163,21 @@ class EvidenceAtlasTaxonomyTests(unittest.TestCase):
         with self.assertRaisesRegex(TaxonomyError, "description is required"):
             validate_taxonomy(data)
 
+    def test_non_object_facet_value_fails_as_taxonomy_error(self):
+        data = taxonomy()
+        data["facets"][0]["values"] = [1]
+        with self.assertRaisesRegex(TaxonomyError, "entry must be an object"):
+            validate_taxonomy(data)
+
+    def test_unexpected_outcome_payloads_are_rejected(self):
+        for path in ("root", "endpoint"):
+            with self.subTest(path=path):
+                data = taxonomy()
+                target = data if path == "root" else data["endpoints"][0]
+                target["outcomes"] = [{"result": "not permitted"}]
+                with self.assertRaisesRegex(TaxonomyError, "unexpected properties"):
+                    validate_taxonomy(data)
+
     def test_version_integrity(self):
         data = taxonomy()
         data["version"] = "2.0.0"
@@ -90,12 +187,95 @@ class EvidenceAtlasTaxonomyTests(unittest.TestCase):
         data["version"] = "01.0.0"
         with self.assertRaisesRegex(TaxonomyError, "semantic versioning"):
             validate_taxonomy(data)
+        data = taxonomy()
+        data["version"] = "2.0.0"
+        data["format_version"] = "taxonomy-v2"
+        with self.assertRaisesRegex(TaxonomyError, "unsupported format_version"):
+            validate_taxonomy(data)
+        data = taxonomy()
+        data["version"] = "1.2.0"
+        with self.assertRaisesRegex(TaxonomyError, "latest change_log version"):
+            validate_taxonomy(data)
+
+    def test_duplicate_json_keys_and_non_json_constants_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "taxonomy.json"
+            for content, message in (
+                ('{"version":"1.0.0","version":"1.1.0"}', "duplicate JSON key"),
+                ('{"version":NaN}', "invalid JSON constant"),
+            ):
+                with self.subTest(content=content):
+                    path.write_text(content, encoding="utf-8")
+                    with self.assertRaisesRegex(TaxonomyError, message):
+                        load_taxonomy(path)
+                    with contextlib.redirect_stderr(io.StringIO()) as errors:
+                        self.assertEqual(main(["--taxonomy", str(path)]), 1)
+                    self.assertIn(message, errors.getvalue())
+
+    def test_separate_origin_and_immunosuppression_facets_preserve_legacy_ids(self):
+        data = taxonomy()
+        facets = {facet["id"]: facet for facet in data["facets"]}
+        self.assertTrue(facets["F-CELL-ORIGIN"]["deprecated"])
+        self.assertEqual(set(facets["F-CELL-ORIGIN"]["superseded_by"]),
+                         {"F-CELL-SOURCE", "F-DONOR-RELATIONSHIP", "F-DONOR-STATUS"})
+        self.assertTrue(facets["F-IMMUNOSUPPRESSION"]["deprecated"])
+        self.assertEqual(set(facets["F-IMMUNOSUPPRESSION"]["superseded_by"]),
+                         {"F-IMMUNOSUPPRESSION-REQUIREMENT", "F-IMMUNOSUPPRESSION-EXPOSURE"})
+        requirement = {value["id"] for value in facets["F-IMMUNOSUPPRESSION-REQUIREMENT"]["values"]}
+        exposure = {value["id"] for value in facets["F-IMMUNOSUPPRESSION-EXPOSURE"]["values"]}
+        self.assertIn("FO-IMMUNOSUPPRESSION-REQUIREMENT-REQUIRED", requirement)
+        self.assertIn("FO-IMMUNOSUPPRESSION-EXPOSURE-USED", exposure)
+
+    def test_deprecated_facets_require_valid_supersession_references(self):
+        data = taxonomy()
+        data["facets"][0]["superseded_by"] = ["F-UNKNOWN"]
+        with self.assertRaisesRegex(TaxonomyError, "unique active facets"):
+            validate_taxonomy(data)
 
     def test_endpoint_question_references_are_valid(self):
         data = taxonomy()
         data["endpoints"][0]["research_question_ids"].append("RQ-99")
         with self.assertRaisesRegex(TaxonomyError, "references must be unique and valid"):
             validate_taxonomy(data)
+
+    def test_measurement_endpoints_separate_analysis_and_observed_counts(self):
+        endpoints = {entry["id"]: entry for entry in taxonomy()["endpoints"]}
+        for endpoint_id in ("EP-01", "EP-04", "EP-05", "EP-06", "EP-07", "EP-11"):
+            with self.subTest(endpoint=endpoint_id):
+                endpoint = endpoints[endpoint_id]
+                self.assertIn("observed_measurement_count", endpoint["required_fields"])
+                self.assertIn("missing_data_method", endpoint["required_fields"])
+                rule = endpoint["denominator_rule"].lower()
+                self.assertIn("source-defined analysis denominator", rule)
+                self.assertIn("observed", rule)
+                self.assertIn("missing-data method", rule)
+        self.assertIn("imputed analysis", endpoints["EP-06"]["denominator_rule"])
+        self.assertIn("do not invent a numerator", endpoints["EP-01"]["denominator_rule"])
+
+    def test_category_definitions_preserve_mechanistic_uncertainty(self):
+        categories = {entry["id"]: entry for entry in taxonomy()["categories"]}
+        self.assertIn("genetic modification alone", categories["TM-GENE-EDITED-CELL"]["description"])
+        self.assertIn("do not infer immune isolation", categories["TM-ENCAPSULATED-CELL"]["description"])
+        for category_id in ("TI-BETA-CELL-REGENERATE", "TM-BETA-REGENERATION"):
+            with self.subTest(category=category_id):
+                self.assertIn("function alone does not establish regeneration",
+                              categories[category_id]["description"])
+
+    def test_documented_taxonomy_identifiers_match_json(self):
+        data = taxonomy()
+        documents = (
+            ("EVIDENCE-ATLAS-RESEARCH-QUESTIONS.md", "research_questions", r"\bRQ-\d{2}\b"),
+            ("EVIDENCE-ATLAS-ENDPOINT-TAXONOMY.md", "endpoints", r"\bEP-\d{2}\b"),
+            ("EVIDENCE-ATLAS-TAXONOMY.md", "categories",
+             r"\b(?:TI|TM)-(?:[A-Z0-9]+-)*[A-Z0-9]+\b"),
+            ("EVIDENCE-ATLAS-TAXONOMY.md", "facets",
+             r"\bF-(?:[A-Z0-9]+-)*[A-Z0-9]+\b"),
+        )
+        for filename, collection, pattern in documents:
+            with self.subTest(filename=filename, collection=collection):
+                text = (ROOT / "docs" / filename).read_text(encoding="utf-8")
+                self.assertEqual(set(re.findall(pattern, text)),
+                                 {entry["id"] for entry in data[collection]})
 
     def test_serialization_is_deterministic_for_object_key_order(self):
         original = taxonomy()
