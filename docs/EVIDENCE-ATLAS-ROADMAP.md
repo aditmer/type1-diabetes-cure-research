@@ -5,7 +5,7 @@ This roadmap is a proposed sequence, not authorization to access or analyze rest
 | Priority | Stage | Exit evidence |
 | --- | --- | --- |
 | 1 | Stabilize the synthetic contract and viewer | Deterministic build, passing integrity tests, explicit missing/conflicting states, readable provenance, and no aggregate/ranking path. |
-| 2 | Refine the question and taxonomy | Maintainer-reviewed scope and research questions; modality categories tied to existing source catalog records without implying that inclusion is endorsement. |
+| 2 | Refine the question and taxonomy | Phase 2 proposal is documented in the research questions, therapeutic and endpoint taxonomies, metadata-only crosswalk, machine-readable taxonomy, and decision register. Maintainer approval is still required; no clinical evidence is imported or endorsed. |
 | 3 | Specify controlled real-data integration | Written authorization for the exact source set, versions, fields, access routes, rights limits, mapping rules, and reviewer roles. Do not alter the frozen Q3 study protocol or reuse its approval outside scope. |
 | 4 | Build a provenance-preserving extraction adapter | Versioned imports that preserve canonical field states, locators, denominators, timing, review history, conflicts, and unresolved cohort links. Adapter remains read-only against approved trackers. |
 | 5 | Run internal scientific and reproducibility review | Independent reproduction of transformations; endpoint/denominator checks; documented overlap handling; missingness, harms, limitations, and discrepancy review; approvals recorded by authorized humans. |
