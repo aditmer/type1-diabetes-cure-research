@@ -285,7 +285,8 @@
       "additionalProperties": false,
       "required": [
         "value",
-        "unit"
+        "unit",
+        "value_kind"
       ],
       "properties": {
         "value": {
@@ -294,7 +295,15 @@
             "string"
           ]
         },
+        "value_kind": {
+          "description": "Use participant_count when value is the participant numerator; otherwise use source_defined without inferring units or harmonizing the result.",
+          "enum": [
+            "participant_count",
+            "source_defined"
+          ]
+        },
         "numerator": {
+          "description": "The number of participants; it may differ from an event count or percentage.",
           "type": "integer",
           "minimum": 0
         },
@@ -305,7 +314,28 @@
         "unit": {
           "$ref": "#/$defs/nonempty"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "value_kind": {
+                "const": "participant_count"
+              }
+            },
+            "required": ["value_kind"]
+          },
+          "then": {
+            "required": ["numerator", "denominator"],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      ]
     },
     "sourceReference": {
       "type": "object",

@@ -229,6 +229,7 @@
         "numerator": 0,
         "denominator": 10,
         "value": 0,
+        "value_kind": "participant_count",
         "unit": "synthetic participants"
       },
       "assessment_timepoint": "Invented month 12 assessment.",
@@ -255,6 +256,7 @@
       "result": {
         "denominator": 10,
         "value": 0.24,
+        "value_kind": "source_defined",
         "unit": "synthetic nmol/L"
       },
       "assessment_timepoint": "Invented month 12 assessment.",
@@ -282,6 +284,7 @@
         "numerator": 5,
         "denominator": 10,
         "value": 5,
+        "value_kind": "participant_count",
         "unit": "synthetic participants"
       },
       "assessment_timepoint": "Invented month 12 assessment.",
@@ -309,6 +312,7 @@
         "numerator": 1,
         "denominator": 10,
         "value": 1,
+        "value_kind": "participant_count",
         "unit": "synthetic participants"
       },
       "assessment_timepoint": "Invented month 12 assessment.",
@@ -336,6 +340,7 @@
         "numerator": 8,
         "denominator": 10,
         "value": 8,
+        "value_kind": "participant_count",
         "unit": "synthetic participants"
       },
       "assessment_timepoint": "Invented month 12 assessment.",
@@ -361,6 +366,7 @@
       "observation_status": "observed",
       "result": {
         "value": "Fictional regimen description only.",
+        "value_kind": "source_defined",
         "unit": "synthetic text"
       },
       "assessment_timepoint": "Invented study period.",
@@ -388,6 +394,7 @@
         "numerator": 2,
         "denominator": 10,
         "value": 2,
+        "value_kind": "participant_count",
         "unit": "synthetic participants"
       },
       "assessment_timepoint": "Invented month 12 assessment.",
@@ -508,6 +515,7 @@
         "numerator": 4,
         "denominator": 8,
         "value": 4,
+        "value_kind": "participant_count",
         "unit": "synthetic participants"
       },
       "assessment_timepoint": "Invented month 12 assessment.",
@@ -534,6 +542,7 @@
       "result": {
         "denominator": 8,
         "value": -0.5,
+        "value_kind": "source_defined",
         "unit": "synthetic percentage points"
       },
       "assessment_timepoint": "Invented month 6 assessment.",

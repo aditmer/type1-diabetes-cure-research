@@ -47,6 +47,54 @@ class EvidenceAtlasTests(unittest.TestCase):
                 with self.assertRaisesRegex(AtlasInputError, "integer"):
                     validate_dataset(data)
 
+    def test_participant_count_value_must_match_numerator(self):
+        for outcome_id in ("SYN-OUTCOME-INSULIN", "SYN-OUTCOME-HBA1C-7",
+                           "SYN-OUTCOME-HYPOGLYCEMIA", "SYN-OUTCOME-DURABILITY"):
+            with self.subTest(outcome=outcome_id):
+                data = fixture()
+                result = next(o["result"] for o in data["outcomes"] if o["outcome_id"] == outcome_id)
+                result["value_kind"] = "participant_count"
+                result["value"] = result["numerator"] + 1
+                with self.assertRaisesRegex(AtlasInputError, "participant count.*numerator"):
+                    validate_dataset(data)
+        data = fixture()
+        result = data["outcomes"][0]["result"]
+        result["value_kind"] = "participant_count"
+        result["value"] = 0.5
+        with self.assertRaisesRegex(AtlasInputError, "participant count.*numerator"):
+            validate_dataset(data)
+        data = fixture()
+        result = next(o["result"] for o in data["outcomes"] if o["outcome_id"] == "SYN-OUTCOME-CPEPTIDE")
+        result.update(value=1, value_kind="participant_count")
+        with self.assertRaisesRegex(AtlasInputError, "participant count.*numerator"):
+            validate_dataset(data)
+
+    def test_result_value_kind_is_explicit_and_preserves_noncount_values(self):
+        data = fixture()
+        result = next(o["result"] for o in data["outcomes"]
+                      if o["outcome_id"] == "SYN-OUTCOME-HYPOGLYCEMIA")
+        result.update(value=3, unit="synthetic events", value_kind="source_defined")
+        validate_dataset(data)
+        result.update(value=10, unit="synthetic percent")
+        validate_dataset(data)
+        for invalid in ("", "unknown", [], None):
+            with self.subTest(invalid=invalid):
+                result["value_kind"] = invalid
+                with self.assertRaisesRegex(AtlasInputError, "value_kind"):
+                    validate_dataset(data)
+        result.pop("value_kind")
+        with self.assertRaisesRegex(AtlasInputError, "value_kind"):
+            validate_dataset(data)
+
+    def test_explicit_participant_units_cannot_be_labeled_noncount(self):
+        for unit in ("participants", " Synthetic Participants "):
+            with self.subTest(unit=unit):
+                data = fixture()
+                result = data["outcomes"][0]["result"]
+                result.update(value_kind="source_defined", unit=unit)
+                with self.assertRaisesRegex(AtlasInputError, "participant.count unit"):
+                    validate_dataset(data)
+
     def test_program_requires_viewer_labels(self):
         data = fixture()
         del data["programs"][0]["name"]

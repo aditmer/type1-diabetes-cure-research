@@ -30,6 +30,12 @@ COUNT_OUTCOMES = {
     "severe_hypoglycemia",
     "serious_adverse_events",
 }
+PARTICIPANT_COUNT_UNITS = {
+    "participant",
+    "participants",
+    "synthetic participant",
+    "synthetic participants",
+}
 OUTCOME_TYPES = MEASURED_OUTCOMES | {"immunosuppression"}
 APPROACH_CATEGORIES = {
     "deceased_donor_islet_transplantation",
@@ -256,6 +262,13 @@ def validate_dataset(dataset):
             _require((type(value) in (int, float) or _nonempty_text(value)) and
                      _nonempty_text(result.get("unit")),
                      f"{outcome_id}: result value and unit must be nonempty")
+            value_kind = result.get("value_kind")
+            _require(isinstance(value_kind, str) and
+                     value_kind in {"participant_count", "source_defined"},
+                     f"{outcome_id}: result value_kind must identify a participant count or source-defined value")
+            _require(result["unit"].strip().casefold() not in PARTICIPANT_COUNT_UNITS or
+                     value_kind == "participant_count",
+                     f"{outcome_id}: participant-count unit requires participant_count value_kind")
             if type(value) is float:
                 _require(math.isfinite(value), f"{outcome_id}: numeric result must be finite")
             _require(outcome.get("assessment_timepoint") and outcome.get("timing_anchor"),
@@ -279,6 +292,9 @@ def validate_dataset(dataset):
                 _require(type(numerator) is int and denominator is not None and
                          0 <= numerator <= denominator,
                          f"{outcome_id}: numerator must be an integer between zero and denominator")
+            if value_kind == "participant_count":
+                _require(type(value) is int and "numerator" in result and value == result["numerator"],
+                         f"{outcome_id}: participant count value must equal its integer numerator")
         elif field_status == "reported" and observation_status == "planned":
             _require(result is None, f"{outcome_id}: planned endpoint cannot have an observed result")
         else:

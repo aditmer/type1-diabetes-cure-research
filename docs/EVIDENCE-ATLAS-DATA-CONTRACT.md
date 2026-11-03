@@ -12,7 +12,7 @@ The machine-readable structural contract is `experiments/evidence-atlas/schema.j
 | Clinical outcome | `outcome_id`; one endpoint for one study, with the original definition, observation state, typed result, denominator, units, time point and anchor, source references, review state, and limitations. |
 | Evidence provenance | `source_id` plus `source_version`; reference and exact location, extraction state, human-review state, approval state, adjudication history, and discrepancies. Outcome and cohort source references bind to a known source version and a location explicitly cataloged by that source or a slash-delimited descendant of one. |
 
-The full field definitions and accepted values are in the JSON Schema. `registry_id` and `follow_up` may be `null` when unavailable. A missing value is never encoded as numerical zero.
+The full field definitions and accepted values are in the JSON Schema. `registry_id` and `follow_up` may be `null` when unavailable. A missing value is never encoded as numerical zero. An observed result declares `value_kind`: `participant_count` requires its integer value to equal its participant numerator, while `source_defined` retains other values such as percentages, event counts, and continuous or qualitative measurements. The units `participant(s)` and `synthetic participant(s)` are reserved for participant counts. The kind does not harmonize or convert the source's units.
 
 ## Status semantics and promotion rules
 

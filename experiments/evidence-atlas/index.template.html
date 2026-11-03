@@ -174,7 +174,7 @@
       card.append(node("span", label(outcome.observation_status), "label"));
       card.append(node("p", `Definition: ${outcome.definition}`));
       if (outcome.field_status === "reported" && outcome.observation_status === "observed" && outcome.result) {
-        const ratio = outcome.result.numerator === undefined ? "" : ` (${outcome.result.numerator}/${outcome.result.denominator})`;
+        const ratio = outcome.result.numerator === undefined ? "" : ` (participant numerator: ${outcome.result.numerator}/${outcome.result.denominator})`;
         card.append(node("p", `Synthetic result: ${outcome.result.value} ${outcome.result.unit}${ratio}`));
         if (outcome.result.denominator !== undefined) {
           card.append(node("p", `Analysis denominator: ${outcome.result.denominator}`));
