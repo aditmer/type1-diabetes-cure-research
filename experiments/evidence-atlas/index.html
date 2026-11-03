@@ -228,6 +228,7 @@
       outcomeList.replaceChildren();
       const panel = node("article", "", "study-panel");
       panel.append(node("h3", `${study.study_id}: ${programs[study.program_id].name}`));
+      panel.append(node("p", `Global cohort identity: ${study.cohort_id}`));
       panel.append(node("p", `Design: ${study.design}`));
       panel.append(node("p", `Population: ${study.population}`));
       panel.append(node("p", `Eligibility: ${study.eligibility}`));
@@ -256,6 +257,7 @@
         ]) {
           const side = node("div", "");
           side.append(node("h4", `${column}: ${study.study_id}`));
+          side.append(node("p", `Global cohort identity: ${study.cohort_id}`));
           const matchingRecords = records.filter(outcome => outcome.type === type);
           if (matchingRecords.length) {
             for (const record of matchingRecords) side.append(renderOutcome(record.outcome_id));
@@ -280,6 +282,20 @@
     }
 
     const links = document.getElementById("cohort-links");
+    const cohortGroups = new Map();
+    for (const study of atlas.studies) {
+      if (!cohortGroups.has(study.cohort_id)) cohortGroups.set(study.cohort_id, []);
+      cohortGroups.get(study.cohort_id).push(study.study_id);
+    }
+    const sharedCohorts = [...cohortGroups].filter(([, studyIds]) => studyIds.length > 1);
+    for (const [cohortId, studyIds] of sharedCohorts) {
+      const card = node("article", "", "card cohort-warning");
+      card.append(node("h3", `Shared cohort identity: ${cohortId}`));
+      card.append(node("p", `Studies: ${studyIds.join(", ")}`));
+      card.append(node("p", "These studies assert the same population through their global cohort identity; they are not independent cohorts."));
+      card.append(node("p", "Identity metadata only; not a separately sourced or clinically reviewed relationship.", "muted"));
+      links.append(card);
+    }
     for (const relation of atlas.cohort_relationships) {
       const card = node("article", "", "card cohort-warning");
       const heading = relation.relationship === "subset"
@@ -295,7 +311,9 @@
       }
       links.append(card);
     }
-    if (!atlas.cohort_relationships.length) links.append(node("p", "No cohort links are recorded."));
+    if (!atlas.cohort_relationships.length && !sharedCohorts.length) {
+      links.append(node("p", "No cohort links are recorded."));
+    }
   </script>
 </body>
 </html>

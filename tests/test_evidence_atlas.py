@@ -97,6 +97,17 @@ class EvidenceAtlasTests(unittest.TestCase):
         with self.assertRaisesRegex(AtlasInputError, "contradictory"):
             validate_dataset(data)
 
+    def test_shared_cohort_identity_is_visible_without_explicit_edges(self):
+        data = fixture()
+        studies = {study["study_id"]: study for study in data["studies"]}
+        studies["SYN-STUDY-GENE"]["cohort_id"] = studies["SYN-STUDY-STEM-2"]["cohort_id"]
+        data["cohort_relationships"] = []
+        validate_dataset(data)
+        text = template()
+        self.assertIn("Shared cohort identity: ${cohortId}", text)
+        self.assertIn("!atlas.cohort_relationships.length && !sharedCohorts.length", text)
+        self.assertEqual(text.count("Global cohort identity: ${study.cohort_id}"), 2)
+
     def test_unexpected_properties_rejected_at_every_record_level(self):
         data = cohort_fixture([("SYN-STUDY-STEM-1", "SYN-STUDY-STEM-2", "same")])
         data["sources"][0]["adjudication_history"] = [

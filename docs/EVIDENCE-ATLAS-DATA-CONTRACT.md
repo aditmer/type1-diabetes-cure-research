@@ -32,6 +32,8 @@ The JSON Schema describes record shape. The Python validator additionally checks
 
 `cohort_id` is a global population identity within one Atlas dataset, not a source-local label. Reusing an ID asserts that the studies concern the same population, even across programs. Namespace source-local identifiers before assigning them. Shared identities enter graph validation as `same` edges, so they cannot also be declared distinct or proper subsets, directly or transitively. Different IDs alone do not prove disjointness.
 
+The explorer and comparison show each study's global cohort ID. The cohort section also lists shared identities even when no explicit relationship edges exist, labeling these as identity metadata rather than separately sourced or clinically reviewed assertions.
+
 Every cohort reference must be attached to at least one linked study through its `source_ids`, or explicitly scoped to it through the source's optional `study_scope`. Resolved relationships require the cited evidence collectively to cover both studies. `study_scope` contains known, unique `study_ids` and a nonempty `note` documenting why the source covers those populations; it permits cross-study mapping sources without attaching unrelated outcome evidence. Scope declarations remain synthetic metadata, not human clinical approval. Uncertain links may have incomplete or absent evidence, but unrelated citations are rejected.
 
 ## Build boundary and provenance display
