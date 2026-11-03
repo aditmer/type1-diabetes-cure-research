@@ -251,7 +251,10 @@
     const links = document.getElementById("cohort-links");
     for (const relation of atlas.cohort_relationships) {
       const card = node("article", "", "card cohort-warning");
-      card.append(node("h3", `${relation.from_study_id} ↔ ${relation.to_study_id}`));
+      const heading = relation.relationship === "subset"
+        ? `${relation.from_study_id} is a subset of ${relation.to_study_id}`
+        : `${relation.from_study_id} ↔ ${relation.to_study_id}`;
+      card.append(node("h3", heading));
       card.append(node("span", label(relation.relationship), "label"));
       card.append(node("p", relation.note));
       if (relation.source_refs.length) {

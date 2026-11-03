@@ -53,6 +53,132 @@ class EvidenceAtlasTests(unittest.TestCase):
         with self.assertRaisesRegex(AtlasInputError, "name is required"):
             validate_dataset(data)
 
+    def test_program_milestone_date_must_be_present(self):
+        data = fixture()
+        del data["programs"][0]["milestones"][0]["date"]
+        with self.assertRaisesRegex(AtlasInputError, "milestone.*date"):
+            validate_dataset(data)
+
+    def test_source_reference_and_version_require_nonempty_text(self):
+        for field in ("reference", "source_version"):
+            for value in ({"text": "synthetic"}, None, "", "  "):
+                with self.subTest(field=field, value=value):
+                    data = fixture()
+                    data["sources"][0][field] = value
+                    with self.assertRaisesRegex(AtlasInputError, "source version and reference"):
+                        validate_dataset(data)
+
+    def test_discrepancies_require_nonempty_text_entries(self):
+        data = fixture()
+        source = next(s for s in data["sources"] if s["source_id"] == "SYN-SOURCE-STEM-REPORT")
+        for value in (None, "", "  ", {"text": "discrepancy"}):
+            with self.subTest(value=value):
+                source["discrepancies"] = [value]
+                with self.assertRaisesRegex(AtlasInputError, "discrepanc"):
+                    validate_dataset(data)
+        data = fixture()
+        data["sources"][0]["discrepancies"] = []
+        validate_dataset(data)
+
+    def test_adjudication_history_requires_complete_text_entries(self):
+        data = fixture()
+        entry = {"date": "2026-01-01", "reviewer": "Synthetic reviewer",
+                 "decision": "Synthetic decision", "note": "Synthetic note"}
+        data["sources"][0]["adjudication_history"] = [entry]
+        validate_dataset(data)
+        for field in entry:
+            with self.subTest(field=field):
+                original = entry[field]
+                entry[field] = None
+                with self.assertRaisesRegex(AtlasInputError, "review history"):
+                    validate_dataset(data)
+                entry[field] = original
+
+    def test_limitations_require_nonempty_text_entries(self):
+        for value in (None, "", "  ", {"text": "limitation"}):
+            with self.subTest(value=value):
+                data = fixture()
+                data["outcomes"][0]["limitations"] = [value]
+                with self.assertRaisesRegex(AtlasInputError, "limitations"):
+                    validate_dataset(data)
+
+    def test_result_text_is_nonempty_and_zero_is_preserved(self):
+        for field in ("value", "unit"):
+            for value in ("", "  "):
+                with self.subTest(field=field, value=value):
+                    data = fixture()
+                    data["outcomes"][0]["result"][field] = value
+                    with self.assertRaisesRegex(AtlasInputError, "result value and unit"):
+                        validate_dataset(data)
+        data = fixture()
+        self.assertEqual(data["outcomes"][0]["result"]["value"], 0)
+        validate_dataset(data)
+
+    def test_optional_numerator_cannot_be_null(self):
+        data = fixture()
+        outcome = next(o for o in data["outcomes"] if o["outcome_id"] == "SYN-OUTCOME-CPEPTIDE")
+        self.assertNotIn("numerator", outcome["result"])
+        validate_dataset(data)
+        outcome["result"]["numerator"] = None
+        with self.assertRaisesRegex(AtlasInputError, "numerator"):
+            validate_dataset(data)
+
+    def test_qualitative_result_counts_are_validated_when_supplied(self):
+        data = fixture()
+        outcome = next(o for o in data["outcomes"] if o["outcome_id"] == "SYN-OUTCOME-CPEPTIDE")
+        outcome["type"] = "immunosuppression"
+        del outcome["result"]["denominator"]
+        validate_dataset(data)
+        outcome["result"]["numerator"] = 0
+        with self.assertRaisesRegex(AtlasInputError, "numerator"):
+            validate_dataset(data)
+        outcome["result"]["denominator"] = 10
+        validate_dataset(data)
+        outcome["result"]["numerator"] = None
+        with self.assertRaisesRegex(AtlasInputError, "numerator"):
+            validate_dataset(data)
+
+    def test_schema_defines_participant_counts_as_integers(self):
+        schema = json.loads((ATLAS_DIR / "schema.json").read_text(encoding="utf-8"))
+        result = schema["$defs"]["result"]
+        self.assertNotIn("numerator", result["required"])
+        self.assertEqual(result["properties"]["numerator"]["type"], "integer")
+        self.assertEqual(result["properties"]["denominator"]["type"], "integer")
+
+    def test_invalid_identifier_and_status_types_fail_explicitly(self):
+        mutations = (
+            ("programs", 0, "approach_id"),
+            ("sources", 0, "extraction_status"),
+            ("sources", 0, "human_review_status"),
+            ("outcomes", 0, "study_id"),
+            ("outcomes", 0, "field_status"),
+            ("outcomes", 0, "observation_status"),
+            ("outcomes", 0, "review_status"),
+            ("outcomes", 0, "type"),
+            ("cohort_relationships", 0, "relationship"),
+            ("cohort_relationships", 0, "from_study_id"),
+            ("cohort_relationships", 0, "to_study_id"),
+        )
+        for collection, index, field in mutations:
+            with self.subTest(collection=collection, field=field):
+                data = fixture()
+                data[collection][index][field] = []
+                with self.assertRaises(AtlasInputError):
+                    validate_dataset(data)
+        for collection in ("outcomes", "cohort_relationships"):
+            with self.subTest(collection=collection):
+                data = fixture()
+                data[collection][0]["source_refs"][0]["source_id"] = []
+                with self.assertRaises(AtlasInputError):
+                    validate_dataset(data)
+        for collection, field in (("programs", "study_ids"), ("studies", "source_ids"),
+                                  ("studies", "outcome_ids")):
+            with self.subTest(collection=collection, field=field):
+                data = fixture()
+                data[collection][0][field].append([])
+                with self.assertRaises(AtlasInputError):
+                    validate_dataset(data)
+
     def test_outcome_definition_must_be_a_nonempty_string(self):
         for value in ({"text": "synthetic definition"}, ["synthetic definition"], 1, None, "", "  "):
             with self.subTest(value=value):
@@ -187,6 +313,12 @@ class EvidenceAtlasTests(unittest.TestCase):
         del relationship["source_refs"]
         with self.assertRaisesRegex(AtlasInputError, "source_refs must be present"):
             validate_dataset(data)
+
+    def test_subset_direction_is_defined_and_rendered(self):
+        schema = json.loads((ATLAS_DIR / "schema.json").read_text(encoding="utf-8"))
+        description = schema["$defs"]["cohortRelationship"]["properties"]["relationship"]["description"]
+        self.assertIn("from_study_id is a subset of to_study_id", description)
+        self.assertIn("${relation.from_study_id} is a subset of ${relation.to_study_id}", template())
 
     def test_incompatible_hba1c_thresholds_remain_separate(self):
         data = fixture()

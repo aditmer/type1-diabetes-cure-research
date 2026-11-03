@@ -8,7 +8,7 @@ The machine-readable structural contract is `experiments/evidence-atlas/schema.j
 | --- | --- |
 | Therapeutic approach | `approach_id`; category, mechanism description, cell origin, immunosuppression context, and development-status description. |
 | Clinical program | `program_id`; links a program/developer to exactly one `approach_id`, its studies, and dated milestones. |
-| Study and cohort | `study_id`; preserves design, target population, eligibility, registry identifier when available, follow-up, and cohort identity. Cohort relationships are explicit edges (`same`, `subset`, `distinct_within_program`, or `uncertain`); uncertainty is not treated as independence. |
+| Study and cohort | `study_id`; preserves design, target population, eligibility, registry identifier when available, follow-up, and cohort identity. Cohort relationships are explicit edges (`same`, `subset`, `distinct_within_program`, or `uncertain`); uncertainty is not treated as independence. For `subset`, `from_study_id` is the subset of `to_study_id`; the other relationships are symmetric. |
 | Clinical outcome | `outcome_id`; one endpoint for one study, with the original definition, observation state, typed result, denominator, units, time point and anchor, source references, review state, and limitations. |
 | Evidence provenance | `source_id` plus `source_version`; reference and exact location, extraction state, human-review state, approval state, adjudication history, and discrepancies. Outcome source references bind to a known source version and specific location. |
 

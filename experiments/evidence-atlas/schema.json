@@ -295,11 +295,11 @@
           ]
         },
         "numerator": {
-          "type": "number",
+          "type": "integer",
           "minimum": 0
         },
         "denominator": {
-          "type": "number",
+          "type": "integer",
           "exclusiveMinimum": 0
         },
         "unit": {
@@ -543,6 +543,7 @@
           "$ref": "#/$defs/nonempty"
         },
         "relationship": {
+          "description": "For subset, from_study_id is a subset of to_study_id; other relationship types are symmetric.",
           "enum": [
             "same",
             "subset",

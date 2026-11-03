@@ -52,6 +52,11 @@ def _nonempty_text(value):
     return isinstance(value, str) and bool(value.strip())
 
 
+def _unique_text_list(value):
+    return (isinstance(value, list) and all(_nonempty_text(item) for item in value) and
+            len(value) == len(set(value)))
+
+
 class AtlasInputError(ValueError):
     """Invalid or unsafe Atlas input; never render a success-shaped fallback."""
 
@@ -92,11 +97,13 @@ def validate_dataset(dataset):
                   "cohort_relationships")), "all entity collections must be lists")
 
     for source in sources.values():
-        _require(source.get("source_version") and source.get("reference"),
-                 f"{source['source_id']}: source version and reference are required")
+        _require(_nonempty_text(source.get("source_version")) and
+                 _nonempty_text(source.get("reference")),
+                 f"{source['source_id']}: source version and reference must be nonempty text")
         _require(source.get("approval_status") == "not_approved_clinical_evidence",
                  f"{source['source_id']}: synthetic sources cannot be clinically approved")
-        _require(source.get("human_review_status") in {"not_reviewed", "pending"},
+        _require(isinstance(source.get("human_review_status"), str) and
+                 source["human_review_status"] in {"not_reviewed", "pending"},
                  f"{source['source_id']}: synthetic sources cannot claim completed human review")
         locations = source.get("locations")
         version_prefix = f"synthetic://{source.get('source_version')}/"
@@ -104,16 +111,25 @@ def validate_dataset(dataset):
                  all(isinstance(location, str) and location.startswith(version_prefix)
                      for location in locations),
                  f"{source['source_id']}: locations must be bound to the synthetic source version")
-        _require(source.get("extraction_status") in FIELD_STATUSES,
+        _require(isinstance(source.get("extraction_status"), str) and
+                 source["extraction_status"] in FIELD_STATUSES,
                  f"{source['source_id']}: invalid extraction status")
-        _require(isinstance(source.get("adjudication_history"), list) and
-                 isinstance(source.get("discrepancies"), list),
-                 f"{source['source_id']}: review history and discrepancies must be lists")
+        history = source.get("adjudication_history")
+        _require(isinstance(history, list), f"{source['source_id']}: review history must be a list")
+        for entry in history:
+            _require(isinstance(entry, dict) and
+                     all(_nonempty_text(entry.get(key)) for key in
+                         ("date", "reviewer", "decision", "note")),
+                     f"{source['source_id']}: review history entries must have complete text")
+        discrepancies = source.get("discrepancies")
+        _require(isinstance(discrepancies, list) and
+                 all(_nonempty_text(entry) for entry in discrepancies),
+                 f"{source['source_id']}: discrepancies must contain nonempty text")
 
     for approach in approaches.values():
         for key in ("name", "category", "mechanism", "cell_origin",
                     "immunosuppression", "development_status"):
-            _require(isinstance(approach.get(key), str) and approach[key],
+            _require(_nonempty_text(approach.get(key)),
                      f"{approach['approach_id']}: {key} is required")
         _require(approach["category"] in APPROACH_CATEGORIES,
                  f"{approach['approach_id']}: invalid approach category")
@@ -126,19 +142,20 @@ def validate_dataset(dataset):
 
     for program in programs.values():
         for key in ("name", "developer"):
-            _require(isinstance(program.get(key), str) and program[key],
+            _require(_nonempty_text(program.get(key)),
                      f"{program['program_id']}: {key} is required")
-        _require(program.get("approach_id") in approaches,
+        _require(isinstance(program.get("approach_id"), str) and program["approach_id"] in approaches,
                  f"{program['program_id']}: unresolved approach")
         study_ids = program.get("study_ids")
-        _require(isinstance(study_ids, list) and len(study_ids) == len(set(study_ids)),
+        _require(_unique_text_list(study_ids),
                  f"{program['program_id']}: study_ids must be a unique list")
         milestones = program.get("milestones")
         _require(isinstance(milestones, list), f"{program['program_id']}: milestones must be a list")
         for milestone in milestones:
             _require(isinstance(milestone, dict) and
-                     isinstance(milestone.get("description"), str) and milestone["description"] and
-                     (milestone.get("date") is None or isinstance(milestone["date"], str)),
+                     _nonempty_text(milestone.get("description")) and
+                     "date" in milestone and
+                     (milestone["date"] is None or _nonempty_text(milestone["date"])),
                      f"{program['program_id']}: milestone description and date are required")
         for study_id in study_ids:
             _require(study_id in studies, f"{program['program_id']}: unresolved study {study_id}")
@@ -147,11 +164,12 @@ def validate_dataset(dataset):
 
     for study in studies.values():
         study_id = study["study_id"]
-        _require(study.get("program_id") in programs, f"{study_id}: unresolved program")
+        _require(isinstance(study.get("program_id"), str) and study["program_id"] in programs,
+                 f"{study_id}: unresolved program")
         _require(study_id in programs[study["program_id"]].get("study_ids", []),
                  f"{study_id}: study is not listed by its program")
         for key in ("design", "population", "eligibility", "cohort_id"):
-            _require(isinstance(study.get(key), str) and study[key], f"{study_id}: {key} is required")
+            _require(_nonempty_text(study.get(key)), f"{study_id}: {key} is required")
         for key in ("enrolled", "registry_id", "follow_up"):
             _require(key in study, f"{study_id}: {key} must be present (use null if unavailable)")
         _require(study.get("enrolled") is None or
@@ -162,11 +180,10 @@ def validate_dataset(dataset):
                  f"{study_id}: only synthetic registry identifiers are permitted")
         _require(isinstance(study.get("source_ids"), list) and study["source_ids"],
                  f"{study_id}: at least one source is required")
-        _require(len(study["source_ids"]) == len(set(study["source_ids"])),
-                 f"{study_id}: source_ids must be unique")
-        _require(isinstance(study.get("outcome_ids"), list), f"{study_id}: outcome_ids must be a list")
-        _require(len(study["outcome_ids"]) == len(set(study["outcome_ids"])),
-                 f"{study_id}: outcome_ids must be unique")
+        _require(_unique_text_list(study["source_ids"]),
+                 f"{study_id}: source_ids must be a unique list of nonempty text")
+        _require(_unique_text_list(study.get("outcome_ids")),
+                 f"{study_id}: outcome_ids must be a unique list")
         for source_id in study["source_ids"]:
             _require(source_id in sources, f"{study_id}: unresolved source {source_id}")
         follow_up = study.get("follow_up")
@@ -183,21 +200,24 @@ def validate_dataset(dataset):
     for outcome in outcomes.values():
         outcome_id = outcome["outcome_id"]
         study_id = outcome.get("study_id")
-        _require(study_id in studies, f"{outcome_id}: unresolved study")
+        _require(isinstance(study_id, str) and study_id in studies, f"{outcome_id}: unresolved study")
         _require(outcome_id in studies[study_id].get("outcome_ids", []),
                  f"{outcome_id}: outcome is not listed by its study")
-        _require(outcome.get("field_status") in FIELD_STATUSES,
+        _require(isinstance(outcome.get("field_status"), str) and outcome["field_status"] in FIELD_STATUSES,
                  f"{outcome_id}: invalid field_status")
-        _require(outcome.get("observation_status") in
+        _require(isinstance(outcome.get("observation_status"), str) and outcome["observation_status"] in
                  {"observed", "planned", "not_reported", "unknown"},
                  f"{outcome_id}: invalid observation_status")
-        _require(outcome.get("type") in OUTCOME_TYPES, f"{outcome_id}: invalid outcome type")
+        _require(isinstance(outcome.get("type"), str) and outcome["type"] in OUTCOME_TYPES,
+                 f"{outcome_id}: invalid outcome type")
         _require(_nonempty_text(outcome.get("definition")),
                  f"{outcome_id}: definition must be a nonempty string")
-        _require(outcome.get("review_status") in {"not_clinically_reviewed", "pending"},
+        _require(isinstance(outcome.get("review_status"), str) and
+                 outcome["review_status"] in {"not_clinically_reviewed", "pending"},
                  f"{outcome_id}: synthetic outcome cannot claim completed clinical review")
-        _require(isinstance(outcome.get("limitations"), list) and outcome["limitations"],
-                 f"{outcome_id}: limitations must be stated")
+        _require(isinstance(outcome.get("limitations"), list) and outcome["limitations"] and
+                 all(_nonempty_text(entry) for entry in outcome["limitations"]),
+                 f"{outcome_id}: limitations must be stated as nonempty text")
         for key in ("result", "assessment_timepoint", "timing_anchor"):
             _require(key in outcome, f"{outcome_id}: {key} must be present (use null if unavailable)")
         for key in ("assessment_timepoint", "timing_anchor"):
@@ -208,7 +228,9 @@ def validate_dataset(dataset):
                  f"{outcome_id}: at least one source reference is required")
         for source_ref in source_refs:
             _require(isinstance(source_ref, dict), f"{outcome_id}: source reference must be an object")
-            source = sources.get(source_ref.get("source_id"))
+            source_id = source_ref.get("source_id")
+            _require(isinstance(source_id, str), f"{outcome_id}: unresolved source reference")
+            source = sources.get(source_id)
             _require(source is not None, f"{outcome_id}: unresolved source reference")
             _require(source_ref["source_id"] in studies[study_id].get("source_ids", []),
                      f"{outcome_id}: source reference is not attached to its study")
@@ -224,29 +246,32 @@ def validate_dataset(dataset):
         if field_status == "reported" and observation_status == "observed":
             _require(isinstance(result, dict), f"{outcome_id}: observed reported result is missing")
             value = result.get("value")
-            _require(type(value) in (int, float, str) and
-                     isinstance(result.get("unit"), str) and result["unit"],
-                     f"{outcome_id}: result value and unit are required")
+            _require((type(value) in (int, float) or _nonempty_text(value)) and
+                     _nonempty_text(result.get("unit")),
+                     f"{outcome_id}: result value and unit must be nonempty")
             if type(value) is float:
                 _require(math.isfinite(value), f"{outcome_id}: numeric result must be finite")
             _require(outcome.get("assessment_timepoint") and outcome.get("timing_anchor"),
                      f"{outcome_id}: observed result needs assessment time and anchor")
             _require(studies[study_id].get("follow_up") is not None,
                      f"{outcome_id}: observed result has no study follow-up")
-            if outcome.get("type") in MEASURED_OUTCOMES:
+            measured = outcome["type"] in MEASURED_OUTCOMES
+            denominator = None
+            if measured or "denominator" in result:
                 denominator = result.get("denominator")
                 _require(type(denominator) is int and denominator > 0,
                          f"{outcome_id}: quantitative result needs a positive integer denominator")
-                _require(studies[study_id].get("enrolled") is not None and
-                         denominator <= studies[study_id]["enrolled"],
+                enrolled = studies[study_id]["enrolled"]
+                _require((not measured or enrolled is not None) and
+                         (enrolled is None or denominator <= enrolled),
                          f"{outcome_id}: denominator exceeds known enrollment")
-                numerator = result.get("numerator")
-                _require(numerator is not None or outcome.get("type") not in COUNT_OUTCOMES,
-                         f"{outcome_id}: participant-count outcome needs a numerator")
-                if numerator is not None:
-                    _require(type(numerator) is int and
-                             0 <= numerator <= denominator,
-                             f"{outcome_id}: numerator must be an integer between zero and denominator")
+            _require("numerator" in result or outcome["type"] not in COUNT_OUTCOMES,
+                     f"{outcome_id}: participant-count outcome needs a numerator")
+            if "numerator" in result:
+                numerator = result["numerator"]
+                _require(type(numerator) is int and denominator is not None and
+                         0 <= numerator <= denominator,
+                         f"{outcome_id}: numerator must be an integer between zero and denominator")
         elif field_status == "reported" and observation_status == "planned":
             _require(result is None, f"{outcome_id}: planned endpoint cannot have an observed result")
         else:
@@ -282,16 +307,18 @@ def validate_dataset(dataset):
 
     seen_relationships = set()
     for relation in dataset["cohort_relationships"]:
+        _require(isinstance(relation, dict), "cohort relationship must be an object")
         left, right = relation.get("from_study_id"), relation.get("to_study_id")
-        _require(left in studies and right in studies and left != right,
+        _require(isinstance(left, str) and isinstance(right, str) and
+                 left in studies and right in studies and left != right,
                  "cohort relationship must reference two different known studies")
         pair = tuple(sorted((left, right)))
         _require(pair not in seen_relationships, "duplicate cohort relationship")
         seen_relationships.add(pair)
-        _require(relation.get("relationship") in
+        _require(isinstance(relation.get("relationship"), str) and relation["relationship"] in
                  {"same", "subset", "distinct_within_program", "uncertain"},
                  f"{left}/{right}: invalid cohort relationship")
-        _require(isinstance(relation.get("note"), str) and relation["note"],
+        _require(_nonempty_text(relation.get("note")),
                  f"{left}/{right}: cohort relationship needs a note")
         _require("source_refs" in relation, f"{left}/{right}: source_refs must be present")
         references = relation["source_refs"]
@@ -299,7 +326,8 @@ def validate_dataset(dataset):
         _require(relation["relationship"] == "uncertain" or references,
                  f"{left}/{right}: resolved relationship needs source references")
         for ref in references:
-            _require(isinstance(ref, dict) and ref.get("source_id") in sources and
+            _require(isinstance(ref, dict) and isinstance(ref.get("source_id"), str) and
+                     ref["source_id"] in sources and
                      ref.get("source_version") == sources[ref["source_id"]].get("source_version") and
                      _location_matches_source(sources[ref["source_id"]], ref.get("location")),
                      f"{left}/{right}: unresolved cohort source reference")
