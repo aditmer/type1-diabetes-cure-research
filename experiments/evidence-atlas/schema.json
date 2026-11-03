@@ -1,0 +1,615 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/moonshot-evidence-atlas/schema-v1.json",
+  "title": "Moonshot Evidence Atlas data contract",
+  "description": "Record-shape contract. Cross-reference, provenance, and scientific-integrity invariants are enforced by scripts/build_evidence_atlas.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "data_scope",
+    "notice",
+    "approaches",
+    "programs",
+    "studies",
+    "outcomes",
+    "sources",
+    "cohort_relationships"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "evidence-atlas-v1"
+    },
+    "data_scope": {
+      "const": "synthetic_only"
+    },
+    "notice": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approaches": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/approach"
+      }
+    },
+    "programs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/program"
+      }
+    },
+    "studies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/study"
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/outcome"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "cohort_relationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/cohortRelationship"
+      }
+    }
+  },
+  "$defs": {
+    "nonempty": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approach": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approach_id",
+        "name",
+        "category",
+        "mechanism",
+        "cell_origin",
+        "immunosuppression",
+        "development_status"
+      ],
+      "properties": {
+        "approach_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "name": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "category": {
+          "enum": [
+            "deceased_donor_islet_transplantation",
+            "stem_cell_derived_islet_replacement",
+            "gene_edited_cell_therapy",
+            "immune_modulating_therapy",
+            "beta_cell_regeneration",
+            "other"
+          ]
+        },
+        "mechanism": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "cell_origin": {
+          "enum": [
+            "autologous",
+            "allogeneic",
+            "mixed",
+            "not_applicable",
+            "unknown"
+          ]
+        },
+        "immunosuppression": {
+          "enum": [
+            "required",
+            "not_required",
+            "varies",
+            "unknown",
+            "not_applicable"
+          ]
+        },
+        "development_status": {
+          "$ref": "#/$defs/nonempty"
+        }
+      }
+    },
+    "milestone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "description"
+      ],
+      "properties": {
+        "date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "$ref": "#/$defs/nonempty"
+        }
+      }
+    },
+    "program": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "program_id",
+        "name",
+        "developer",
+        "approach_id",
+        "study_ids",
+        "milestones"
+      ],
+      "properties": {
+        "program_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "name": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "developer": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "approach_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "study_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonempty"
+          }
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/milestone"
+          }
+        }
+      }
+    },
+    "followUp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit",
+        "anchor"
+      ],
+      "properties": {
+        "value": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "unit": {
+          "enum": [
+            "days",
+            "weeks",
+            "months",
+            "years"
+          ]
+        },
+        "anchor": {
+          "$ref": "#/$defs/nonempty"
+        }
+      }
+    },
+    "study": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "study_id",
+        "program_id",
+        "registry_id",
+        "design",
+        "population",
+        "eligibility",
+        "cohort_id",
+        "enrolled",
+        "follow_up",
+        "source_ids",
+        "outcome_ids"
+      ],
+      "properties": {
+        "study_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "program_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "registry_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "design": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "population": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "eligibility": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "cohort_id": {
+          "description": "Global population identity within this dataset. Reused IDs assert the same cohort, including across programs; source-local IDs must be namespaced before use.",
+          "$ref": "#/$defs/nonempty"
+        },
+        "enrolled": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "follow_up": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/followUp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonempty"
+          }
+        },
+        "outcome_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonempty"
+          }
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit",
+        "value_kind"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "value_kind": {
+          "description": "Use participant_count when value is the participant numerator; otherwise use source_defined without inferring units or harmonizing the result.",
+          "enum": [
+            "participant_count",
+            "source_defined"
+          ]
+        },
+        "numerator": {
+          "description": "The number of participants; it may differ from an event count or percentage.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "denominator": {
+          "type": "integer",
+          "exclusiveMinimum": 0
+        },
+        "unit": {
+          "$ref": "#/$defs/nonempty"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "value_kind": {
+                "const": "participant_count"
+              }
+            },
+            "required": ["value_kind"]
+          },
+          "then": {
+            "required": ["numerator", "denominator"],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "source_version",
+        "location"
+      ],
+      "properties": {
+        "source_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "source_version": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "location": {
+          "type": "string",
+          "pattern": "^synthetic://"
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome_id",
+        "study_id",
+        "type",
+        "definition",
+        "field_status",
+        "observation_status",
+        "result",
+        "assessment_timepoint",
+        "timing_anchor",
+        "review_status",
+        "limitations",
+        "source_refs"
+      ],
+      "properties": {
+        "outcome_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "study_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "type": {
+          "enum": [
+            "insulin_independence",
+            "c_peptide",
+            "hba1c",
+            "severe_hypoglycemia",
+            "graft_durability",
+            "immunosuppression",
+            "serious_adverse_events"
+          ]
+        },
+        "definition": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "field_status": {
+          "enum": [
+            "reported",
+            "unreported_in_reviewed_material",
+            "inaccessible",
+            "not_yet_extracted",
+            "conflicting",
+            "not_applicable"
+          ]
+        },
+        "observation_status": {
+          "enum": [
+            "observed",
+            "planned",
+            "not_reported",
+            "unknown"
+          ]
+        },
+        "result": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/result"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assessment_timepoint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "timing_anchor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "review_status": {
+          "enum": [
+            "not_clinically_reviewed",
+            "pending",
+            "partial",
+            "complete"
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonempty"
+          }
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/sourceReference"
+          }
+        }
+      }
+    },
+    "adjudication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "reviewer",
+        "decision",
+        "note"
+      ],
+      "properties": {
+        "date": {
+          "type": "string"
+        },
+        "reviewer": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "decision": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "note": {
+          "$ref": "#/$defs/nonempty"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "reference",
+        "source_version",
+        "locations",
+        "extraction_status",
+        "human_review_status",
+        "approval_status",
+        "adjudication_history",
+        "discrepancies"
+      ],
+      "properties": {
+        "source_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "reference": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "source_version": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "study_scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["study_ids", "note"],
+          "properties": {
+            "study_ids": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/nonempty"
+              }
+            },
+            "note": {
+              "$ref": "#/$defs/nonempty"
+            }
+          }
+        },
+        "locations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^synthetic://"
+          }
+        },
+        "extraction_status": {
+          "enum": [
+            "reported",
+            "unreported_in_reviewed_material",
+            "inaccessible",
+            "not_yet_extracted",
+            "conflicting",
+            "not_applicable"
+          ]
+        },
+        "human_review_status": {
+          "enum": [
+            "not_reviewed",
+            "pending",
+            "partial",
+            "complete"
+          ]
+        },
+        "approval_status": {
+          "enum": [
+            "not_approved_clinical_evidence",
+            "pending_approval",
+            "approved_for_clinical_use",
+            "rejected"
+          ]
+        },
+        "adjudication_history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/adjudication"
+          }
+        },
+        "discrepancies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonempty"
+          }
+        }
+      }
+    },
+    "cohortRelationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from_study_id",
+        "to_study_id",
+        "relationship",
+        "source_refs",
+        "note"
+      ],
+      "properties": {
+        "from_study_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "to_study_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "relationship": {
+          "description": "For subset, from_study_id is a subset of to_study_id (proper, not equal). Other relationship types are symmetric; distinct_within_program requires non-overlapping studies in the same program.",
+          "enum": [
+            "same",
+            "subset",
+            "distinct_within_program",
+            "uncertain"
+          ]
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceReference"
+          }
+        },
+        "note": {
+          "$ref": "#/$defs/nonempty"
+        }
+      }
+    }
+  }
+}

@@ -12,6 +12,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(ROOT))
 
 from scripts.q3_classifier import InputError, SPECS, _valid_value, _validate_consistency
+from scripts.cohort_graph import CohortGraphError, validate_cohort_graph
 
 
 Q3 = ROOT / "experiments" / "q3"
@@ -117,81 +118,17 @@ def _has_source_locator_detail(value):
 
 
 def _validate_relationship_consistency(links, known_overlaps=()):
-    parents = {}
-
-    def find(population):
-        parents.setdefault(population, population)
-        if parents[population] != population:
-            parents[population] = find(parents[population])
-        return parents[population]
-
-    def union(left, right):
-        left_root, right_root = find(left), find(right)
-        if left_root != right_root:
-            parents[max(left_root, right_root)] = min(left_root, right_root)
-
-    for link in links:
-        if link["relationship"] == "same":
-            union(link["from_population_id"], link["to_population_id"])
-
-    subset_graph = {}
-    distinct_pairs = []
+    normalized = []
     for link in links:
         left, right = link["from_population_id"], link["to_population_id"]
-        left_root, right_root = find(left), find(right)
-        if link["relationship"] == "distinct_within_program":
-            _require(left_root != right_root,
-                     "contradictory cohort map: populations are both same and distinct")
-            distinct_pairs.append((left_root, right_root))
-        elif link["relationship"] == "subset":
-            child, superset = (
-                (left, right) if link["direction_if_subset"] == "from_is_subset_of_to"
-                else (right, left)
-            )
-            child_root, superset_root = find(child), find(superset)
-            _require(child_root != superset_root,
-                     "contradictory subset cycle through same populations")
-            subset_graph.setdefault(child_root, set()).add(superset_root)
-            subset_graph.setdefault(superset_root, set())
-
-    visiting = set()
-    visited = set()
-
-    def visit(population):
-        _require(population not in visiting, "contradictory subset cycle")
-        if population in visited:
-            return
-        visiting.add(population)
-        for superset in subset_graph.get(population, ()):
-            visit(superset)
-        visiting.remove(population)
-        visited.add(population)
-
-    for population in subset_graph:
-        visit(population)
-
-    reachable = {
-        population: {population, *subset_graph.get(population, ())}
-        for population in set(subset_graph) |
-        {root for pair in distinct_pairs for root in pair} |
-        {find(population) for pair in known_overlaps for population in pair}
-    }
-    for middle in sorted(reachable):
-        for population in sorted(reachable):
-            if middle in reachable[population]:
-                reachable[population].update(reachable[middle])
-
-    for left, right in distinct_pairs:
-        _require(not any(left in descendants and right in descendants
-                         for descendants in reachable.values()),
-                 "contradictory cohort map: distinct populations share a known subset")
-        _require(not any(
-            (left in reachable[overlap_left] and right in reachable[overlap_right]) or
-            (right in reachable[overlap_left] and left in reachable[overlap_right])
-            for overlap_left, overlap_right in (
-                (find(a), find(b)) for a, b in known_overlaps
-            )
-        ), "contradictory cohort map: distinct populations contradict documented overlap")
+        relationship = link["relationship"]
+        if relationship == "subset" and link["direction_if_subset"] != "from_is_subset_of_to":
+            left, right = right, left
+        normalized.append((left, right, relationship))
+    try:
+        validate_cohort_graph(normalized, known_overlaps)
+    except CohortGraphError as exc:
+        raise ValidationError(str(exc)) from exc
 
 
 def _validate_public_content(value, location):

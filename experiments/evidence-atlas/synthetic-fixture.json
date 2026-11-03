@@ -1,0 +1,669 @@
+{
+  "schema_version": "evidence-atlas-v1",
+  "data_scope": "synthetic_only",
+  "notice": "SYNTHETIC DEMONSTRATION ONLY. Every program, study, participant count, outcome, and source reference in this file is invented. Nothing here is clinical evidence or a treatment claim.",
+  "approaches": [
+    {
+      "approach_id": "SYN-APPROACH-DONOR",
+      "name": "Deceased-donor islet transplantation",
+      "category": "deceased_donor_islet_transplantation",
+      "mechanism": "Synthetic example: replace beta-cell function using transplanted donor islets.",
+      "cell_origin": "allogeneic",
+      "immunosuppression": "required",
+      "development_status": "Synthetic category demonstration; not a real program status."
+    },
+    {
+      "approach_id": "SYN-APPROACH-STEM",
+      "name": "Stem-cell-derived islet replacement",
+      "category": "stem_cell_derived_islet_replacement",
+      "mechanism": "Synthetic example: differentiate stem cells into insulin-producing islet-like cells.",
+      "cell_origin": "allogeneic",
+      "immunosuppression": "varies",
+      "development_status": "Synthetic category demonstration; not a real program status."
+    },
+    {
+      "approach_id": "SYN-APPROACH-GENE",
+      "name": "Gene-edited cell therapy",
+      "category": "gene_edited_cell_therapy",
+      "mechanism": "Synthetic example: modify transplanted cells to alter immune recognition.",
+      "cell_origin": "allogeneic",
+      "immunosuppression": "unknown",
+      "development_status": "Synthetic category demonstration; not a real program status."
+    },
+    {
+      "approach_id": "SYN-APPROACH-IMMUNE",
+      "name": "Immune-modulating therapy",
+      "category": "immune_modulating_therapy",
+      "mechanism": "Synthetic example: modify an immune pathway while preserving other measures of disease control.",
+      "cell_origin": "not_applicable",
+      "immunosuppression": "not_applicable",
+      "development_status": "Synthetic category demonstration; not a real program status."
+    },
+    {
+      "approach_id": "SYN-APPROACH-REGEN",
+      "name": "Beta-cell regeneration",
+      "category": "beta_cell_regeneration",
+      "mechanism": "Synthetic example: investigate a pathway proposed to affect beta-cell mass.",
+      "cell_origin": "not_applicable",
+      "immunosuppression": "not_applicable",
+      "development_status": "Synthetic category demonstration; not a real program status."
+    }
+  ],
+  "programs": [
+    {
+      "program_id": "SYN-PROGRAM-DONOR",
+      "name": "Fictional donor-islet demonstration program",
+      "developer": "Synthetic organization A",
+      "approach_id": "SYN-APPROACH-DONOR",
+      "study_ids": [
+        "SYN-STUDY-DONOR"
+      ],
+      "milestones": [
+        {
+          "date": null,
+          "description": "Invented milestone for interface demonstration only."
+        }
+      ]
+    },
+    {
+      "program_id": "SYN-PROGRAM-STEM",
+      "name": "Fictional stem-cell demonstration program",
+      "developer": "Synthetic organization B",
+      "approach_id": "SYN-APPROACH-STEM",
+      "study_ids": [
+        "SYN-STUDY-STEM-1",
+        "SYN-STUDY-STEM-2"
+      ],
+      "milestones": []
+    },
+    {
+      "program_id": "SYN-PROGRAM-GENE",
+      "name": "Fictional gene-editing demonstration program",
+      "developer": "Synthetic organization C",
+      "approach_id": "SYN-APPROACH-GENE",
+      "study_ids": [
+        "SYN-STUDY-GENE"
+      ],
+      "milestones": []
+    },
+    {
+      "program_id": "SYN-PROGRAM-IMMUNE",
+      "name": "Fictional immune-modulation demonstration program",
+      "developer": "Synthetic organization D",
+      "approach_id": "SYN-APPROACH-IMMUNE",
+      "study_ids": [
+        "SYN-STUDY-IMMUNE"
+      ],
+      "milestones": []
+    },
+    {
+      "program_id": "SYN-PROGRAM-REGEN",
+      "name": "Fictional regeneration demonstration program",
+      "developer": "Synthetic organization E",
+      "approach_id": "SYN-APPROACH-REGEN",
+      "study_ids": [],
+      "milestones": []
+    }
+  ],
+  "studies": [
+    {
+      "study_id": "SYN-STUDY-DONOR",
+      "program_id": "SYN-PROGRAM-DONOR",
+      "registry_id": null,
+      "design": "Invented, uncontrolled demonstration record.",
+      "population": "Invented group of ten synthetic participants.",
+      "eligibility": "Invented demonstration criteria; not derived from real participants.",
+      "cohort_id": "SYN-COHORT-DONOR",
+      "enrolled": 10,
+      "follow_up": {
+        "value": 12,
+        "unit": "months",
+        "anchor": "Invented first treatment date."
+      },
+      "source_ids": [
+        "SYN-SOURCE-DONOR"
+      ],
+      "outcome_ids": [
+        "SYN-OUTCOME-INSULIN",
+        "SYN-OUTCOME-CPEPTIDE",
+        "SYN-OUTCOME-HBA1C-7",
+        "SYN-OUTCOME-HYPOGLYCEMIA",
+        "SYN-OUTCOME-DURABILITY",
+        "SYN-OUTCOME-IMMUNOSUPPRESSION",
+        "SYN-OUTCOME-SAE"
+      ]
+    },
+    {
+      "study_id": "SYN-STUDY-STEM-1",
+      "program_id": "SYN-PROGRAM-STEM",
+      "registry_id": null,
+      "design": "Invented planned-only demonstration record.",
+      "population": "Synthetic population not enrolled.",
+      "eligibility": "Invented eligibility description.",
+      "cohort_id": "SYN-COHORT-STEM-1",
+      "enrolled": null,
+      "follow_up": null,
+      "source_ids": [
+        "SYN-SOURCE-STEM-PLAN"
+      ],
+      "outcome_ids": [
+        "SYN-OUTCOME-PLANNED"
+      ]
+    },
+    {
+      "study_id": "SYN-STUDY-STEM-2",
+      "program_id": "SYN-PROGRAM-STEM",
+      "registry_id": null,
+      "design": "Invented second report used to demonstrate uncertain cohort linkage.",
+      "population": "Synthetic population; possible overlap is unresolved.",
+      "eligibility": "Invented eligibility description.",
+      "cohort_id": "SYN-COHORT-STEM-2",
+      "enrolled": 8,
+      "follow_up": {
+        "value": 6,
+        "unit": "months",
+        "anchor": "Invented first treatment date."
+      },
+      "source_ids": [
+        "SYN-SOURCE-STEM-REPORT",
+        "SYN-SOURCE-STEM-ERRATUM"
+      ],
+      "outcome_ids": [
+        "SYN-OUTCOME-UNREPORTED",
+        "SYN-OUTCOME-CONFLICT"
+      ]
+    },
+    {
+      "study_id": "SYN-STUDY-GENE",
+      "program_id": "SYN-PROGRAM-GENE",
+      "registry_id": null,
+      "design": "Invented synthetic report pair with uncertain cohort relation.",
+      "population": "Synthetic population; overlap with SYN-STUDY-STEM-2 is unresolved.",
+      "eligibility": "Invented eligibility description.",
+      "cohort_id": "SYN-COHORT-GENE",
+      "enrolled": 8,
+      "follow_up": {
+        "value": 6,
+        "unit": "months",
+        "anchor": "Invented first treatment date."
+      },
+      "source_ids": [
+        "SYN-SOURCE-GENE"
+      ],
+      "outcome_ids": [
+        "SYN-OUTCOME-PENDING"
+      ]
+    },
+    {
+      "study_id": "SYN-STUDY-IMMUNE",
+      "program_id": "SYN-PROGRAM-IMMUNE",
+      "registry_id": null,
+      "design": "Invented synthetic endpoint-definition demonstration.",
+      "population": "Invented group of eight synthetic participants.",
+      "eligibility": "Invented eligibility description.",
+      "cohort_id": "SYN-COHORT-IMMUNE",
+      "enrolled": 8,
+      "follow_up": {
+        "value": 12,
+        "unit": "months",
+        "anchor": "Invented first treatment date."
+      },
+      "source_ids": [
+        "SYN-SOURCE-IMMUNE"
+      ],
+      "outcome_ids": [
+        "SYN-OUTCOME-HBA1C-65",
+        "SYN-OUTCOME-HBA1C-CHANGE"
+      ]
+    }
+  ],
+  "outcomes": [
+    {
+      "outcome_id": "SYN-OUTCOME-INSULIN",
+      "study_id": "SYN-STUDY-DONOR",
+      "type": "insulin_independence",
+      "definition": "Synthetic definition: no exogenous insulin during the assessment period.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "numerator": 0,
+        "denominator": 10,
+        "value": 0,
+        "value_kind": "participant_count",
+        "unit": "synthetic participants"
+      },
+      "assessment_timepoint": "Invented month 12 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented value; not an observed clinical outcome."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-DONOR",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/table-1/insulin-independence"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-CPEPTIDE",
+      "study_id": "SYN-STUDY-DONOR",
+      "type": "c_peptide",
+      "definition": "Synthetic definition: mean stimulated C-peptide at month 12.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "denominator": 10,
+        "value": 0.24,
+        "value_kind": "source_defined",
+        "unit": "synthetic nmol/L"
+      },
+      "assessment_timepoint": "Invented month 12 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented value and assay description; not an observed clinical outcome."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-DONOR",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/table-1/c-peptide"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-HBA1C-7",
+      "study_id": "SYN-STUDY-DONOR",
+      "type": "hba1c",
+      "definition": "Synthetic endpoint: participants with HbA1c < 7.0% at month 12.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "numerator": 5,
+        "denominator": 10,
+        "value": 5,
+        "value_kind": "participant_count",
+        "unit": "synthetic participants"
+      },
+      "assessment_timepoint": "Invented month 12 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented endpoint and value; the threshold is not harmonized with other definitions."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-DONOR",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/table-1/hba1c-under-7"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-HYPOGLYCEMIA",
+      "study_id": "SYN-STUDY-DONOR",
+      "type": "severe_hypoglycemia",
+      "definition": "Synthetic endpoint: participants with at least one source-defined severe hypoglycemia event.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "numerator": 1,
+        "denominator": 10,
+        "value": 1,
+        "value_kind": "participant_count",
+        "unit": "synthetic participants"
+      },
+      "assessment_timepoint": "Invented month 12 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented event count; no real safety or efficacy inference is possible."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-DONOR",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/table-1/severe-hypoglycemia"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-DURABILITY",
+      "study_id": "SYN-STUDY-DONOR",
+      "type": "graft_durability",
+      "definition": "Synthetic endpoint: participants with an invented graft-function measure at month 12.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "numerator": 8,
+        "denominator": 10,
+        "value": 8,
+        "value_kind": "participant_count",
+        "unit": "synthetic participants"
+      },
+      "assessment_timepoint": "Invented month 12 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented duration and value; no durability conclusion is supported."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-DONOR",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/table-1/graft-function"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-IMMUNOSUPPRESSION",
+      "study_id": "SYN-STUDY-DONOR",
+      "type": "immunosuppression",
+      "definition": "Synthetic description of an invented protocol requirement.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "value": "Fictional regimen description only.",
+        "value_kind": "source_defined",
+        "unit": "synthetic text"
+      },
+      "assessment_timepoint": "Invented study period.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented requirement; not treatment guidance."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-DONOR",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/methods/immunosuppression"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-SAE",
+      "study_id": "SYN-STUDY-DONOR",
+      "type": "serious_adverse_events",
+      "definition": "Synthetic endpoint: participants with one or more serious adverse events.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "numerator": 2,
+        "denominator": 10,
+        "value": 2,
+        "value_kind": "participant_count",
+        "unit": "synthetic participants"
+      },
+      "assessment_timepoint": "Invented month 12 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented event data; no real safety inference is possible."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-DONOR",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/table-1/serious-adverse-events"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-PLANNED",
+      "study_id": "SYN-STUDY-STEM-1",
+      "type": "hba1c",
+      "definition": "Synthetic planned endpoint: HbA1c threshold outcome planned for a future assessment.",
+      "field_status": "reported",
+      "observation_status": "planned",
+      "result": null,
+      "assessment_timepoint": "Synthetic assessment planned for month 12.",
+      "timing_anchor": "Synthetic planned first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented endpoint plan only; no participants or result are represented."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-STEM-PLAN",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/protocol/planned-hba1c"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-UNREPORTED",
+      "study_id": "SYN-STUDY-STEM-2",
+      "type": "c_peptide",
+      "definition": "Synthetic example of an endpoint not present in the fictional reviewed material.",
+      "field_status": "unreported_in_reviewed_material",
+      "observation_status": "not_reported",
+      "result": null,
+      "assessment_timepoint": null,
+      "timing_anchor": null,
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented omission state; it is not evidence that a real outcome was absent."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-STEM-REPORT",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/results/c-peptide"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-CONFLICT",
+      "study_id": "SYN-STUDY-STEM-2",
+      "type": "serious_adverse_events",
+      "definition": "Synthetic example of two inconsistent fictional source statements.",
+      "field_status": "conflicting",
+      "observation_status": "unknown",
+      "result": null,
+      "assessment_timepoint": null,
+      "timing_anchor": null,
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented disagreement; neither value is selected or promoted."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-STEM-REPORT",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/table-2/serious-events"
+        },
+        {
+          "source_id": "SYN-SOURCE-STEM-ERRATUM",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/appendix/serious-events"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-PENDING",
+      "study_id": "SYN-STUDY-GENE",
+      "type": "insulin_independence",
+      "definition": "Synthetic example of an endpoint whose fictional source has not yet been extracted.",
+      "field_status": "not_yet_extracted",
+      "observation_status": "unknown",
+      "result": null,
+      "assessment_timepoint": null,
+      "timing_anchor": null,
+      "review_status": "pending",
+      "limitations": [
+        "Pending extraction is not an unreported or negative result."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-GENE",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/pending/insulin-independence"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-HBA1C-65",
+      "study_id": "SYN-STUDY-IMMUNE",
+      "type": "hba1c",
+      "definition": "Synthetic endpoint: participants with HbA1c < 6.5% at month 12.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "numerator": 4,
+        "denominator": 8,
+        "value": 4,
+        "value_kind": "participant_count",
+        "unit": "synthetic participants"
+      },
+      "assessment_timepoint": "Invented month 12 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented endpoint; the 6.5% threshold remains distinct from the separate 7.0% threshold."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-IMMUNE",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/results/hba1c-under-6.5"
+        }
+      ]
+    },
+    {
+      "outcome_id": "SYN-OUTCOME-HBA1C-CHANGE",
+      "study_id": "SYN-STUDY-IMMUNE",
+      "type": "hba1c",
+      "definition": "Synthetic continuous outcome: mean HbA1c change from baseline at month 6.",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "result": {
+        "denominator": 8,
+        "value": -0.5,
+        "value_kind": "source_defined",
+        "unit": "synthetic percentage points"
+      },
+      "assessment_timepoint": "Invented month 6 assessment.",
+      "timing_anchor": "Invented first treatment date.",
+      "review_status": "not_clinically_reviewed",
+      "limitations": [
+        "Invented continuous outcome; not harmonized with a threshold endpoint."
+      ],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-IMMUNE",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/results/hba1c-change"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "SYN-SOURCE-DONOR",
+      "reference": "Invented synthetic source A; no external publication or registry.",
+      "source_version": "synthetic-v1",
+      "locations": [
+        "synthetic://synthetic-v1/table-1",
+        "synthetic://synthetic-v1/methods"
+      ],
+      "extraction_status": "reported",
+      "human_review_status": "not_reviewed",
+      "approval_status": "not_approved_clinical_evidence",
+      "adjudication_history": [],
+      "discrepancies": []
+    },
+    {
+      "source_id": "SYN-SOURCE-STEM-PLAN",
+      "reference": "Invented synthetic protocol B; no external publication or registry.",
+      "source_version": "synthetic-v1",
+      "locations": [
+        "synthetic://synthetic-v1/protocol"
+      ],
+      "extraction_status": "reported",
+      "human_review_status": "not_reviewed",
+      "approval_status": "not_approved_clinical_evidence",
+      "adjudication_history": [],
+      "discrepancies": []
+    },
+    {
+      "source_id": "SYN-SOURCE-STEM-REPORT",
+      "reference": "Invented synthetic report C; no external publication or registry.",
+      "source_version": "synthetic-v1",
+      "locations": [
+        "synthetic://synthetic-v1/results",
+        "synthetic://synthetic-v1/table-2"
+      ],
+      "extraction_status": "conflicting",
+      "human_review_status": "not_reviewed",
+      "approval_status": "not_approved_clinical_evidence",
+      "adjudication_history": [],
+      "discrepancies": [
+        "Invented conflicting serious-event statements."
+      ]
+    },
+    {
+      "source_id": "SYN-SOURCE-STEM-ERRATUM",
+      "reference": "Invented synthetic addendum D; no external publication or registry.",
+      "source_version": "synthetic-v1",
+      "locations": [
+        "synthetic://synthetic-v1/appendix"
+      ],
+      "extraction_status": "conflicting",
+      "human_review_status": "not_reviewed",
+      "approval_status": "not_approved_clinical_evidence",
+      "adjudication_history": [],
+      "discrepancies": [
+        "Invented conflicting serious-event statements."
+      ]
+    },
+    {
+      "source_id": "SYN-SOURCE-GENE",
+      "reference": "Invented synthetic source E; no external publication or registry.",
+      "source_version": "synthetic-v1",
+      "locations": [
+        "synthetic://synthetic-v1/pending"
+      ],
+      "extraction_status": "not_yet_extracted",
+      "human_review_status": "pending",
+      "approval_status": "not_approved_clinical_evidence",
+      "adjudication_history": [],
+      "discrepancies": []
+    },
+    {
+      "source_id": "SYN-SOURCE-IMMUNE",
+      "reference": "Invented synthetic source F; no external publication or registry.",
+      "source_version": "synthetic-v1",
+      "locations": [
+        "synthetic://synthetic-v1/results"
+      ],
+      "extraction_status": "reported",
+      "human_review_status": "not_reviewed",
+      "approval_status": "not_approved_clinical_evidence",
+      "adjudication_history": [],
+      "discrepancies": []
+    }
+  ],
+  "cohort_relationships": [
+    {
+      "from_study_id": "SYN-STUDY-STEM-2",
+      "to_study_id": "SYN-STUDY-GENE",
+      "relationship": "uncertain",
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-STEM-REPORT",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/results/cohort-link"
+        },
+        {
+          "source_id": "SYN-SOURCE-GENE",
+          "source_version": "synthetic-v1",
+          "location": "synthetic://synthetic-v1/pending/cohort-link"
+        }
+      ],
+      "note": "Synthetic example of possible participant overlap; cannot be treated as independent or pooled."
+    }
+  ]
+}
