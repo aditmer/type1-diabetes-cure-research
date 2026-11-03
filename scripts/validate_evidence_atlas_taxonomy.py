@@ -8,8 +8,18 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-TAXONOMY_PATH = ROOT / "experiments" / "evidence-atlas" / "taxonomy-v1.json"
-SUPPORTED_FORMAT_VERSION = "taxonomy-v1"
+TAXONOMY_PATH = ROOT / "experiments" / "evidence-atlas" / "taxonomy-v2.json"
+SUPPORTED_FORMAT_VERSION = "taxonomy-v2"
+SUPPORTED_MAJOR_VERSION = 2
+ASSESSMENT_STATUS_RULES = {
+    "reported": "non_null",
+    "not_reported": "null",
+    "not_yet_extracted": "null",
+    "inaccessible": "null",
+    "not_applicable": "null",
+    "conflicting": "null",
+    "unknown": "null",
+}
 IDENTIFIER = re.compile(r"^[A-Z]{1,3}(?:-[A-Z0-9]+)+$")
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 
@@ -58,6 +68,66 @@ def _validate_unique_ids(records, seen, label, prefix=None):
                  f"{identifier}: description is required")
 
 
+def _validate_field_assessment_contract(contract):
+    _validate_keys(contract, "field_assessment_contract",
+                   ("description", "applies_to", "required_field_semantics",
+                    "status_key", "value_key", "assessment_required_keys",
+                    "unavailable_value", "zero_value_policy",
+                    "observation_state_rule", "statuses"))
+    _require(_nonempty(contract["description"]),
+             "field_assessment_contract: description is required")
+    scopes = contract["applies_to"]
+    _require(isinstance(scopes, list) and all(_nonempty(scope) for scope in scopes) and
+             len(scopes) == len(set(scopes)) and
+             set(scopes) == {"endpoints.required_fields", "reporting_views.required_fields"},
+             "field_assessment_contract: applies_to must cover endpoint and reporting view fields")
+    _require(contract["required_field_semantics"] == "assess_and_record_status",
+             "field_assessment_contract: required fields must be assessed with a status")
+    _require(contract["status_key"] == "status" and contract["value_key"] == "value",
+             "field_assessment_contract: assessment must contain status and value")
+    keys = contract["assessment_required_keys"]
+    _require(isinstance(keys, list) and all(_nonempty(key) for key in keys) and
+             len(keys) == len(set(keys)) and set(keys) == {"status", "value"},
+             "field_assessment_contract: status and value must both be required")
+    _require(contract["unavailable_value"] is None,
+             "field_assessment_contract: unavailable values must be null")
+    _require(contract["zero_value_policy"] == "explicit_source_report_only",
+             "field_assessment_contract: zero must be explicitly reported")
+    _require(_nonempty(contract["observation_state_rule"]),
+             "field_assessment_contract: observation_state_rule is required")
+    statuses = _record_list(contract, "statuses")
+    seen = set()
+    for status in statuses:
+        _validate_keys(status, "field assessment status", ("id", "value_rule", "description"))
+        identifier = status["id"]
+        _require(isinstance(identifier, str) and identifier in ASSESSMENT_STATUS_RULES,
+                 f"invalid field assessment status: {identifier!r}")
+        _require(identifier not in seen, f"duplicate field assessment status: {identifier}")
+        seen.add(identifier)
+        _require(status["value_rule"] == ASSESSMENT_STATUS_RULES[identifier],
+                 f"{identifier}: invalid field assessment value_rule")
+        _require(_nonempty(status["description"]),
+                 f"{identifier}: field assessment description is required")
+    _require(seen == set(ASSESSMENT_STATUS_RULES),
+             "field_assessment_contract: all assessment statuses are required")
+
+
+def _validate_capture_definition(record, question_ids):
+    identifier = record["id"]
+    _require(_nonempty(record.get("label")), f"{identifier}: label is required")
+    refs = record.get("research_question_ids")
+    _require(isinstance(refs, list) and refs and all(_nonempty(ref) for ref in refs) and
+             len(refs) == len(set(refs)) and all(ref in question_ids for ref in refs),
+             f"{identifier}: research question references must be unique and valid")
+    required_fields = record.get("required_fields")
+    _require(isinstance(required_fields, list) and required_fields and
+             all(_nonempty(field) for field in required_fields) and
+             len(required_fields) == len(set(required_fields)),
+             f"{identifier}: required_fields must be nonempty and unique")
+    for field in ("timing_anchor", "interpretation_hazards"):
+        _require(_nonempty(record.get(field)), f"{identifier}: {field} is required")
+
+
 def _validate_acyclic(category_ids, relationships):
     parents = {identifier: [] for identifier in category_ids}
     for relation in relationships:
@@ -102,8 +172,8 @@ def validate_taxonomy(taxonomy):
     """Validate identifiers, references, descriptions, version, and relationships."""
     _validate_keys(taxonomy, "taxonomy",
                    ("taxonomy_id", "format_version", "version", "versioning",
-                    "change_log", "categories", "facets", "research_questions",
-                    "endpoints", "relationships"))
+                    "change_log", "field_assessment_contract", "categories", "facets",
+                    "research_questions", "endpoints", "reporting_views", "relationships"))
     _require(taxonomy.get("taxonomy_id") == "moonshot-evidence-atlas",
              "taxonomy_id is invalid")
     version = taxonomy.get("version")
@@ -111,7 +181,7 @@ def validate_taxonomy(taxonomy):
     _require(match is not None, "version must follow semantic versioning")
     _require(taxonomy.get("format_version") == SUPPORTED_FORMAT_VERSION,
              f"unsupported format_version; expected {SUPPORTED_FORMAT_VERSION}")
-    _require(match.group(1) == "1",
+    _require(int(match.group(1)) == SUPPORTED_MAJOR_VERSION,
              "format_version major version must match version")
     versioning = taxonomy.get("versioning")
     _validate_keys(versioning, "versioning", ("scheme", "patch", "minor", "major"))
@@ -126,7 +196,8 @@ def validate_taxonomy(taxonomy):
         _validate_keys(entry, "change_log entry", ("version", "description"))
         entry_version = entry.get("version")
         entry_match = SEMVER.fullmatch(entry_version) if isinstance(entry_version, str) else None
-        _require(entry_match is not None and entry_match.group(1) == "1",
+        _require(entry_match is not None and
+                 1 <= int(entry_match.group(1)) <= SUPPORTED_MAJOR_VERSION,
                  "change_log versions must use supported semantic versions")
         current_version = tuple(map(int, entry_match.groups()))
         _require(previous_version is None or current_version > previous_version,
@@ -136,11 +207,13 @@ def validate_taxonomy(taxonomy):
         previous_version = current_version
     _require(change_log[-1]["version"] == version,
              "latest change_log version must match version")
+    _validate_field_assessment_contract(taxonomy["field_assessment_contract"])
 
     categories = _record_list(taxonomy, "categories")
     facets = _record_list(taxonomy, "facets")
     questions = _record_list(taxonomy, "research_questions")
     endpoints = _record_list(taxonomy, "endpoints")
+    reporting_views = _record_list(taxonomy, "reporting_views")
     relationships = taxonomy.get("relationships")
     _require(isinstance(relationships, list), "relationships must be a list")
 
@@ -197,27 +270,36 @@ def validate_taxonomy(taxonomy):
 
     question_ids = {question["id"] for question in questions}
     _validate_unique_ids(endpoints, seen, "endpoint", "EP-")
+    endpoint_ids = {endpoint["id"] for endpoint in endpoints}
     for endpoint in endpoints:
         _validate_keys(endpoint, endpoint["id"],
                        ("id", "label", "description", "research_question_ids", "required_fields",
                         "units", "denominator_rule", "timing_anchor", "interpretation_hazards"))
-        _require(_nonempty(endpoint.get("label")),
-                 f"{endpoint['id']}: label is required")
-        refs = endpoint.get("research_question_ids")
-        _require(isinstance(refs, list) and refs and all(_nonempty(ref) for ref in refs) and
-                 len(refs) == len(set(refs)) and
-                 all(ref in question_ids for ref in refs),
-                 f"{endpoint['id']}: research question references must be unique and valid")
-        required_fields = endpoint.get("required_fields")
+        _validate_capture_definition(endpoint, question_ids)
         units = endpoint.get("units")
-        _require(isinstance(required_fields, list) and required_fields and
-                 all(_nonempty(field) for field in required_fields),
-                 f"{endpoint['id']}: required_fields must be nonempty")
         _require(isinstance(units, list) and units and all(_nonempty(unit) for unit in units),
                  f"{endpoint['id']}: units must be nonempty")
-        for field in ("denominator_rule", "timing_anchor", "interpretation_hazards"):
-            _require(_nonempty(endpoint.get(field)),
-                     f"{endpoint['id']}: {field} is required")
+        _require(_nonempty(endpoint.get("denominator_rule")),
+                 f"{endpoint['id']}: denominator_rule is required")
+
+    _validate_unique_ids(reporting_views, seen, "reporting view", "EP-")
+    for view in reporting_views:
+        _validate_keys(view, view["id"],
+                       ("id", "kind", "label", "description", "research_question_ids",
+                        "required_fields", "candidate_endpoint_ids", "reporting_rule",
+                        "timing_anchor", "interpretation_hazards"))
+        _require(view["kind"] == "longitudinal_reporting_view",
+                 f"{view['id']}: invalid reporting view kind")
+        _validate_capture_definition(view, question_ids)
+        refs = view["candidate_endpoint_ids"]
+        _require(isinstance(refs, list) and refs and all(_nonempty(ref) for ref in refs) and
+                 len(refs) == len(set(refs)) and all(ref in endpoint_ids for ref in refs),
+                 f"{view['id']}: candidate endpoint references must be unique and valid")
+        _require(_nonempty(view["reporting_rule"]),
+                 f"{view['id']}: reporting_rule is required")
+        for field in ("constituent_endpoint_ids", "constituent_outcome_record_refs"):
+            _require(field in view["required_fields"],
+                     f"{view['id']}: {field} must be assessed")
 
     seen_relations = set()
     overlap_pairs = set()

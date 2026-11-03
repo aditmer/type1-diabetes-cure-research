@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CROSSWALK = ROOT / "docs" / "EVIDENCE-ATLAS-SOURCE-CROSSWALK.md"
-TAXONOMY = ROOT / "experiments" / "evidence-atlas" / "taxonomy-v1.json"
+TAXONOMY = ROOT / "experiments" / "evidence-atlas" / "taxonomy-v2.json"
 
 
 def catalog_ids(filename, column):

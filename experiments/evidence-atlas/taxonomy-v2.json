@@ -1,17 +1,38 @@
 {
-  "format_version": "taxonomy-v1",
+  "format_version": "taxonomy-v2",
   "taxonomy_id": "moonshot-evidence-atlas",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "versioning": {
     "scheme": "Semantic Versioning",
     "patch": "Editorial clarification that does not change meaning or identifiers.",
-    "minor": "Backward-compatible addition of identifiers, descriptions, facets, questions, or endpoints.",
-    "major": "Incompatible meaning or identifier change; publish explicit supersession mappings and never silently reclassify existing records."
+    "minor": "Backward-compatible addition of identifiers, descriptions, facets, questions, endpoints, or reporting views.",
+    "major": "Incompatible structure, meaning, or identifier change; publish explicit migration or supersession notes and never silently reclassify existing records."
   },
   "change_log": [
     {"version": "1.0.0", "description": "Initial proposed Phase 2 taxonomy; no evidence or catalog assignments were imported."},
-    {"version": "1.1.0", "description": "Add separate cell-source, donor-relationship, donor-status, immunosuppression-requirement, and exposure facets; deprecate combined facets without automatic mapping; clarify edited, regenerative, and encapsulated categories and analysis denominators. No evidence assignments were migrated."}
+    {"version": "1.1.0", "description": "Add separate cell-source, donor-relationship, donor-status, immunosuppression-requirement, and exposure facets; deprecate combined facets without automatic mapping; clarify edited, regenerative, and encapsulated categories and analysis denominators. No evidence assignments were migrated."},
+    {"version": "2.0.0", "description": "Add an explicit required-field assessment contract and move EP-12 from endpoints to reporting_views without changing its ID. This is a breaking draft format change; no evidence or outcome records were migrated."}
   ],
+  "field_assessment_contract": {
+    "description": "Each required field requires an assessment and status, not an available value. Represent each assessment with status and value; unavailable values are null, never inferred as zero. A reported zero requires an explicit source report.",
+    "applies_to": ["endpoints.required_fields", "reporting_views.required_fields"],
+    "required_field_semantics": "assess_and_record_status",
+    "status_key": "status",
+    "value_key": "value",
+    "assessment_required_keys": ["status", "value"],
+    "unavailable_value": null,
+    "zero_value_policy": "explicit_source_report_only",
+    "observation_state_rule": "Field availability is separate from whether an outcome is planned or observed. A reported field alone does not establish an observed outcome.",
+    "statuses": [
+      {"id": "reported", "value_rule": "non_null", "description": "The field value is explicitly available in the source; zero is allowed only when explicitly reported."},
+      {"id": "not_reported", "value_rule": "null", "description": "The reviewed material does not report the value; this does not establish that it was not collected."},
+      {"id": "not_yet_extracted", "value_rule": "null", "description": "The value has not yet been extracted or reviewed."},
+      {"id": "inaccessible", "value_rule": "null", "description": "The material needed for the value is inaccessible or restricted."},
+      {"id": "not_applicable", "value_rule": "null", "description": "The field does not apply to the stated endpoint or reporting context."},
+      {"id": "conflicting", "value_rule": "null", "description": "Conflicting source values are unresolved; retain their provenance separately for adjudication."},
+      {"id": "unknown", "value_rule": "null", "description": "The value or its availability cannot be established."}
+    ]
+  },
   "categories": [
     {
       "id": "TI-DISEASE-MODIFICATION",
@@ -372,8 +393,21 @@
     {"id": "EP-09", "label": "Serious adverse events and discontinuation", "description": "Seriousness/type and source-attributed status of adverse events, with treatment interruption, discontinuation, explant, hospitalization, and death recorded separately.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-05", "RQ-06"], "required_fields": ["event_definition", "event_count", "affected_participants", "exposure_denominator", "seriousness", "attribution", "observation_window", "discontinuation_reason"], "units": ["events", "participants", "person-time if reported"], "denominator_rule": "Report recurrent event counts separately from participants with one or more events and number exposed.", "timing_anchor": "Exposure period, event onset, discontinuation, and post-treatment surveillance.", "interpretation_hazards": "Temporal association is not causation; small or short studies cannot rule out rare/late harms."},
     {"id": "EP-10", "label": "Immunosuppression exposure and complications", "description": "Systemic agents/regimens, actual exposure, changes, cessation, and separately defined complications.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-05"], "required_fields": ["agent", "regimen", "start_stop_dates", "exposure_status", "complication_definition", "event_count", "affected_participants", "denominator"], "units": ["source-reported dose/level", "events", "participants"], "denominator_rule": "Complication counts use affected participants and event counts separately with exposure window/denominator.", "timing_anchor": "Cell treatment/infusion and each immunosuppression exposure period.", "interpretation_hazards": "Required, planned, and received therapy are distinct; do not attribute harms unless source does."},
     {"id": "EP-11", "label": "Quality of life and treatment burden", "description": "Patient-reported quality-of-life, burden, fear, function, or preference using source-identified instrument/domain.", "research_question_ids": ["RQ-00", "RQ-02", "RQ-09"], "required_fields": ["instrument_version", "domain", "scale_direction", "recall_period", "baseline", "follow_up", "analysis_denominator", "observed_measurement_count", "missing_data_method", "missing_questionnaires"], "units": ["source-defined scale"], "denominator_rule": "Preserve the source-defined analysis denominator, observed questionnaire count, and missing-data method separately; state respondent type.", "timing_anchor": "Baseline and stated collection window.", "interpretation_hazards": "Different instruments are not interchangeable; response bias and missingness matter."},
-    {"id": "EP-12", "label": "Long-term durability and safety", "description": "Longitudinal patient-important benefit, graft/therapy function, retreatment, and delayed harm, each preserved as its own measure.", "research_question_ids": ["RQ-00", "RQ-01", "RQ-04", "RQ-05", "RQ-06", "RQ-08"], "required_fields": ["time_origin", "follow_up_distribution", "number_at_risk", "withdrawals", "censoring", "retreatment", "ongoing_cointerventions", "constituent_endpoint_ids"], "units": ["constituent endpoint units preserved"], "denominator_rule": "Report each constituent endpoint's own analysis denominator and participants observed at each horizon.", "timing_anchor": "Intervention or source-defined time origin, with multi-year horizon stated.", "interpretation_hazards": "Not a single endpoint; 12 months is a reporting expectation, not a durability threshold; longest follow-up does not apply to all."},
     {"id": "EP-13", "label": "Stage 3 onset delay", "description": "Time from defined Stage 1/2 baseline to source-defined, adjudicated clinical Stage 3 diagnosis.", "research_question_ids": ["RQ-00", "RQ-04", "RQ-07", "RQ-10"], "required_fields": ["stage_eligibility", "diagnostic_criteria", "time_origin", "event_count", "analysis_denominator", "censoring", "follow_up", "surveillance_intensity"], "units": ["time", "participants with progression", "source-defined time-to-event estimate"], "denominator_rule": "Report progression participants and time-to-event analysis set; preserve censoring and uncertainty.", "timing_anchor": "Date of qualifying Stage 1/2 baseline to diagnosis.", "interpretation_hazards": "Delay is not prevention of autoimmunity, reversal, or post-diagnosis preservation."}
+  ],
+  "reporting_views": [
+    {
+      "id": "EP-12",
+      "kind": "longitudinal_reporting_view",
+      "label": "Long-term durability and safety",
+      "description": "A longitudinal reporting view, not an independently measurable endpoint, of patient-important benefit, graft or therapy function, retreatment, and delayed harm.",
+      "research_question_ids": ["RQ-00", "RQ-01", "RQ-04", "RQ-05", "RQ-06", "RQ-08", "RQ-10", "RQ-11"],
+      "required_fields": ["time_origin", "follow_up_distribution", "number_at_risk", "withdrawals", "censoring", "retreatment", "ongoing_cointerventions", "constituent_endpoint_ids", "constituent_outcome_record_refs"],
+      "candidate_endpoint_ids": ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07", "EP-08", "EP-09", "EP-10", "EP-11", "EP-13"],
+      "reporting_rule": "Select source-relevant constituent endpoint IDs and reference their existing outcome records separately without duplicating measurements. Preserve each endpoint's own unit, analysis denominator, timing, and exposure; candidates do not imply observed outcomes.",
+      "timing_anchor": "Intervention or source-defined time origin, with multi-year horizon stated when available.",
+      "interpretation_hazards": "Not a single endpoint; 12 months is a reporting expectation, not a durability threshold; longest follow-up does not apply to all."
+    }
   ],
   "relationships": [
     {"subject_id": "TI-PREVENT-DELAY", "relation": "is_a", "object_id": "TI-DISEASE-MODIFICATION", "description": "Prevention/delay intent is a disease-modification intent."},
