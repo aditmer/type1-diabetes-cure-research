@@ -55,6 +55,28 @@ class EvidenceAtlasPhase3AInventoryTests(unittest.TestCase):
         self.assertIn("NCT02239354-history-v13", rows["S17"])
         self.assertIn("NCT03163511-history-v20", rows["S20"])
 
+    def test_s18_inventory_distinguishes_task_log_from_historical_checks(self):
+        row = next(
+            line for line in self.lines
+            if re.match(r"^\|\s*S18\s*\|", line)
+        )
+        self.assertIn("made no new source access", row)
+        self.assertIn("metadata-only identity/hash verification", row)
+        self.assertIn("“in this task”", row)
+        self.assertIn("not a historical claim", row)
+        self.assertIn("partial AI main-article triage on 2026-10-27", row)
+        self.assertIn("aggregate population/design XML inspection on 2026-10-29", row)
+        self.assertIn("neither is human review or source-content completion", row)
+        self.assertIn("unversioned broad page response included an in-article participant-level table", row)
+        self.assertIn("safely version-bound permitted inspection remains unresolved", row)
+        self.assertIn("clinical_content_reviewed=false", row)
+        self.assertIn("source_content_review_complete=false", row)
+        self.assertIn("review_status=pending_human_review", row)
+        self.assertIn("CC BY-NC-ND 4.0", row)
+        self.assertIn("mmc2.xlsx", row)
+        self.assertIn(
+            "scope listing does not mean all components were inspected", row)
+
 
 if __name__ == "__main__":
     unittest.main()
