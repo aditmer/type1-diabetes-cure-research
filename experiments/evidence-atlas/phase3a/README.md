@@ -22,6 +22,16 @@ synthetic-only rights/review placeholders do not represent clinical evidence,
 human approval, or a source-use grant. Rejection and quarantine reasons are
 machine-readable and the input is never mutated.
 
+Recursive synthetic-input preflight requires integer magnitude below `10**640`,
+including nested values and invalid integer object keys. Larger integers reject
+with `INTEGER_MAGNITUDE_EXCEEDED`; audit sanitization uses an explicit
+`unsupported_input` marker without converting the integer to text. The bound
+keeps accepted integers serializable at CPython's minimum configurable
+640-digit limit without changing process conversion settings.
+Magnitude checks apply only to exact built-in integers; unsupported subclasses
+are rejected and audit-sanitized without custom arithmetic. Invalid object keys
+are recursively checked under the same nesting-depth limit as values.
+
 The EP-12 demo accepts only scalar non-negative integer reported
 `number_at_risk` counts, preserving explicit zero; booleans, fractions,
 negative, empty, structured, and narrative values are rejected. It validates
@@ -63,3 +73,8 @@ This scope rule also applies to invalid supplied view follow-up windows.
 Pending/unavailable null assessments retain their
 partial/pending label, and measured-record `co_interventions` remain
 open-ended. See the source contract for the complete allowlist and limits.
+
+Cohort-link `direction` is restricted to `this_is_subset` or `other_is_subset`
+for subset relationships. Other relationships must omit it or use explicit
+null; non-null payloads are rejected for both record kinds. Valid uncertain
+links still quarantine without pooling.

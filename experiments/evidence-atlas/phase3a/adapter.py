@@ -52,6 +52,7 @@ EVENT_COUNT_UNITS = {"event", "events", "synthetic event", "synthetic events"}
 SUPPORTED_NONCOUNT_UNITS = {"synthetic proportion"}
 SOURCE_REFERENCE_FIELDS = {"source_id", "source_version", "location"}
 MAX_INPUT_DEPTH = 100
+INTEGER_MAGNITUDE_LIMIT = 10**640
 SOURCE_KEYS = {
     "source_id",
     "source_version",
@@ -145,6 +146,8 @@ def _audit_safe(value, active=None, depth=0):
         active = set()
     if depth > MAX_INPUT_DEPTH:
         return {"unsupported_input": "maximum nesting depth exceeded"}
+    if type(value) is int and abs(value) >= INTEGER_MAGNITUDE_LIMIT:
+        return {"unsupported_input": "integer magnitude exceeds synthetic limit"}
     if isinstance(value, float) and not math.isfinite(value):
         return {"non_finite_numeric_input": repr(value)}
     if isinstance(value, dict):
@@ -190,6 +193,9 @@ def _input_issues(value, path="$", active=None, depth=0):
     if depth > MAX_INPUT_DEPTH:
         return [_issue("INPUT_STRUCTURE_TOO_DEEP",
                        f"input exceeds the maximum nesting depth at {path}")]
+    if type(value) is int and abs(value) >= INTEGER_MAGNITUDE_LIMIT:
+        return [_issue("INTEGER_MAGNITUDE_EXCEEDED",
+                       f"integer magnitude must be less than 10**640 at {path}")]
     if isinstance(value, float) and not math.isfinite(value):
         return [_issue("NONFINITE_NUMBER_INPUT",
                        f"non-finite numeric input is not permitted at {path}")]
@@ -206,6 +212,10 @@ def _input_issues(value, path="$", active=None, depth=0):
                     issues.append(_issue(
                         "NON_STRING_OBJECT_KEY",
                         f"object keys must be strings at {path}"))
+                    issues.extend(_input_issues(
+                        key, f"{path}.<object-key>", active, depth + 1))
+                    issues.extend(_input_issues(
+                        item, f"{path}.<non-string-key-value>", active, depth + 1))
                     continue
                 issues.extend(_input_issues(
                     item, f"{path}.{key}", active, depth + 1))
@@ -642,6 +652,20 @@ def _validate_cohort_links(record, record_id, records_by_id):
             issues.append(_issue("COHORT_LINK_SELF_REFERENCE",
                                  "a cohort relationship cannot refer to itself", record_id))
             continue
+        direction = link.get("direction")
+        if relationship == "subset":
+            if (not isinstance(direction, str) or
+                    direction not in {"this_is_subset", "other_is_subset"}):
+                issues.append(_issue("COHORT_SUBSET_DIRECTION_MISSING",
+                                     "subset relationships require an explicit direction",
+                                     record_id))
+                continue
+        elif direction is not None:
+            issues.append(_issue(
+                "COHORT_LINK_DIRECTION_INVALID",
+                "non-subset relationships must omit direction or explicitly set it to null",
+                record_id))
+            continue
         if relationship == "uncertain":
             issues.append(_issue("COHORT_OVERLAP_UNRESOLVED",
                                  "uncertain cohort links remain unresolved; no pooling or independence",
@@ -670,13 +694,6 @@ def _validate_cohort_links(record, record_id, records_by_id):
                 target_cohort == record.get("cohort_id")):
             issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",
                                  "distinct records cannot share a cohort identity",
-                                 record_id))
-        direction = link.get("direction")
-        if (relationship == "subset" and (
-                not isinstance(direction, str) or
-                direction not in {"this_is_subset", "other_is_subset"})):
-            issues.append(_issue("COHORT_SUBSET_DIRECTION_MISSING",
-                                 "subset relationships require an explicit direction",
                                  record_id))
     return issues
 

@@ -4,7 +4,10 @@ import io
 import importlib.util
 import json
 import math
+import os
 import socket
+import subprocess
+import sys
 import unittest
 from unittest import mock
 from pathlib import Path
@@ -1633,6 +1636,171 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertNotIn(
             view["record_id"],
             {item["record_id"] for item in result["projection"]})
+
+    def test_cohort_direction_shape_is_validated_for_both_record_kinds(self):
+        omitted = object()
+        directions = (
+            omitted, None, "this_is_subset", "other_is_subset", "",
+            True, 0, [], {"human_approved": True, "approval": "unsupported synthetic claim"},
+        )
+        for kind in ("measured_outcome", "reporting_view"):
+            for relationship in ("same", "distinct_within_program", "subset", "uncertain"):
+                for direction in directions:
+                    with self.subTest(kind=kind, relationship=relationship, direction=direction):
+                        data = fixture()
+                        target = record(data)
+                        if kind == "measured_outcome":
+                            owner = target
+                            target = copy.deepcopy(owner)
+                            target["record_id"] = "SYN-OUTCOME-2"
+                            data["records"].append(target)
+                        else:
+                            owner = append_ep12_view(data, cohort_id="SYN-COHORT-1")
+                        if relationship in ("subset", "distinct_within_program"):
+                            target["cohort_id"] = "SYN-TARGET-COHORT"
+                        link = {
+                            "other_record_id": target["record_id"],
+                            "relationship": relationship,
+                            "evidence_status": "synthetic_fixture_only",
+                            "source_refs": copy.deepcopy(record(data)["source_refs"]),
+                        }
+                        if direction is not omitted:
+                            link["direction"] = copy.deepcopy(direction)
+                        owner["cohort_links"] = [link]
+                        result = ADAPTER.validate_and_project(data)
+                        outcome = next(item for item in result["records"]
+                                       if item["record_id"] == owner["record_id"])
+                        valid_direction = (
+                            isinstance(direction, str) and direction in
+                            {"this_is_subset", "other_is_subset"}
+                            if relationship == "subset" else
+                            direction is omitted or direction is None)
+                        expected_disposition = (
+                            "quarantined" if valid_direction and relationship == "uncertain"
+                            else "accepted" if valid_direction else "rejected")
+                        self.assertEqual(outcome["disposition"], expected_disposition)
+                        self.assertEqual(
+                            outcome["source_binding"]["original_record"]["cohort_links"],
+                            [link])
+                        projection = next(
+                            (item for item in result["projection"]
+                             if item["record_id"] == owner["record_id"]), None)
+                        if expected_disposition == "accepted":
+                            self.assertEqual(projection["source_values"]["cohort_links"], [link])
+                        else:
+                            self.assertIsNone(projection)
+                            expected_reason = (
+                                "COHORT_OVERLAP_UNRESOLVED" if valid_direction else
+                                "COHORT_SUBSET_DIRECTION_MISSING" if relationship == "subset" else
+                                "COHORT_LINK_DIRECTION_INVALID")
+                            self.assertIn(
+                                expected_reason, {reason["code"] for reason in outcome["reasons"]})
+                        json.dumps(result, allow_nan=False)
+
+    def test_integer_magnitude_boundary_preserves_strict_json_reports(self):
+        for kind in ("measured_outcome", "reporting_view"):
+            for sign in (1, -1):
+                data = fixture()
+                owner = record(data) if kind == "measured_outcome" else append_ep12_view(data)
+                boundary_value = sign * (10**640 - 1)
+                if kind == "measured_outcome":
+                    owner["co_interventions"] = [{"synthetic_count": boundary_value}]
+                else:
+                    owner["follow_up_window"] = {"value": abs(boundary_value), "unit": "months"}
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "accepted")
+                json.dumps(result, allow_nan=False)
+                for magnitude in (10**640, 10**5000):
+                    oversized = sign * magnitude
+                    if kind == "measured_outcome":
+                        owner["co_interventions"] = [{"synthetic_count": oversized}]
+                    else:
+                        owner["follow_up_window"]["value"] = oversized
+                    result = ADAPTER.validate_and_project(data)
+                    self.assertEqual(result["status"], "rejected")
+                    self.assertIn("INTEGER_MAGNITUDE_EXCEEDED", reason_codes(result))
+                    self.assertEqual(result["projection"], [])
+                    encoded = json.dumps(result, allow_nan=False)
+                    self.assertIn("integer magnitude exceeds synthetic limit", encoded)
+                    marker = {"unsupported_input": "integer magnitude exceeds synthetic limit"}
+                    audit = ADAPTER._audit_safe({oversized: {"nested": oversized}})
+                    self.assertEqual(audit["entries"], [
+                        {"key": marker, "value": {"nested": marker}}])
+                    json.dumps(audit, allow_nan=False)
+
+        data = fixture()
+        record(data)["co_interventions"] = [{10**5000: -(10**5000)}]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("NON_STRING_OBJECT_KEY", reason_codes(result))
+        self.assertIn("INTEGER_MAGNITUDE_EXCEEDED", reason_codes(result))
+        json.dumps(result, allow_nan=False)
+
+        for sign in (1, -1):
+            data = fixture()
+            record(data)["follow_up_window"]["value"] = sign * 10**5000
+            result = ADAPTER.validate_and_project(data)
+            self.assertEqual(result["status"], "rejected")
+            self.assertIn("INTEGER_MAGNITUDE_EXCEEDED", reason_codes(result))
+            json.dumps(result, allow_nan=False)
+
+    def test_integer_boundary_at_minimum_runtime_conversion_limit(self):
+        completed = subprocess.run(
+            [sys.executable, "-m", "unittest",
+             f"tests.test_evidence_atlas_phase3a.{type(self).__name__}."
+             "test_integer_magnitude_boundary_preserves_strict_json_reports", "-q"],
+            cwd=ROOT, env={**os.environ, "PYTHONINTMAXSTRDIGITS": "640"},
+            capture_output=True, text=True, check=False)
+        self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+
+    def test_integer_subclasses_do_not_invoke_custom_arithmetic(self):
+        class HostileInt(int):
+            def __abs__(self):
+                raise AssertionError("unsupported subclass arithmetic invoked")
+
+        marker = {"unsupported_input": "HostileInt"}
+        for kind in ("measured_outcome", "reporting_view"):
+            for payload in (HostileInt(1), {HostileInt(1): None}):
+                with self.subTest(kind=kind, is_key=isinstance(payload, dict)):
+                    data = fixture()
+                    owner = record(data) if kind == "measured_outcome" else append_ep12_view(data)
+                    owner["follow_up_window"] = {"value": payload, "unit": "months"}
+                    result = ADAPTER.validate_and_project(data)
+                    self.assertEqual(result["status"], "rejected")
+                    self.assertEqual(result["projection"], [])
+                    self.assertIn("UNSUPPORTED_INPUT_VALUE", reason_codes(result))
+                    self.assertNotIn("INTEGER_MAGNITUDE_EXCEEDED", reason_codes(result))
+                    json.dumps(result, allow_nan=False)
+                    audit = ADAPTER._audit_safe(payload)
+                    if isinstance(payload, dict):
+                        self.assertEqual(audit["entries"], [{"key": marker, "value": None}])
+                        self.assertIn("NON_STRING_OBJECT_KEY", reason_codes(result))
+                    else:
+                        self.assertEqual(audit, marker)
+                    json.dumps(audit, allow_nan=False)
+
+    def test_oversized_integers_in_invalid_tuple_keys_are_recursively_checked(self):
+        marker = {"unsupported_input": "integer magnitude exceeds synthetic limit"}
+        for kind in ("measured_outcome", "reporting_view"):
+            for sign in (1, -1):
+                data = fixture()
+                owner = record(data) if kind == "measured_outcome" else append_ep12_view(data)
+                payload = {("nested", (sign * 10**5000,)): None}
+                owner["follow_up_window"] = {"value": payload, "unit": "months"}
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertEqual(result["projection"], [])
+                self.assertIn("NON_STRING_OBJECT_KEY", reason_codes(result))
+                self.assertIn("INTEGER_MAGNITUDE_EXCEEDED", reason_codes(result))
+                self.assertEqual(ADAPTER._audit_safe(payload)["entries"], [
+                    {"key": ["nested", [marker]], "value": None}])
+                json.dumps(result, allow_nan=False)
+        deep_key = (10**5000,)
+        for _ in range(ADAPTER.MAX_INPUT_DEPTH):
+            deep_key = (deep_key,)
+        codes = {issue["code"] for issue in ADAPTER._input_issues({deep_key: None})}
+        self.assertIn("INPUT_STRUCTURE_TOO_DEEP", codes)
+        json.dumps(ADAPTER._audit_safe({deep_key: None}), allow_nan=False)
 
     def test_ep12_cohort_links_are_validated_in_reporting_branch(self):
         def link(other_record_id, relationship):
