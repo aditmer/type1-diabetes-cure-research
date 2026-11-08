@@ -707,6 +707,7 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                 report = ADAPTER.validate_and_project(data)
                 self.assertNotEqual(report["status"], "accepted")
                 self.assertTrue(report["reasons"])
+                self.assertEqual(report["projection"], [])
 
     def test_cli_validation_does_not_attempt_network_connections(self):
         output = io.StringIO()
