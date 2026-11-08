@@ -148,15 +148,15 @@ def _audit_safe(value, active=None, depth=0):
         return {"unsupported_input": "maximum nesting depth exceeded"}
     if type(value) is int and abs(value) >= INTEGER_MAGNITUDE_LIMIT:
         return {"unsupported_input": "integer magnitude exceeds synthetic limit"}
-    if isinstance(value, float) and not math.isfinite(value):
+    if type(value) is float and not math.isfinite(value):
         return {"non_finite_numeric_input": repr(value)}
-    if isinstance(value, dict):
+    if type(value) is dict:
         identity = id(value)
         if identity in active:
             return {"unsupported_input": "cyclic reference"}
         active.add(identity)
         try:
-            if all(isinstance(key, str) for key in value):
+            if all(type(key) is str for key in value):
                 return {
                     key: _audit_safe(item, active, depth + 1)
                     for key, item in value.items()
@@ -173,7 +173,7 @@ def _audit_safe(value, active=None, depth=0):
             }
         finally:
             active.remove(identity)
-    if isinstance(value, (list, tuple)):
+    if type(value) in (list, tuple):
         identity = id(value)
         if identity in active:
             return {"unsupported_input": "cyclic reference"}
@@ -196,10 +196,10 @@ def _input_issues(value, path="$", active=None, depth=0):
     if type(value) is int and abs(value) >= INTEGER_MAGNITUDE_LIMIT:
         return [_issue("INTEGER_MAGNITUDE_EXCEEDED",
                        f"integer magnitude must be less than 10**640 at {path}")]
-    if isinstance(value, float) and not math.isfinite(value):
+    if type(value) is float and not math.isfinite(value):
         return [_issue("NONFINITE_NUMBER_INPUT",
                        f"non-finite numeric input is not permitted at {path}")]
-    if isinstance(value, dict):
+    if type(value) is dict:
         identity = id(value)
         if identity in active:
             return [_issue("CYCLIC_INPUT_REFERENCE",
@@ -208,10 +208,10 @@ def _input_issues(value, path="$", active=None, depth=0):
         issues = []
         try:
             for key, item in value.items():
-                if not isinstance(key, str):
+                if type(key) is not str:
                     issues.append(_issue(
                         "NON_STRING_OBJECT_KEY",
-                        f"object keys must be strings at {path}"))
+                        f"object keys must be exact built-in strings at {path}"))
                     issues.extend(_input_issues(
                         key, f"{path}.<object-key>", active, depth + 1))
                     issues.extend(_input_issues(
@@ -222,7 +222,7 @@ def _input_issues(value, path="$", active=None, depth=0):
         finally:
             active.remove(identity)
         return issues
-    if isinstance(value, (list, tuple)):
+    if type(value) in (list, tuple):
         identity = id(value)
         if identity in active:
             return [_issue("CYCLIC_INPUT_REFERENCE",
@@ -465,29 +465,33 @@ def _validate_references(record, source):
 
 
 def _auditable_source_record(record, source):
-    scope = source.get("authorized_field_scope") if isinstance(source, dict) else None
-    authorized = set(scope) if isinstance(scope, list) and all(
-        isinstance(field, str) for field in scope) else set()
+    scope = source.get("authorized_field_scope") if type(source) is dict else None
+    authorized = set(scope) if type(scope) is list and all(
+        type(field) is str for field in scope) else set()
     # Identity, original state, and locators form the audit binding envelope.
     included = authorized | MANDATORY_SCOPE_FIELDS
-    return _audit_safe({key: value for key, value in record.items() if key in included})
+    return _audit_safe({
+        key: value for key, value in record.items()
+        if type(key) is str and key in included})
 
 
 def _auditable_source(source):
-    if not isinstance(source, dict):
+    if type(source) is not dict:
         return None
-    result = {key: value for key, value in source.items() if key in SOURCE_KEYS}
+    result = {
+        key: value for key, value in source.items()
+        if type(key) is str and key in SOURCE_KEYS}
     rights = source.get("rights")
-    if isinstance(rights, dict):
+    if type(rights) is dict:
         result["rights"] = {
             key: value for key, value in rights.items()
-            if key in {"status", "redistribution"}
+            if type(key) is str and key in {"status", "redistribution"}
         }
     review = source.get("review_provenance")
-    if isinstance(review, dict):
+    if type(review) is dict:
         result["review_provenance"] = {
             key: value for key, value in review.items()
-            if key in {"status", "reviewer", "approval"}
+            if type(key) is str and key in {"status", "reviewer", "approval"}
         }
     return _audit_safe(result)
 
@@ -1031,7 +1035,7 @@ def _validate_record(record, source, records_by_id, sources):
                     "constituent_outcome_record_refs assessment must exactly match eligible records",
                     record_id))
         if issues:
-            quarantined = any(issue["code"] in {
+            quarantined = all(issue["code"] in {
                 "SOURCE_STATE_NOT_PROJECTABLE", "STATE_MAPPING_UNAUTHORIZED",
                 "REPORTING_VIEW_ASSESSMENTS_INCOMPLETE",
                 "REPORTING_VIEW_ASSESSMENT_INVALID",
@@ -1309,20 +1313,20 @@ def _validate_record(record, source, records_by_id, sources):
             "UNIT_UNSUPPORTED",
             "unit is outside the controlled synthetic demonstration vocabulary",
             record_id))
-    if participant_count_unit:
+    if status == "reported" and participant_count_unit:
         if (type(value) is not int or participant_status != "reported" or
                 participant_count != value):
             issues.append(_issue(
                 "PARTICIPANT_VALUE_COUNT_MISMATCH",
                 "participant-valued results must equal the explicitly reported participant_count",
                 record_id))
-    if event_count_unit:
+    if status == "reported" and event_count_unit:
         if type(value) is not int or type(event_count) is not int or value != event_count:
             issues.append(_issue(
                 "EVENT_VALUE_COUNT_MISMATCH",
                 "event-valued results must equal the explicitly reported event_count",
                 record_id))
-    if (unit == "synthetic proportion" and
+    if (status == "reported" and unit == "synthetic proportion" and
             (type(value) not in (int, float) or
              (type(value) is float and not math.isfinite(value)) or
              value < 0 or value > 1)):
@@ -1336,7 +1340,7 @@ def _validate_record(record, source, records_by_id, sources):
     issues.extend(_validate_cohort_links(record, record_id, records_by_id))
 
     if issues:
-        quarantined = any(issue["code"] in {
+        quarantined = all(issue["code"] in {
             "SOURCE_STATE_NOT_PROJECTABLE", "CONFLICT_REQUIRES_ADJUDICATION",
             "COHORT_OVERLAP_UNRESOLVED", "HUMAN_ADJUDICATION_MISSING",
             "STATE_MAPPING_UNAUTHORIZED", "PARTICIPANT_COUNT_REVIEW_INCOMPLETE",
@@ -1349,25 +1353,30 @@ def _validate_record(record, source, records_by_id, sources):
 
 
 def _invalid_input_report(manifest, issues):
+    manifest = {key: value for key, value in manifest.items() if type(key) is str}
     source_by_id = {}
-    records = manifest.get("records") if isinstance(manifest, dict) else None
-    sources = manifest.get("sources") if isinstance(manifest, dict) else None
-    if isinstance(sources, list):
+    records = manifest.get("records")
+    sources = manifest.get("sources")
+    if type(sources) is list:
         for source in sources:
-            if isinstance(source, dict) and isinstance(source.get("source_id"), str):
+            if type(source) is not dict:
+                continue
+            source = {key: value for key, value in source.items() if type(key) is str}
+            if type(source.get("source_id")) is str:
                 source_by_id[source["source_id"]] = source
     outcomes = []
-    if isinstance(records, list):
+    if type(records) is list:
         for record in records:
-            if not isinstance(record, dict):
+            if type(record) is not dict:
                 continue
+            record = {key: value for key, value in record.items() if type(key) is str}
             source_id = record.get("source_id")
-            source = source_by_id.get(source_id) if isinstance(source_id, str) else None
+            source = source_by_id.get(source_id) if type(source_id) is str else None
             record_id = record.get("record_id")
             record_issues = [
                 {
                     **issue,
-                    **({"record_id": record_id} if isinstance(record_id, str) else {}),
+                    **({"record_id": record_id} if type(record_id) is str else {}),
                 }
                 for issue in issues
             ]
@@ -1392,7 +1401,7 @@ def _invalid_input_report(manifest, issues):
 
 def validate_and_project(manifest):
     """Return a deterministic report and projection; never mutate the input."""
-    if not isinstance(manifest, dict):
+    if type(manifest) is not dict:
         return {
             "contract_version": CONTRACT_VERSION,
             "status": "rejected",

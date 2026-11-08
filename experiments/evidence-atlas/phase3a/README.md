@@ -32,6 +32,24 @@ Magnitude checks apply only to exact built-in integers; unsupported subclasses
 are rejected and audit-sanitized without custom arithmetic. Invalid object keys
 are recursively checked under the same nesting-depth limit as values.
 
+Object keys must be exact built-in strings, not subclasses. Rejected-input
+audit envelopes omit unsupported keys before identity/scope lookups; retained
+nested payloads use audit-safe key markers without invoking copy/text hooks.
+Primitive and container recognition is exact built-in only, including
+float/dict/list/tuple. Unsupported subclasses reject without numeric or
+traversal hooks; ordinary built-in tuples retain their existing snapshot/audit
+behavior. Invalid-input envelopes never traverse unsupported containers.
+Rejection-class local record-validation reasons take precedence over local
+quarantine reasons: both remain in the report, but the record rejects and no
+projection is emitted. Local validation quarantines only when all its reasons
+belong to that record kind's defined quarantine vocabulary; this includes
+`REPORTING_VIEW_ASSESSMENT_INVALID`, not just structurally valid inputs.
+Graph-only issues can separately quarantine an otherwise accepted record, and
+source issues can separately reject it. The local vocabulary therefore does
+not describe every reason in a final quarantined outcome.
+Count/proportion comparisons apply only to reported results, not null
+not-yet-extracted, inaccessible, or conflicting result states.
+
 The EP-12 demo accepts only scalar non-negative integer reported
 `number_at_risk` counts, preserving explicit zero; booleans, fractions,
 negative, empty, structured, and narrative values are rejected. It validates

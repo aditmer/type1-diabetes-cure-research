@@ -170,6 +170,10 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             source_refs=item["source_refs"] + [{
                 "source_id": "SYN-SOURCE-1",
                 "source_version": "SYN-VERSION-1",
+                "location": "synthetic://SYN-VERSION-1/record-1/value-a",
+            }, {
+                "source_id": "SYN-SOURCE-1",
+                "source_version": "SYN-VERSION-1",
                 "location": "synthetic://SYN-VERSION-1/record-1/value-b",
             }],
             conflicting_values=[
@@ -320,11 +324,12 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                 self.assertEqual(result["status"], "rejected")
                 self.assertIn(code, reason_codes(result))
 
-    def test_14_missing_human_adjudication_metadata_is_quarantined(self):
+    def test_14_missing_required_review_metadata_is_rejected(self):
         data = fixture()
         del record(data)["review_evidence"]
         result = ADAPTER.validate_and_project(data)
-        self.assertEqual(result["status"], "quarantined")
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("REQUIRED_RECORD_FIELDS_MISSING", reason_codes(result))
         self.assertIn("HUMAN_ADJUDICATION_MISSING", reason_codes(result))
 
     def test_15_invalid_endpoint_or_taxonomy_identifier_is_rejected(self):
@@ -517,7 +522,7 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         data = fixture()
         record(data).update(field_status="inaccessible", value=1)
         result = ADAPTER.validate_and_project(data)
-        self.assertEqual(result["status"], "quarantined")
+        self.assertEqual(result["status"], "rejected")
         self.assertIn("FIELD_STATE_VALUE_MISMATCH", reason_codes(result))
         binding = result["records"][0]["source_binding"]
         self.assertEqual(binding["original_record"]["value"], 1)
@@ -939,7 +944,8 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             "endpoint_id": "EP-01",
         }]
         result = ADAPTER.validate_and_project(data)
-        self.assertEqual(result["status"], "quarantined")
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("REQUIRED_RECORD_FIELDS_MISSING", reason_codes(result))
         self.assertIn("SOURCE_STATE_NOT_PROJECTABLE", reason_codes(result))
         self.assertIn("STATE_MAPPING_UNAUTHORIZED", reason_codes(result))
 
@@ -1779,6 +1785,183 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                         self.assertEqual(audit, marker)
                     json.dumps(audit, allow_nan=False)
 
+    def test_string_subclass_keys_reject_without_copy_or_text_hooks(self):
+        class UnsafeKey(str):
+            def __deepcopy__(self, memo):
+                return float("nan")
+
+            def __str__(self):
+                raise AssertionError("unsupported text hook invoked")
+
+        data = fixture()
+        payload = {UnsafeKey("synthetic"): 1}
+        record(data)["co_interventions"] = [payload]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertEqual(result["projection"], [])
+        self.assertIn("NON_STRING_OBJECT_KEY", reason_codes(result))
+        self.assertIn("UNSUPPORTED_INPUT_VALUE", reason_codes(result))
+        self.assertEqual(ADAPTER._audit_safe(payload)["entries"], [
+            {"key": {"unsupported_input": "UnsafeKey"}, "value": 1}])
+        json.dumps(result, allow_nan=False)
+
+    def test_invalid_input_envelopes_do_not_invoke_hostile_key_hooks(self):
+        class HostileKey(str):
+            armed = False
+
+            def __hash__(self):
+                if self.armed:
+                    raise AssertionError("unsupported hash hook invoked")
+                return str.__hash__(self)
+
+            def __eq__(self, other):
+                if self.armed:
+                    raise AssertionError("unsupported equality hook invoked")
+                return str.__eq__(self, other)
+
+        for envelope in ("manifest", "record", "source", "rights", "review"):
+            for collision in (False, True):
+                with self.subTest(envelope=envelope, collision=collision):
+                    data = fixture()
+                    target, name = {
+                        "manifest": (data, "records"),
+                        "record": (record(data), "source_id"),
+                        "source": (data["sources"][0], "source_id"),
+                        "rights": (data["sources"][0]["rights"], "status"),
+                        "review": (data["sources"][0]["review_provenance"], "status"),
+                    }[envelope]
+                    name = name if collision else "unsupported_extra"
+                    value = target.pop(name) if name in target else None
+                    key = HostileKey(name)
+                    target[key] = value
+                    key.armed = True
+                    result = ADAPTER.validate_and_project(data)
+                    self.assertEqual(result["status"], "rejected")
+                    self.assertEqual(result["projection"], [])
+                    self.assertIn("NON_STRING_OBJECT_KEY", reason_codes(result))
+                    self.assertIn("UNSUPPORTED_INPUT_VALUE", reason_codes(result))
+                    json.dumps(result, allow_nan=False)
+
+    def test_structural_rejection_precedes_quarantine_for_both_record_kinds(self):
+        for kind in ("measured_outcome", "reporting_view"):
+            for malformed in (False, True):
+                for unresolved in (False, True):
+                    with self.subTest(kind=kind, malformed=malformed, unresolved=unresolved):
+                        data = fixture()
+                        owner = record(data) if kind == "measured_outcome" else append_ep12_view(data)
+                        if malformed:
+                            owner["follow_up_window"] = {"value": -1, "unit": "months"}
+                        if unresolved:
+                            if kind == "measured_outcome":
+                                owner["unit"] = "unsupported synthetic unit"
+                                quarantine_code = "UNIT_UNSUPPORTED"
+                            else:
+                                assessment = owner["field_assessments"]["withdrawals"]
+                                assessment.update(
+                                    field_status="reported", value="synthetic narrative",
+                                    source_refs=copy.deepcopy(
+                                        owner["field_assessments"]["time_origin"]["source_refs"]))
+                                quarantine_code = "REPORTING_VIEW_ASSESSMENT_SCHEMA_UNRESOLVED"
+                        result = ADAPTER.validate_and_project(data)
+                        disposition = "rejected" if malformed else "quarantined" if unresolved else "accepted"
+                        outcome = next(item for item in result["records"]
+                                       if item["record_id"] == owner["record_id"])
+                        self.assertEqual(outcome["disposition"], disposition)
+                        self.assertEqual(result["status"], disposition)
+                        if malformed:
+                            self.assertIn("FOLLOW_UP_WINDOW_INVALID", reason_codes(result))
+                        if unresolved:
+                            self.assertIn(quarantine_code, reason_codes(result))
+                        if malformed or unresolved:
+                            self.assertEqual(result["projection"], [])
+                        json.dumps(result, allow_nan=False)
+
+    def test_invalid_input_audit_uses_exact_identity_and_scope_values(self):
+        class HostileText(str):
+            def __hash__(self):
+                raise AssertionError("unsupported identity hash invoked")
+
+            def __eq__(self, other):
+                raise AssertionError("unsupported identity equality invoked")
+
+            def __str__(self):
+                raise AssertionError("unsupported identity text invoked")
+
+            def __deepcopy__(self, memo):
+                raise AssertionError("unsupported identity copy invoked")
+
+        for location in ("source_id", "record_source_id", "record_id", "scope"):
+            with self.subTest(location=location):
+                data = fixture()
+                if location == "source_id":
+                    data["sources"][0]["source_id"] = HostileText("SYN-SOURCE-1")
+                elif location == "record_source_id":
+                    record(data)["source_id"] = HostileText("SYN-SOURCE-1")
+                elif location == "record_id":
+                    record(data)["record_id"] = HostileText("SYN-OUTCOME-1")
+                else:
+                    data["sources"][0]["authorized_field_scope"].append(
+                        HostileText("co_interventions"))
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertEqual(result["projection"], [])
+                self.assertIn("UNSUPPORTED_INPUT_VALUE", reason_codes(result))
+                json.dumps(result, allow_nan=False)
+
+    def test_float_and_container_subclasses_reject_without_custom_hooks(self):
+        class HostileFloat(float):
+            def __repr__(self):
+                raise AssertionError("unsupported float repr invoked")
+
+        class HostileDict(dict):
+            def items(self):
+                raise AssertionError("unsupported dict traversal invoked")
+
+            def get(self, *args):
+                raise AssertionError("unsupported dict lookup invoked")
+
+        class HostileList(list):
+            def __iter__(self):
+                raise AssertionError("unsupported list traversal invoked")
+
+        class HostileTuple(tuple):
+            def __iter__(self):
+                raise AssertionError("unsupported tuple traversal invoked")
+
+        for payload in (HostileFloat("nan"), HostileDict(), HostileList(), HostileTuple()):
+            with self.subTest(type=type(payload).__name__):
+                data = fixture()
+                record(data)["co_interventions"] = [payload]
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertIn("UNSUPPORTED_INPUT_VALUE", reason_codes(result))
+                self.assertEqual(result["projection"], [])
+                self.assertEqual(ADAPTER._audit_safe(payload),
+                                 {"unsupported_input": type(payload).__name__})
+                json.dumps(result, allow_nan=False)
+        for location in ("records", "sources", "record", "source", "scope", "rights", "review"):
+            with self.subTest(envelope=location):
+                data = fixture()
+                if location in ("records", "sources"):
+                    data[location] = HostileList(data[location])
+                elif location == "record":
+                    data["records"][0] = HostileDict(data["records"][0])
+                elif location == "source":
+                    data["sources"][0] = HostileDict(data["sources"][0])
+                elif location == "scope":
+                    data["sources"][0]["authorized_field_scope"] = HostileList()
+                else:
+                    field = "rights" if location == "rights" else "review_provenance"
+                    data["sources"][0][field] = HostileDict()
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertIn("UNSUPPORTED_INPUT_VALUE", reason_codes(result))
+                json.dumps(result, allow_nan=False)
+        result = ADAPTER.validate_and_project(HostileDict())
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("INVALID_MANIFEST", reason_codes(result))
+        json.dumps(result, allow_nan=False)
+
     def test_oversized_integers_in_invalid_tuple_keys_are_recursively_checked(self):
         marker = {"unsupported_input": "integer magnitude exceeds synthetic limit"}
         for kind in ("measured_outcome", "reporting_view"):
@@ -1827,7 +2010,7 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             ([link("SYN-OUTCOME-1", "uncertain")],
              "COHORT_OVERLAP_UNRESOLVED", "quarantined", "SYN-VIEW-COHORT"),
             ([link("SYN-OUTCOME-1", "uncertain")],
-             "COHORT_LINK_COHORT_ID_MISSING", "quarantined", _OMIT_COHORT_ID),
+             "COHORT_LINK_COHORT_ID_MISSING", "rejected", _OMIT_COHORT_ID),
         )
         for links, expected_code, expected_disposition, cohort_id in cases:
             with self.subTest(links=links):
