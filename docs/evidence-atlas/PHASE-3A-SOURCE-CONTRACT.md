@@ -6,6 +6,8 @@
 
 One manifest entry identifies one exact source version and an explicitly authorized subset of its fields. A record carries source-faithful facts and their provenance; it does not infer a target value. A batch manifest may refer to multiple sources, but each endpoint record remains bound to its own source version, population, cohort, and locator.
 
+The proposed scope contract is exact by top-level record field: every projected source value must be named in `authorized_field_scope`, and every field emitted by the projection is checked against that allowlist. The nested EP-12 `field_assessments` object is one declared group; its child keys must exactly match the nine required taxonomy-draft assessment IDs, with no extras or missing slots. Identity, original state, and source locators are mandatory scope members. Audit bindings retain only those authorized record fields plus that identity/state/provenance envelope; adapter-control inputs are not projected as source values.
+
 ```json
 {
   "contract": "evidence-atlas-source-manifest",
@@ -112,6 +114,10 @@ The existing evidence tracker defines `analysis_denominator` as the number asses
 ## Endpoint and reporting-view constraints
 
 Retain the source endpoint definition and approved taxonomy identifier separately. A difference in threshold, population, time anchor, unit, or analysis rule is not repaired by relabeling or normalization. An unresolved or incompatible definition is quarantined. `EP-12` is a longitudinal reporting view, not an independently measured outcome: it can only reference eligible, separately identified constituent endpoint/outcome records. It must not carry a standalone result, denominator, or independent clinical claim.
+
+The current `taxonomy-v2.json` draft requires EP-12 assessments for `time_origin`, `follow_up_distribution`, `number_at_risk`, `withdrawals`, `censoring`, `retreatment`, `ongoing_cointerventions`, `constituent_endpoint_ids`, and `constituent_outcome_record_refs`. These are required assessments, not assertions that every value is known. A field assessment must retain its original state and nullable value; a pending or unavailable field is not converted into a guessed value or another taxonomy state.
+
+The experimental adapter implements only a synthetic demonstration of that assessment shape. It requires a source-bound, explicit `time_origin`, all nine assessment slots, and exact agreement between the eligible constituent records and the two constituent-reference assessments. The other fields may be explicitly marked pending in synthetic fixtures; the resulting view is labeled `synthetic_only_with_pending_required_fields` and is not represented as fully populated or scientifically taxonomy-compliant. Missing timing, assessment, or provenance fails closed by quarantine. This partial implementation does not approve any state mapping or extend to real-source records.
 
 ## Cohorts, transformation trace and status
 

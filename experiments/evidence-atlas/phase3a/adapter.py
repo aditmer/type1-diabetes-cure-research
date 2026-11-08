@@ -5,7 +5,9 @@ write path. Its CLI reads only the bundled fixture and prints a deterministic
 validation report to standard output.
 """
 
+import copy
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -26,6 +28,14 @@ MEASURED_ENDPOINTS = {
     "EP-07", "EP-08", "EP-09", "EP-10", "EP-11", "EP-13",
 }
 REPORTING_VIEW = "EP-12"
+REPORTING_VIEW_REQUIRED_FIELDS = {
+    "time_origin", "follow_up_distribution", "number_at_risk", "withdrawals",
+    "censoring", "retreatment", "ongoing_cointerventions",
+    "constituent_endpoint_ids", "constituent_outcome_record_refs",
+}
+PARTICIPANT_COUNT_UNITS = {
+    "participant", "participants", "synthetic participant", "synthetic participants",
+}
 SOURCE_KEYS = {
     "source_id",
     "source_version",
@@ -39,16 +49,21 @@ SOURCE_KEYS = {
     "evidence_context",
     "review_provenance",
 }
-REQUIRED_SCOPE = {
-    "endpoint_definition",
-    "field_status",
-    "observation_status",
-    "analysis_denominator",
-    "observed_measurement_count",
-    "missing_data_method",
-    "value",
-    "timing",
-    "cohort",
+SOURCE_SCOPE_FIELDS = {
+    "record_id", "record_kind", "source_id", "source_version", "endpoint_id",
+    "field_status", "observation_status", "source_refs", "endpoint_definition",
+    "time_origin", "timing_anchor", "assessment_timepoint", "follow_up_window",
+    "participant_count", "participant_count_status", "participant_count_review",
+    "participant_count_conflicts", "event_count", "analysis_denominator",
+    "observed_measurement_count", "missing_data_method", "analysis_population_id",
+    "observed_measurement_population_id", "population_basis_note", "value", "unit",
+    "co_interventions", "cohort_id", "cohort_links", "constituents",
+    "field_assessments",
+    "conflicting_values",
+}
+MANDATORY_SCOPE_FIELDS = {
+    "record_id", "record_kind", "source_id", "source_version", "endpoint_id",
+    "field_status", "observation_status", "source_refs",
 }
 RECORD_KEYS = {
     "record_id",
@@ -65,10 +80,15 @@ RECORD_KEYS = {
     "follow_up_window",
     "participant_count",
     "participant_count_status",
+    "participant_count_review",
+    "participant_count_conflicts",
     "event_count",
     "analysis_denominator",
     "observed_measurement_count",
     "missing_data_method",
+    "analysis_population_id",
+    "observed_measurement_population_id",
+    "population_basis_note",
     "value",
     "unit",
     "co_interventions",
@@ -78,6 +98,7 @@ RECORD_KEYS = {
     "conflicting_values",
     "review_evidence",
     "constituents",
+    "field_assessments",
     "requested_state_mapping",
     "mapping_target_definition",
 }
@@ -85,7 +106,7 @@ RECORD_KEYS = {
 
 def _issue(code, message, record_id=None):
     issue = {"code": code, "message": message}
-    if record_id is not None:
+    if isinstance(record_id, str):
         issue["record_id"] = record_id
     return issue
 
@@ -94,8 +115,46 @@ def _text(value):
     return isinstance(value, str) and bool(value.strip())
 
 
+def _audit_safe(value):
+    if isinstance(value, float) and not math.isfinite(value):
+        return {"non_finite_numeric_input": repr(value)}
+    if isinstance(value, dict):
+        return {key: _audit_safe(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_audit_safe(item) for item in value]
+    return copy.deepcopy(value)
+
+
+def _contains_nonfinite_number(value):
+    if type(value) is float:
+        return not math.isfinite(value)
+    if isinstance(value, dict):
+        return any(_contains_nonfinite_number(item) for item in value.values())
+    if isinstance(value, list):
+        return any(_contains_nonfinite_number(item) for item in value)
+    return False
+
+
 def _positive_number(value):
-    return type(value) in (int, float) and value > 0
+    return (type(value) in (int, float) and value > 0 and
+            (type(value) is int or math.isfinite(value)))
+
+
+def _record_scope_fields(record):
+    fields = {
+        "record_id", "record_kind", "source_id", "source_version", "endpoint_id",
+        "field_status", "observation_status", "source_refs",
+    }
+    fields.update(key for key in (
+        "endpoint_definition", "time_origin", "timing_anchor", "assessment_timepoint",
+        "follow_up_window", "participant_count", "participant_count_status",
+        "participant_count_review", "participant_count_conflicts", "event_count",
+        "analysis_denominator", "observed_measurement_count", "missing_data_method",
+        "analysis_population_id", "observed_measurement_population_id",
+        "population_basis_note", "value", "unit", "co_interventions", "cohort_id",
+        "cohort_links", "constituents", "field_assessments", "conflicting_values",
+    ) if key in record)
+    return fields
 
 
 def _source_map(sources):
@@ -104,7 +163,7 @@ def _source_map(sources):
 
     def source_issue(code, message, source_id):
         issue = _issue(code, message)
-        if source_id is not None:
+        if isinstance(source_id, str):
             issue["source_id"] = source_id
         return issue
 
@@ -143,6 +202,10 @@ def _source_map(sources):
             issues.append(source_issue(
                 "INVALID_SOURCE_REFERENCE",
                 f"{source_id} needs a version-bound synthetic record reference", source_id))
+        if not _text(source.get("document_type")):
+            issues.append(source_issue(
+                "DOCUMENT_TYPE_MISSING",
+                f"{source_id} must have a nonempty document_type", source_id))
         study_id = source.get("registry_trial_study_id")
         if study_id is not None and (
                 not _text(study_id) or not study_id.startswith("SYN-")):
@@ -168,10 +231,19 @@ def _source_map(sources):
             issues.append(source_issue(
                 "FIELD_SCOPE_MISSING",
                 f"{source_id} needs an explicit synthetic field scope", source_id))
-        elif not REQUIRED_SCOPE.issubset(set(field_scope)):
+        elif len(field_scope) != len(set(field_scope)):
+            issues.append(source_issue(
+                "FIELD_SCOPE_DUPLICATE",
+                f"{source_id} field scope entries must be unique", source_id))
+        elif not set(field_scope).issubset(SOURCE_SCOPE_FIELDS):
+            issues.append(source_issue(
+                "FIELD_SCOPE_INVALID",
+                f"{source_id} field scope contains unsupported fields", source_id))
+        elif not MANDATORY_SCOPE_FIELDS.issubset(field_scope):
             issues.append(source_issue(
                 "FIELD_SCOPE_INCOMPLETE",
-                f"{source_id} synthetic field scope is incomplete", source_id))
+                f"{source_id} field scope must include identity, state, and provenance fields",
+                source_id))
         if source.get("evidence_context") != "synthetic":
             issues.append(source_issue(
                 "NON_SYNTHETIC_EVIDENCE_CONTEXT",
@@ -203,6 +275,7 @@ def _validate_references(record, source):
                        "a measured record requires an exact source locator",
                        record.get("record_id"))]
     issues = []
+    original_reference = source.get("original_record_reference") if source else None
     prefix = f"synthetic://{record.get('source_version')}/"
     for ref in refs:
         if (not isinstance(ref, dict) or
@@ -213,6 +286,13 @@ def _validate_references(record, source):
             issues.append(_issue("SOURCE_PROVENANCE_MISMATCH",
                                  "locator must bind to the exact synthetic source version",
                                  record.get("record_id")))
+        elif (not _text(original_reference) or
+              (ref["location"] != original_reference and
+               not ref["location"].startswith(original_reference.rstrip("/") + "/"))):
+            issues.append(_issue(
+                "SOURCE_LOCATOR_OUTSIDE_APPROVED_SCOPE",
+                "locator must equal or descend from the manifest original_record_reference",
+                record.get("record_id")))
     if source and record.get("source_version") != source.get("source_version"):
         issues.append(_issue("SOURCE_PROVENANCE_MISMATCH",
                              "record and source versions differ",
@@ -220,9 +300,146 @@ def _validate_references(record, source):
     return issues
 
 
-def _validate_record(record, source, records_by_id):
+def _auditable_source_record(record, source):
+    scope = source.get("authorized_field_scope") if isinstance(source, dict) else None
+    authorized = set(scope) if isinstance(scope, list) and all(
+        isinstance(field, str) for field in scope) else set()
+    # Identity, original state, and locators form the audit binding envelope.
+    included = authorized | MANDATORY_SCOPE_FIELDS
+    return _audit_safe({key: value for key, value in record.items() if key in included})
+
+
+def _cohort_link_has_provenance(link, sources):
+    refs = link.get("source_refs")
+    if link.get("evidence_status") != "synthetic_fixture_only" or not isinstance(refs, list) or not refs:
+        return False
+    for ref in refs:
+        if not isinstance(ref, dict):
+            return False
+        source_id = ref.get("source_id")
+        source = sources.get(source_id) if isinstance(source_id, str) else None
+        location = ref.get("location")
+        if (source is None or ref.get("source_version") != source.get("source_version") or
+                not _text(location)):
+            return False
+        original_reference = source.get("original_record_reference")
+        if (not _text(original_reference) or
+                (location != original_reference and
+                 not location.startswith(original_reference.rstrip("/") + "/"))):
+            return False
+    return True
+
+
+def _cohort_graph_issues(records_by_id, sources):
+    issues_by_record = {}
+    subset_edges = []
+    distinct_edges = []
+    allowed_link_fields = {
+        "other_record_id", "relationship", "direction", "evidence_status", "source_refs",
+    }
+
+    def add(record_id, code, message):
+        issues_by_record.setdefault(record_id, []).append(
+            _issue(code, message, record_id))
+
+    for record_id, record in records_by_id.items():
+        links = record.get("cohort_links")
+        if not isinstance(links, list):
+            continue
+        for link in links:
+            if not isinstance(link, dict):
+                continue
+            if set(link) - allowed_link_fields:
+                add(record_id, "COHORT_LINK_FIELDS_INVALID",
+                    "cohort links may contain only the declared relationship and provenance fields")
+            relationship = link.get("relationship")
+            target_id = link.get("other_record_id")
+            if not isinstance(relationship, str) or relationship not in {
+                    "same", "subset", "distinct_within_program", "uncertain"}:
+                continue
+            if not isinstance(target_id, str) or target_id not in records_by_id:
+                continue
+            if target_id == record_id:
+                continue
+            if not _cohort_link_has_provenance(link, sources):
+                add(record_id, "COHORT_LINK_PROVENANCE_MISSING",
+                    "cohort relationships require synthetic fixture evidence bound to a manifest locator")
+                continue
+            if relationship == "uncertain":
+                continue
+            own_cohort = record.get("cohort_id")
+            other_cohort = records_by_id[target_id].get("cohort_id")
+            if (not isinstance(own_cohort, str) or not isinstance(other_cohort, str) or
+                    not own_cohort.startswith("SYN-") or not other_cohort.startswith("SYN-")):
+                continue
+            if relationship == "same":
+                if own_cohort != other_cohort:
+                    add(record_id, "COHORT_GRAPH_CONTRADICTION",
+                        "same-cohort relationship conflicts with declared cohort identities")
+                continue
+            if relationship == "distinct_within_program":
+                distinct_edges.append((own_cohort, other_cohort, record_id, target_id))
+                continue
+            direction = link.get("direction")
+            if direction == "this_is_subset":
+                subset_edges.append((own_cohort, other_cohort, record_id, target_id))
+            elif direction == "other_is_subset":
+                subset_edges.append((other_cohort, own_cohort, target_id, record_id))
+            if own_cohort == other_cohort:
+                add(record_id, "COHORT_GRAPH_CONTRADICTION",
+                    "a proper subset relationship cannot use the same cohort identity")
+
+    nodes = {
+        cohort_id for edge in subset_edges for cohort_id in edge[:2]
+    } | {cohort_id for edge in distinct_edges for cohort_id in edge[:2]}
+    reachability = {(node, node) for node in nodes}
+    reachability.update((smaller, larger) for smaller, larger, _, _ in subset_edges)
+    for pivot in nodes:
+        reachability.update(
+            (start, end) for start in nodes for end in nodes
+            if (start, pivot) in reachability and (pivot, end) in reachability
+        )
+    cyclic = {
+        node for node in nodes
+        if any(smaller == node and larger == node
+               for smaller, larger, _, _ in subset_edges) or
+        any(other != node and (node, other) in reachability and
+            (other, node) in reachability for other in nodes)
+    }
+    for smaller, larger, source_record, target_record in subset_edges:
+        if smaller in cyclic and larger in cyclic:
+            add(source_record, "COHORT_GRAPH_CONTRADICTION",
+                "subset relationships contain a directed cycle")
+            add(target_record, "COHORT_GRAPH_CONTRADICTION",
+                "subset relationships contain a directed cycle")
+    for first, second, source_record, target_record in distinct_edges:
+        if ((first, second) in reachability or (second, first) in reachability or
+                first == second):
+            add(source_record, "COHORT_GRAPH_CONTRADICTION",
+                "distinct cohorts conflict with a same-cohort or transitive subset relationship")
+            add(target_record, "COHORT_GRAPH_CONTRADICTION",
+                "distinct cohorts conflict with a same-cohort or transitive subset relationship")
+    return issues_by_record
+
+
+def _validate_record(record, source, records_by_id, sources):
     record_id = record.get("record_id")
     issues = []
+    if not isinstance(record_id, str) or not _text(record_id):
+        return [_issue("NON_SYNTHETIC_RECORD_ID",
+                       "record IDs must be nonempty text", record_id)], "rejected"
+    source_id = record.get("source_id")
+    if not isinstance(source_id, str) or not _text(source_id):
+        return [_issue("INVALID_SOURCE_ID",
+                       "record source_id must be nonempty text", record_id)], "rejected"
+    endpoint_id = record.get("endpoint_id")
+    if not isinstance(endpoint_id, str) or not _text(endpoint_id):
+        return [_issue("INVALID_ENDPOINT_ID",
+                       "endpoint_id must be nonempty text", record_id)], "rejected"
+    field_status = record.get("field_status")
+    if not isinstance(field_status, str) or field_status not in FIELD_STATUSES:
+        return [_issue("INVALID_FIELD_STATUS",
+                       f"unsupported original field status: {field_status}", record_id)], "rejected"
     required = {
         "record_id", "record_kind", "source_id", "source_version", "endpoint_id",
         "field_status", "source_refs", "review_evidence",
@@ -231,10 +448,14 @@ def _validate_record(record, source, records_by_id):
         required |= {
             "observation_status", "endpoint_definition", "time_origin", "timing_anchor",
             "assessment_timepoint", "follow_up_window", "participant_count",
-            "participant_count_status", "event_count", "analysis_denominator",
-            "observed_measurement_count", "missing_data_method", "value", "unit",
+            "participant_count_status", "participant_count_review",
+            "participant_count_conflicts", "event_count", "analysis_denominator",
+            "observed_measurement_count", "missing_data_method", "analysis_population_id",
+            "observed_measurement_population_id", "population_basis_note", "value", "unit",
             "co_interventions", "cohort_id", "cohort_links",
         }
+    elif record.get("record_kind") == "reporting_view":
+        required.add("field_assessments")
     missing = required - set(record)
     if missing:
         issues.append(_issue("REQUIRED_RECORD_FIELDS_MISSING",
@@ -243,15 +464,27 @@ def _validate_record(record, source, records_by_id):
     if unexpected:
         issues.append(_issue("UNEXPECTED_RECORD_FIELDS",
                              f"unexpected record fields: {sorted(unexpected)}", record_id))
-    if not _text(record_id) or not record_id.startswith("SYN-"):
+    if not record_id.startswith("SYN-"):
         issues.append(_issue("NON_SYNTHETIC_RECORD_ID",
                              "record IDs must use the SYN- namespace", record_id))
+    if not source_id.startswith("SYN-"):
+        issues.append(_issue("NON_SYNTHETIC_SOURCE_ID",
+                             "source IDs must use the SYN- namespace", record_id))
     if source is None:
         issues.append(_issue("SOURCE_NOT_IN_MANIFEST",
                              "record source is not in the manifest", record_id))
     elif record.get("source_version") != source.get("source_version"):
         issues.append(_issue("UNAPPROVED_SOURCE_VERSION",
                              "record source version does not match the manifest", record_id))
+    if source is not None:
+        field_scope = source.get("authorized_field_scope")
+        if isinstance(field_scope, list):
+            unauthorized = _record_scope_fields(record) - set(field_scope)
+            if unauthorized:
+                issues.append(_issue(
+                    "FIELD_OUTSIDE_AUTHORIZED_SCOPE",
+                    f"record projects fields outside authorized_field_scope: {sorted(unauthorized)}",
+                    record_id))
     issues.extend(_validate_references(record, source))
 
     if not isinstance(record.get("review_evidence"), dict):
@@ -263,12 +496,19 @@ def _validate_record(record, source, records_by_id):
                              "synthetic data cannot assert human adjudication or approval",
                              record_id))
 
-    endpoint_id = record.get("endpoint_id")
     kind = record.get("record_kind")
     if kind == "reporting_view":
-        if endpoint_id != REPORTING_VIEW:
+        if not isinstance(endpoint_id, str) or endpoint_id != REPORTING_VIEW:
             issues.append(_issue("INVALID_ENDPOINT_KIND",
                                  "reporting_view records must use EP-12", record_id))
+        if field_status != "not_applicable":
+            issues.append(_issue("SOURCE_STATE_NOT_PROJECTABLE",
+                                 "reporting views require not_applicable field status",
+                                 record_id))
+        if record.get("requested_state_mapping") is not None:
+            issues.append(_issue("STATE_MAPPING_UNAUTHORIZED",
+                                 "no Q3-to-Atlas state mapping is authorized; preserve the original state",
+                                 record_id))
         if any(key in record for key in (
                 "value", "unit", "analysis_denominator", "observed_measurement_count",
                 "participant_count", "event_count")):
@@ -288,6 +528,14 @@ def _validate_record(record, source, records_by_id):
                     continue
                 constituent_id = constituent.get("record_id")
                 endpoint = constituent.get("endpoint_id")
+                if not isinstance(constituent_id, str) or not _text(constituent_id):
+                    issues.append(_issue("INVALID_REPORTING_VIEW_CONSTITUENT",
+                                         "constituent record_id must be nonempty text", record_id))
+                    continue
+                if not isinstance(endpoint, str):
+                    issues.append(_issue("INVALID_REPORTING_VIEW_CONSTITUENT",
+                                         "constituent endpoint_id must be text", record_id))
+                    continue
                 target = records_by_id.get(constituent_id)
                 if constituent_id in seen:
                     issues.append(_issue("DUPLICATE_REPORTING_VIEW_CONSTITUENT",
@@ -301,13 +549,128 @@ def _validate_record(record, source, records_by_id):
                     issues.append(_issue("INELIGIBLE_REPORTING_VIEW_CONSTITUENT",
                                          "EP-12 constituents must reference reported, observed measured endpoints",
                                          record_id))
+        assessments = record.get("field_assessments")
+        if not isinstance(assessments, dict) or set(assessments) != REPORTING_VIEW_REQUIRED_FIELDS:
+            issues.append(_issue(
+                "REPORTING_VIEW_ASSESSMENTS_INCOMPLETE",
+                "EP-12 must assess every required taxonomy field, including explicit unknown/pending states",
+                record_id))
+        else:
+            for field, assessment in assessments.items():
+                if (not isinstance(assessment, dict) or
+                    set(assessment) != {
+                        "field_status", "value", "source_refs", "provenance",
+                    }):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_ASSESSMENT_INVALID",
+                    f"EP-12 assessment {field} must preserve state, value, references, and synthetic provenance",
+                    record_id))
+                    continue
+                assessment_status = assessment.get("field_status")
+                assessment_value = assessment.get("value")
+                assessment_refs = assessment.get("source_refs")
+                if (not isinstance(assessment_status, str) or
+                    assessment_status not in FIELD_STATUSES):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_ASSESSMENT_STATUS_INVALID",
+                    f"EP-12 assessment {field} has an unsupported original state",
+                    record_id))
+                elif assessment_status == "reported" and assessment_value is None:
+                    issues.append(_issue(
+                    "REPORTING_VIEW_ASSESSMENT_VALUE_MISSING",
+                    f"reported EP-12 assessment {field} requires an explicit value",
+                    record_id))
+                elif assessment_status != "reported" and assessment_value is not None:
+                    issues.append(_issue(
+                    "REPORTING_VIEW_ASSESSMENT_STATE_VALUE_MISMATCH",
+                    f"non-reported EP-12 assessment {field} must retain a null value",
+                    record_id))
+                if _contains_nonfinite_number(assessment_value):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
+                    f"EP-12 assessment {field} contains a non-finite numeric value",
+                    record_id))
+                if assessment.get("provenance") != "synthetic_fixture_only":
+                    issues.append(_issue(
+                    "REPORTING_VIEW_PROVENANCE_MISSING",
+                    f"EP-12 assessment {field} must be explicitly synthetic",
+                    record_id))
+                if not isinstance(assessment_refs, list):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_PROVENANCE_MISSING",
+                    f"EP-12 assessment {field} source_refs must be a list",
+                    record_id))
+                elif assessment_refs and not _cohort_link_has_provenance({
+                    "evidence_status": "synthetic_fixture_only",
+                    "source_refs": assessment_refs,
+                }, sources):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_PROVENANCE_MISSING",
+                    f"EP-12 assessment {field} references must bind to manifest source locators",
+                    record_id))
+                elif (assessment_status == "reported" and field not in {
+                    "constituent_endpoint_ids", "constituent_outcome_record_refs"} and
+                      not assessment_refs):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_PROVENANCE_MISSING",
+                    f"reported EP-12 assessment {field} requires a source-bound locator",
+                    record_id))
+            time_assessment = assessments.get("time_origin")
+            if (not isinstance(time_assessment, dict) or
+                    time_assessment.get("field_status") != "reported" or
+                    not _text(time_assessment.get("value")) or
+                    not isinstance(time_assessment.get("source_refs"), list) or
+                    not time_assessment.get("source_refs")):
+                issues.append(_issue(
+                    "REPORTING_VIEW_TIMING_MISSING",
+                    "EP-12 requires a source-bound, explicit time_origin assessment",
+                    record_id))
+                issues.append(_issue(
+                    "REPORTING_VIEW_PROVENANCE_MISSING",
+                    "EP-12 time_origin requires at least one source-bound synthetic locator",
+                    record_id))
+            endpoint_assessment = assessments.get("constituent_endpoint_ids")
+            outcome_assessment = assessments.get("constituent_outcome_record_refs")
+            if isinstance(constituents, list):
+                expected_endpoints = [
+                    item.get("endpoint_id") for item in constituents if isinstance(item, dict)
+                ]
+                expected_records = [
+                    item.get("record_id") for item in constituents if isinstance(item, dict)
+                ]
+                if (not isinstance(endpoint_assessment, dict) or
+                    endpoint_assessment.get("field_status") != "reported" or
+                    endpoint_assessment.get("value") != expected_endpoints):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_CONSTITUENT_ASSESSMENT_MISMATCH",
+                    "constituent_endpoint_ids assessment must exactly match eligible references",
+                    record_id))
+                if (not isinstance(outcome_assessment, dict) or
+                    outcome_assessment.get("field_status") != "reported" or
+                    outcome_assessment.get("value") != expected_records):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_CONSTITUENT_ASSESSMENT_MISMATCH",
+                    "constituent_outcome_record_refs assessment must exactly match eligible records",
+                    record_id))
         if issues:
-            return issues, "rejected"
+            quarantined = any(issue["code"] in {
+                "SOURCE_STATE_NOT_PROJECTABLE", "STATE_MAPPING_UNAUTHORIZED",
+                "REPORTING_VIEW_ASSESSMENTS_INCOMPLETE",
+                "REPORTING_VIEW_ASSESSMENT_INVALID",
+                "REPORTING_VIEW_ASSESSMENT_STATUS_INVALID",
+                "REPORTING_VIEW_ASSESSMENT_VALUE_MISSING",
+                "REPORTING_VIEW_ASSESSMENT_STATE_VALUE_MISMATCH",
+                "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
+                "REPORTING_VIEW_PROVENANCE_MISSING",
+                "REPORTING_VIEW_TIMING_MISSING",
+                "REPORTING_VIEW_CONSTITUENT_ASSESSMENT_MISMATCH",
+            } for issue in issues)
+            return issues, "quarantined" if quarantined else "rejected"
         return [], "accepted"
     if kind != "measured_outcome":
         issues.append(_issue("INVALID_RECORD_KIND",
                              "record_kind must be measured_outcome or reporting_view", record_id))
-    if endpoint_id not in MEASURED_ENDPOINTS:
+    if not isinstance(endpoint_id, str) or endpoint_id not in MEASURED_ENDPOINTS:
         if endpoint_id == REPORTING_VIEW:
             issues.append(_issue("REPORTING_VIEW_AS_MEASURED_OUTCOME",
                                  "EP-12 is a reporting view, not a measured endpoint", record_id))
@@ -327,11 +690,13 @@ def _validate_record(record, source, records_by_id):
                              "no Q3-to-Atlas state mapping is authorized; preserve the original state",
                              record_id))
 
-    status = record.get("field_status")
-    if status not in FIELD_STATUSES:
-        issues.append(_issue("INVALID_FIELD_STATUS",
-                             f"unsupported original field status: {status}", record_id))
-    elif status != "reported":
+    status = field_status
+    if status != "reported":
+        if record.get("value") is not None:
+            issues.append(_issue(
+                "FIELD_STATE_VALUE_MISMATCH",
+                "non-reported source states must retain a null value",
+                record_id))
         code = ("CONFLICT_REQUIRES_ADJUDICATION" if status == "conflicting"
                 else "SOURCE_STATE_NOT_PROJECTABLE")
         if status == "conflicting":
@@ -392,9 +757,30 @@ def _validate_record(record, source, records_by_id):
         issues.append(_issue("MISSING_DATA_METHOD_REQUIRED",
                              "a differing analysis denominator and observed count require a method",
                              record_id))
+    analysis_population = record.get("analysis_population_id")
+    observed_population = record.get("observed_measurement_population_id")
+    if (not isinstance(analysis_population, str) or not analysis_population.startswith("SYN-") or
+            not isinstance(observed_population, str) or not observed_population.startswith("SYN-")):
+        issues.append(_issue("DENOMINATOR_POPULATION_MISSING",
+                             "analysis and observed-count population bases must be explicit",
+                             record_id))
+    populations_differ = (
+        isinstance(analysis_population, str) and
+        isinstance(observed_population, str) and
+        analysis_population != observed_population
+    )
+    if populations_differ and not _text(record.get("population_basis_note")):
+        issues.append(_issue("DENOMINATOR_POPULATION_UNEXPLAINED",
+                             "distinct population bases require an explicit explanation",
+                             record_id))
+    if (type(denominator) is int and type(observed_count) is int and
+            observed_count > denominator and not populations_differ):
+        issues.append(_issue("OBSERVED_COUNT_EXCEEDS_ANALYSIS_DENOMINATOR",
+                             "observed count exceeds the analysis denominator for the same population",
+                             record_id))
     participant_status = record.get("participant_count_status")
     participant_count = record.get("participant_count")
-    if participant_status not in FIELD_STATUSES:
+    if not isinstance(participant_status, str) or participant_status not in FIELD_STATUSES:
         issues.append(_issue("PARTICIPANT_COUNT_STATUS_INVALID",
                              "participant_count_status must preserve a supported field state",
                              record_id))
@@ -409,6 +795,54 @@ def _validate_record(record, source, records_by_id):
     if participant_status != "reported" and participant_count is not None:
         issues.append(_issue("UNAVAILABLE_COUNT_HAS_VALUE",
                              "unavailable participant counts must remain null", record_id))
+    if participant_status == "unreported_in_reviewed_material":
+        field_review = record.get("participant_count_review")
+        if (not isinstance(field_review, dict) or
+                field_review != {
+                    "status": "completed_synthetic_fixture_review",
+                    "field": "participant_count",
+                    "scope": f"synthetic://{record.get('source_version')}/participant-count",
+                    "review_complete": True,
+                }):
+            issues.append(_issue(
+                "PARTICIPANT_COUNT_REVIEW_INCOMPLETE",
+                "unreported participant count requires completed field-specific synthetic review provenance",
+                record_id))
+    elif participant_status == "not_yet_extracted":
+        if record.get("participant_count_review") not in (None, {
+                "status": "pending_synthetic_fixture_review",
+                "field": "participant_count",
+                "review_complete": False,
+        }):
+            issues.append(_issue(
+                "PENDING_COUNT_HAS_REVIEW_CLAIM",
+                "not_yet_extracted participant count cannot claim completed review",
+                record_id))
+    elif participant_status == "conflicting":
+        if participant_count is not None:
+            issues.append(_issue("PARTICIPANT_COUNT_CONFLICT_HAS_VALUE",
+                                 "conflicting participant counts cannot select a value", record_id))
+        conflicts = record.get("participant_count_conflicts")
+        conflict_refs = {
+            (item.get("source_id"), item.get("source_version"), item.get("location"))
+            for item in conflicts if isinstance(item, dict) and
+            isinstance(item.get("source_id"), str) and
+            isinstance(item.get("source_version"), str) and
+            isinstance(item.get("location"), str)
+        } if isinstance(conflicts, list) else set()
+        source_refs = {
+            (item.get("source_id"), item.get("source_version"), item.get("location"))
+            for item in record.get("source_refs", []) if isinstance(item, dict) and
+            isinstance(item.get("source_id"), str) and
+            isinstance(item.get("source_version"), str) and
+            isinstance(item.get("location"), str)
+        }
+        if len(conflict_refs) < 2 or not conflict_refs.issubset(source_refs):
+            issues.append(_issue("PARTICIPANT_COUNT_CONFLICT_PROVENANCE_INCOMPLETE",
+                                 "conflicting counts require distinct cited source locators",
+                                 record_id))
+        issues.append(_issue("PARTICIPANT_COUNT_CONFLICT",
+                             "conflicting participant count remains unresolved", record_id))
     if type(participant_count) is int and participant_count < 0:
         issues.append(_issue("PARTICIPANT_COUNT_INVALID",
                              "participant_count must be nonnegative", record_id))
@@ -428,13 +862,22 @@ def _validate_record(record, source, records_by_id):
         issues.append(_issue("CO_INTERVENTIONS_INVALID",
                              "co_interventions must preserve a source-defined list", record_id))
     value = record.get("value")
-    if (type(value) not in (int, float, str) or
-            (isinstance(value, str) and not value.strip())):
+    if status == "reported" and (
+            type(value) not in (int, float, str) or
+            (isinstance(value, str) and not value.strip()) or
+            (type(value) is float and not math.isfinite(value))):
         issues.append(_issue("REPORTED_VALUE_INVALID",
-                             "a reported synthetic value must be a number or nonempty text",
+                             "a reported synthetic value must be finite numeric data or nonempty text",
                              record_id))
     if not _text(record.get("unit")):
         issues.append(_issue("UNIT_MISSING", "source-defined unit is required", record_id))
+    if record.get("unit") in PARTICIPANT_COUNT_UNITS:
+        if (type(value) is not int or participant_status != "reported" or
+                participant_count != value):
+            issues.append(_issue(
+                "PARTICIPANT_VALUE_COUNT_MISMATCH",
+                "participant-valued results must equal the explicitly reported participant_count",
+                record_id))
     if (type(participant_count) is int and type(denominator) is int and
             participant_count > denominator):
         issues.append(_issue("PARTICIPANT_COUNT_EXCEEDS_DENOMINATOR",
@@ -448,15 +891,30 @@ def _validate_record(record, source, records_by_id):
         issues.append(_issue("COHORT_LINKS_INVALID", "cohort_links must be a list", record_id))
     else:
         for link in links:
-            if not isinstance(link, dict) or link.get("relationship") not in {
+            if not isinstance(link, dict):
+                issues.append(_issue("COHORT_LINK_INVALID",
+                                     "cohort relationship must be an object", record_id))
+                continue
+            unexpected_link_fields = set(link) - {
+                "other_record_id", "relationship", "direction",
+                "evidence_status", "source_refs",
+            }
+            if unexpected_link_fields:
+                issues.append(_issue(
+                    "COHORT_LINK_FIELDS_INVALID",
+                    "cohort links may contain only the declared relationship and provenance fields",
+                    record_id))
+            relationship = link.get("relationship")
+            if not isinstance(relationship, str) or relationship not in {
                     "same", "subset", "distinct_within_program", "uncertain"}:
                 issues.append(_issue("COHORT_LINK_INVALID",
                                      "cohort relationship is invalid", record_id))
-            elif link["relationship"] == "uncertain":
+            elif relationship == "uncertain":
                 issues.append(_issue("COHORT_OVERLAP_UNRESOLVED",
                                      "uncertain cohort links remain unresolved; no pooling or independence",
                                      record_id))
-            elif link.get("other_record_id") not in records_by_id:
+            elif (not isinstance(link.get("other_record_id"), str) or
+                  link.get("other_record_id") not in records_by_id):
                 issues.append(_issue("COHORT_LINK_TARGET_MISSING",
                                      "cohort link target must resolve to a fixture record", record_id))
             elif link.get("other_record_id") == record_id:
@@ -465,18 +923,20 @@ def _validate_record(record, source, records_by_id):
             else:
                 target = records_by_id[link["other_record_id"]]
                 target_cohort = target.get("cohort_id")
-                if (link["relationship"] == "same" and
+                if (relationship == "same" and
                         target_cohort != record.get("cohort_id")):
                     issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",
                                          "same-cohort records must preserve one cohort identity",
                                          record_id))
-                if (link["relationship"] == "distinct_within_program" and
+                if (relationship == "distinct_within_program" and
                         target_cohort == record.get("cohort_id")):
                     issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",
                                          "distinct records cannot share a cohort identity",
                                          record_id))
-                if (link["relationship"] == "subset" and link.get("direction") not in {
-                        "this_is_subset", "other_is_subset"}):
+                direction = link.get("direction")
+                if (relationship == "subset" and (
+                        not isinstance(direction, str) or
+                        direction not in {"this_is_subset", "other_is_subset"})):
                     issues.append(_issue("COHORT_SUBSET_DIRECTION_MISSING",
                                          "subset relationships require an explicit direction",
                                          record_id))
@@ -485,7 +945,8 @@ def _validate_record(record, source, records_by_id):
         quarantined = any(issue["code"] in {
             "SOURCE_STATE_NOT_PROJECTABLE", "CONFLICT_REQUIRES_ADJUDICATION",
             "COHORT_OVERLAP_UNRESOLVED", "HUMAN_ADJUDICATION_MISSING",
-            "STATE_MAPPING_UNAUTHORIZED",
+            "STATE_MAPPING_UNAUTHORIZED", "PARTICIPANT_COUNT_REVIEW_INCOMPLETE",
+            "PARTICIPANT_COUNT_CONFLICT", "PARTICIPANT_COUNT_CONFLICT_PROVENANCE_INCOMPLETE",
         } for issue in issues)
         return issues, "quarantined" if quarantined else "rejected"
     return [], "accepted"
@@ -515,11 +976,11 @@ def validate_and_project(manifest):
                                  "only an explicitly synthetic manifest is accepted"))
     if manifest.get("taxonomy_version") != TAXONOMY_VERSION:
         top_issues.append(_issue("TAXONOMY_VERSION_UNRESOLVED",
-                                 "fixture must pin the reviewed synthetic taxonomy snapshot"))
+                                 "fixture must pin the declared synthetic taxonomy version"))
     sources, source_issues = _source_map(manifest.get("sources"))
     referenced_source_ids = {
         record.get("source_id") for record in manifest.get("records", [])
-        if isinstance(record, dict)
+        if isinstance(record, dict) and isinstance(record.get("source_id"), str)
     } if isinstance(manifest.get("records"), list) else set()
     top_issues.extend(
         issue for issue in source_issues
@@ -529,25 +990,33 @@ def validate_and_project(manifest):
     if not isinstance(records, list):
         top_issues.append(_issue("INVALID_RECORDS", "records must be a list"))
         records = []
+    elif not records:
+        top_issues.append(_issue("EMPTY_BATCH",
+                                 "at least one synthetic record is required for validation"))
     records_by_id = {}
     for record in records:
         if not isinstance(record, dict):
             top_issues.append(_issue("INVALID_RECORD", "each record must be an object"))
             continue
         record_id = record.get("record_id")
-        if record_id in records_by_id:
+        if not isinstance(record_id, str) or not _text(record_id):
+            top_issues.append(_issue("NON_SYNTHETIC_RECORD_ID",
+                                     "record IDs must be nonempty text", record_id))
+        elif record_id in records_by_id:
             top_issues.append(_issue("DUPLICATE_RECORD_ID",
                                      f"duplicate record ID: {record_id}", record_id))
         else:
             records_by_id[record_id] = record
 
+    cohort_issues = _cohort_graph_issues(records_by_id, sources)
     outcomes = []
     projection = []
     for record in records:
         if not isinstance(record, dict):
             continue
-        source = sources.get(record.get("source_id"))
-        record_issues, disposition = _validate_record(record, source, records_by_id)
+        source_id = record.get("source_id")
+        source = sources.get(source_id) if isinstance(source_id, str) else None
+        record_issues, disposition = _validate_record(record, source, records_by_id, sources)
         related_source_issues = [
             {**issue, "record_id": record.get("record_id")}
             for issue in source_issues
@@ -556,9 +1025,19 @@ def validate_and_project(manifest):
         if related_source_issues:
             record_issues.extend(related_source_issues)
             disposition = "rejected"
+        graph_issues = cohort_issues.get(record.get("record_id"), [])
+        if graph_issues:
+            record_issues.extend(graph_issues)
+            if disposition == "accepted":
+                disposition = "quarantined"
+        source_binding = {
+            "manifest_source": _audit_safe(source) if source is not None else None,
+            "original_record": _auditable_source_record(record, source),
+        }
         outcomes.append({
             "record_id": record.get("record_id"),
             "disposition": disposition,
+            "source_binding": source_binding,
             "reasons": sorted(record_issues, key=lambda issue: (issue["code"], issue["message"])),
         })
         if disposition == "accepted":
@@ -570,16 +1049,29 @@ def validate_and_project(manifest):
                 "endpoint_id": record["endpoint_id"],
                 "original_field_status": record["field_status"],
                 "observation_status": record.get("observation_status"),
-                "source_refs": record.get("source_refs", []),
+                "source_refs": _audit_safe(record.get("source_refs", [])),
+                "source_binding": source_binding,
                 "source_values": {
                     key: record[key] for key in (
                         "endpoint_definition", "time_origin", "timing_anchor",
                         "assessment_timepoint", "follow_up_window", "participant_count",
-                        "participant_count_status", "event_count", "analysis_denominator",
-                        "observed_measurement_count", "missing_data_method", "value", "unit",
-                        "co_interventions", "cohort_id", "cohort_links", "constituents",
+                        "participant_count_status", "participant_count_review",
+                        "participant_count_conflicts", "event_count", "analysis_denominator",
+                        "observed_measurement_count", "missing_data_method",
+                        "analysis_population_id", "observed_measurement_population_id",
+                        "population_basis_note", "value", "unit", "co_interventions",
+                        "cohort_id", "cohort_links", "constituents", "field_assessments",
+                        "conflicting_values",
                     ) if key in record
                 },
+                **({
+                    "taxonomy_assessment_status": (
+                        "synthetic_only_with_pending_required_fields"
+                        if any(item.get("field_status") != "reported"
+                               for item in record.get("field_assessments", {}).values())
+                        else "synthetic_only_all_required_fields_reported"
+                    )
+                } if record.get("record_kind") == "reporting_view" else {}),
                 "transformation": {
                     "rule_id": "identity-preserving-synthetic-projection",
                     "software_version": CONTRACT_VERSION,
@@ -608,13 +1100,18 @@ def validate_and_project(manifest):
 
 
 def main():
+    if sys.argv[1:]:
+        print("Phase 3A adapter accepts no CLI arguments; only the bundled synthetic fixture is supported.",
+              file=sys.stderr)
+        return 2
     try:
         manifest = json.loads(FIXTURE.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         print(f"Phase 3A synthetic validation failed: {exc}", file=sys.stderr)
         return 1
     report = validate_and_project(manifest)
-    print(json.dumps(report, ensure_ascii=True, sort_keys=True, separators=(",", ":")))
+    print(json.dumps(report, ensure_ascii=True, sort_keys=True, separators=(",", ":"),
+                     allow_nan=False))
     return 0 if report["status"] == "accepted" else 1
 
 
