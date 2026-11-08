@@ -12,7 +12,8 @@ Approval of Phase 2 design does not by itself authorize Phase 3 source access or
 
 | Field | Value |
 |---|---|
-| Exact repository commit reviewed | `3571a2334cf1cbcb895d81155f1fae42e5459836` |
+| Underlying Phase 2 baseline reviewed | `3571a2334cf1cbcb895d81155f1fae42e5459836` |
+| Exact package PR-head commit reviewed by human maintainer | **PENDING — REVIEWER TO RECORD AFTER REVIEW** |
 | PR #91 | Merged; implementation only, not scientific approval |
 | Issue #92 | Open; human decision pending |
 | Reviewer name / role | **PENDING — NOT PROVIDED** |
@@ -20,7 +21,7 @@ Approval of Phase 2 design does not by itself authorize Phase 3 source access or
 | Decision authority | **PENDING — NOT VERIFIED** |
 | Approval status for every proposal | **PENDING / NOT AUTHORIZED** |
 
-This package does not fill the reviewer identity/date fields. The document author is not the maintainer reviewer and cannot sign or approve on the maintainer's behalf.
+The baseline above identifies the underlying Phase 2 material, not this decision package. A human maintainer must record the exact package PR-head SHA they reviewed after completing review; a document cannot self-embed its own final commit SHA. This package does not fill reviewer identity, review date, reviewed-head, signature, or approval fields. The document author is not the maintainer reviewer and cannot sign or approve on the maintainer's behalf.
 
 ## Decision record template — leave blank until a human completes it
 
@@ -29,6 +30,8 @@ This package does not fill the reviewer identity/date fields. The document autho
 **Decision date (UTC):** PENDING — NOT PROVIDED
 
 **Authority and scope for this decision:** PENDING — NOT VERIFIED
+
+**Exact package PR-head commit reviewed:** PENDING — REVIEWER TO RECORD
 
 **Evidence/material reviewed for this decision:** PENDING — NOT RECORDED
 
