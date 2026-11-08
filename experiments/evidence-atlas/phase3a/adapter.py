@@ -581,6 +581,68 @@ def _cohort_graph_issues(records_by_id, sources):
     return issues_by_record
 
 
+def _validate_cohort_links(record, record_id, records_by_id):
+    issues = []
+    links = record.get("cohort_links")
+    if not isinstance(links, list):
+        return [_issue("COHORT_LINKS_INVALID",
+                       "cohort_links must be a list", record_id)]
+    for link in links:
+        if not isinstance(link, dict):
+            issues.append(_issue("COHORT_LINK_INVALID",
+                                 "cohort relationship must be an object", record_id))
+            continue
+        unexpected_link_fields = set(link) - {
+            "other_record_id", "relationship", "direction",
+            "evidence_status", "source_refs",
+        }
+        if unexpected_link_fields:
+            issues.append(_issue(
+                "COHORT_LINK_FIELDS_INVALID",
+                "cohort links may contain only the declared relationship and provenance fields",
+                record_id))
+        relationship = link.get("relationship")
+        if not isinstance(relationship, str) or relationship not in {
+                "same", "subset", "distinct_within_program", "uncertain"}:
+            issues.append(_issue("COHORT_LINK_INVALID",
+                                 "cohort relationship is invalid", record_id))
+            continue
+        if relationship == "uncertain":
+            issues.append(_issue("COHORT_OVERLAP_UNRESOLVED",
+                                 "uncertain cohort links remain unresolved; no pooling or independence",
+                                 record_id))
+            continue
+        target_id = link.get("other_record_id")
+        if not isinstance(target_id, str) or target_id not in records_by_id:
+            issues.append(_issue("COHORT_LINK_TARGET_MISSING",
+                                 "cohort link target must resolve to a fixture record", record_id))
+            continue
+        if target_id == record_id:
+            issues.append(_issue("COHORT_LINK_SELF_REFERENCE",
+                                 "a cohort relationship cannot refer to itself", record_id))
+            continue
+        target = records_by_id[target_id]
+        target_cohort = target.get("cohort_id")
+        if (relationship == "same" and
+                target_cohort != record.get("cohort_id")):
+            issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",
+                                 "same-cohort records must preserve one cohort identity",
+                                 record_id))
+        if (relationship == "distinct_within_program" and
+                target_cohort == record.get("cohort_id")):
+            issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",
+                                 "distinct records cannot share a cohort identity",
+                                 record_id))
+        direction = link.get("direction")
+        if (relationship == "subset" and (
+                not isinstance(direction, str) or
+                direction not in {"this_is_subset", "other_is_subset"})):
+            issues.append(_issue("COHORT_SUBSET_DIRECTION_MISSING",
+                                 "subset relationships require an explicit direction",
+                                 record_id))
+    return issues
+
+
 def _validate_record(record, source, records_by_id, sources):
     record_id = record.get("record_id")
     issues = []
@@ -664,6 +726,8 @@ def _validate_record(record, source, records_by_id, sources):
             "constituent references and taxonomy assessments are limited to reporting views",
             record_id))
     if kind == "reporting_view":
+        if "cohort_links" in record:
+            issues.extend(_validate_cohort_links(record, record_id, records_by_id))
         if not isinstance(endpoint_id, str) or endpoint_id != REPORTING_VIEW:
             issues.append(_issue("INVALID_ENDPOINT_KIND",
                                  "reporting_view records must use EP-12", record_id))
@@ -780,6 +844,14 @@ def _validate_record(record, source, records_by_id, sources):
                     record_id))
                 elif (assessment_status == "reported" and
                       field == "number_at_risk" and
+                      type(assessment_value) in (int, float) and
+                      assessment_value < 0):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
+                    "reported EP-12 number_at_risk cannot be negative",
+                    record_id))
+                elif (assessment_status == "reported" and
+                      field == "number_at_risk" and
                       isinstance(assessment_value, (list, dict)) and
                       not assessment_value):
                     issues.append(_issue(
@@ -892,6 +964,7 @@ def _validate_record(record, source, records_by_id, sources):
                 "REPORTING_VIEW_FIELD_REVIEW_UNVERIFIED",
                 "REPORTING_VIEW_FIELD_CONFLICT_UNRESOLVED",
                 "REPORTING_VIEW_CONSTITUENT_ASSESSMENT_MISMATCH",
+                "COHORT_OVERLAP_UNRESOLVED",
             } for issue in issues)
             return issues, "quarantined" if quarantined else "rejected"
         return [], "accepted"
@@ -1164,60 +1237,7 @@ def _validate_record(record, source, records_by_id, sources):
     if not _text(record.get("cohort_id")) or not record["cohort_id"].startswith("SYN-"):
         issues.append(_issue("COHORT_ID_INVALID",
                              "cohort identity must use the SYN- namespace", record_id))
-    links = record.get("cohort_links")
-    if not isinstance(links, list):
-        issues.append(_issue("COHORT_LINKS_INVALID", "cohort_links must be a list", record_id))
-    else:
-        for link in links:
-            if not isinstance(link, dict):
-                issues.append(_issue("COHORT_LINK_INVALID",
-                                     "cohort relationship must be an object", record_id))
-                continue
-            unexpected_link_fields = set(link) - {
-                "other_record_id", "relationship", "direction",
-                "evidence_status", "source_refs",
-            }
-            if unexpected_link_fields:
-                issues.append(_issue(
-                    "COHORT_LINK_FIELDS_INVALID",
-                    "cohort links may contain only the declared relationship and provenance fields",
-                    record_id))
-            relationship = link.get("relationship")
-            if not isinstance(relationship, str) or relationship not in {
-                    "same", "subset", "distinct_within_program", "uncertain"}:
-                issues.append(_issue("COHORT_LINK_INVALID",
-                                     "cohort relationship is invalid", record_id))
-            elif relationship == "uncertain":
-                issues.append(_issue("COHORT_OVERLAP_UNRESOLVED",
-                                     "uncertain cohort links remain unresolved; no pooling or independence",
-                                     record_id))
-            elif (not isinstance(link.get("other_record_id"), str) or
-                  link.get("other_record_id") not in records_by_id):
-                issues.append(_issue("COHORT_LINK_TARGET_MISSING",
-                                     "cohort link target must resolve to a fixture record", record_id))
-            elif link.get("other_record_id") == record_id:
-                issues.append(_issue("COHORT_LINK_SELF_REFERENCE",
-                                     "a cohort relationship cannot refer to itself", record_id))
-            else:
-                target = records_by_id[link["other_record_id"]]
-                target_cohort = target.get("cohort_id")
-                if (relationship == "same" and
-                        target_cohort != record.get("cohort_id")):
-                    issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",
-                                         "same-cohort records must preserve one cohort identity",
-                                         record_id))
-                if (relationship == "distinct_within_program" and
-                        target_cohort == record.get("cohort_id")):
-                    issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",
-                                         "distinct records cannot share a cohort identity",
-                                         record_id))
-                direction = link.get("direction")
-                if (relationship == "subset" and (
-                        not isinstance(direction, str) or
-                        direction not in {"this_is_subset", "other_is_subset"})):
-                    issues.append(_issue("COHORT_SUBSET_DIRECTION_MISSING",
-                                         "subset relationships require an explicit direction",
-                                         record_id))
+    issues.extend(_validate_cohort_links(record, record_id, records_by_id))
 
     if issues:
         quarantined = any(issue["code"] in {

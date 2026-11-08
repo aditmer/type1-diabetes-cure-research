@@ -78,6 +78,27 @@ def ep12_assessments(constituents, timing_records=None):
     }
 
 
+def append_ep12_view(data, cohort_links=None):
+    constituents = [{"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"}]
+    view = {
+        "record_id": "SYN-VIEW-12",
+        "record_kind": "reporting_view",
+        "source_id": "SYN-SOURCE-1",
+        "source_version": "SYN-VERSION-1",
+        "endpoint_id": "EP-12",
+        "field_status": "not_applicable",
+        "source_refs": [],
+        "review_evidence": {"status": "not_applicable_synthetic"},
+        "constituents": constituents,
+        "field_assessments": ep12_assessments(
+            constituents, timing_records=[record(data)]),
+    }
+    if cohort_links is not None:
+        view["cohort_links"] = cohort_links
+    data["records"].append(view)
+    return view
+
+
 class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
     def test_01_fully_specified_synthetic_record_is_projected(self):
         result = ADAPTER.validate_and_project(fixture())
@@ -1092,21 +1113,8 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
 
     def test_ep12_blank_reported_assessment_is_quarantined_but_zero_is_preserved(self):
         data = fixture()
-        constituents = [{"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"}]
-        data["records"].append({
-            "record_id": "SYN-VIEW-12",
-            "record_kind": "reporting_view",
-            "source_id": "SYN-SOURCE-1",
-            "source_version": "SYN-VERSION-1",
-            "endpoint_id": "EP-12",
-            "field_status": "not_applicable",
-            "source_refs": [],
-            "review_evidence": {"status": "not_applicable_synthetic"},
-            "constituents": constituents,
-            "field_assessments": ep12_assessments(
-                constituents, timing_records=[record(data)]),
-        })
-        assessment = data["records"][-1]["field_assessments"]["number_at_risk"]
+        view = append_ep12_view(data)
+        assessment = view["field_assessments"]["number_at_risk"]
         assessment.update(
             field_status="reported",
             value="",
@@ -1133,6 +1141,72 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                          if item["record_id"] == "SYN-VIEW-12")
         self.assertEqual(
             projected["source_values"]["field_assessments"]["number_at_risk"]["value"], 0)
+
+    def test_ep12_negative_number_at_risk_is_quarantined_but_zero_is_preserved(self):
+        data = fixture()
+        view = append_ep12_view(data)
+        assessment = view["field_assessments"]["number_at_risk"]
+        assessment.update(
+            field_status="reported",
+            value=-1,
+            source_refs=[{
+                "source_id": "SYN-SOURCE-1",
+                "source_version": "SYN-VERSION-1",
+                "location": "synthetic://SYN-VERSION-1/record-1/number-at-risk",
+            }],
+        )
+        result = ADAPTER.validate_and_project(data)
+        outcome = next(item for item in result["records"]
+                       if item["record_id"] == "SYN-VIEW-12")
+        self.assertEqual(outcome["disposition"], "quarantined")
+        self.assertIn("REPORTING_VIEW_ASSESSMENT_VALUE_INVALID", reason_codes(result))
+        self.assertNotIn("SYN-VIEW-12", {item["record_id"] for item in result["projection"]})
+
+        assessment["value"] = 0
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+        projected = next(item for item in result["projection"]
+                         if item["record_id"] == "SYN-VIEW-12")
+        self.assertEqual(
+            projected["source_values"]["field_assessments"]["number_at_risk"]["value"], 0)
+
+    def test_ep12_cohort_links_are_validated_in_reporting_branch(self):
+        def link(other_record_id, relationship):
+            return {
+                "other_record_id": other_record_id,
+                "relationship": relationship,
+                "evidence_status": "synthetic_fixture_only",
+                "source_refs": [{
+                    "source_id": "SYN-SOURCE-1",
+                    "source_version": "SYN-VERSION-1",
+                    "location": "synthetic://SYN-VERSION-1/record-1/cohort-link",
+                }],
+            }
+
+        cases = (
+            ({}, "COHORT_LINKS_INVALID", "rejected"),
+            ([None], "COHORT_LINK_INVALID", "rejected"),
+            ([link("SYN-OUTCOME-1", "unknown")],
+             "COHORT_LINK_INVALID", "rejected"),
+            ([link("SYN-MISSING", "same")],
+             "COHORT_LINK_TARGET_MISSING", "rejected"),
+            ([link("SYN-VIEW-12", "same")],
+             "COHORT_LINK_SELF_REFERENCE", "rejected"),
+            ([link("SYN-OUTCOME-1", "uncertain")],
+             "COHORT_OVERLAP_UNRESOLVED", "quarantined"),
+        )
+        for links, expected_code, expected_disposition in cases:
+            with self.subTest(links=links):
+                data = fixture()
+                append_ep12_view(data, cohort_links=links)
+                result = ADAPTER.validate_and_project(data)
+                outcome = next(item for item in result["records"]
+                               if item["record_id"] == "SYN-VIEW-12")
+                self.assertEqual(outcome["disposition"], expected_disposition)
+                self.assertIn(expected_code, {reason["code"] for reason in outcome["reasons"]})
+                self.assertNotIn(
+                    "SYN-VIEW-12",
+                    {item["record_id"] for item in result["projection"]})
 
     def test_nonstring_record_id_with_unapproved_source_version_returns_report(self):
         data = fixture()
