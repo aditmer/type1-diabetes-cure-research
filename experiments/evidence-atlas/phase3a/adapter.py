@@ -778,6 +778,14 @@ def _validate_record(record, source, records_by_id, sources):
                     "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
                     f"reported EP-12 assessment {field} cannot be blank text",
                     record_id))
+                elif (assessment_status == "reported" and
+                      field == "number_at_risk" and
+                      isinstance(assessment_value, (list, dict)) and
+                      not assessment_value):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
+                    "reported EP-12 number_at_risk cannot be an empty collection",
+                    record_id))
                 elif assessment_status != "reported" and assessment_value is not None:
                     issues.append(_issue(
                     "REPORTING_VIEW_ASSESSMENT_STATE_VALUE_MISMATCH",

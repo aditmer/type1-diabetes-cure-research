@@ -1120,6 +1120,12 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertEqual(result["status"], "quarantined")
         self.assertIn("REPORTING_VIEW_ASSESSMENT_VALUE_INVALID", reason_codes(result))
 
+        for empty_value in ([], {}):
+            assessment["value"] = empty_value
+            result = ADAPTER.validate_and_project(data)
+            self.assertEqual(result["status"], "quarantined")
+            self.assertIn("REPORTING_VIEW_ASSESSMENT_VALUE_INVALID", reason_codes(result))
+
         assessment["value"] = 0
         result = ADAPTER.validate_and_project(data)
         self.assertEqual(result["status"], "accepted")
