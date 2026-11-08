@@ -39,6 +39,11 @@ Primitive and container recognition is exact built-in only, including
 float/dict/list/tuple. Unsupported subclasses reject without numeric or
 traversal hooks; ordinary built-in tuples retain their existing snapshot/audit
 behavior. Invalid-input envelopes never traverse unsupported containers.
+Built-in type recognition uses identity comparisons, not class equality.
+Unsupported-type marker names come from the built-in type-name descriptor,
+bypassing custom metaclass equality, name lookup, and name descriptors.
+The marker name is normalized through the built-in string method to an exact
+string, even when a hostile string subclass was assigned as the class name.
 Rejection-class local record-validation reasons take precedence over local
 quarantine reasons: both remain in the report, but the record rejects and no
 projection is emitted. Local validation quarantines only when all its reasons

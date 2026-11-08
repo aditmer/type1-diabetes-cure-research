@@ -1962,6 +1962,66 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertIn("INVALID_MANIFEST", reason_codes(result))
         json.dumps(result, allow_nan=False)
 
+    def test_metaclass_hooks_do_not_run_in_preflight_or_audit(self):
+        class EqualityMeta(type):
+            def __eq__(cls, other):
+                raise AssertionError("unsupported metaclass equality invoked")
+
+        class AttributeMeta(EqualityMeta):
+            def __getattribute__(cls, name):
+                if name == "__name__":
+                    raise AssertionError("unsupported metaclass name lookup invoked")
+                return super().__getattribute__(name)
+
+        class DescriptorMeta(EqualityMeta):
+            @property
+            def __name__(cls):
+                raise AssertionError("unsupported metaclass name descriptor invoked")
+
+        for meta in (EqualityMeta, AttributeMeta, DescriptorMeta):
+            for base in (object, str, int, float, dict, list, tuple):
+                cls = meta("UnsupportedSynthetic", (base,), {})
+                payload = cls()
+                marker = {"unsupported_input": "UnsupportedSynthetic"}
+                self.assertEqual(ADAPTER._audit_safe(payload), marker)
+                codes = {issue["code"] for issue in ADAPTER._input_issues(payload)}
+                self.assertEqual(codes, {"UNSUPPORTED_INPUT_VALUE"})
+                self.assertFalse(ADAPTER._positive_number(payload))
+                data = fixture()
+                record(data)["co_interventions"] = [payload]
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertEqual(result["projection"], [])
+                self.assertIn("UNSUPPORTED_INPUT_VALUE", reason_codes(result))
+                audit = result["records"][0]["source_binding"]["original_record"]
+                self.assertEqual(audit["co_interventions"], [marker])
+                json.dumps(result, allow_nan=False)
+
+    def test_unsupported_type_name_is_sanitized_to_exact_string(self):
+        class HostileName(str):
+            def __str__(self):
+                raise AssertionError("unsupported class-name text hook invoked")
+
+            def __deepcopy__(self, memo):
+                raise AssertionError("unsupported class-name copy hook invoked")
+
+        class UnsupportedSynthetic:
+            pass
+
+        UnsupportedSynthetic.__name__ = HostileName("SyntheticNamedType")
+        payload = UnsupportedSynthetic()
+        marker = ADAPTER._audit_safe(payload)
+        self.assertIs(type(marker["unsupported_input"]), str)
+        self.assertEqual(marker, {"unsupported_input": "SyntheticNamedType"})
+        data = fixture()
+        record(data)["co_interventions"] = [payload]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        audit = result["records"][0]["source_binding"]["original_record"]
+        self.assertIs(type(audit["co_interventions"][0]["unsupported_input"]), str)
+        copy.deepcopy(result)
+        json.dumps(result, allow_nan=False)
+
     def test_oversized_integers_in_invalid_tuple_keys_are_recursively_checked(self):
         marker = {"unsupported_input": "integer magnitude exceeds synthetic limit"}
         for kind in ("measured_outcome", "reporting_view"):

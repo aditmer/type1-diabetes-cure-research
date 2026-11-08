@@ -173,7 +173,7 @@ def _audit_safe(value, active=None, depth=0):
             }
         finally:
             active.remove(identity)
-    if type(value) in (list, tuple):
+    if type(value) is list or type(value) is tuple:
         identity = id(value)
         if identity in active:
             return {"unsupported_input": "cyclic reference"}
@@ -182,9 +182,12 @@ def _audit_safe(value, active=None, depth=0):
             return [_audit_safe(item, active, depth + 1) for item in value]
         finally:
             active.remove(identity)
-    if value is None or type(value) in (str, int, float, bool):
+    if (value is None or type(value) is str or type(value) is int or
+            type(value) is float or type(value) is bool):
         return value
-    return {"unsupported_input": type(value).__name__}
+    # Bypass metaclass name hooks and normalize subclass names to exact strings.
+    return {"unsupported_input": str.__str__(
+        type.__dict__["__name__"].__get__(type(value)))}
 
 
 def _input_issues(value, path="$", active=None, depth=0):
@@ -222,7 +225,7 @@ def _input_issues(value, path="$", active=None, depth=0):
         finally:
             active.remove(identity)
         return issues
-    if type(value) in (list, tuple):
+    if type(value) is list or type(value) is tuple:
         identity = id(value)
         if identity in active:
             return [_issue("CYCLIC_INPUT_REFERENCE",
@@ -236,7 +239,8 @@ def _input_issues(value, path="$", active=None, depth=0):
         finally:
             active.remove(identity)
         return issues
-    if value is None or type(value) in (str, int, float, bool):
+    if (value is None or type(value) is str or type(value) is int or
+            type(value) is float or type(value) is bool):
         return []
     return [_issue("UNSUPPORTED_INPUT_VALUE",
                    f"unsupported input value at {path}")]
@@ -292,7 +296,7 @@ def _reference_signatures(refs, source=None):
 
 
 def _positive_number(value):
-    return (type(value) in (int, float) and value > 0 and
+    return ((type(value) is int or type(value) is float) and value > 0 and
             (type(value) is int or math.isfinite(value)))
 
 
@@ -1293,7 +1297,7 @@ def _validate_record(record, source, records_by_id, sources):
                              "co_interventions must preserve a source-defined list", record_id))
     value = record.get("value")
     if status == "reported" and (
-            type(value) not in (int, float, str) or
+            (type(value) is not int and type(value) is not float and type(value) is not str) or
             (isinstance(value, str) and not value.strip()) or
             (type(value) is float and not math.isfinite(value))):
         issues.append(_issue("REPORTED_VALUE_INVALID",
@@ -1327,7 +1331,7 @@ def _validate_record(record, source, records_by_id, sources):
                 "event-valued results must equal the explicitly reported event_count",
                 record_id))
     if (status == "reported" and unit == "synthetic proportion" and
-            (type(value) not in (int, float) or
+            ((type(value) is not int and type(value) is not float) or
              (type(value) is float and not math.isfinite(value)) or
              value < 0 or value > 1)):
         issues.append(_issue(
