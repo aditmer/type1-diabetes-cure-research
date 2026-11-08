@@ -22,7 +22,9 @@ synthetic-only rights/review placeholders do not represent clinical evidence,
 human approval, or a source-use grant. Rejection and quarantine reasons are
 machine-readable and the input is never mutated.
 
-The EP-12 demo rejects negative or empty reported `number_at_risk` values while
-preserving an explicitly reported zero. It validates view-level cohort links
-with the same structural and provenance checks as measured records; self-links
-are invalid, and unresolved overlap remains quarantined.
+The EP-12 demo accepts only scalar non-negative integer reported
+`number_at_risk` counts, preserving explicit zero; booleans, fractions,
+negative, empty, structured, and narrative values are rejected. It validates
+view-level cohort links with the same structural and provenance checks as
+measured records; self-links are invalid, and unresolved overlap remains
+quarantined.

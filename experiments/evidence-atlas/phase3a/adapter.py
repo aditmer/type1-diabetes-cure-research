@@ -587,6 +587,14 @@ def _validate_cohort_links(record, record_id, records_by_id):
     if not isinstance(links, list):
         return [_issue("COHORT_LINKS_INVALID",
                        "cohort_links must be a list", record_id)]
+    own_cohort = record.get("cohort_id")
+    valid_own_cohort = _text(own_cohort) and own_cohort.startswith("SYN-")
+    if record.get("record_kind") == "reporting_view":
+        if links and not valid_own_cohort and "cohort_id" not in record:
+            issues.append(_issue(
+                "COHORT_LINK_COHORT_ID_MISSING",
+                "reporting-view cohort links require an explicit synthetic cohort_id",
+                record_id))
     for link in links:
         if not isinstance(link, dict):
             issues.append(_issue("COHORT_LINK_INVALID",
@@ -623,6 +631,19 @@ def _validate_cohort_links(record, record_id, records_by_id):
             continue
         target = records_by_id[target_id]
         target_cohort = target.get("cohort_id")
+        if relationship != "uncertain":
+            if not valid_own_cohort:
+                issues.append(_issue("COHORT_ID_INVALID",
+                                     "cohort identity must use the SYN- namespace",
+                                     record_id))
+                continue
+            if (not _text(target_cohort) or
+                    not target_cohort.startswith("SYN-")):
+                issues.append(_issue(
+                    "COHORT_LINK_TARGET_COHORT_INVALID",
+                    "non-uncertain cohort links require a target with an explicit synthetic cohort_id",
+                    record_id))
+                continue
         if (relationship == "same" and
                 target_cohort != record.get("cohort_id")):
             issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",
@@ -726,6 +747,13 @@ def _validate_record(record, source, records_by_id, sources):
             "constituent references and taxonomy assessments are limited to reporting views",
             record_id))
     if kind == "reporting_view":
+        if ("cohort_id" in record and
+                (not _text(record.get("cohort_id")) or
+                 not record["cohort_id"].startswith("SYN-"))):
+            issues.append(_issue(
+                "COHORT_ID_INVALID",
+                "a supplied reporting-view cohort_id must use the SYN- namespace",
+                record_id))
         if "cohort_links" in record:
             issues.extend(_validate_cohort_links(record, record_id, records_by_id))
         if not isinstance(endpoint_id, str) or endpoint_id != REPORTING_VIEW:
@@ -844,19 +872,11 @@ def _validate_record(record, source, records_by_id, sources):
                     record_id))
                 elif (assessment_status == "reported" and
                       field == "number_at_risk" and
-                      type(assessment_value) in (int, float) and
-                      assessment_value < 0):
+                      (type(assessment_value) is not int or
+                       assessment_value < 0)):
                     issues.append(_issue(
                     "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
-                    "reported EP-12 number_at_risk cannot be negative",
-                    record_id))
-                elif (assessment_status == "reported" and
-                      field == "number_at_risk" and
-                      isinstance(assessment_value, (list, dict)) and
-                      not assessment_value):
-                    issues.append(_issue(
-                    "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
-                    "reported EP-12 number_at_risk cannot be an empty collection",
+                    "reported EP-12 number_at_risk must be a non-negative integer count; structured or narrative values are unsupported",
                     record_id))
                 elif assessment_status != "reported" and assessment_value is not None:
                     issues.append(_issue(
