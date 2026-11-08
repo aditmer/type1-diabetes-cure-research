@@ -2022,6 +2022,133 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         copy.deepcopy(result)
         json.dumps(result, allow_nan=False)
 
+    def test_expansion_budget_exact_helper_and_full_report_boundaries(self):
+        value = [None, None, None]
+        self.assertEqual(ADAPTER._expansion_cost(value) + 3 * 64, 256)
+        with mock.patch.object(ADAPTER, "MAX_EXPANSION_WORK", 256):
+            self.assertEqual(ADAPTER._audit_safe(value), value)
+        with mock.patch.object(ADAPTER, "MAX_EXPANSION_WORK", 255):
+            self.assertIn("audit omitted", ADAPTER._audit_safe(value)["unsupported_input"])
+        with mock.patch.object(ADAPTER, "MAX_EXPANSION_WORK", 568):
+            self.assertEqual(ADAPTER._input_issues(value), [])
+        with mock.patch.object(ADAPTER, "MAX_EXPANSION_WORK", 567):
+            self.assertEqual({issue["code"] for issue in ADAPTER._input_issues(value)},
+                             {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+        with mock.patch.object(ADAPTER.copy, "deepcopy") as copier:
+            with self.assertRaises(ADAPTER._ExpansionBudgetExceeded):
+                ADAPTER._snapshot(value, ADAPTER._ExpansionBudget(255))
+            copier.assert_not_called()
+        data = fixture()
+        budget = ADAPTER._ExpansionBudget(10**9)
+        report = ADAPTER._validate_and_project(data, budget)
+        ADAPTER._count_expansion(report, budget)
+        exact_cost = 10**9 - budget.remaining
+        with mock.patch.object(ADAPTER, "MAX_EXPANSION_WORK", exact_cost):
+            self.assertEqual(ADAPTER.validate_and_project(data), report)
+        with mock.patch.object(ADAPTER, "MAX_EXPANSION_WORK", exact_cost - 1):
+            result = ADAPTER.validate_and_project(data)
+            self.assertEqual(reason_codes(result), {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+            self.assertEqual(result["records"], [])
+            self.assertEqual(result["projection"], [])
+            self.assertIn("budget exceeded", result["audit_omission"])
+            self.assertLess(len(json.dumps(result, allow_nan=False)), 512)
+
+    def test_shared_dags_use_expanded_budget_for_both_record_kinds(self):
+        def dag(depth):
+            value = []
+            for _ in range(depth):
+                value = [value, value]
+            return value
+
+        for kind in ("measured_outcome", "reporting_view"):
+            for depth in (6, 12, 30):
+                data = fixture()
+                owner = record(data) if kind == "measured_outcome" else append_ep12_view(data)
+                payload = dag(depth)
+                if kind == "measured_outcome":
+                    owner["co_interventions"] = payload
+                else:
+                    owner["field_assessments"]["ongoing_cointerventions"].update(
+                        field_status="reported", value=payload,
+                        source_refs=copy.deepcopy(
+                            owner["field_assessments"]["time_origin"]["source_refs"]))
+                result = ADAPTER.validate_and_project(data)
+                if depth == 6:
+                    self.assertNotIn("INPUT_EXPANSION_BUDGET_EXCEEDED", reason_codes(result))
+                    expected = "accepted" if kind == "measured_outcome" else "quarantined"
+                    self.assertEqual(result["status"], expected)
+                else:
+                    self.assertEqual(reason_codes(result), {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+                    self.assertEqual(result["records"], [])
+                    self.assertEqual(result["projection"], [])
+                    self.assertLess(len(json.dumps(result, allow_nan=False)), 512)
+                self.assertIs(payload[0], payload[1])
+                self.assertEqual(result, ADAPTER.validate_and_project(data))
+        self.assertEqual(
+            {issue["code"] for issue in ADAPTER._input_issues(dag(30))},
+            {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+        self.assertIn("audit omitted", ADAPTER._audit_safe(dag(30))["unsupported_input"])
+
+    def test_wide_input_and_scalar_report_copying_share_budget(self):
+        wide = {f"synthetic-{index}": None for index in range(20000)}
+        self.assertIn("INPUT_EXPANSION_BUDGET_EXCEEDED",
+                      {issue["code"] for issue in ADAPTER._input_issues(wide)})
+        self.assertIn("audit omitted", ADAPTER._audit_safe(wide)["unsupported_input"])
+        for count in (1, 5):
+            data = fixture()
+            data["sources"][0]["document_type"] = "synthetic " + "x" * 10000
+            for index in range(1, count):
+                owner = copy.deepcopy(record(data))
+                owner["record_id"] = f"SYN-EXTRA-{index}"
+                data["records"].append(owner)
+            result = ADAPTER.validate_and_project(data)
+            if count == 1:
+                self.assertEqual(result["status"], "accepted")
+            else:
+                self.assertEqual(reason_codes(result), {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+                self.assertEqual(result["records"], [])
+                self.assertLess(len(json.dumps(result, allow_nan=False)), 512)
+        data = fixture()
+        record(data)["co_interventions"] = ["x" * ADAPTER.MAX_EXPANSION_WORK]
+        self.assertEqual(reason_codes(ADAPTER.validate_and_project(data)),
+                         {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+
+    def test_rejected_input_issue_fanout_and_audits_are_bounded(self):
+        data = fixture()
+        base = record(data)
+        base["co_interventions"] = [object() for _ in range(100)]
+        for index in range(1, 5):
+            owner = dict(base)
+            owner["record_id"] = f"SYN-INVALID-{index}"
+            data["records"].append(owner)
+        self.assertEqual(
+            {issue["code"] for issue in ADAPTER._input_issues(data)},
+            {"UNSUPPORTED_INPUT_VALUE"})
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertEqual(reason_codes(result), {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+        self.assertEqual(result["records"], [])
+        self.assertEqual(result["projection"], [])
+        self.assertLess(len(json.dumps(result, allow_nan=False)), 512)
+        ordinary = fixture()
+        shared = {"synthetic": [1, 2]}
+        record(ordinary)["co_interventions"] = [shared, shared]
+        report = ADAPTER.validate_and_project(ordinary)
+        self.assertEqual(report["status"], "accepted")
+        audit = report["records"][0]["source_binding"]["original_record"]["co_interventions"]
+        self.assertEqual(audit, [shared, shared])
+        self.assertIsNot(audit[0], audit[1])
+        self.assertIsNot(report["projection"][0]["source_values"]["co_interventions"][0], shared)
+        long_path = {"synthetic-" + "x" * 10000: [object() for _ in range(100)]}
+        issues = ADAPTER._input_issues(long_path)
+        self.assertEqual({issue["code"] for issue in issues},
+                         {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+        ordinary = fixture()
+        record(ordinary)["co_interventions"] = [{"x" * 3000: [float("nan")] * 50}]
+        result = ADAPTER.validate_and_project(ordinary)
+        self.assertEqual(reason_codes(result), {"INPUT_EXPANSION_BUDGET_EXCEEDED"})
+        self.assertLess(len(json.dumps(result, allow_nan=False)), 512)
+
     def test_oversized_integers_in_invalid_tuple_keys_are_recursively_checked(self):
         marker = {"unsupported_input": "integer magnitude exceeds synthetic limit"}
         for kind in ("measured_outcome", "reporting_view"):

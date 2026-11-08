@@ -52,6 +52,7 @@ EVENT_COUNT_UNITS = {"event", "events", "synthetic event", "synthetic events"}
 SUPPORTED_NONCOUNT_UNITS = {"synthetic proportion"}
 SOURCE_REFERENCE_FIELDS = {"source_id", "source_version", "location"}
 MAX_INPUT_DEPTH = 100
+MAX_EXPANSION_WORK = 2000000
 INTEGER_MAGNITUDE_LIMIT = 10**640
 SOURCE_KEYS = {
     "source_id",
@@ -141,7 +142,61 @@ def _text(value):
     return isinstance(value, str) and bool(value.strip())
 
 
-def _audit_safe(value, active=None, depth=0):
+class _ExpansionBudgetExceeded(Exception):
+    pass
+
+
+class _ExpansionBudget:
+    def __init__(self, limit=None):
+        self.remaining = MAX_EXPANSION_WORK if limit is None else limit
+
+    def charge(self, amount=1):
+        if amount > self.remaining:
+            raise _ExpansionBudgetExceeded
+        self.remaining -= amount
+
+
+def _expansion_cost(value):
+    if type(value) is str:
+        return 64 + 12 * len(value)
+    if type(value) is int:
+        return 64 + value.bit_length()
+    return 64
+
+
+def _count_expansion(value, budget):
+    budget.charge(_expansion_cost(value))
+    if type(value) is dict:
+        for key, item in value.items():
+            budget.charge(_expansion_cost(key))
+            _count_expansion(item, budget)
+    elif type(value) is list or type(value) is tuple:
+        for item in value:
+            _count_expansion(item, budget)
+
+
+def _snapshot(value, budget):
+    _count_expansion(value, budget)
+    return copy.deepcopy(value)
+
+
+def _expansion_issue():
+    return _issue(
+        "INPUT_EXPANSION_BUDGET_EXCEEDED",
+        "aggregate expanded input/report work exceeds the synthetic limit")
+
+
+def _audit_safe(value, active=None, depth=0, budget=None):
+    if budget is not None:
+        return _audit_value(value, active, depth, budget)
+    try:
+        return _audit_value(value, active, depth, _ExpansionBudget())
+    except _ExpansionBudgetExceeded:
+        return {"unsupported_input": "expanded input/report budget exceeded; audit omitted"}
+
+
+def _audit_value(value, active, depth, budget):
+    budget.charge(_expansion_cost(value))
     if active is None:
         active = set()
     if depth > MAX_INPUT_DEPTH:
@@ -156,17 +211,22 @@ def _audit_safe(value, active=None, depth=0):
             return {"unsupported_input": "cyclic reference"}
         active.add(identity)
         try:
-            if all(type(key) is str for key in value):
+            string_keys = True
+            for key in value:
+                budget.charge(_expansion_cost(key))
+                if type(key) is not str:
+                    string_keys = False
+            if string_keys:
                 return {
-                    key: _audit_safe(item, active, depth + 1)
+                    key: _audit_value(item, active, depth + 1, budget)
                     for key, item in value.items()
                 }
             return {
                 "unsupported_input": "non-string object key",
                 "entries": [
                     {
-                        "key": _audit_safe(key, active, depth + 1),
-                        "value": _audit_safe(item, active, depth + 1),
+                        "key": _audit_value(key, active, depth + 1, budget),
+                        "value": _audit_value(item, active, depth + 1, budget),
                     }
                     for key, item in value.items()
                 ],
@@ -179,18 +239,29 @@ def _audit_safe(value, active=None, depth=0):
             return {"unsupported_input": "cyclic reference"}
         active.add(identity)
         try:
-            return [_audit_safe(item, active, depth + 1) for item in value]
+            return [_audit_value(item, active, depth + 1, budget) for item in value]
         finally:
             active.remove(identity)
     if (value is None or type(value) is str or type(value) is int or
             type(value) is float or type(value) is bool):
         return value
+    name = type.__dict__["__name__"].__get__(type(value))
+    budget.charge(64 + 12 * str.__len__(name))
     # Bypass metaclass name hooks and normalize subclass names to exact strings.
-    return {"unsupported_input": str.__str__(
-        type.__dict__["__name__"].__get__(type(value)))}
+    return {"unsupported_input": str.__str__(name)}
 
 
-def _input_issues(value, path="$", active=None, depth=0):
+def _input_issues(value, path="$", active=None, depth=0, budget=None):
+    if budget is not None:
+        return _scan_input(value, path, active, depth, budget)
+    try:
+        return _scan_input(value, path, active, depth, _ExpansionBudget())
+    except _ExpansionBudgetExceeded:
+        return [_expansion_issue()]
+
+
+def _scan_input(value, path, active, depth, budget):
+    budget.charge(_expansion_cost(value) + 24 * len(path))
     if active is None:
         active = set()
     if depth > MAX_INPUT_DEPTH:
@@ -211,17 +282,18 @@ def _input_issues(value, path="$", active=None, depth=0):
         issues = []
         try:
             for key, item in value.items():
+                budget.charge(_expansion_cost(key))
                 if type(key) is not str:
                     issues.append(_issue(
                         "NON_STRING_OBJECT_KEY",
                         f"object keys must be exact built-in strings at {path}"))
-                    issues.extend(_input_issues(
-                        key, f"{path}.<object-key>", active, depth + 1))
-                    issues.extend(_input_issues(
-                        item, f"{path}.<non-string-key-value>", active, depth + 1))
+                    issues.extend(_scan_input(
+                        key, f"{path}.<object-key>", active, depth + 1, budget))
+                    issues.extend(_scan_input(
+                        item, f"{path}.<non-string-key-value>", active, depth + 1, budget))
                     continue
-                issues.extend(_input_issues(
-                    item, f"{path}.{key}", active, depth + 1))
+                issues.extend(_scan_input(
+                    item, f"{path}.{key}", active, depth + 1, budget))
         finally:
             active.remove(identity)
         return issues
@@ -234,8 +306,8 @@ def _input_issues(value, path="$", active=None, depth=0):
         issues = []
         try:
             for index, item in enumerate(value):
-                issues.extend(_input_issues(
-                    item, f"{path}[{index}]", active, depth + 1))
+                issues.extend(_scan_input(
+                    item, f"{path}[{index}]", active, depth + 1, budget))
         finally:
             active.remove(identity)
         return issues
@@ -468,7 +540,7 @@ def _validate_references(record, source):
     return issues
 
 
-def _auditable_source_record(record, source):
+def _auditable_source_record(record, source, budget=None):
     scope = source.get("authorized_field_scope") if type(source) is dict else None
     authorized = set(scope) if type(scope) is list and all(
         type(field) is str for field in scope) else set()
@@ -476,10 +548,10 @@ def _auditable_source_record(record, source):
     included = authorized | MANDATORY_SCOPE_FIELDS
     return _audit_safe({
         key: value for key, value in record.items()
-        if type(key) is str and key in included})
+        if type(key) is str and key in included}, budget=budget)
 
 
-def _auditable_source(source):
+def _auditable_source(source, budget=None):
     if type(source) is not dict:
         return None
     result = {
@@ -497,7 +569,7 @@ def _auditable_source(source):
             key: value for key, value in review.items()
             if type(key) is str and key in {"status", "reviewer", "approval"}
         }
-    return _audit_safe(result)
+    return _audit_safe(result, budget=budget)
 
 
 def _cohort_link_has_provenance(link, sources):
@@ -1356,7 +1428,10 @@ def _validate_record(record, source, records_by_id, sources):
     return [], "accepted"
 
 
-def _invalid_input_report(manifest, issues):
+def _invalid_input_report(manifest, issues, budget):
+    before = budget.remaining
+    _count_expansion(issues, budget)
+    issue_copy_cost = before - budget.remaining
     manifest = {key: value for key, value in manifest.items() if type(key) is str}
     source_by_id = {}
     records = manifest.get("records")
@@ -1377,6 +1452,7 @@ def _invalid_input_report(manifest, issues):
             source_id = record.get("source_id")
             source = source_by_id.get(source_id) if type(source_id) is str else None
             record_id = record.get("record_id")
+            budget.charge(issue_copy_cost + 64 * (1 + len(issues)))
             record_issues = [
                 {
                     **issue,
@@ -1385,11 +1461,11 @@ def _invalid_input_report(manifest, issues):
                 for issue in issues
             ]
             outcomes.append({
-                "record_id": _audit_safe(record_id),
+                "record_id": _audit_safe(record_id, budget=budget),
                 "disposition": "rejected",
                 "source_binding": {
-                    "manifest_source": _auditable_source(source),
-                    "original_record": _auditable_source_record(record, source),
+                    "manifest_source": _auditable_source(source, budget),
+                    "original_record": _auditable_source_record(record, source, budget),
                 },
                 "reasons": record_issues,
             })
@@ -1404,7 +1480,24 @@ def _invalid_input_report(manifest, issues):
 
 
 def validate_and_project(manifest):
-    """Return a deterministic report and projection; never mutate the input."""
+    """Return a deterministic bounded report; never mutate the input."""
+    budget = _ExpansionBudget()
+    try:
+        report = _validate_and_project(manifest, budget)
+        _count_expansion(report, budget)
+        return report
+    except _ExpansionBudgetExceeded:
+        return {
+            "contract_version": CONTRACT_VERSION,
+            "status": "rejected",
+            "records": [],
+            "reasons": [_expansion_issue()],
+            "projection": [],
+            "audit_omission": "expanded input/report budget exceeded",
+        }
+
+
+def _validate_and_project(manifest, budget):
     if type(manifest) is not dict:
         return {
             "contract_version": CONTRACT_VERSION,
@@ -1413,9 +1506,9 @@ def validate_and_project(manifest):
             "reasons": [_issue("INVALID_MANIFEST", "manifest must be an object")],
             "projection": [],
         }
-    input_issues = _input_issues(manifest)
+    input_issues = _input_issues(manifest, budget=budget)
     if input_issues:
-        return _invalid_input_report(manifest, input_issues)
+        return _invalid_input_report(manifest, input_issues, budget)
     allowed = {"contract_version", "synthetic_only", "taxonomy_version", "sources", "records"}
     top_issues = []
     unexpected = set(manifest) - allowed
@@ -1490,13 +1583,13 @@ def validate_and_project(manifest):
             if disposition == "accepted":
                 disposition = "quarantined"
         source_binding = {
-            "manifest_source": _auditable_source(source),
-            "original_record": _auditable_source_record(record, source),
+            "manifest_source": _auditable_source(source, budget),
+            "original_record": _auditable_source_record(record, source, budget),
         }
         outcomes.append({
-            "record_id": _audit_safe(record.get("record_id")),
+            "record_id": _audit_safe(record.get("record_id"), budget=budget),
             "disposition": disposition,
-            "source_binding": _audit_safe(source_binding),
+            "source_binding": _audit_safe(source_binding, budget=budget),
             "reasons": sorted(record_issues, key=lambda issue: (issue["code"], issue["message"])),
         })
         if disposition == "accepted":
@@ -1508,10 +1601,10 @@ def validate_and_project(manifest):
                 "endpoint_id": record["endpoint_id"],
                 "original_field_status": record["field_status"],
                 "observation_status": record.get("observation_status"),
-                "source_refs": _audit_safe(record.get("source_refs", [])),
-                "source_binding": _audit_safe(source_binding),
+                "source_refs": _audit_safe(record.get("source_refs", []), budget=budget),
+                "source_binding": _audit_safe(source_binding, budget=budget),
                 "source_values": {
-                    key: copy.deepcopy(record[key]) for key in (
+                    key: _snapshot(record[key], budget) for key in (
                         "endpoint_definition", "time_origin", "timing_anchor",
                         "assessment_timepoint", "follow_up_window", "participant_count",
                         "participant_count_status", "participant_count_review",

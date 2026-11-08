@@ -44,6 +44,19 @@ Unsupported-type marker names come from the built-in type-name descriptor,
 bypassing custom metaclass equality, name lookup, and name descriptors.
 The marker name is normalized through the built-in string method to an exact
 string, even when a hostile string subclass was assigned as the class name.
+
+Each adapter call has one conservative 2,000,000-credit expanded-input/report
+budget shared by preflight, diagnostic copying, audit copies, projection
+snapshot checks, and the final serialization-shape check. Alias occurrences
+count repeatedly, not just unique objects. Each value/key visit costs 64
+credits plus 12 per string character or the integer bit length; preflight also
+charges 24 per diagnostic-path character before creating diagnostics.
+Exhaustion returns `INPUT_EXPANSION_BUDGET_EXCEEDED`, empty records/projection,
+and explicit `audit_omission`, without re-auditing the offending input.
+Standalone preflight/audit helpers also stop with a bounded reason/marker.
+This intentionally limits large otherwise-valid synthetic inputs and repeated
+source/report copies; small shared-alias snapshots and scoped audits remain
+supported. It is not a clinical limit, authorization, or wall-clock guarantee.
 Rejection-class local record-validation reasons take precedence over local
 quarantine reasons: both remain in the report, but the record rejects and no
 projection is emitted. Local validation quarantines only when all its reasons
