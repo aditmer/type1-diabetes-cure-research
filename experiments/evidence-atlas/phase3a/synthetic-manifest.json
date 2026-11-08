@@ -1,0 +1,105 @@
+{
+  "contract_version": "phase3a-synthetic-v1",
+  "synthetic_only": true,
+  "taxonomy_version": "taxonomy-v2@2.0.0",
+  "sources": [
+    {
+      "source_id": "SYN-SOURCE-1",
+      "source_version": "SYN-VERSION-1",
+      "version_state": "synthetic_fixture_version",
+      "original_record_reference": "synthetic://SYN-VERSION-1/record-1",
+      "document_type": "invented fixture record",
+      "registry_trial_study_id": "SYN-STUDY-1",
+      "allowed_access_route": "bundled_fixture",
+      "rights": {
+        "status": "synthetic_fixture_only",
+        "redistribution": "synthetic_fixture_only"
+      },
+      "authorized_field_scope": [
+        "record_id",
+        "record_kind",
+        "source_id",
+        "source_version",
+        "endpoint_id",
+        "endpoint_definition",
+        "field_status",
+        "observation_status",
+        "source_refs",
+        "time_origin",
+        "timing_anchor",
+        "assessment_timepoint",
+        "follow_up_window",
+        "participant_count",
+        "participant_count_status",
+        "participant_count_review",
+        "participant_count_conflicts",
+        "event_count",
+        "analysis_denominator",
+        "observed_measurement_count",
+        "missing_data_method",
+        "analysis_population_id",
+        "observed_measurement_population_id",
+        "population_basis_note",
+        "value",
+        "unit",
+        "co_interventions",
+        "cohort_id",
+        "cohort_links",
+        "constituents",
+        "field_assessments",
+        "conflicting_values"
+      ],
+      "evidence_context": "synthetic",
+      "review_provenance": {
+        "status": "not_applicable_synthetic",
+        "reviewer": null,
+        "approval": null
+      }
+    }
+  ],
+  "records": [
+    {
+      "record_id": "SYN-OUTCOME-1",
+      "record_kind": "measured_outcome",
+      "source_id": "SYN-SOURCE-1",
+      "source_version": "SYN-VERSION-1",
+      "endpoint_id": "EP-01",
+      "field_status": "reported",
+      "observation_status": "observed",
+      "endpoint_definition": "Invented binary endpoint definition for fixture testing.",
+      "time_origin": "synthetic first intervention",
+      "timing_anchor": "synthetic first intervention",
+      "assessment_timepoint": "synthetic month 12",
+      "follow_up_window": {
+        "value": 12,
+        "unit": "months"
+      },
+      "participant_count": 1,
+      "participant_count_status": "reported",
+      "participant_count_review": null,
+      "participant_count_conflicts": [],
+      "event_count": null,
+      "analysis_denominator": 1,
+      "observed_measurement_count": 1,
+      "missing_data_method": "none reported",
+      "analysis_population_id": "SYN-POPULATION-1",
+      "observed_measurement_population_id": "SYN-POPULATION-1",
+      "population_basis_note": "same synthetic population",
+      "value": 1,
+      "unit": "synthetic participants",
+      "co_interventions": [],
+      "cohort_id": "SYN-COHORT-1",
+      "cohort_links": [],
+      "source_refs": [
+        {
+          "source_id": "SYN-SOURCE-1",
+          "source_version": "SYN-VERSION-1",
+          "location": "synthetic://SYN-VERSION-1/record-1/endpoint-1"
+        }
+      ],
+      "review_evidence": {
+        "status": "not_applicable_synthetic"
+      }
+    }
+  ]
+}
