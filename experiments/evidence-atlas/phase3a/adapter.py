@@ -666,6 +666,21 @@ def _validate_record(record, source, records_by_id, sources):
             issues.append(_issue("STATE_MAPPING_UNAUTHORIZED",
                                  "no Q3-to-Atlas state mapping is authorized; preserve the original state",
                                  record_id))
+        has_view_origin = "time_origin" in record
+        has_view_anchor = "timing_anchor" in record
+        if has_view_origin or has_view_anchor:
+            if (not has_view_origin or not has_view_anchor or
+                    not _text(record.get("time_origin")) or
+                    not _text(record.get("timing_anchor"))):
+                issues.append(_issue(
+                    "REPORTING_VIEW_TIMING_PAIR_INCOMPLETE",
+                    "view-level time_origin and timing_anchor must both be explicit text when supplied",
+                    record_id))
+            elif record["time_origin"] != record["timing_anchor"]:
+                issues.append(_issue(
+                    "REPORTING_VIEW_TIMING_INCONSISTENT",
+                    "view-level time_origin and timing_anchor must agree; constituent anchors remain separate",
+                    record_id))
         if any(key in record for key in (
                 "value", "unit", "analysis_denominator", "observed_measurement_count",
                 "participant_count", "event_count")):
@@ -847,6 +862,8 @@ def _validate_record(record, source, records_by_id, sources):
                 "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
                 "REPORTING_VIEW_PROVENANCE_MISSING",
                 "REPORTING_VIEW_TIMING_MISSING",
+                "REPORTING_VIEW_TIMING_PAIR_INCOMPLETE",
+                "REPORTING_VIEW_TIMING_INCONSISTENT",
                 "REPORTING_VIEW_TIMING_UNSUPPORTED_MAPPING",
                 "REPORTING_VIEW_FIELD_REVIEW_UNVERIFIED",
                 "REPORTING_VIEW_FIELD_CONFLICT_UNRESOLVED",

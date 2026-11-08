@@ -1063,6 +1063,33 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertEqual(result["projection"], [])
         json.dumps(result, allow_nan=False)
 
+    def test_ep12_view_timing_pair_is_consistent_without_constituent_comparison(self):
+        data = fixture()
+        constituents = [{"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"}]
+        view = {
+            "record_id": "SYN-VIEW-12",
+            "record_kind": "reporting_view",
+            "source_id": "SYN-SOURCE-1",
+            "source_version": "SYN-VERSION-1",
+            "endpoint_id": "EP-12",
+            "field_status": "not_applicable",
+            "time_origin": "synthetic view-specific anchor",
+            "timing_anchor": "synthetic view-specific anchor",
+            "source_refs": [],
+            "review_evidence": {"status": "not_applicable_synthetic"},
+            "constituents": constituents,
+            "field_assessments": ep12_assessments(
+                constituents, timing_records=[record(data)]),
+        }
+        data["records"].append(view)
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+
+        view["timing_anchor"] = "synthetic unrelated end"
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("REPORTING_VIEW_TIMING_INCONSISTENT", reason_codes(result))
+
     def test_malformed_identifiers_return_reasons_instead_of_raising(self):
         mutations = (
             lambda data: record(data).update(record_id=[]),
