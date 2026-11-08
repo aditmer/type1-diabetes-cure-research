@@ -25,8 +25,10 @@ machine-readable and the input is never mutated.
 Recursive synthetic-input preflight requires integer magnitude below `10**640`,
 including nested values and invalid integer object keys. Larger integers reject
 with `INTEGER_MAGNITUDE_EXCEEDED`; audit sanitization uses an explicit
-`unsupported_input` marker without converting the integer to text. The bound
-keeps accepted integers serializable at CPython's minimum configurable
+`unsupported_input` marker without converting the integer to text. This handling
+is subject to the aggregate budget: exhaustion can occur first and instead
+return the budget reason with explicit audit omission, not the integer marker.
+The magnitude bound keeps accepted integers serializable at CPython's minimum configurable
 640-digit limit without changing process conversion settings.
 Magnitude checks apply only to exact built-in integers; unsupported subclasses
 are rejected and audit-sanitized without custom arithmetic. Invalid object keys
@@ -70,7 +72,14 @@ not-yet-extracted, inaccessible, or conflicting result states.
 
 The EP-12 demo accepts only scalar non-negative integer reported
 `number_at_risk` counts, preserving explicit zero; booleans, fractions,
-negative, empty, structured, and narrative values are rejected. It validates
+negative, structured, and narrative counts are quarantined with
+`REPORTING_VIEW_ASSESSMENT_VALUE_INVALID`; reported null counts quarantine
+with `REPORTING_VIEW_ASSESSMENT_VALUE_MISSING`, and blank counts quarantine
+as invalid. These isolated local failures block projection, not necessarily
+produce a rejected disposition. Mixed rejection-class local reasons or
+separate global/source rejection can instead reject the report. Ordinary
+scoped audit retention and the aggregate-budget audit-omission exception
+described above still apply. It validates
 view-level cohort links with the same structural, identity, target, and
 provenance checks as measured records. Linked views and non-uncertain link
 targets require explicit synthetic cohort identities; self-links are invalid,
@@ -98,9 +107,15 @@ placeholders. A synthetic review marker never establishes human approval or
 source authorization.
 
 EP-12 uses a per-kind top-level allowlist rather than accepting measured-only
-fields. Reported values in `follow_up_distribution`, `withdrawals`, `censoring`,
-`retreatment`, and `ongoing_cointerventions` now quarantine because their
-synthetic value schemas are unresolved, including benign narratives/scalars.
+fields. Non-null, nonblank reported values passing preflight in `follow_up_distribution`,
+`withdrawals`, `censoring`, `retreatment`, and `ongoing_cointerventions`
+quarantine locally with `REPORTING_VIEW_ASSESSMENT_SCHEMA_UNRESOLVED`,
+including benign narratives/scalars. Reported null or blank text values
+instead hit `REPORTING_VIEW_ASSESSMENT_VALUE_MISSING` or
+`REPORTING_VIEW_ASSESSMENT_VALUE_INVALID` first. These isolated local cases
+quarantine; mixed rejection-class, global, or budget failures can reject.
+Empty lists/dictionaries in these five slots also get the unresolved-schema
+reason; they are not interpreted as blank text.
 This intentionally tightens earlier unchecked acceptance; audit-safe
 representations of original values remain in the audit only when their
 top-level field is included in the applicable synthetic `authorized_field_scope`,

@@ -1359,6 +1359,56 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                 projected["source_values"]["field_assessments"]["number_at_risk"]["value"],
                 value)
 
+    def test_ep12_null_blank_counts_quarantine_unless_rejection_takes_precedence(self):
+        for value in (None, "", "   "):
+            for invalid_window in (False, True):
+                data = fixture()
+                view = append_ep12_view(data)
+                view["field_assessments"]["number_at_risk"].update(
+                    field_status="reported", value=value,
+                    source_refs=copy.deepcopy(
+                        view["field_assessments"]["time_origin"]["source_refs"]))
+                if invalid_window:
+                    view["follow_up_window"] = {"value": -1, "unit": "months"}
+                result = ADAPTER.validate_and_project(data)
+                expected = "rejected" if invalid_window else "quarantined"
+                self.assertEqual(result["status"], expected)
+                outcome = next(item for item in result["records"]
+                               if item["record_id"] == view["record_id"])
+                self.assertEqual(outcome["disposition"], expected)
+                code = ("REPORTING_VIEW_ASSESSMENT_VALUE_MISSING" if value is None
+                        else "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID")
+                self.assertIn(code, reason_codes(result))
+                if invalid_window:
+                    self.assertIn("FOLLOW_UP_WINDOW_INVALID", reason_codes(result))
+                self.assertEqual(result["projection"], [])
+                self.assertEqual(
+                    outcome["source_binding"]["original_record"]["field_assessments"][
+                        "number_at_risk"]["value"], value)
+                json.dumps(result, allow_nan=False)
+
+    def test_unresolved_assessment_empty_values_precede_schema_reason(self):
+        for field in ADAPTER.REPORTING_VIEW_UNRESOLVED_VALUE_FIELDS:
+            for value in (None, "", "   ", [], {}, "synthetic narrative"):
+                data = fixture()
+                view = append_ep12_view(data)
+                view["field_assessments"][field].update(
+                    field_status="reported", value=value,
+                    source_refs=copy.deepcopy(
+                        view["field_assessments"]["time_origin"]["source_refs"]))
+                result = ADAPTER.validate_and_project(data)
+                code = ("REPORTING_VIEW_ASSESSMENT_VALUE_MISSING" if value is None
+                        else "REPORTING_VIEW_ASSESSMENT_SCHEMA_UNRESOLVED"
+                        if value == "synthetic narrative" or type(value) is list or type(value) is dict
+                        else "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID")
+                self.assertEqual(result["status"], "quarantined")
+                self.assertIn(code, reason_codes(result))
+                if value is None or type(value) is str and not value.strip():
+                    self.assertNotIn("REPORTING_VIEW_ASSESSMENT_SCHEMA_UNRESOLVED",
+                                     reason_codes(result))
+                self.assertEqual(result["projection"], [])
+                json.dumps(result, allow_nan=False)
+
     def test_ep12_constituent_references_reject_unvalidated_extra_payload(self):
         extras = (
             {
