@@ -1025,7 +1025,8 @@ def validate_and_project(manifest):
         if related_source_issues:
             record_issues.extend(related_source_issues)
             disposition = "rejected"
-        graph_issues = cohort_issues.get(record.get("record_id"), [])
+        record_id = record.get("record_id")
+        graph_issues = cohort_issues.get(record_id, []) if isinstance(record_id, str) else []
         if graph_issues:
             record_issues.extend(graph_issues)
             if disposition == "accepted":

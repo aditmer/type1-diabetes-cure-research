@@ -684,13 +684,21 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                     result["records"][0]["source_binding"]["original_record"]["value"],
                     {"non_finite_numeric_input": repr(value)},
                 )
+                data = fixture()
+                record(data)["follow_up_window"]["value"] = value
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertIn("FOLLOW_UP_WINDOW_INVALID", reason_codes(result))
+                json.dumps(result, allow_nan=False)
 
     def test_malformed_identifiers_return_reasons_instead_of_raising(self):
         mutations = (
+            lambda data: record(data).update(record_id=[]),
             lambda data: record(data).update(source_id=[]),
             lambda data: record(data).update(endpoint_id=[]),
             lambda data: record(data).update(field_status=[]),
             lambda data: data["sources"][0].update(source_id=[]),
+            lambda data: record(data)["source_refs"][0].update(location=[]),
         )
         for mutate in mutations:
             with self.subTest(mutate=mutate):
