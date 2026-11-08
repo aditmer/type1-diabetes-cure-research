@@ -35,6 +35,16 @@ REPORTING_VIEW_REQUIRED_FIELDS = {
     "censoring", "retreatment", "ongoing_cointerventions",
     "constituent_endpoint_ids", "constituent_outcome_record_refs",
 }
+REPORTING_VIEW_UNRESOLVED_VALUE_FIELDS = {
+    "follow_up_distribution", "withdrawals", "censoring",
+    "retreatment", "ongoing_cointerventions",
+}
+REPORTING_VIEW_KEYS = {
+    "record_id", "record_kind", "source_id", "source_version", "endpoint_id",
+    "field_status", "source_refs", "review_evidence", "constituents",
+    "field_assessments", "time_origin", "timing_anchor", "follow_up_window",
+    "cohort_id", "cohort_links", "requested_state_mapping",
+}
 PARTICIPANT_COUNT_UNITS = {
     "participant", "participants", "synthetic participant", "synthetic participants",
 }
@@ -747,6 +757,16 @@ def _validate_record(record, source, records_by_id, sources):
                              record_id))
 
     kind = record.get("record_kind")
+    if kind == "measured_outcome" or "follow_up_window" in record:
+        follow_up = record.get("follow_up_window")
+        if (not isinstance(follow_up, dict) or
+                set(follow_up) != {"value", "unit"} or
+                not _positive_number(follow_up.get("value")) or
+                not _text(follow_up.get("unit"))):
+            issues.append(_issue(
+                "FOLLOW_UP_WINDOW_INVALID",
+                "a follow-up window must contain exactly a positive finite value and a nonempty source-defined unit",
+                record_id))
     if kind == "measured_outcome" and any(
             key in record for key in ("constituents", "field_assessments")):
         issues.append(_issue(
@@ -754,6 +774,12 @@ def _validate_record(record, source, records_by_id, sources):
             "constituent references and taxonomy assessments are limited to reporting views",
             record_id))
     if kind == "reporting_view":
+        unsupported_view_fields = set(record) - REPORTING_VIEW_KEYS
+        if unsupported_view_fields:
+            issues.append(_issue(
+                "REPORTING_VIEW_FIELDS_INVALID",
+                f"unsupported reporting-view fields: {sorted(unsupported_view_fields)}",
+                record_id))
         if ("cohort_id" in record and
                 (not _text(record.get("cohort_id")) or
                  not record["cohort_id"].startswith("SYN-"))):
@@ -791,7 +817,8 @@ def _validate_record(record, source, records_by_id, sources):
                     record_id))
         if any(key in record for key in (
                 "value", "unit", "analysis_denominator", "observed_measurement_count",
-                "participant_count", "event_count")):
+                "participant_count", "participant_count_status",
+                "participant_count_review", "participant_count_conflicts", "event_count")):
             issues.append(_issue("REPORTING_VIEW_AS_MEASURED_OUTCOME",
                                  "EP-12 cannot carry a separately measured result",
                                  record_id))
@@ -891,6 +918,12 @@ def _validate_record(record, source, records_by_id, sources):
                     "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
                     "reported EP-12 number_at_risk must be a non-negative integer count; structured or narrative values are unsupported",
                     record_id))
+                elif (assessment_status == "reported" and
+                      field in REPORTING_VIEW_UNRESOLVED_VALUE_FIELDS):
+                    issues.append(_issue(
+                        "REPORTING_VIEW_ASSESSMENT_SCHEMA_UNRESOLVED",
+                        f"reported EP-12 assessment {field} lacks a supported synthetic value schema",
+                        record_id))
                 elif assessment_status != "reported" and assessment_value is not None:
                     issues.append(_issue(
                     "REPORTING_VIEW_ASSESSMENT_STATE_VALUE_MISMATCH",
@@ -989,6 +1022,7 @@ def _validate_record(record, source, records_by_id, sources):
                 "REPORTING_VIEW_ASSESSMENT_VALUE_MISSING",
                 "REPORTING_VIEW_ASSESSMENT_STATE_VALUE_MISMATCH",
                 "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
+                "REPORTING_VIEW_ASSESSMENT_SCHEMA_UNRESOLVED",
                 "REPORTING_VIEW_PROVENANCE_MISSING",
                 "REPORTING_VIEW_TIMING_MISSING",
                 "REPORTING_VIEW_TIMING_PAIR_INCOMPLETE",
@@ -1073,15 +1107,6 @@ def _validate_record(record, source, records_by_id, sources):
             issues.append(_issue("TIMING_ANCHOR_INCONSISTENT",
                                  "time_origin and timing_anchor must agree in this demonstration",
                                  record_id))
-    follow_up = record.get("follow_up_window")
-    if (not isinstance(follow_up, dict) or
-            set(follow_up) != {"value", "unit"} or
-            not _positive_number(follow_up.get("value")) or
-            not _text(follow_up.get("unit"))):
-        issues.append(_issue("FOLLOW_UP_WINDOW_INVALID",
-                             "a positive source-defined follow-up window and unit are required",
-                             record_id))
-
     denominator = record.get("analysis_denominator")
     if type(denominator) is not int or denominator <= 0:
         issues.append(_issue("MISSING_ANALYSIS_DENOMINATOR",

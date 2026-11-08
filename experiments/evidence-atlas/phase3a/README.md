@@ -43,3 +43,23 @@ constituent references contain only `record_id` and `endpoint_id`; follow-up
 windows contain only `value` and `unit`. See
 `docs/evidence-atlas/PHASE-3A-SOURCE-CONTRACT.md` for the detailed synthetic
 contract and limits.
+
+Optional EP-12 follow-up windows receive the same exact shape and positive
+finite-value checks as measured windows; they do not complete the pending
+follow-up-distribution assessment. Measured participant-count status, review,
+and conflict fields are forbidden on EP-12, including null or empty
+placeholders. A synthetic review marker never establishes human approval or
+source authorization.
+
+EP-12 uses a per-kind top-level allowlist rather than accepting measured-only
+fields. Reported values in `follow_up_distribution`, `withdrawals`, `censoring`,
+`retreatment`, and `ongoing_cointerventions` now quarantine because their
+synthetic value schemas are unresolved, including benign narratives/scalars.
+This intentionally tightens earlier unchecked acceptance; audit-safe
+representations of original values remain in the audit only when their
+top-level field is included in the applicable synthetic `authorized_field_scope`,
+and are otherwise omitted.
+This scope rule also applies to invalid supplied view follow-up windows.
+Pending/unavailable null assessments retain their
+partial/pending label, and measured-record `co_interventions` remain
+open-ended. See the source contract for the complete allowlist and limits.

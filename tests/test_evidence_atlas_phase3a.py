@@ -1384,6 +1384,214 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                     view["record_id"],
                     {item["record_id"] for item in result["projection"]})
 
+    def test_ep12_optional_follow_up_window_uses_measured_shape_validation(self):
+        invalid_windows = (
+            None, [], {}, {"value": 12},
+            {"value": -1, "unit": "months"},
+            {"value": 0, "unit": "months"},
+            {"value": True, "unit": "months"},
+            {"value": "12", "unit": "months"},
+            {"value": 12, "unit": []},
+            {"value": 12, "unit": " "},
+            {"value": 12, "unit": "months",
+             "approval_claim": {"status": "human_approved"}},
+        )
+        for window in invalid_windows:
+            with self.subTest(window=window):
+                data = fixture()
+                view = append_ep12_view(data)
+                view["follow_up_window"] = window
+                result = ADAPTER.validate_and_project(data)
+                outcome = next(item for item in result["records"]
+                               if item["record_id"] == view["record_id"])
+                self.assertEqual(outcome["disposition"], "rejected")
+                self.assertIn("FOLLOW_UP_WINDOW_INVALID",
+                              {reason["code"] for reason in outcome["reasons"]})
+                self.assertEqual(
+                    outcome["source_binding"]["original_record"]["follow_up_window"],
+                    window)
+                self.assertNotIn(
+                    view["record_id"], {item["record_id"] for item in result["projection"]})
+                json.dumps(result, allow_nan=False)
+
+        data = fixture()
+        view = append_ep12_view(data)
+        view["follow_up_window"] = {"value": 12, "unit": "synthetic months"}
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+        projection = next(item for item in result["projection"]
+                          if item["record_id"] == view["record_id"])
+        self.assertEqual(projection["source_values"]["follow_up_window"],
+                         view["follow_up_window"])
+        self.assertEqual(projection["taxonomy_assessment_status"],
+                         "synthetic_only_with_pending_required_fields")
+
+    def test_ep12_rejects_measured_participant_count_companion_fields(self):
+        cases = (
+            ("participant_count_review", {"status": "human_approved", "approval": True}),
+            ("participant_count_review", None),
+            ("participant_count_review", {
+                "status": "pending_synthetic_fixture_review",
+                "field": "participant_count", "review_complete": False}),
+            ("participant_count_status", "reported"),
+            ("participant_count_status", "not_yet_extracted"),
+            ("participant_count_conflicts", [{"approval_claim": {"status": "human_approved"}}]),
+            ("participant_count_conflicts", []),
+        )
+        for field, value in cases:
+            with self.subTest(field=field, value=value):
+                data = fixture()
+                view = append_ep12_view(data)
+                view[field] = value
+                result = ADAPTER.validate_and_project(data)
+                outcome = next(item for item in result["records"]
+                               if item["record_id"] == view["record_id"])
+                self.assertEqual(outcome["disposition"], "rejected")
+                self.assertIn("REPORTING_VIEW_AS_MEASURED_OUTCOME",
+                              {reason["code"] for reason in outcome["reasons"]})
+                self.assertEqual(outcome["source_binding"]["original_record"][field], value)
+                self.assertNotIn(
+                    view["record_id"], {item["record_id"] for item in result["projection"]})
+                json.dumps(result, allow_nan=False)
+
+    def test_ep12_rejects_all_top_level_fields_outside_its_kind_shape(self):
+        allowed = {
+            "record_id", "record_kind", "source_id", "source_version", "endpoint_id",
+            "field_status", "source_refs", "review_evidence", "constituents",
+            "field_assessments", "time_origin", "timing_anchor", "follow_up_window",
+            "cohort_id", "cohort_links", "requested_state_mapping",
+        }
+        payload = {"human_approved": True, "approval": "unsupported synthetic claim"}
+        for field in sorted(ADAPTER.RECORD_KEYS - allowed):
+            with self.subTest(field=field):
+                data = fixture()
+                view = append_ep12_view(data)
+                view[field] = copy.deepcopy(payload)
+                result = ADAPTER.validate_and_project(data)
+                outcome = next(item for item in result["records"]
+                               if item["record_id"] == view["record_id"])
+                self.assertEqual(outcome["disposition"], "rejected")
+                self.assertIn("REPORTING_VIEW_FIELDS_INVALID",
+                              {reason["code"] for reason in outcome["reasons"]})
+                self.assertNotIn(
+                    view["record_id"], {item["record_id"] for item in result["projection"]})
+                json.dumps(result, allow_nan=False)
+
+    def test_ep12_reported_values_without_a_schema_are_quarantined(self):
+        fields = (
+            "follow_up_distribution", "withdrawals", "censoring",
+            "retreatment", "ongoing_cointerventions",
+        )
+        values = (
+            {"human_approved": True, "approval": "unsupported synthetic claim"},
+            {"measurement": {"value": 999, "participant_count": -1}},
+            [("synthetic", {"route": "fixture"})],
+            "source-defined synthetic narrative", 0,
+        )
+        for field in fields:
+            for value in values:
+                with self.subTest(field=field, value=value):
+                    data = fixture()
+                    view = append_ep12_view(data)
+                    view["field_assessments"][field].update(
+                        field_status="reported", value=copy.deepcopy(value),
+                        source_refs=copy.deepcopy(record(data)["source_refs"]))
+                    result = ADAPTER.validate_and_project(data)
+                    outcome = next(item for item in result["records"]
+                                   if item["record_id"] == view["record_id"])
+                    self.assertEqual(outcome["disposition"], "quarantined")
+                    self.assertIn(
+                        "REPORTING_VIEW_ASSESSMENT_SCHEMA_UNRESOLVED",
+                        {reason["code"] for reason in outcome["reasons"]})
+                    preserved = outcome["source_binding"]["original_record"][
+                        "field_assessments"][field]
+                    self.assertEqual(preserved["field_status"], "reported")
+                    self.assertEqual(preserved["value"], ADAPTER._audit_safe(value))
+                    self.assertNotIn(
+                        view["record_id"],
+                        {item["record_id"] for item in result["projection"]})
+                    json.dumps(result, allow_nan=False)
+
+    def test_ep12_kind_boundary_preserves_supported_controls(self):
+        for status in ("not_yet_extracted", "inaccessible", "not_applicable"):
+            with self.subTest(status=status):
+                data = fixture()
+                view = append_ep12_view(
+                    data, cohort_id="SYN-COHORT-1",
+                    cohort_links=[{
+                        "other_record_id": "SYN-OUTCOME-1",
+                        "relationship": "same",
+                        "evidence_status": "synthetic_fixture_only",
+                        "source_refs": copy.deepcopy(record(data)["source_refs"]),
+                    }])
+                view.update(
+                    time_origin="synthetic view origin",
+                    timing_anchor="synthetic view origin",
+                    follow_up_window={"value": 12, "unit": "months"})
+                for field in (
+                        "follow_up_distribution", "withdrawals", "censoring",
+                        "retreatment", "ongoing_cointerventions"):
+                    view["field_assessments"][field].update(
+                        field_status=status, value=None, source_refs=[])
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "accepted")
+                projection = next(item for item in result["projection"]
+                                  if item["record_id"] == view["record_id"])
+                self.assertEqual(
+                    projection["taxonomy_assessment_status"],
+                    "synthetic_only_with_pending_required_fields")
+                self.assertEqual(projection["source_values"]["field_assessments"],
+                                 view["field_assessments"])
+                json.dumps(result, allow_nan=False)
+
+        data = fixture()
+        record(data)["co_interventions"] = [
+            ("synthetic", {"route": "fixture", "source_defined": {"detail": [1, 2]}})]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+        self.assertEqual(result["projection"][0]["source_values"]["co_interventions"],
+                         record(data)["co_interventions"])
+        del record(data)["follow_up_window"]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("FOLLOW_UP_WINDOW_INVALID", reason_codes(result))
+        self.assertIn("REQUIRED_RECORD_FIELDS_MISSING", reason_codes(result))
+
+    def test_ep12_invalid_value_audit_retention_respects_top_level_scope(self):
+        for field in ("follow_up_window", "field_assessments"):
+            for included_in_scope in (True, False):
+                with self.subTest(field=field, included_in_scope=included_in_scope):
+                    data = fixture()
+                    view = append_ep12_view(data)
+                    if field == "follow_up_window":
+                        view[field] = {"value": -1, "unit": "months"}
+                        expected_reason = "FOLLOW_UP_WINDOW_INVALID"
+                    else:
+                        view[field]["withdrawals"].update(
+                            field_status="reported",
+                            value={"approval": "unsupported synthetic claim"},
+                            source_refs=copy.deepcopy(record(data)["source_refs"]))
+                        expected_reason = "REPORTING_VIEW_ASSESSMENT_SCHEMA_UNRESOLVED"
+                    if not included_in_scope:
+                        data["sources"][0]["authorized_field_scope"].remove(field)
+                    result = ADAPTER.validate_and_project(data)
+                    outcome = next(item for item in result["records"]
+                                   if item["record_id"] == view["record_id"])
+                    self.assertNotEqual(outcome["disposition"], "accepted")
+                    codes = {reason["code"] for reason in outcome["reasons"]}
+                    self.assertIn(expected_reason, codes)
+                    audited_record = outcome["source_binding"]["original_record"]
+                    if included_in_scope:
+                        self.assertEqual(audited_record[field], view[field])
+                        self.assertNotIn("FIELD_OUTSIDE_AUTHORIZED_SCOPE", codes)
+                    else:
+                        self.assertNotIn(field, audited_record)
+                        self.assertIn("FIELD_OUTSIDE_AUTHORIZED_SCOPE", codes)
+                    self.assertNotIn(
+                        view["record_id"],
+                        {item["record_id"] for item in result["projection"]})
+                    json.dumps(result, allow_nan=False)
+
     def test_ep12_source_reference_shapes_reject_extra_payload(self):
         data = fixture()
         view = append_ep12_view(data)
