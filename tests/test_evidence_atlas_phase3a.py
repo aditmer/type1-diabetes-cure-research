@@ -1040,6 +1040,29 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                     else "REPORTING_VIEW_FIELD_CONFLICT_UNRESOLVED")
                 self.assertIn(expected, reason_codes(result))
 
+    def test_ep12_missing_time_origin_assessment_value_returns_report(self):
+        data = fixture()
+        constituents = [{"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"}]
+        data["records"].append({
+            "record_id": "SYN-VIEW-12",
+            "record_kind": "reporting_view",
+            "source_id": "SYN-SOURCE-1",
+            "source_version": "SYN-VERSION-1",
+            "endpoint_id": "EP-12",
+            "field_status": "not_applicable",
+            "source_refs": [],
+            "review_evidence": {"status": "not_applicable_synthetic"},
+            "constituents": constituents,
+            "field_assessments": ep12_assessments(
+                constituents, timing_records=[record(data)]),
+        })
+        del data["records"][-1]["field_assessments"]["time_origin"]["value"]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("REPORTING_VIEW_ASSESSMENT_INVALID", reason_codes(result))
+        self.assertEqual(result["projection"], [])
+        json.dumps(result, allow_nan=False)
+
     def test_malformed_identifiers_return_reasons_instead_of_raising(self):
         mutations = (
             lambda data: record(data).update(record_id=[]),

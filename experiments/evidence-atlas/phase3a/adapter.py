@@ -792,7 +792,7 @@ def _validate_record(record, source, records_by_id, sources):
                     "EP-12 time_origin requires at least one source-bound synthetic locator",
                     record_id))
             if isinstance(time_assessment, dict) and isinstance(constituents, list):
-                timing_value = time_assessment["value"]
+                timing_value = time_assessment.get("value")
                 expected_timing = []
                 for item in constituents:
                     target = (
@@ -805,7 +805,7 @@ def _validate_record(record, source, records_by_id, sources):
                             "time_origin": target.get("time_origin"),
                             "timing_anchor": target.get("timing_anchor"),
                         })
-                if (timing_value != {
+                if (not isinstance(timing_value, dict) or timing_value != {
                         "representation": "constituent_specific_unharmonized",
                         "constituents": expected_timing,
                     } or len(expected_timing) != len(constituents)):
