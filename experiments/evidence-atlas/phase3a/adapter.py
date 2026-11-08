@@ -39,6 +39,8 @@ PARTICIPANT_COUNT_UNITS = {
     "participant", "participants", "synthetic participant", "synthetic participants",
 }
 EVENT_COUNT_UNITS = {"event", "events", "synthetic event", "synthetic events"}
+SUPPORTED_NONCOUNT_UNITS = {"synthetic proportion"}
+SOURCE_REFERENCE_FIELDS = {"source_id", "source_version", "location"}
 MAX_INPUT_DEPTH = 100
 SOURCE_KEYS = {
     "source_id",
@@ -419,7 +421,12 @@ def _validate_references(record, source):
                        record.get("record_id"))]
     issues = []
     for ref in refs:
-        if (not isinstance(ref, dict) or
+        if (not isinstance(ref, dict) or set(ref) != SOURCE_REFERENCE_FIELDS):
+            issues.append(_issue(
+                "SOURCE_REFERENCE_FIELDS_INVALID",
+                "source references must contain exactly source_id, source_version, and location",
+                record.get("record_id")))
+        elif (
                 ref.get("source_id") != record.get("source_id") or
                 ref.get("source_version") != record.get("source_version")):
             issues.append(_issue("SOURCE_PROVENANCE_MISMATCH",
@@ -470,7 +477,7 @@ def _cohort_link_has_provenance(link, sources):
     if link.get("evidence_status") != "synthetic_fixture_only" or not isinstance(refs, list) or not refs:
         return False
     for ref in refs:
-        if not isinstance(ref, dict):
+        if not isinstance(ref, dict) or set(ref) != SOURCE_REFERENCE_FIELDS:
             return False
         source_id = ref.get("source_id")
         source = sources.get(source_id) if isinstance(source_id, str) else None
@@ -799,6 +806,12 @@ def _validate_record(record, source, records_by_id, sources):
                     issues.append(_issue("INVALID_REPORTING_VIEW_CONSTITUENT",
                                          "constituent references must be objects", record_id))
                     continue
+                if set(constituent) != {"record_id", "endpoint_id"}:
+                    issues.append(_issue(
+                        "INVALID_REPORTING_VIEW_CONSTITUENT",
+                        "constituent references may contain only record_id and endpoint_id",
+                        record_id))
+                    continue
                 constituent_id = constituent.get("record_id")
                 endpoint = constituent.get("endpoint_id")
                 if not isinstance(constituent_id, str) or not _text(constituent_id):
@@ -1062,6 +1075,7 @@ def _validate_record(record, source, records_by_id, sources):
                                  record_id))
     follow_up = record.get("follow_up_window")
     if (not isinstance(follow_up, dict) or
+            set(follow_up) != {"value", "unit"} or
             not _positive_number(follow_up.get("value")) or
             not _text(follow_up.get("unit"))):
         issues.append(_issue("FOLLOW_UP_WINDOW_INVALID",
@@ -1115,6 +1129,12 @@ def _validate_record(record, source, records_by_id, sources):
                              record_id))
     participant_status = record.get("participant_count_status")
     participant_count = record.get("participant_count")
+    if (type(participant_count) is int and type(denominator) is int and
+            participant_count > denominator):
+        issues.append(_issue(
+            "PARTICIPANT_COUNT_BASIS_UNRESOLVED",
+            "participant_count exceeds analysis_denominator, but their population and count bases are not established",
+            record_id))
     participant_conflicts = record.get("participant_count_conflicts")
     if not isinstance(participant_conflicts, list):
         issues.append(_issue("PARTICIPANT_COUNT_CONFLICTS_INVALID",
@@ -1236,24 +1256,38 @@ def _validate_record(record, source, records_by_id, sources):
     if not _text(record.get("unit")):
         issues.append(_issue("UNIT_MISSING", "source-defined unit is required", record_id))
     unit = record.get("unit")
-    if isinstance(unit, str) and unit in PARTICIPANT_COUNT_UNITS:
+    normalized_unit = unit.strip().casefold() if isinstance(unit, str) else None
+    participant_count_unit = normalized_unit in {
+        candidate.casefold() for candidate in PARTICIPANT_COUNT_UNITS}
+    event_count_unit = normalized_unit in {
+        candidate.casefold() for candidate in EVENT_COUNT_UNITS}
+    if (isinstance(unit, str) and not participant_count_unit and
+            not event_count_unit and unit not in SUPPORTED_NONCOUNT_UNITS):
+        issues.append(_issue(
+            "UNIT_UNSUPPORTED",
+            "unit is outside the controlled synthetic demonstration vocabulary",
+            record_id))
+    if participant_count_unit:
         if (type(value) is not int or participant_status != "reported" or
                 participant_count != value):
             issues.append(_issue(
                 "PARTICIPANT_VALUE_COUNT_MISMATCH",
                 "participant-valued results must equal the explicitly reported participant_count",
                 record_id))
-    if isinstance(unit, str) and unit in EVENT_COUNT_UNITS:
+    if event_count_unit:
         if type(value) is not int or type(event_count) is not int or value != event_count:
             issues.append(_issue(
                 "EVENT_VALUE_COUNT_MISMATCH",
                 "event-valued results must equal the explicitly reported event_count",
                 record_id))
-    if (type(participant_count) is int and type(denominator) is int and
-            participant_count > denominator):
-        issues.append(_issue("PARTICIPANT_COUNT_EXCEEDS_DENOMINATOR",
-                             "participant count cannot exceed the analysis denominator",
-                             record_id))
+    if (unit == "synthetic proportion" and
+            (type(value) not in (int, float) or
+             (type(value) is float and not math.isfinite(value)) or
+             value < 0 or value > 1)):
+        issues.append(_issue(
+            "PROPORTION_VALUE_INVALID",
+            "synthetic proportion values must be finite numeric values from zero through one",
+            record_id))
     if not _text(record.get("cohort_id")) or not record["cohort_id"].startswith("SYN-"):
         issues.append(_issue("COHORT_ID_INVALID",
                              "cohort identity must use the SYN- namespace", record_id))
@@ -1265,6 +1299,8 @@ def _validate_record(record, source, records_by_id, sources):
             "COHORT_OVERLAP_UNRESOLVED", "HUMAN_ADJUDICATION_MISSING",
             "STATE_MAPPING_UNAUTHORIZED", "PARTICIPANT_COUNT_REVIEW_INCOMPLETE",
             "PARTICIPANT_COUNT_CONFLICT", "PARTICIPANT_COUNT_CONFLICT_PROVENANCE_INCOMPLETE",
+            "PARTICIPANT_COUNT_BASIS_UNRESOLVED",
+            "UNIT_UNSUPPORTED",
         } for issue in issues)
         return issues, "quarantined" if quarantined else "rejected"
     return [], "accepted"

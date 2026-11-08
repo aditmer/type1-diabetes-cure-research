@@ -29,3 +29,17 @@ view-level cohort links with the same structural, identity, target, and
 provenance checks as measured records. Linked views and non-uncertain link
 targets require explicit synthetic cohort identities; self-links are invalid,
 and unresolved overlap remains quarantined.
+
+Measured-result units use a controlled synthetic vocabulary: declared
+participant/event count units (case/whitespace variants select the same
+comparator but the original text is preserved) and `synthetic proportion`
+(finite numeric values from zero through one). Count values must match their
+corresponding synthetic participant/event count. Unknown units and participant
+counts exceeding the analysis denominator are quarantined because their
+semantics or basis are unresolved; no clinical unit mapping or enrollment
+interpretation is implied. Reference objects have exact shapes: source
+references contain only `source_id`, `source_version`, and `location`; EP-12
+constituent references contain only `record_id` and `endpoint_id`; follow-up
+windows contain only `value` and `unit`. See
+`docs/evidence-atlas/PHASE-3A-SOURCE-CONTRACT.md` for the detailed synthetic
+contract and limits.

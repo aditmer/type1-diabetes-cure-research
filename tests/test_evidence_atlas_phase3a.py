@@ -3,6 +3,7 @@ import contextlib
 import io
 import importlib.util
 import json
+import math
 import socket
 import unittest
 from unittest import mock
@@ -530,6 +531,34 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertEqual(result["status"], "rejected")
         self.assertIn("OBSERVED_COUNT_EXCEEDS_ANALYSIS_DENOMINATOR", reason_codes(result))
 
+    def test_participant_count_above_analysis_denominator_is_quarantined_as_unresolved(self):
+        cases = (
+            {
+                "value": 10,
+                "unit": "synthetic participants",
+                "participant_count": 10,
+            },
+            {
+                "value": 0.5,
+                "unit": "synthetic proportion",
+                "participant_count": 10,
+            },
+        )
+        for changes in cases:
+            with self.subTest(unit=changes["unit"]):
+                data = fixture()
+                record(data).update(
+                    **changes,
+                    analysis_denominator=8,
+                    observed_measurement_count=8,
+                    missing_data_method="none reported",
+                )
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "quarantined")
+                self.assertIn("PARTICIPANT_COUNT_BASIS_UNRESOLVED",
+                              reason_codes(result))
+                self.assertEqual(result["projection"], [])
+
     def test_participant_valued_result_must_match_reported_count(self):
         data = fixture()
         record(data).update(value=500, participant_count=1)
@@ -550,6 +579,138 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         result = ADAPTER.validate_and_project(data)
         self.assertEqual(result["status"], "rejected")
         self.assertIn("EVENT_VALUE_COUNT_MISMATCH", reason_codes(result))
+
+    def test_count_unit_variants_compare_counts_without_normalizing_source_text(self):
+        cases = (
+            ("Synthetic participants", "participant_count", 1),
+            (" participants ", "participant_count", 1),
+            ("synthetic Participants", "participant_count", 1),
+            ("synthetic participants ", "participant_count", 1),
+            ("Participants", "participant_count", 1),
+            ("Events", "event_count", 3),
+            (" events ", "event_count", 3),
+            ("synthetic Events", "event_count", 3),
+        )
+        for unit, count_field, count in cases:
+            with self.subTest(unit=unit):
+                data = fixture()
+                item = record(data)
+                if count_field == "event_count":
+                    item.update(
+                        endpoint_id="EP-03",
+                        endpoint_definition="Invented event count endpoint.",
+                        event_count=count,
+                        value=count,
+                        unit=unit,
+                    )
+                    item.update(
+                        participant_count=None,
+                        participant_count_status="not_yet_extracted",
+                        participant_count_review={
+                            "status": "pending_synthetic_fixture_review",
+                            "field": "participant_count",
+                            "review_complete": False,
+                        },
+                    )
+                else:
+                    item.update(value=count, participant_count=count, unit=unit)
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "accepted")
+                self.assertEqual(result["projection"][0]["source_values"]["unit"], unit)
+                self.assertEqual(
+                    result["records"][0]["source_binding"]["original_record"]["unit"],
+                    unit)
+                item["value"] = count + 1
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                expected_reason = (
+                    "PARTICIPANT_VALUE_COUNT_MISMATCH"
+                    if count_field == "participant_count" else "EVENT_VALUE_COUNT_MISMATCH")
+                self.assertIn(expected_reason, reason_codes(result))
+
+    def test_exact_supported_count_units_are_preserved(self):
+        cases = (
+            ("synthetic participants", 1, None),
+            ("synthetic events", 3, 3),
+        )
+        for unit, value, event_count in cases:
+            with self.subTest(unit=unit):
+                data = fixture()
+                item = record(data)
+                item.update(value=value, unit=unit, event_count=event_count)
+                if event_count is not None:
+                    item.update(
+                        endpoint_id="EP-03",
+                        endpoint_definition="Invented event count endpoint.",
+                        participant_count=None,
+                        participant_count_status="not_yet_extracted",
+                        participant_count_review={
+                            "status": "pending_synthetic_fixture_review",
+                            "field": "participant_count",
+                            "review_complete": False,
+                        },
+                    )
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "accepted")
+                self.assertEqual(result["projection"][0]["source_values"]["unit"], unit)
+
+    def test_unsupported_unit_is_quarantined_and_proportion_is_supported(self):
+        data = fixture()
+        record(data).update(
+            value=999,
+            participant_count=1,
+            unit="participants counted",
+        )
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("UNIT_UNSUPPORTED", reason_codes(result))
+        self.assertEqual(
+            result["records"][0]["source_binding"]["original_record"]["unit"],
+            "participants counted")
+
+        data = fixture()
+        record(data).update(value=0.5, unit="synthetic proportion")
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+
+    def test_synthetic_proportion_is_finite_numeric_between_zero_and_one(self):
+        data = fixture()
+        for value in (0, 0.5, 1):
+            with self.subTest(valid_value=value):
+                record(data).update(value=value, unit="synthetic proportion")
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "accepted")
+
+        for value in (-1, 1.01, 10**400, -(10**400), True, "0.5",
+                      float("inf"), float("nan")):
+            with self.subTest(invalid_value=value):
+                record(data).update(value=value, unit="synthetic proportion")
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                expected_reason = (
+                    "NONFINITE_NUMBER_INPUT"
+                    if type(value) is float and not math.isfinite(value)
+                    else "PROPORTION_VALUE_INVALID")
+                self.assertIn(expected_reason, reason_codes(result))
+                json.dumps(result, allow_nan=False)
+
+    def test_measured_source_reference_and_follow_up_shapes_reject_extra_payload(self):
+        data = fixture()
+        record(data)["source_refs"][0].update({
+            "measurement": {"value": 999, "participant_count": -1},
+            "approval_claim": {"status": "human_approved"},
+        })
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("SOURCE_REFERENCE_FIELDS_INVALID", reason_codes(result))
+
+        data = fixture()
+        record(data)["follow_up_window"]["approval_claim"] = {
+            "status": "human_approved",
+        }
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("FOLLOW_UP_WINDOW_INVALID", reason_codes(result))
 
     def test_empty_batch_is_rejected(self):
         result = ADAPTER.validate_and_project({
@@ -1188,6 +1349,82 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             self.assertEqual(
                 projected["source_values"]["field_assessments"]["number_at_risk"]["value"],
                 value)
+
+    def test_ep12_constituent_references_reject_unvalidated_extra_payload(self):
+        extras = (
+            {
+                "value": 999,
+                "unit": "synthetic participants",
+                "participant_count": 999,
+                "analysis_denominator": 1,
+            },
+            {
+                "measurement": {
+                    "value": 999,
+                    "unit": "synthetic participants",
+                    "participant_count": -1,
+                },
+            },
+            {"approval_claim": {"status": "human_approved"}},
+        )
+        for extra in extras:
+            with self.subTest(extra=extra):
+                data = fixture()
+                view = append_ep12_view(data)
+                view["constituents"][0].update(extra)
+                result = ADAPTER.validate_and_project(data)
+                view_result = next(
+                    item for item in result["records"]
+                    if item["record_id"] == view["record_id"])
+                self.assertEqual(view_result["disposition"], "rejected")
+                self.assertIn(
+                    "INVALID_REPORTING_VIEW_CONSTITUENT",
+                    {reason["code"] for reason in view_result["reasons"]})
+                self.assertNotIn(
+                    view["record_id"],
+                    {item["record_id"] for item in result["projection"]})
+
+    def test_ep12_source_reference_shapes_reject_extra_payload(self):
+        data = fixture()
+        view = append_ep12_view(data)
+        view["field_assessments"]["time_origin"]["source_refs"][0].update({
+            "measurement": {"value": 999, "participant_count": -1},
+            "approval_claim": {"status": "human_approved"},
+        })
+        result = ADAPTER.validate_and_project(data)
+        view_result = next(
+            item for item in result["records"]
+            if item["record_id"] == view["record_id"])
+        self.assertNotEqual(view_result["disposition"], "accepted")
+        self.assertNotIn(
+            view["record_id"],
+            {item["record_id"] for item in result["projection"]})
+
+        data = fixture()
+        view = append_ep12_view(
+            data,
+            cohort_id="SYN-COHORT-1",
+            cohort_links=[{
+                "other_record_id": "SYN-OUTCOME-1",
+                "relationship": "same",
+                "evidence_status": "synthetic_fixture_only",
+                "source_refs": [{
+                    "source_id": "SYN-SOURCE-1",
+                    "source_version": "SYN-VERSION-1",
+                    "location": "synthetic://SYN-VERSION-1/record-1/cohort-link",
+                    "measurement": {"value": 999, "participant_count": -1},
+                    "approval_claim": {"status": "human_approved"},
+                }],
+            }],
+        )
+        result = ADAPTER.validate_and_project(data)
+        view_result = next(
+            item for item in result["records"]
+            if item["record_id"] == view["record_id"])
+        self.assertNotEqual(view_result["disposition"], "accepted")
+        self.assertNotIn(
+            view["record_id"],
+            {item["record_id"] for item in result["projection"]})
 
     def test_ep12_cohort_links_are_validated_in_reporting_branch(self):
         def link(other_record_id, relationship):
