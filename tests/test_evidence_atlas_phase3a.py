@@ -1090,6 +1090,57 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertEqual(result["status"], "quarantined")
         self.assertIn("REPORTING_VIEW_TIMING_INCONSISTENT", reason_codes(result))
 
+    def test_ep12_blank_reported_assessment_is_quarantined_but_zero_is_preserved(self):
+        data = fixture()
+        constituents = [{"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"}]
+        data["records"].append({
+            "record_id": "SYN-VIEW-12",
+            "record_kind": "reporting_view",
+            "source_id": "SYN-SOURCE-1",
+            "source_version": "SYN-VERSION-1",
+            "endpoint_id": "EP-12",
+            "field_status": "not_applicable",
+            "source_refs": [],
+            "review_evidence": {"status": "not_applicable_synthetic"},
+            "constituents": constituents,
+            "field_assessments": ep12_assessments(
+                constituents, timing_records=[record(data)]),
+        })
+        assessment = data["records"][-1]["field_assessments"]["number_at_risk"]
+        assessment.update(
+            field_status="reported",
+            value="",
+            source_refs=[{
+                "source_id": "SYN-SOURCE-1",
+                "source_version": "SYN-VERSION-1",
+                "location": "synthetic://SYN-VERSION-1/record-1/number-at-risk",
+            }],
+        )
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("REPORTING_VIEW_ASSESSMENT_VALUE_INVALID", reason_codes(result))
+
+        assessment["value"] = 0
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+        projected = next(item for item in result["projection"]
+                         if item["record_id"] == "SYN-VIEW-12")
+        self.assertEqual(
+            projected["source_values"]["field_assessments"]["number_at_risk"]["value"], 0)
+
+    def test_nonstring_record_id_with_unapproved_source_version_returns_report(self):
+        data = fixture()
+        record(data)["record_id"] = []
+        data["sources"][0]["version_state"] = "unapproved"
+        del data["sources"][0]["document_type"]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertEqual(result["projection"], [])
+        self.assertIn("NON_SYNTHETIC_RECORD_ID", reason_codes(result))
+        self.assertIn("UNAPPROVED_SOURCE_VERSION", reason_codes(result))
+        self.assertIn("DOCUMENT_TYPE_MISSING", reason_codes(result))
+        json.dumps(result, allow_nan=False)
+
     def test_malformed_identifiers_return_reasons_instead_of_raising(self):
         mutations = (
             lambda data: record(data).update(record_id=[]),

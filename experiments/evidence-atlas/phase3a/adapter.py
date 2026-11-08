@@ -114,6 +114,15 @@ def _issue(code, message, record_id=None):
     return issue
 
 
+def _reason_sort_key(issue):
+    record_id = issue.get("record_id")
+    return (
+        record_id if isinstance(record_id, str) else "",
+        issue.get("code", ""),
+        issue.get("message", ""),
+    )
+
+
 def _text(value):
     return isinstance(value, str) and bool(value.strip())
 
@@ -762,6 +771,13 @@ def _validate_record(record, source, records_by_id, sources):
                     "REPORTING_VIEW_ASSESSMENT_VALUE_MISSING",
                     f"reported EP-12 assessment {field} requires an explicit value",
                     record_id))
+                elif (assessment_status == "reported" and
+                      isinstance(assessment_value, str) and
+                      not assessment_value.strip()):
+                    issues.append(_issue(
+                    "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
+                    f"reported EP-12 assessment {field} cannot be blank text",
+                    record_id))
                 elif assessment_status != "reported" and assessment_value is not None:
                     issues.append(_issue(
                     "REPORTING_VIEW_ASSESSMENT_STATE_VALUE_MISMATCH",
@@ -1317,7 +1333,11 @@ def validate_and_project(manifest):
         source = sources.get(source_id) if isinstance(source_id, str) else None
         record_issues, disposition = _validate_record(record, source, records_by_id, sources)
         related_source_issues = [
-            {**issue, "record_id": record.get("record_id")}
+            {
+                **issue,
+                **({"record_id": record.get("record_id")}
+                   if isinstance(record.get("record_id"), str) else {}),
+            }
             for issue in source_issues
             if issue.get("source_id") == record.get("source_id")
         ]
@@ -1335,7 +1355,7 @@ def validate_and_project(manifest):
             "original_record": _auditable_source_record(record, source),
         }
         outcomes.append({
-            "record_id": record.get("record_id"),
+            "record_id": _audit_safe(record.get("record_id")),
             "disposition": disposition,
             "source_binding": source_binding,
             "reasons": sorted(record_issues, key=lambda issue: (issue["code"], issue["message"])),
@@ -1393,8 +1413,7 @@ def validate_and_project(manifest):
         "contract_version": CONTRACT_VERSION,
         "status": status,
         "records": outcomes,
-        "reasons": sorted(reasons, key=lambda issue: (
-            issue.get("record_id", ""), issue["code"], issue["message"])),
+        "reasons": sorted(reasons, key=_reason_sort_key),
         "projection": projection,
     }
 
