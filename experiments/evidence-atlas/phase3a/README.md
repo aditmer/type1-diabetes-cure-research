@@ -25,6 +25,7 @@ machine-readable and the input is never mutated.
 The EP-12 demo accepts only scalar non-negative integer reported
 `number_at_risk` counts, preserving explicit zero; booleans, fractions,
 negative, empty, structured, and narrative values are rejected. It validates
-view-level cohort links with the same structural and provenance checks as
-measured records; self-links are invalid, and unresolved overlap remains
-quarantined.
+view-level cohort links with the same structural, identity, target, and
+provenance checks as measured records. Linked views and non-uncertain link
+targets require explicit synthetic cohort identities; self-links are invalid,
+and unresolved overlap remains quarantined.
