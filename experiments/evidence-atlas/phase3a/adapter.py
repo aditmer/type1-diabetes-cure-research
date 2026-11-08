@@ -615,11 +615,6 @@ def _validate_cohort_links(record, record_id, records_by_id):
             issues.append(_issue("COHORT_LINK_INVALID",
                                  "cohort relationship is invalid", record_id))
             continue
-        if relationship == "uncertain":
-            issues.append(_issue("COHORT_OVERLAP_UNRESOLVED",
-                                 "uncertain cohort links remain unresolved; no pooling or independence",
-                                 record_id))
-            continue
         target_id = link.get("other_record_id")
         if not isinstance(target_id, str) or target_id not in records_by_id:
             issues.append(_issue("COHORT_LINK_TARGET_MISSING",
@@ -629,21 +624,25 @@ def _validate_cohort_links(record, record_id, records_by_id):
             issues.append(_issue("COHORT_LINK_SELF_REFERENCE",
                                  "a cohort relationship cannot refer to itself", record_id))
             continue
+        if relationship == "uncertain":
+            issues.append(_issue("COHORT_OVERLAP_UNRESOLVED",
+                                 "uncertain cohort links remain unresolved; no pooling or independence",
+                                 record_id))
+            continue
         target = records_by_id[target_id]
         target_cohort = target.get("cohort_id")
-        if relationship != "uncertain":
-            if not valid_own_cohort:
-                issues.append(_issue("COHORT_ID_INVALID",
-                                     "cohort identity must use the SYN- namespace",
-                                     record_id))
-                continue
-            if (not _text(target_cohort) or
-                    not target_cohort.startswith("SYN-")):
-                issues.append(_issue(
-                    "COHORT_LINK_TARGET_COHORT_INVALID",
-                    "non-uncertain cohort links require a target with an explicit synthetic cohort_id",
-                    record_id))
-                continue
+        if not valid_own_cohort:
+            issues.append(_issue("COHORT_ID_INVALID",
+                                 "cohort identity must use the SYN- namespace",
+                                 record_id))
+            continue
+        if (not _text(target_cohort) or
+                not target_cohort.startswith("SYN-")):
+            issues.append(_issue(
+                "COHORT_LINK_TARGET_COHORT_INVALID",
+                "non-uncertain cohort links require a target with an explicit synthetic cohort_id",
+                record_id))
+            continue
         if (relationship == "same" and
                 target_cohort != record.get("cohort_id")):
             issues.append(_issue("COHORT_IDENTITY_CONTRADICTION",

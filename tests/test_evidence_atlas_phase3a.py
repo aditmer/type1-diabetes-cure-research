@@ -1229,6 +1229,91 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                     "SYN-VIEW-12",
                     {item["record_id"] for item in result["projection"]})
 
+    def test_uncertain_cohort_links_validate_structure_before_quarantine(self):
+        def link(include_target=True, target_id=None):
+            relation = {
+                "relationship": "uncertain",
+                "evidence_status": "synthetic_fixture_only",
+                "source_refs": [{
+                    "source_id": "SYN-SOURCE-1",
+                    "source_version": "SYN-VERSION-1",
+                    "location": "synthetic://SYN-VERSION-1/record-1/cohort-link",
+                }],
+            }
+            if include_target:
+                relation["other_record_id"] = target_id
+            return relation
+
+        invalid_targets = (
+            ("self", "SYN-OUTCOME-1", "SYN-VIEW-12",
+             "COHORT_LINK_SELF_REFERENCE"),
+            ("missing", "SYN-MISSING", "SYN-MISSING",
+             "COHORT_LINK_TARGET_MISSING"),
+            ("list", ["SYN-OUTCOME-2"], ["SYN-OUTCOME-2"],
+             "COHORT_LINK_TARGET_MISSING"),
+            ("omitted", _OMIT_COHORT_ID, _OMIT_COHORT_ID,
+             "COHORT_LINK_TARGET_MISSING"),
+        )
+        for record_kind in ("measured_outcome", "reporting_view"):
+            for case, measured_target, view_target, expected_code in invalid_targets:
+                with self.subTest(record_kind=record_kind, case=case):
+                    data = fixture()
+                    if record_kind == "measured_outcome":
+                        second = copy.deepcopy(record(data))
+                        second["record_id"] = "SYN-OUTCOME-2"
+                        data["records"].append(second)
+                        owner_id = "SYN-OUTCOME-1"
+                        relation = link(
+                            include_target=measured_target is not _OMIT_COHORT_ID,
+                            target_id=(measured_target
+                                       if measured_target is not _OMIT_COHORT_ID else None))
+                        record(data)["cohort_links"] = [relation]
+                    else:
+                        owner = append_ep12_view(
+                            data, cohort_id="SYN-VIEW-COHORT")
+                        owner_id = owner["record_id"]
+                        relation = link(
+                            include_target=view_target is not _OMIT_COHORT_ID,
+                            target_id=(view_target
+                                       if view_target is not _OMIT_COHORT_ID else None))
+                        owner["cohort_links"] = [relation]
+
+                    result = ADAPTER.validate_and_project(data)
+                    outcome = next(item for item in result["records"]
+                                   if item["record_id"] == owner_id)
+                    self.assertEqual(outcome["disposition"], "rejected")
+                    self.assertIn(expected_code,
+                                  {reason["code"] for reason in outcome["reasons"]})
+                    self.assertNotIn(
+                        owner_id,
+                        {item["record_id"] for item in result["projection"]})
+                    json.dumps(result, allow_nan=False)
+
+        data = fixture()
+        second = copy.deepcopy(record(data))
+        second["record_id"] = "SYN-OUTCOME-2"
+        data["records"].append(second)
+        record(data)["cohort_links"] = [link(target_id="SYN-OUTCOME-2")]
+        result = ADAPTER.validate_and_project(data)
+        outcome = next(item for item in result["records"]
+                       if item["record_id"] == "SYN-OUTCOME-1")
+        self.assertEqual(outcome["disposition"], "quarantined")
+        self.assertIn("COHORT_OVERLAP_UNRESOLVED",
+                      {reason["code"] for reason in outcome["reasons"]})
+
+        data = fixture()
+        view = append_ep12_view(
+            data,
+            cohort_links=[link(target_id="SYN-OUTCOME-1")],
+            cohort_id="SYN-VIEW-COHORT",
+        )
+        result = ADAPTER.validate_and_project(data)
+        outcome = next(item for item in result["records"]
+                       if item["record_id"] == view["record_id"])
+        self.assertEqual(outcome["disposition"], "quarantined")
+        self.assertIn("COHORT_OVERLAP_UNRESOLVED",
+                      {reason["code"] for reason in outcome["reasons"]})
+
     def test_ep12_projectable_cohort_links_require_explicit_valid_identities(self):
         def link(other_record_id, relationship, direction=None):
             relation = {
