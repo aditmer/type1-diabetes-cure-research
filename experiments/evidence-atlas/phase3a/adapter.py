@@ -5,11 +5,12 @@ write path. Its CLI reads only the bundled fixture and prints a deterministic
 validation report to standard output.
 """
 
-import copy
 import json
 import math
+import re
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 
 FIXTURE = Path(__file__).with_name("synthetic-manifest.json")
@@ -36,6 +37,8 @@ REPORTING_VIEW_REQUIRED_FIELDS = {
 PARTICIPANT_COUNT_UNITS = {
     "participant", "participants", "synthetic participant", "synthetic participants",
 }
+EVENT_COUNT_UNITS = {"event", "events", "synthetic event", "synthetic events"}
+MAX_INPUT_DEPTH = 100
 SOURCE_KEYS = {
     "source_id",
     "source_version",
@@ -115,24 +118,145 @@ def _text(value):
     return isinstance(value, str) and bool(value.strip())
 
 
-def _audit_safe(value):
+def _audit_safe(value, active=None, depth=0):
+    if active is None:
+        active = set()
+    if depth > MAX_INPUT_DEPTH:
+        return {"unsupported_input": "maximum nesting depth exceeded"}
     if isinstance(value, float) and not math.isfinite(value):
         return {"non_finite_numeric_input": repr(value)}
     if isinstance(value, dict):
-        return {key: _audit_safe(item) for key, item in value.items()}
-    if isinstance(value, list):
-        return [_audit_safe(item) for item in value]
-    return copy.deepcopy(value)
+        identity = id(value)
+        if identity in active:
+            return {"unsupported_input": "cyclic reference"}
+        active.add(identity)
+        try:
+            if all(isinstance(key, str) for key in value):
+                return {
+                    key: _audit_safe(item, active, depth + 1)
+                    for key, item in value.items()
+                }
+            return {
+                "unsupported_input": "non-string object key",
+                "entries": [
+                    {
+                        "key": _audit_safe(key, active, depth + 1),
+                        "value": _audit_safe(item, active, depth + 1),
+                    }
+                    for key, item in value.items()
+                ],
+            }
+        finally:
+            active.remove(identity)
+    if isinstance(value, (list, tuple)):
+        identity = id(value)
+        if identity in active:
+            return {"unsupported_input": "cyclic reference"}
+        active.add(identity)
+        try:
+            return [_audit_safe(item, active, depth + 1) for item in value]
+        finally:
+            active.remove(identity)
+    if value is None or type(value) in (str, int, float, bool):
+        return value
+    return {"unsupported_input": type(value).__name__}
 
 
-def _contains_nonfinite_number(value):
-    if type(value) is float:
-        return not math.isfinite(value)
+def _input_issues(value, path="$", active=None, depth=0):
+    if active is None:
+        active = set()
+    if depth > MAX_INPUT_DEPTH:
+        return [_issue("INPUT_STRUCTURE_TOO_DEEP",
+                       f"input exceeds the maximum nesting depth at {path}")]
+    if isinstance(value, float) and not math.isfinite(value):
+        return [_issue("NONFINITE_NUMBER_INPUT",
+                       f"non-finite numeric input is not permitted at {path}")]
     if isinstance(value, dict):
-        return any(_contains_nonfinite_number(item) for item in value.values())
-    if isinstance(value, list):
-        return any(_contains_nonfinite_number(item) for item in value)
-    return False
+        identity = id(value)
+        if identity in active:
+            return [_issue("CYCLIC_INPUT_REFERENCE",
+                           f"cyclic input reference is not permitted at {path}")]
+        active.add(identity)
+        issues = []
+        try:
+            for key, item in value.items():
+                if not isinstance(key, str):
+                    issues.append(_issue(
+                        "NON_STRING_OBJECT_KEY",
+                        f"object keys must be strings at {path}"))
+                    continue
+                issues.extend(_input_issues(
+                    item, f"{path}.{key}", active, depth + 1))
+        finally:
+            active.remove(identity)
+        return issues
+    if isinstance(value, (list, tuple)):
+        identity = id(value)
+        if identity in active:
+            return [_issue("CYCLIC_INPUT_REFERENCE",
+                           f"cyclic input reference is not permitted at {path}")]
+        active.add(identity)
+        issues = []
+        try:
+            for index, item in enumerate(value):
+                issues.extend(_input_issues(
+                    item, f"{path}[{index}]", active, depth + 1))
+        finally:
+            active.remove(identity)
+        return issues
+    if value is None or type(value) in (str, int, float, bool):
+        return []
+    return [_issue("UNSUPPORTED_INPUT_VALUE",
+                   f"unsupported input value at {path}")]
+
+
+def _synthetic_locator(value, source_version):
+    if (not isinstance(value, str) or not isinstance(source_version, str) or
+            not re.fullmatch(r"SYN-[A-Za-z0-9._-]+", source_version) or
+            "%" in value or "\\" in value or any(ord(char) < 32 for char in value)):
+        return None
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return None
+    if (parsed.scheme != "synthetic" or parsed.netloc != source_version or
+            parsed.query or parsed.fragment or not parsed.path.startswith("/")):
+        return None
+    segments = parsed.path[1:].split("/")
+    if (not segments or any(
+            not segment or segment in {".", ".."} or
+            not re.fullmatch(r"[A-Za-z0-9._-]+", segment)
+            for segment in segments)):
+        return None
+    canonical = f"synthetic://{source_version}/{'/'.join(segments)}"
+    return segments if canonical == value else None
+
+
+def _locator_within_source(value, source):
+    if not isinstance(source, dict):
+        return False
+    version = source.get("source_version")
+    base = _synthetic_locator(source.get("original_record_reference"), version)
+    locator = _synthetic_locator(value, version)
+    return base is not None and locator is not None and locator[:len(base)] == base
+
+
+def _reference_signatures(refs, source=None):
+    if not isinstance(refs, list):
+        return set()
+    signatures = set()
+    for item in refs:
+        if not isinstance(item, dict):
+            continue
+        source_id = item.get("source_id")
+        version = item.get("source_version")
+        location = item.get("location")
+        if not all(isinstance(value, str) for value in (source_id, version, location)):
+            continue
+        if source is not None and not _locator_within_source(location, source):
+            continue
+        signatures.add((source_id, version, location))
+    return signatures
 
 
 def _positive_number(value):
@@ -197,11 +321,11 @@ def _source_map(sources):
                                        f"{source_id} version is not approved for this fixture",
                                        source_id))
         reference = source.get("original_record_reference")
-        if (not _text(reference) or not version or
-                not reference.startswith(f"synthetic://{version}/")):
+        if _synthetic_locator(reference, version) is None:
             issues.append(source_issue(
                 "INVALID_SOURCE_REFERENCE",
-                f"{source_id} needs a version-bound synthetic record reference", source_id))
+                f"{source_id} needs a canonical, version-bound synthetic record reference",
+                source_id))
         if not _text(source.get("document_type")):
             issues.append(source_issue(
                 "DOCUMENT_TYPE_MISSING",
@@ -217,7 +341,15 @@ def _source_map(sources):
                 "INVALID_SYNTHETIC_ACCESS_ROUTE",
                 f"{source_id} must use the bundled fixture route", source_id))
         rights = source.get("rights")
-        if not isinstance(rights, dict) or rights.get("status") != "synthetic_fixture_only":
+        if not isinstance(rights, dict):
+            issues.append(source_issue(
+                "RIGHTS_AUTHORIZATION_MISSING",
+                f"{source_id} lacks explicit synthetic-only rights scope", source_id))
+        elif set(rights) - {"status", "redistribution"}:
+            issues.append(source_issue(
+                "HUMAN_APPROVAL_NOT_ALLOWED",
+                f"{source_id} contains unsupported rights or approval claims", source_id))
+        elif rights.get("status") != "synthetic_fixture_only":
             issues.append(source_issue(
                 "RIGHTS_AUTHORIZATION_MISSING",
                 f"{source_id} lacks explicit synthetic-only rights scope", source_id))
@@ -250,6 +382,7 @@ def _source_map(sources):
                 f"{source_id} must be marked synthetic", source_id))
         review = source.get("review_provenance")
         if (not isinstance(review, dict) or
+                set(review) != {"status", "reviewer", "approval"} or
                 review.get("status") != "not_applicable_synthetic" or
                 review.get("reviewer") is not None or review.get("approval") is not None):
             issues.append(source_issue(
@@ -275,23 +408,17 @@ def _validate_references(record, source):
                        "a measured record requires an exact source locator",
                        record.get("record_id"))]
     issues = []
-    original_reference = source.get("original_record_reference") if source else None
-    prefix = f"synthetic://{record.get('source_version')}/"
     for ref in refs:
         if (not isinstance(ref, dict) or
                 ref.get("source_id") != record.get("source_id") or
-                ref.get("source_version") != record.get("source_version") or
-                not _text(ref.get("location")) or
-                not ref["location"].startswith(prefix)):
+                ref.get("source_version") != record.get("source_version")):
             issues.append(_issue("SOURCE_PROVENANCE_MISMATCH",
                                  "locator must bind to the exact synthetic source version",
                                  record.get("record_id")))
-        elif (not _text(original_reference) or
-              (ref["location"] != original_reference and
-               not ref["location"].startswith(original_reference.rstrip("/") + "/"))):
+        elif not _locator_within_source(ref.get("location"), source):
             issues.append(_issue(
                 "SOURCE_LOCATOR_OUTSIDE_APPROVED_SCOPE",
-                "locator must equal or descend from the manifest original_record_reference",
+                "locator must be canonical and equal or descend from the manifest original record reference",
                 record.get("record_id")))
     if source and record.get("source_version") != source.get("source_version"):
         issues.append(_issue("SOURCE_PROVENANCE_MISMATCH",
@@ -309,6 +436,25 @@ def _auditable_source_record(record, source):
     return _audit_safe({key: value for key, value in record.items() if key in included})
 
 
+def _auditable_source(source):
+    if not isinstance(source, dict):
+        return None
+    result = {key: value for key, value in source.items() if key in SOURCE_KEYS}
+    rights = source.get("rights")
+    if isinstance(rights, dict):
+        result["rights"] = {
+            key: value for key, value in rights.items()
+            if key in {"status", "redistribution"}
+        }
+    review = source.get("review_provenance")
+    if isinstance(review, dict):
+        result["review_provenance"] = {
+            key: value for key, value in review.items()
+            if key in {"status", "reviewer", "approval"}
+        }
+    return _audit_safe(result)
+
+
 def _cohort_link_has_provenance(link, sources):
     refs = link.get("source_refs")
     if link.get("evidence_status") != "synthetic_fixture_only" or not isinstance(refs, list) or not refs:
@@ -320,12 +466,7 @@ def _cohort_link_has_provenance(link, sources):
         source = sources.get(source_id) if isinstance(source_id, str) else None
         location = ref.get("location")
         if (source is None or ref.get("source_version") != source.get("source_version") or
-                not _text(location)):
-            return False
-        original_reference = source.get("original_record_reference")
-        if (not _text(original_reference) or
-                (location != original_reference and
-                 not location.startswith(original_reference.rstrip("/") + "/"))):
+                not _text(location) or not _locator_within_source(location, source)):
             return False
     return True
 
@@ -413,12 +554,21 @@ def _cohort_graph_issues(records_by_id, sources):
             add(target_record, "COHORT_GRAPH_CONTRADICTION",
                 "subset relationships contain a directed cycle")
     for first, second, source_record, target_record in distinct_edges:
+        shares_known_subset = any(
+            (descendant, first) in reachability and
+            (descendant, second) in reachability
+            for descendant in nodes)
         if ((first, second) in reachability or (second, first) in reachability or
-                first == second):
+                first == second or shares_known_subset):
+            message = (
+                "distinct cohorts share a known subset"
+                if shares_known_subset else
+                "distinct cohorts conflict with a same-cohort or transitive subset relationship"
+            )
             add(source_record, "COHORT_GRAPH_CONTRADICTION",
-                "distinct cohorts conflict with a same-cohort or transitive subset relationship")
+                message)
             add(target_record, "COHORT_GRAPH_CONTRADICTION",
-                "distinct cohorts conflict with a same-cohort or transitive subset relationship")
+                message)
     return issues_by_record
 
 
@@ -478,7 +628,8 @@ def _validate_record(record, source, records_by_id, sources):
                              "record source version does not match the manifest", record_id))
     if source is not None:
         field_scope = source.get("authorized_field_scope")
-        if isinstance(field_scope, list):
+        if isinstance(field_scope, list) and all(
+                isinstance(field, str) for field in field_scope):
             unauthorized = _record_scope_fields(record) - set(field_scope)
             if unauthorized:
                 issues.append(_issue(
@@ -497,6 +648,12 @@ def _validate_record(record, source, records_by_id, sources):
                              record_id))
 
     kind = record.get("record_kind")
+    if kind == "measured_outcome" and any(
+            key in record for key in ("constituents", "field_assessments")):
+        issues.append(_issue(
+            "MEASURED_RECORD_HAS_VIEW_FIELDS",
+            "constituent references and taxonomy assessments are limited to reporting views",
+            record_id))
     if kind == "reporting_view":
         if not isinstance(endpoint_id, str) or endpoint_id != REPORTING_VIEW:
             issues.append(_issue("INVALID_ENDPOINT_KIND",
@@ -575,6 +732,16 @@ def _validate_record(record, source, records_by_id, sources):
                     "REPORTING_VIEW_ASSESSMENT_STATUS_INVALID",
                     f"EP-12 assessment {field} has an unsupported original state",
                     record_id))
+                elif assessment_status == "unreported_in_reviewed_material":
+                    issues.append(_issue(
+                    "REPORTING_VIEW_FIELD_REVIEW_UNVERIFIED",
+                    f"EP-12 assessment {field} lacks representable field-specific completed-review provenance",
+                    record_id))
+                elif assessment_status == "conflicting":
+                    issues.append(_issue(
+                    "REPORTING_VIEW_FIELD_CONFLICT_UNRESOLVED",
+                    f"EP-12 assessment {field} lacks distinct conflict provenance and remains unresolved",
+                    record_id))
                 elif assessment_status == "reported" and assessment_value is None:
                     issues.append(_issue(
                     "REPORTING_VIEW_ASSESSMENT_VALUE_MISSING",
@@ -584,11 +751,6 @@ def _validate_record(record, source, records_by_id, sources):
                     issues.append(_issue(
                     "REPORTING_VIEW_ASSESSMENT_STATE_VALUE_MISMATCH",
                     f"non-reported EP-12 assessment {field} must retain a null value",
-                    record_id))
-                if _contains_nonfinite_number(assessment_value):
-                    issues.append(_issue(
-                    "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
-                    f"EP-12 assessment {field} contains a non-finite numeric value",
                     record_id))
                 if assessment.get("provenance") != "synthetic_fixture_only":
                     issues.append(_issue(
@@ -618,17 +780,39 @@ def _validate_record(record, source, records_by_id, sources):
             time_assessment = assessments.get("time_origin")
             if (not isinstance(time_assessment, dict) or
                     time_assessment.get("field_status") != "reported" or
-                    not _text(time_assessment.get("value")) or
+                    not isinstance(time_assessment.get("value"), dict) or
                     not isinstance(time_assessment.get("source_refs"), list) or
                     not time_assessment.get("source_refs")):
                 issues.append(_issue(
                     "REPORTING_VIEW_TIMING_MISSING",
-                    "EP-12 requires a source-bound, explicit time_origin assessment",
+                    "EP-12 requires source-bound constituent-specific timing assessments",
                     record_id))
                 issues.append(_issue(
                     "REPORTING_VIEW_PROVENANCE_MISSING",
                     "EP-12 time_origin requires at least one source-bound synthetic locator",
                     record_id))
+            if isinstance(time_assessment, dict) and isinstance(constituents, list):
+                timing_value = time_assessment["value"]
+                expected_timing = []
+                for item in constituents:
+                    target = (
+                        records_by_id.get(item.get("record_id"))
+                        if isinstance(item, dict) and
+                        isinstance(item.get("record_id"), str) else None)
+                    if target is not None:
+                        expected_timing.append({
+                            "record_id": target.get("record_id"),
+                            "time_origin": target.get("time_origin"),
+                            "timing_anchor": target.get("timing_anchor"),
+                        })
+                if (timing_value != {
+                        "representation": "constituent_specific_unharmonized",
+                        "constituents": expected_timing,
+                    } or len(expected_timing) != len(constituents)):
+                    issues.append(_issue(
+                        "REPORTING_VIEW_TIMING_UNSUPPORTED_MAPPING",
+                        "EP-12 must preserve each constituent timing separately without an unapproved common-origin mapping",
+                        record_id))
             endpoint_assessment = assessments.get("constituent_endpoint_ids")
             outcome_assessment = assessments.get("constituent_outcome_record_refs")
             if isinstance(constituents, list):
@@ -663,6 +847,9 @@ def _validate_record(record, source, records_by_id, sources):
                 "REPORTING_VIEW_ASSESSMENT_VALUE_INVALID",
                 "REPORTING_VIEW_PROVENANCE_MISSING",
                 "REPORTING_VIEW_TIMING_MISSING",
+                "REPORTING_VIEW_TIMING_UNSUPPORTED_MAPPING",
+                "REPORTING_VIEW_FIELD_REVIEW_UNVERIFIED",
+                "REPORTING_VIEW_FIELD_CONFLICT_UNRESOLVED",
                 "REPORTING_VIEW_CONSTITUENT_ASSESSMENT_MISMATCH",
             } for issue in issues)
             return issues, "quarantined" if quarantined else "rejected"
@@ -703,11 +890,15 @@ def _validate_record(record, source, records_by_id, sources):
             conflicts = record.get("conflicting_values")
             locators = {
                 (item.get("source_version"), item.get("location"))
-                for item in conflicts if isinstance(item, dict)
+                for item in conflicts if isinstance(item, dict) and
+                isinstance(item.get("source_version"), str) and
+                isinstance(item.get("location"), str) and
+                _locator_within_source(item.get("location"), source)
             } if isinstance(conflicts, list) else set()
             ref_locators = {
-                (ref.get("source_version"), ref.get("location"))
-                for ref in record.get("source_refs", []) if isinstance(ref, dict)
+                (version, location)
+                for _, version, location in
+                _reference_signatures(record.get("source_refs"), source)
             }
             if len(locators) < 2 or not locators.issubset(ref_locators):
                 issues.append(_issue("CONFLICT_PROVENANCE_INCOMPLETE",
@@ -757,6 +948,11 @@ def _validate_record(record, source, records_by_id, sources):
         issues.append(_issue("MISSING_DATA_METHOD_REQUIRED",
                              "a differing analysis denominator and observed count require a method",
                              record_id))
+    if (record.get("missing_data_method") is not None and
+            not _text(record.get("missing_data_method"))):
+        issues.append(_issue("MISSING_DATA_METHOD_INVALID",
+                             "missing_data_method must be nonempty text or null",
+                             record_id))
     analysis_population = record.get("analysis_population_id")
     observed_population = record.get("observed_measurement_population_id")
     if (not isinstance(analysis_population, str) or not analysis_population.startswith("SYN-") or
@@ -773,6 +969,11 @@ def _validate_record(record, source, records_by_id, sources):
         issues.append(_issue("DENOMINATOR_POPULATION_UNEXPLAINED",
                              "distinct population bases require an explicit explanation",
                              record_id))
+    if (record.get("population_basis_note") is not None and
+            not _text(record.get("population_basis_note"))):
+        issues.append(_issue("POPULATION_BASIS_NOTE_INVALID",
+                             "population_basis_note must be nonempty text or null",
+                             record_id))
     if (type(denominator) is int and type(observed_count) is int and
             observed_count > denominator and not populations_differ):
         issues.append(_issue("OBSERVED_COUNT_EXCEEDS_ANALYSIS_DENOMINATOR",
@@ -780,6 +981,14 @@ def _validate_record(record, source, records_by_id, sources):
                              record_id))
     participant_status = record.get("participant_count_status")
     participant_count = record.get("participant_count")
+    participant_conflicts = record.get("participant_count_conflicts")
+    if not isinstance(participant_conflicts, list):
+        issues.append(_issue("PARTICIPANT_COUNT_CONFLICTS_INVALID",
+                             "participant_count_conflicts must be a list", record_id))
+    elif participant_status != "conflicting" and participant_conflicts:
+        issues.append(_issue("PARTICIPANT_COUNT_CONFLICT_STATE_MISMATCH",
+                             "participant_count_conflicts require a conflicting count state",
+                             record_id))
     if not isinstance(participant_status, str) or participant_status not in FIELD_STATUSES:
         issues.append(_issue("PARTICIPANT_COUNT_STATUS_INVALID",
                              "participant_count_status must preserve a supported field state",
@@ -797,13 +1006,21 @@ def _validate_record(record, source, records_by_id, sources):
                              "unavailable participant counts must remain null", record_id))
     if participant_status == "unreported_in_reviewed_material":
         field_review = record.get("participant_count_review")
+        original_reference = (
+            source.get("original_record_reference")
+            if isinstance(source, dict) else None)
+        expected_review_scope = (
+            f"{original_reference}/participant-count"
+            if isinstance(original_reference, str) else None)
         if (not isinstance(field_review, dict) or
-                field_review != {
-                    "status": "completed_synthetic_fixture_review",
-                    "field": "participant_count",
-                    "scope": f"synthetic://{record.get('source_version')}/participant-count",
-                    "review_complete": True,
-                }):
+                set(field_review) != {
+                    "status", "field", "scope", "review_complete",
+                } or
+                field_review.get("status") != "completed_synthetic_fixture_review" or
+                field_review.get("field") != "participant_count" or
+                field_review.get("scope") != expected_review_scope or
+                field_review.get("review_complete") is not True or
+                not _locator_within_source(field_review.get("scope"), source)):
             issues.append(_issue(
                 "PARTICIPANT_COUNT_REVIEW_INCOMPLETE",
                 "unreported participant count requires completed field-specific synthetic review provenance",
@@ -819,6 +1036,11 @@ def _validate_record(record, source, records_by_id, sources):
                 "not_yet_extracted participant count cannot claim completed review",
                 record_id))
     elif participant_status == "conflicting":
+        if record.get("participant_count_review") is not None:
+            issues.append(_issue(
+                "PARTICIPANT_COUNT_REVIEW_STATE_MISMATCH",
+                "conflicting participant counts cannot carry an omission-review claim",
+                record_id))
         if participant_count is not None:
             issues.append(_issue("PARTICIPANT_COUNT_CONFLICT_HAS_VALUE",
                                  "conflicting participant counts cannot select a value", record_id))
@@ -830,19 +1052,27 @@ def _validate_record(record, source, records_by_id, sources):
             isinstance(item.get("source_version"), str) and
             isinstance(item.get("location"), str)
         } if isinstance(conflicts, list) else set()
-        source_refs = {
-            (item.get("source_id"), item.get("source_version"), item.get("location"))
-            for item in record.get("source_refs", []) if isinstance(item, dict) and
-            isinstance(item.get("source_id"), str) and
-            isinstance(item.get("source_version"), str) and
-            isinstance(item.get("location"), str)
-        }
+        source_refs = _reference_signatures(record.get("source_refs"), source)
         if len(conflict_refs) < 2 or not conflict_refs.issubset(source_refs):
             issues.append(_issue("PARTICIPANT_COUNT_CONFLICT_PROVENANCE_INCOMPLETE",
                                  "conflicting counts require distinct cited source locators",
                                  record_id))
         issues.append(_issue("PARTICIPANT_COUNT_CONFLICT",
                              "conflicting participant count remains unresolved", record_id))
+    elif isinstance(participant_status, str) and participant_status in {
+            "reported", "inaccessible", "not_applicable"} and (
+            record.get("participant_count_review") is not None):
+        issues.append(_issue(
+            "PARTICIPANT_COUNT_REVIEW_STATE_MISMATCH",
+            "participant_count_review is only valid for an unreported or pending field state",
+            record_id))
+    endpoint_conflicts = record.get("conflicting_values")
+    if endpoint_conflicts is not None and not isinstance(endpoint_conflicts, list):
+        issues.append(_issue("CONFLICTING_VALUES_INVALID",
+                             "conflicting_values must be a list", record_id))
+    elif status != "conflicting" and endpoint_conflicts:
+        issues.append(_issue("CONFLICT_STATE_MISMATCH",
+                             "conflicting_values require a conflicting field state", record_id))
     if type(participant_count) is int and participant_count < 0:
         issues.append(_issue("PARTICIPANT_COUNT_INVALID",
                              "participant_count must be nonnegative", record_id))
@@ -871,12 +1101,19 @@ def _validate_record(record, source, records_by_id, sources):
                              record_id))
     if not _text(record.get("unit")):
         issues.append(_issue("UNIT_MISSING", "source-defined unit is required", record_id))
-    if record.get("unit") in PARTICIPANT_COUNT_UNITS:
+    unit = record.get("unit")
+    if isinstance(unit, str) and unit in PARTICIPANT_COUNT_UNITS:
         if (type(value) is not int or participant_status != "reported" or
                 participant_count != value):
             issues.append(_issue(
                 "PARTICIPANT_VALUE_COUNT_MISMATCH",
                 "participant-valued results must equal the explicitly reported participant_count",
+                record_id))
+    if isinstance(unit, str) and unit in EVENT_COUNT_UNITS:
+        if type(value) is not int or type(event_count) is not int or value != event_count:
+            issues.append(_issue(
+                "EVENT_VALUE_COUNT_MISMATCH",
+                "event-valued results must equal the explicitly reported event_count",
                 record_id))
     if (type(participant_count) is int and type(denominator) is int and
             participant_count > denominator):
@@ -952,6 +1189,48 @@ def _validate_record(record, source, records_by_id, sources):
     return [], "accepted"
 
 
+def _invalid_input_report(manifest, issues):
+    source_by_id = {}
+    records = manifest.get("records") if isinstance(manifest, dict) else None
+    sources = manifest.get("sources") if isinstance(manifest, dict) else None
+    if isinstance(sources, list):
+        for source in sources:
+            if isinstance(source, dict) and isinstance(source.get("source_id"), str):
+                source_by_id[source["source_id"]] = source
+    outcomes = []
+    if isinstance(records, list):
+        for record in records:
+            if not isinstance(record, dict):
+                continue
+            source_id = record.get("source_id")
+            source = source_by_id.get(source_id) if isinstance(source_id, str) else None
+            record_id = record.get("record_id")
+            record_issues = [
+                {
+                    **issue,
+                    **({"record_id": record_id} if isinstance(record_id, str) else {}),
+                }
+                for issue in issues
+            ]
+            outcomes.append({
+                "record_id": _audit_safe(record_id),
+                "disposition": "rejected",
+                "source_binding": {
+                    "manifest_source": _auditable_source(source),
+                    "original_record": _auditable_source_record(record, source),
+                },
+                "reasons": record_issues,
+            })
+    safe_issues = sorted(issues, key=lambda issue: (issue["code"], issue["message"]))
+    return {
+        "contract_version": CONTRACT_VERSION,
+        "status": "rejected",
+        "records": outcomes,
+        "reasons": safe_issues,
+        "projection": [],
+    }
+
+
 def validate_and_project(manifest):
     """Return a deterministic report and projection; never mutate the input."""
     if not isinstance(manifest, dict):
@@ -962,6 +1241,9 @@ def validate_and_project(manifest):
             "reasons": [_issue("INVALID_MANIFEST", "manifest must be an object")],
             "projection": [],
         }
+    input_issues = _input_issues(manifest)
+    if input_issues:
+        return _invalid_input_report(manifest, input_issues)
     allowed = {"contract_version", "synthetic_only", "taxonomy_version", "sources", "records"}
     top_issues = []
     unexpected = set(manifest) - allowed
@@ -1032,7 +1314,7 @@ def validate_and_project(manifest):
             if disposition == "accepted":
                 disposition = "quarantined"
         source_binding = {
-            "manifest_source": _audit_safe(source) if source is not None else None,
+            "manifest_source": _auditable_source(source),
             "original_record": _auditable_source_record(record, source),
         }
         outcomes.append({

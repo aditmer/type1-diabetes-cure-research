@@ -29,14 +29,33 @@ def reason_codes(result):
     return {reason["code"] for reason in result["reasons"]}
 
 
-def ep12_assessments(constituents):
+def ep12_assessments(constituents, timing_records=None):
+    timing_by_id = {
+        item["record_id"]: {
+            "record_id": item["record_id"],
+            "time_origin": item.get("time_origin", "synthetic first intervention"),
+            "timing_anchor": item.get("timing_anchor", "synthetic first intervention"),
+        }
+        for item in (timing_records or constituents)
+    }
     refs = [{
         "source_id": "SYN-SOURCE-1",
         "source_version": "SYN-VERSION-1",
         "location": "synthetic://SYN-VERSION-1/record-1/endpoint-1",
     }]
     values = {
-        "time_origin": ("reported", "synthetic intervention", refs),
+        "time_origin": (
+            "reported",
+            {
+                "representation": "constituent_specific_unharmonized",
+                "constituents": [
+                    timing_by_id[item["record_id"]]
+                    for item in constituents
+                    if item["record_id"] in timing_by_id
+                ],
+            },
+            refs,
+        ),
         "follow_up_distribution": ("not_yet_extracted", None, []),
         "number_at_risk": ("not_yet_extracted", None, []),
         "withdrawals": ("not_yet_extracted", None, []),
@@ -87,7 +106,7 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             participant_count_review={
                 "status": "completed_synthetic_fixture_review",
                 "field": "participant_count",
-                "scope": "synthetic://SYN-VERSION-1/participant-count",
+                "scope": "synthetic://SYN-VERSION-1/record-1/participant-count",
                 "review_complete": True,
             },
         )
@@ -318,7 +337,7 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             "field_assessments": ep12_assessments([
                 {"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"},
                 {"record_id": "SYN-OUTCOME-2", "endpoint_id": "EP-03"},
-            ]),
+            ], timing_records=[first, second]),
         })
         result = ADAPTER.validate_and_project(data)
         self.assertEqual(result["status"], "accepted")
@@ -349,7 +368,8 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             "source_refs": [],
             "review_evidence": {"status": "not_applicable_synthetic"},
             "constituents": constituents,
-            "field_assessments": ep12_assessments(constituents),
+            "field_assessments": ep12_assessments(
+                constituents, timing_records=[record(data)]),
         })
         data["records"][-1]["field_assessments"]["time_origin"]["source_refs"] = []
         result = ADAPTER.validate_and_project(data)
@@ -493,6 +513,20 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertEqual(result["status"], "rejected")
         self.assertIn("PARTICIPANT_VALUE_COUNT_MISMATCH", reason_codes(result))
 
+    def test_event_valued_result_must_match_event_count(self):
+        data = fixture()
+        item = record(data)
+        item.update(
+            endpoint_id="EP-03",
+            endpoint_definition="Invented event count endpoint.",
+            value=500,
+            unit="synthetic events",
+            event_count=3,
+        )
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("EVENT_VALUE_COUNT_MISMATCH", reason_codes(result))
+
     def test_empty_batch_is_rejected(self):
         result = ADAPTER.validate_and_project({
             "contract_version": "phase3a-synthetic-v1",
@@ -602,6 +636,56 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertEqual(result["status"], "quarantined")
         self.assertIn("COHORT_GRAPH_CONTRADICTION", reason_codes(result))
 
+    def test_distinct_cohorts_cannot_share_a_known_subset(self):
+        data = fixture()
+        first = record(data)
+        records = [first]
+        for index, cohort_id in ((2, "SYN-COHORT-2"), (3, "SYN-COHORT-3")):
+            item = copy.deepcopy(first)
+            item.update(
+                record_id=f"SYN-OUTCOME-{index}",
+                cohort_id=cohort_id,
+                source_refs=[{
+                    "source_id": "SYN-SOURCE-1",
+                    "source_version": "SYN-VERSION-1",
+                    "location": f"synthetic://SYN-VERSION-1/record-1/endpoint-{index}",
+                }],
+            )
+            data["records"].append(item)
+            records.append(item)
+        edge = lambda suffix: [{
+            "source_id": "SYN-SOURCE-1",
+            "source_version": "SYN-VERSION-1",
+            "location": f"synthetic://SYN-VERSION-1/record-1/{suffix}",
+        }]
+        first["cohort_links"] = [
+            {
+                "other_record_id": "SYN-OUTCOME-2",
+                "relationship": "subset",
+                "direction": "this_is_subset",
+                "evidence_status": "synthetic_fixture_only",
+                "source_refs": edge("edge-a-b"),
+            },
+            {
+                "other_record_id": "SYN-OUTCOME-3",
+                "relationship": "subset",
+                "direction": "this_is_subset",
+                "evidence_status": "synthetic_fixture_only",
+                "source_refs": edge("edge-a-c"),
+            },
+        ]
+        records[1]["cohort_links"] = [{
+            "other_record_id": "SYN-OUTCOME-3",
+            "relationship": "distinct_within_program",
+            "evidence_status": "synthetic_fixture_only",
+            "source_refs": edge("edge-b-c"),
+        }]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("COHORT_GRAPH_CONTRADICTION", reason_codes(result))
+        self.assertTrue(any("share a known subset" in reason["message"]
+                            for reason in result["reasons"]))
+
     def test_cohort_relationship_without_edge_provenance_is_quarantined(self):
         data = fixture()
         second = copy.deepcopy(record(data))
@@ -678,18 +762,274 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                 record(data)["value"] = value
                 result = ADAPTER.validate_and_project(data)
                 self.assertEqual(result["status"], "rejected")
-                self.assertIn("REPORTED_VALUE_INVALID", reason_codes(result))
-                json.dumps(result, allow_nan=False)
+                self.assertIn("NONFINITE_NUMBER_INPUT", reason_codes(result))
                 self.assertEqual(
                     result["records"][0]["source_binding"]["original_record"]["value"],
                     {"non_finite_numeric_input": repr(value)},
                 )
+                json.dumps(result, allow_nan=False)
                 data = fixture()
                 record(data)["follow_up_window"]["value"] = value
                 result = ADAPTER.validate_and_project(data)
                 self.assertEqual(result["status"], "rejected")
-                self.assertIn("FOLLOW_UP_WINDOW_INVALID", reason_codes(result))
+                self.assertIn("NONFINITE_NUMBER_INPUT", reason_codes(result))
                 json.dumps(result, allow_nan=False)
+
+    def test_nonfinite_nested_values_and_identifiers_are_strict_json_rejections(self):
+        mutations = (
+            lambda data: record(data)["co_interventions"].append(
+                {"synthetic_exposure": float("nan")}),
+            lambda data: record(data).update(record_id=float("inf")),
+            lambda data: record(data).update(
+                participant_count_review=float("nan")),
+            lambda data: record(data).update(
+                participant_count_conflicts=[{"source_version": float("-inf")}]),
+            lambda data: record(data).update(missing_data_method=float("nan")),
+            lambda data: record(data).update(population_basis_note=float("inf")),
+        )
+        for mutate in mutations:
+            with self.subTest(mutate=mutate):
+                data = fixture()
+                mutate(data)
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertEqual(result["projection"], [])
+                json.dumps(result, allow_nan=False)
+
+    def test_malformed_scope_unit_and_conflict_collections_do_not_raise(self):
+        mutations = (
+            lambda data: data["sources"][0].update(
+                authorized_field_scope=[None, {}]),
+            lambda data: record(data).update(unit=[]),
+            lambda data: record(data).update(unit={}),
+            lambda data: record(data).update(missing_data_method=[]),
+            lambda data: record(data).update(population_basis_note=[]),
+            lambda data: record(data).update(field_assessments=[]),
+            lambda data: record(data).update(
+                field_status="conflicting",
+                value=None,
+                conflicting_values=[{
+                    "source_version": [],
+                    "location": "synthetic://SYN-VERSION-1/record-1/value",
+                }],
+            ),
+            lambda data: record(data).update(
+                participant_count_status="conflicting",
+                participant_count=None,
+                source_refs=None,
+                participant_count_conflicts=[{
+                    "source_id": "SYN-SOURCE-1",
+                    "source_version": "SYN-VERSION-1",
+                    "location": "synthetic://SYN-VERSION-1/record-1/count",
+                }],
+            ),
+        )
+        for mutate in mutations:
+            with self.subTest(mutate=mutate):
+                data = fixture()
+                mutate(data)
+                result = ADAPTER.validate_and_project(data)
+                self.assertNotEqual(result["status"], "accepted")
+                self.assertEqual(result["projection"], [])
+                self.assertTrue(result["records"][0]["source_binding"]["original_record"])
+                json.dumps(result, allow_nan=False)
+
+    def test_approval_claims_and_non_string_object_keys_fail_closed(self):
+        data = fixture()
+        data["sources"][0]["rights"]["human_approval_state"] = "approved"
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("HUMAN_APPROVAL_NOT_ALLOWED", reason_codes(result))
+        json.dumps(result, allow_nan=False)
+
+        data = fixture()
+        data["sources"][0]["review_provenance"]["approved_by"] = "synthetic-unauthorized-claim"
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("HUMAN_APPROVAL_NOT_ALLOWED", reason_codes(result))
+        self.assertNotIn("approved_by", json.dumps(result))
+
+        data = fixture()
+        record(data)[1] = "invalid-key"
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("NON_STRING_OBJECT_KEY", reason_codes(result))
+        json.dumps(result, allow_nan=False)
+
+    def test_cyclic_and_unsupported_python_values_return_strict_json_reports(self):
+        data = fixture()
+        record(data)["co_interventions"].append(data)
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("CYCLIC_INPUT_REFERENCE", reason_codes(result))
+        json.dumps(result, allow_nan=False)
+
+        data = fixture()
+        record(data)["population_basis_note"] = object()
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("UNSUPPORTED_INPUT_VALUE", reason_codes(result))
+        json.dumps(result, allow_nan=False)
+
+    def test_record_locator_rejects_noncanonical_traversal_and_encoded_paths(self):
+        for location in (
+                "synthetic://SYN-VERSION-1/record-1/../record-2/endpoint",
+                "synthetic://SYN-VERSION-1/record-1/%2e%2e/record-2/endpoint",
+                "synthetic://SYN-VERSION-1/record-1%2f..%2frecord-2/endpoint"):
+            with self.subTest(location=location):
+                data = fixture()
+                record(data)["source_refs"][0]["location"] = location
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertIn("SOURCE_LOCATOR_OUTSIDE_APPROVED_SCOPE", reason_codes(result))
+
+    def test_manifest_cohort_and_assessment_locators_are_canonical(self):
+        data = fixture()
+        data["sources"][0]["original_record_reference"] = (
+            "synthetic://SYN-VERSION-1/record-1/../record-2")
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "rejected")
+        self.assertIn("INVALID_SOURCE_REFERENCE", reason_codes(result))
+
+        data = fixture()
+        second = copy.deepcopy(record(data))
+        second["record_id"] = "SYN-OUTCOME-2"
+        data["records"].append(second)
+        record(data)["cohort_links"] = [{
+            "other_record_id": "SYN-OUTCOME-2",
+            "relationship": "same",
+            "evidence_status": "synthetic_fixture_only",
+            "source_refs": [{
+                "source_id": "SYN-SOURCE-1",
+                "source_version": "SYN-VERSION-1",
+                "location": "synthetic://SYN-VERSION-1/record-1/%2e%2e/record-2/edge",
+            }],
+        }]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("COHORT_LINK_PROVENANCE_MISSING", reason_codes(result))
+
+        data = fixture()
+        constituents = [{"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"}]
+        data["records"].append({
+            "record_id": "SYN-VIEW-12",
+            "record_kind": "reporting_view",
+            "source_id": "SYN-SOURCE-1",
+            "source_version": "SYN-VERSION-1",
+            "endpoint_id": "EP-12",
+            "field_status": "not_applicable",
+            "source_refs": [],
+            "review_evidence": {"status": "not_applicable_synthetic"},
+            "constituents": constituents,
+            "field_assessments": ep12_assessments(
+                constituents, timing_records=[record(data)]),
+        })
+        data["records"][-1]["field_assessments"]["time_origin"]["source_refs"][0][
+            "location"] = "synthetic://SYN-VERSION-1/record-1/../record-2/timing"
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("REPORTING_VIEW_PROVENANCE_MISSING", reason_codes(result))
+
+    def test_participant_count_review_scope_is_bound_to_exact_record(self):
+        data = fixture()
+        item = record(data)
+        item.update(
+            endpoint_id="EP-03",
+            endpoint_definition="Invented event count endpoint.",
+            value=3,
+            unit="synthetic events",
+            event_count=3,
+            participant_count=None,
+            participant_count_status="unreported_in_reviewed_material",
+            participant_count_review={
+                "status": "completed_synthetic_fixture_review",
+                "field": "participant_count",
+                "scope": "synthetic://SYN-VERSION-1/another-record/participant-count",
+                "review_complete": True,
+            },
+        )
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("PARTICIPANT_COUNT_REVIEW_INCOMPLETE", reason_codes(result))
+
+    def test_ep12_retains_distinct_constituent_timing_without_harmonizing(self):
+        data = fixture()
+        first = record(data)
+        first["time_origin"] = "synthetic first intervention"
+        first["timing_anchor"] = "synthetic first intervention"
+        second = copy.deepcopy(first)
+        second.update(
+            record_id="SYN-OUTCOME-2",
+            endpoint_id="EP-03",
+            endpoint_definition="Invented separate event endpoint.",
+            time_origin="synthetic randomization",
+            timing_anchor="synthetic randomization",
+            source_refs=[{
+                "source_id": "SYN-SOURCE-1",
+                "source_version": "SYN-VERSION-1",
+                "location": "synthetic://SYN-VERSION-1/record-1/endpoint-3",
+            }],
+        )
+        constituents = [
+            {"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"},
+            {"record_id": "SYN-OUTCOME-2", "endpoint_id": "EP-03"},
+        ]
+        data["records"].append(second)
+        data["records"].append({
+            "record_id": "SYN-VIEW-12",
+            "record_kind": "reporting_view",
+            "source_id": "SYN-SOURCE-1",
+            "source_version": "SYN-VERSION-1",
+            "endpoint_id": "EP-12",
+            "field_status": "not_applicable",
+            "source_refs": [],
+            "review_evidence": {"status": "not_applicable_synthetic"},
+            "constituents": constituents,
+            "field_assessments": ep12_assessments(
+                constituents, timing_records=[first, second]),
+        })
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+        timing = next(item for item in result["projection"]
+                      if item["record_id"] == "SYN-VIEW-12")["source_values"][
+                          "field_assessments"]["time_origin"]["value"]
+        self.assertEqual(
+            [item["time_origin"] for item in timing["constituents"]],
+            ["synthetic first intervention", "synthetic randomization"])
+
+        data["records"][-1]["field_assessments"]["time_origin"]["value"] = (
+            "synthetic unrelated randomization")
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "quarantined")
+        self.assertIn("REPORTING_VIEW_TIMING_UNSUPPORTED_MAPPING", reason_codes(result))
+
+    def test_ep12_unreported_or_conflicting_assessment_is_quarantined(self):
+        for state in ("unreported_in_reviewed_material", "conflicting"):
+            with self.subTest(state=state):
+                data = fixture()
+                constituents = [{"record_id": "SYN-OUTCOME-1", "endpoint_id": "EP-01"}]
+                data["records"].append({
+                    "record_id": "SYN-VIEW-12",
+                    "record_kind": "reporting_view",
+                    "source_id": "SYN-SOURCE-1",
+                    "source_version": "SYN-VERSION-1",
+                    "endpoint_id": "EP-12",
+                    "field_status": "not_applicable",
+                    "source_refs": [],
+                    "review_evidence": {"status": "not_applicable_synthetic"},
+                    "constituents": constituents,
+                    "field_assessments": ep12_assessments(
+                        constituents, timing_records=[record(data)]),
+                })
+                assessment = data["records"][-1]["field_assessments"]["number_at_risk"]
+                assessment.update(field_status=state, value=None, source_refs=[])
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "quarantined")
+                expected = (
+                    "REPORTING_VIEW_FIELD_REVIEW_UNVERIFIED"
+                    if state == "unreported_in_reviewed_material"
+                    else "REPORTING_VIEW_FIELD_CONFLICT_UNRESOLVED")
+                self.assertIn(expected, reason_codes(result))
 
     def test_malformed_identifiers_return_reasons_instead_of_raising(self):
         mutations = (
