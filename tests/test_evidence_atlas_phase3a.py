@@ -814,6 +814,15 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
                 }],
             ),
             lambda data: record(data).update(
+                field_status="conflicting",
+                value=None,
+                conflicting_values=[{
+                    "source_version": "SYN-VERSION-1",
+                    "location": [],
+                }],
+                source_refs=None,
+            ),
+            lambda data: record(data).update(
                 participant_count_status="conflicting",
                 participant_count=None,
                 source_refs=None,
