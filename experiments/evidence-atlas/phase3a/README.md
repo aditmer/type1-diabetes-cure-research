@@ -70,6 +70,24 @@ not describe every reason in a final quarantined outcome.
 Count/proportion comparisons apply only to reported results, not null
 not-yet-extracted, inaccessible, or conflicting result states.
 
+For measured-record `participant_count_status=not_yet_extracted`, null
+`participant_count_review` is allowed. The pending-review check itself allows
+absence, but the measured-record required-field check still rejects a missing
+`participant_count_review` with `REQUIRED_RECORD_FIELDS_MISSING`.
+A present object must contain
+exactly `status=pending_synthetic_fixture_review`, `field=participant_count`,
+and boolean `review_complete=false`, checked by identity rather than equality.
+For preflight-supported inputs, numeric zeros (including `0.0` and `-0.0`),
+malformed shapes, and completed-review claims reject locally with
+`PENDING_COUNT_HAS_REVIEW_CLAIM` and no projection, subject to scope/global/budget
+precedence. Unsupported, cyclic, nonfinite, or oversized inputs may fail globally
+before this local reason; aggregate exhaustion may replace diagnostics with its
+bounded budget reason and audit omission. The completed-review branch
+for `unreported_in_reviewed_material` requires identity boolean true and its
+existing exact field-specific scope. Ordinary below-budget rejections retain
+only scoped audit-safe data; aggregate exhaustion omits record audit explicitly.
+These synthetic validation shapes do not establish human approval or authorization.
+
 The EP-12 demo accepts only scalar non-negative integer reported
 `number_at_risk` counts, preserving explicit zero; booleans, fractions,
 negative, structured, and narrative counts are quarantined with

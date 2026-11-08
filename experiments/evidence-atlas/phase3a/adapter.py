@@ -1302,14 +1302,18 @@ def _validate_record(record, source, records_by_id, sources):
                 "unreported participant count requires completed field-specific synthetic review provenance",
                 record_id))
     elif participant_status == "not_yet_extracted":
-        if record.get("participant_count_review") not in (None, {
-                "status": "pending_synthetic_fixture_review",
-                "field": "participant_count",
-                "review_complete": False,
-        }):
+        field_review = record.get("participant_count_review")
+        if field_review is not None and (
+                not isinstance(field_review, dict) or
+                set(field_review) != {"status", "field", "review_complete"} or
+                field_review.get("status") != "pending_synthetic_fixture_review" or
+                field_review.get("field") != "participant_count" or
+                field_review.get("review_complete") is not False):
             issues.append(_issue(
                 "PENDING_COUNT_HAS_REVIEW_CLAIM",
-                "not_yet_extracted participant count cannot claim completed review",
+                "required not_yet_extracted participant count review field must be null or "
+                "have exactly status=pending_synthetic_fixture_review, "
+                "field=participant_count, and review_complete=false (boolean)",
                 record_id))
     elif participant_status == "conflicting":
         if record.get("participant_count_review") is not None:

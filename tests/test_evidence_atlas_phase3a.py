@@ -518,6 +518,92 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
         self.assertEqual(values["participant_count_status"], "not_yet_extracted")
         self.assertIsNone(values["participant_count"])
 
+    def test_pending_count_review_requires_exact_shape_and_boolean_false(self):
+        pending = {
+            "status": "pending_synthetic_fixture_review",
+            "field": "participant_count",
+            "review_complete": False,
+        }
+        cases = [("absent", None, False), ("null", None, True),
+                 ("false", pending, True)]
+        for flag in (0, 0.0, -0.0, True, 1, None, "", []):
+            cases.append((f"flag-{flag!r}", {**pending, "review_complete": flag}, False))
+        for key in pending:
+            cases.append((f"missing-{key}",
+                          {k: v for k, v in pending.items() if k != key}, False))
+        cases.extend([
+            ("extra", {**pending, "scope": "synthetic://extra"}, False),
+            ("wrong-status", {**pending, "status": "completed_synthetic_fixture_review"}, False),
+            ("wrong-field", {**pending, "field": "event_count"}, False),
+            ("empty-object", {}, False),
+            ("empty-text", "", False),
+            ("list", [], False),
+        ])
+        for label, review, accepted in cases:
+            with self.subTest(label=label):
+                data = fixture()
+                item = record(data)
+                item.update(participant_count=None,
+                            participant_count_status="not_yet_extracted",
+                            event_count=1, unit="synthetic events")
+                if label == "absent":
+                    item.pop("participant_count_review", None)
+                else:
+                    item["participant_count_review"] = review
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "accepted" if accepted else "rejected")
+                if accepted:
+                    self.assertIsNone(result["projection"][0]["source_values"]["participant_count"])
+                else:
+                    self.assertEqual(result["projection"], [])
+                    if label == "absent":
+                        self.assertIn("REQUIRED_RECORD_FIELDS_MISSING", reason_codes(result))
+                        self.assertNotIn("PENDING_COUNT_HAS_REVIEW_CLAIM", reason_codes(result))
+                    else:
+                        self.assertIn("PENDING_COUNT_HAS_REVIEW_CLAIM", reason_codes(result))
+                        self.assertEqual(
+                            result["records"][0]["source_binding"]["original_record"]
+                            ["participant_count_review"], review)
+                json.dumps(result, allow_nan=False)
+
+    def test_pending_count_review_nonfinite_flags_reject_in_global_preflight(self):
+        for flag in (float("nan"), float("inf"), -float("inf")):
+            with self.subTest(flag=flag):
+                data = fixture()
+                record(data).update(
+                    participant_count=None, participant_count_status="not_yet_extracted",
+                    event_count=1, unit="synthetic events",
+                    participant_count_review={
+                        "status": "pending_synthetic_fixture_review",
+                        "field": "participant_count", "review_complete": flag,
+                    })
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "rejected")
+                self.assertEqual(result["projection"], [])
+                self.assertIn("NONFINITE_NUMBER_INPUT", reason_codes(result))
+                self.assertNotIn("PENDING_COUNT_HAS_REVIEW_CLAIM", reason_codes(result))
+                json.dumps(result, allow_nan=False)
+
+    def test_completed_count_review_requires_boolean_true(self):
+        for flag in (True, False, 1, 1.0, 0, 0.0, None):
+            with self.subTest(flag=flag):
+                data = fixture()
+                record(data).update(
+                    participant_count=None,
+                    participant_count_status="unreported_in_reviewed_material",
+                    event_count=1, unit="synthetic events",
+                    participant_count_review={
+                        "status": "completed_synthetic_fixture_review",
+                        "field": "participant_count",
+                        "scope": "synthetic://SYN-VERSION-1/record-1/participant-count",
+                        "review_complete": flag,
+                    })
+                result = ADAPTER.validate_and_project(data)
+                self.assertEqual(result["status"], "accepted" if flag is True else "quarantined")
+                if flag is not True:
+                    self.assertEqual(result["projection"], [])
+                    self.assertIn("PARTICIPANT_COUNT_REVIEW_INCOMPLETE", reason_codes(result))
+
     def test_nonreported_field_with_value_is_rejected_and_bound_for_audit(self):
         data = fixture()
         record(data).update(field_status="inaccessible", value=1)
