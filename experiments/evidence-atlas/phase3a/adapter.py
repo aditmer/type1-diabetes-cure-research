@@ -5,6 +5,7 @@ write path. Its CLI reads only the bundled fixture and prints a deterministic
 validation report to standard output.
 """
 
+import copy
 import json
 import math
 import re
@@ -1404,7 +1405,7 @@ def validate_and_project(manifest):
         outcomes.append({
             "record_id": _audit_safe(record.get("record_id")),
             "disposition": disposition,
-            "source_binding": source_binding,
+            "source_binding": _audit_safe(source_binding),
             "reasons": sorted(record_issues, key=lambda issue: (issue["code"], issue["message"])),
         })
         if disposition == "accepted":
@@ -1417,8 +1418,8 @@ def validate_and_project(manifest):
                 "original_field_status": record["field_status"],
                 "observation_status": record.get("observation_status"),
                 "source_refs": _audit_safe(record.get("source_refs", [])),
-                "source_binding": source_binding,
-                "source_values": {
+                "source_binding": _audit_safe(source_binding),
+                "source_values": copy.deepcopy({
                     key: record[key] for key in (
                         "endpoint_definition", "time_origin", "timing_anchor",
                         "assessment_timepoint", "follow_up_window", "participant_count",
@@ -1430,7 +1431,7 @@ def validate_and_project(manifest):
                         "cohort_id", "cohort_links", "constituents", "field_assessments",
                         "conflicting_values",
                     ) if key in record
-                },
+                }),
                 **({
                     "taxonomy_assessment_status": (
                         "synthetic_only_with_pending_required_fields"

@@ -1494,6 +1494,148 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             json.dumps(second, sort_keys=True, separators=(",", ":")),
         )
 
+    def test_projection_snapshots_are_detached_from_input_and_audit_bindings(self):
+        data = fixture()
+        second = copy.deepcopy(record(data))
+        second["record_id"] = "SYN-OUTCOME-2"
+        data["records"].append(second)
+        link = {
+            "other_record_id": "SYN-OUTCOME-2",
+            "relationship": "same",
+            "evidence_status": "synthetic_fixture_only",
+            "source_refs": [{
+                "source_id": "SYN-SOURCE-1",
+                "source_version": "SYN-VERSION-1",
+                "location": "synthetic://SYN-VERSION-1/record-1/cohort-link",
+            }],
+        }
+        record(data)["cohort_links"] = [link]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+        repeated = ADAPTER.validate_and_project(copy.deepcopy(data))
+        self.assertEqual(
+            json.dumps(result, sort_keys=True, separators=(",", ":")),
+            json.dumps(repeated, sort_keys=True, separators=(",", ":")),
+        )
+
+        projection = result["projection"][0]
+        outcome = result["records"][0]
+        data["records"][0]["follow_up_window"]["value"] = 999
+        data["records"][0]["co_interventions"].append({"changed_after_validation": True})
+        data["records"][0]["cohort_links"][0]["source_refs"][0]["location"] = (
+            "synthetic://SYN-VERSION-1/record-1/changed")
+        self.assertEqual(projection["source_values"]["follow_up_window"]["value"], 12)
+        self.assertEqual(projection["source_values"]["co_interventions"], [])
+        self.assertEqual(
+            projection["source_values"]["cohort_links"][0]["source_refs"][0]["location"],
+            "synthetic://SYN-VERSION-1/record-1/cohort-link")
+        self.assertEqual(
+            outcome["source_binding"]["original_record"]["follow_up_window"]["value"], 12)
+        self.assertEqual(
+            outcome["source_binding"]["original_record"]["cohort_links"][0]
+            ["source_refs"][0]["location"],
+            "synthetic://SYN-VERSION-1/record-1/cohort-link")
+
+        projection["source_refs"][0]["location"] = "projection-only-change"
+        projection["source_values"]["cohort_links"][0]["source_refs"].append(
+            {"mutated": True})
+        projection["source_binding"]["original_record"]["cohort_id"] = "SYN-ALTERED"
+        self.assertEqual(
+            outcome["source_binding"]["original_record"]["cohort_id"], "SYN-COHORT-1")
+        self.assertEqual(
+            outcome["source_binding"]["original_record"]["source_refs"][0]["location"],
+            "synthetic://SYN-VERSION-1/record-1/endpoint-1")
+        self.assertEqual(
+            outcome["source_binding"]["original_record"]["cohort_links"][0]["source_refs"],
+            [{
+                "source_id": "SYN-SOURCE-1",
+                "source_version": "SYN-VERSION-1",
+                "location": "synthetic://SYN-VERSION-1/record-1/cohort-link",
+            }])
+        self.assertEqual(data["records"][0]["cohort_id"], "SYN-COHORT-1")
+        json.dumps(result, allow_nan=False)
+
+    def test_ep12_assessments_and_links_are_detached_projection_snapshots(self):
+        data = fixture()
+        view = append_ep12_view(
+            data,
+            cohort_id="SYN-COHORT-1",
+            cohort_links=[{
+                "other_record_id": "SYN-OUTCOME-1",
+                "relationship": "same",
+                "evidence_status": "synthetic_fixture_only",
+                "source_refs": [{
+                    "source_id": "SYN-SOURCE-1",
+                    "source_version": "SYN-VERSION-1",
+                    "location": "synthetic://SYN-VERSION-1/record-1/view-cohort-link",
+                }],
+            }],
+        )
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+        outcome = next(item for item in result["records"]
+                       if item["record_id"] == view["record_id"])
+        projection = next(item for item in result["projection"]
+                          if item["record_id"] == view["record_id"])
+        repeated = ADAPTER.validate_and_project(copy.deepcopy(data))
+        self.assertEqual(
+            json.dumps(result, sort_keys=True, separators=(",", ":")),
+            json.dumps(repeated, sort_keys=True, separators=(",", ":")),
+        )
+
+        view["field_assessments"]["time_origin"]["value"]["constituents"][0][
+            "time_origin"] = "changed after validation"
+        view["cohort_links"][0]["source_refs"][0]["location"] = (
+            "synthetic://SYN-VERSION-1/record-1/changed")
+        self.assertEqual(
+            projection["source_values"]["field_assessments"]["time_origin"]["value"]
+            ["constituents"][0]["time_origin"],
+            "synthetic first intervention")
+        self.assertEqual(
+            projection["source_values"]["cohort_links"][0]["source_refs"][0]["location"],
+            "synthetic://SYN-VERSION-1/record-1/view-cohort-link")
+        self.assertEqual(
+            outcome["source_binding"]["original_record"]["field_assessments"]
+            ["time_origin"]["value"]["constituents"][0]["time_origin"],
+            "synthetic first intervention")
+
+        projection["source_values"]["field_assessments"]["time_origin"]["value"][
+            "constituents"][0]["timing_anchor"] = "projection mutation"
+        projection["source_values"]["cohort_links"][0]["source_refs"].clear()
+        projection["source_binding"]["original_record"]["field_assessments"][
+            "number_at_risk"]["provenance"] = "projection mutation"
+        self.assertEqual(
+            outcome["source_binding"]["original_record"]["field_assessments"]
+            ["time_origin"]["value"]["constituents"][0]["timing_anchor"],
+            "synthetic first intervention")
+        self.assertEqual(
+            outcome["source_binding"]["original_record"]["field_assessments"]
+            ["number_at_risk"]["provenance"],
+            "synthetic_fixture_only")
+        self.assertTrue(view["cohort_links"][0]["source_refs"])
+        json.dumps(result, allow_nan=False)
+
+    def test_nested_tuple_projection_preserves_type_without_aliasing(self):
+        data = fixture()
+        original_item = ("synthetic", {"route": "fixture"})
+        record(data)["co_interventions"] = [original_item]
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+        projected = result["projection"][0]["source_values"]["co_interventions"]
+        self.assertIsInstance(projected[0], tuple)
+        self.assertIsInstance(projected[0][1], dict)
+        self.assertEqual(projected[0][1]["route"], "fixture")
+
+        original_item[1]["route"] = "input mutated"
+        self.assertEqual(projected[0][1]["route"], "fixture")
+        projected[0][1]["route"] = "projection mutated"
+        self.assertEqual(original_item[1]["route"], "input mutated")
+        self.assertIsInstance(
+            result["records"][0]["source_binding"]["original_record"]
+            ["co_interventions"][0],
+            list)
+        json.dumps(result, allow_nan=False)
+
     def test_input_manifest_is_not_mutated(self):
         data = fixture()
         original = copy.deepcopy(data)
