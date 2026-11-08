@@ -1419,8 +1419,8 @@ def validate_and_project(manifest):
                 "observation_status": record.get("observation_status"),
                 "source_refs": _audit_safe(record.get("source_refs", [])),
                 "source_binding": _audit_safe(source_binding),
-                "source_values": copy.deepcopy({
-                    key: record[key] for key in (
+                "source_values": {
+                    key: copy.deepcopy(record[key]) for key in (
                         "endpoint_definition", "time_origin", "timing_anchor",
                         "assessment_timepoint", "follow_up_window", "participant_count",
                         "participant_count_status", "participant_count_review",
@@ -1431,7 +1431,7 @@ def validate_and_project(manifest):
                         "cohort_id", "cohort_links", "constituents", "field_assessments",
                         "conflicting_values",
                     ) if key in record
-                }),
+                },
                 **({
                     "taxonomy_assessment_status": (
                         "synthetic_only_with_pending_required_fields"

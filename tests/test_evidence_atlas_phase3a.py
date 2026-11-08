@@ -1636,6 +1636,27 @@ class EvidenceAtlasPhase3AAdapterTests(unittest.TestCase):
             list)
         json.dumps(result, allow_nan=False)
 
+    def test_projection_source_fields_do_not_preserve_cross_field_input_aliases(self):
+        data = fixture()
+        shared = []
+        record(data)["co_interventions"] = shared
+        record(data)["cohort_links"] = shared
+        result = ADAPTER.validate_and_project(data)
+        self.assertEqual(result["status"], "accepted")
+
+        source_values = result["projection"][0]["source_values"]
+        interventions = source_values["co_interventions"]
+        links = source_values["cohort_links"]
+        self.assertIsNot(interventions, links)
+
+        interventions.append({"projection_only": True})
+        self.assertEqual(links, [])
+        self.assertEqual(shared, [])
+        links.append({"link_projection_only": True})
+        self.assertEqual(interventions, [{"projection_only": True}])
+        self.assertEqual(shared, [])
+        json.dumps(result, allow_nan=False)
+
     def test_input_manifest_is_not_mutated(self):
         data = fixture()
         original = copy.deepcopy(data)
